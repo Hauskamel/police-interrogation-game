@@ -8,12 +8,12 @@ function Car () {
 
     useFrame(() => {
         if (carRef.current) {
-            carRef.current.position.x += 0.05;
+            carRef.current.position.x -= 0.03;
         }
     });
 
     return (
-        <primitive object={ scene } ref={ carRef } position={ [ -20, 0, 1.2] } />
+        <primitive object={ scene } ref={ carRef } position={ [ 20, 0, 0] } />
     )
 }
 
