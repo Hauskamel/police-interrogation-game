@@ -5,6 +5,7 @@ import { Road } from "./components/Road"
 import { Car } from "./components/Car"
 
 import './App.css'
+import {Streetbay} from "./components/Streetbay.jsx";
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
 
             <Road />
             <Car />
+            <Streetbay />
         </Canvas>
     )
 }
