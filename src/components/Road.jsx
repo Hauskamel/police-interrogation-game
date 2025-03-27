@@ -4,7 +4,7 @@ function Road () {
     const { scene } = useGLTF("/models/road.glb");
 
     return (
-        <primitive object={ scene } position={ [0, 0, 0] } />
+        <primitive object={ scene } position={ [-20, 0, 0] } />
     )
 }
 

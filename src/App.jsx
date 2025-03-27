@@ -1,8 +1,9 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
 
-import { Road } from "./components/Road"
-import { Car } from "./components/Car"
+import { Road } from "./components/Road";
+import { Car } from "./components/Car";
+import { Policeman } from "./components/Policeman";
 
 import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
@@ -17,6 +18,7 @@ function App() {
             <Road />
             <Car />
             <Streetbay />
+            <Policeman />
 
         </Canvas>
     )

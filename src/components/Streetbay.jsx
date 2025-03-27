@@ -1,6 +1,5 @@
 import {useGLTF} from "@react-three/drei";
 
-
 function Streetbay() {
     const {scene} = useGLTF("/models/streetbay.glb")
 
