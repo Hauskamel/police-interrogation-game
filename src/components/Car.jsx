@@ -17,7 +17,7 @@ function Car () {
     });
 
     return (
-        <primitive object={ scene } ref={ carRef } position={ [ 20, 0, 0] } />
+        <primitive object={ scene } ref={ carRef } position={ [20, 0, 0] } />
     )
 }
 
