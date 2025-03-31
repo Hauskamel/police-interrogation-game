@@ -1,21 +1,47 @@
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei"
+import { Canvas, useThree } from "@react-three/fiber";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
 
 import { Road } from "./components/Road";
 import { Car } from "./components/Car";
 import { Policeman } from "./components/Policeman";
 
 import './App.css'
-import {Streetbay} from "./components/Streetbay.jsx";
-import {useEffect,} from "react";
-import {generateUUID, randInt} from "three/src/math/MathUtils.js";
+import { Streetbay } from "./components/Streetbay.jsx";
+import { useEffect } from "react";
+import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore } from "./store";
+
 
 
 function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
+
+
+
+
+
+
+
+
+    function CameraController () {
+        const { camera } = useThree();
+
+        useEffect(() => {
+            camera.position.set(7, 12, -16);
+            // camera.lookAt(Policeman);
+        }, [camera]);
+        return null;
+    }
+
+
+
+
+
+
+
+
 
     useEffect(() => {
         let respawnTime = randInt(10000, 18000);
@@ -32,7 +58,8 @@ function App() {
     }, [addCar]);
 
     return (
-        <Canvas camera={ {position: [7, 14, -16], fov: 70} } >
+        <Canvas >
+            <CameraController />
             <ambientLight />
             <directionalLight position={ [5,5,5] } />
             <OrbitControls />
