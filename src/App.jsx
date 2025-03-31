@@ -1,5 +1,6 @@
-import { Canvas, useThree } from "@react-three/fiber";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import * as THREE from "three"
 
 import { Road } from "./components/Road";
 import { Car } from "./components/Car";
@@ -21,26 +22,22 @@ function App() {
 
 
 
-
-
-
-
     function CameraController () {
         const { camera } = useThree();
 
         useEffect(() => {
-            camera.position.set(7, 12, -16);
-            // camera.lookAt(Policeman);
+            camera.position.set(24, 14, -14);
+            camera.updateProjectionMatrix();
         }, [camera]);
-        return null;
+
+
+        // useFrame(() => {
+            // camera.lookAt(10,50,50)
+        // })
+
+
+
     }
-
-
-
-
-
-
-
 
 
     useEffect(() => {
