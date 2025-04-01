@@ -19,7 +19,6 @@ function Car ({ car, streetBayEnteringCoordinates }) {
         switch (status) {
 
             case "entering":
-                console.log("Test")
 
             default:
                 console.log(carRef.current.position)
@@ -31,8 +30,6 @@ function Car ({ car, streetBayEnteringCoordinates }) {
                     if (carRef.current.position.x < -45) {
                         removeCar(id);
                     }
-
-                    if (carRef.current.position.x )
                 }
 
                 if (status === "entering") {

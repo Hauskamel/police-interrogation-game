@@ -13,6 +13,7 @@ import {generateUUID} from "three/src/math/MathUtils.js";
 import {useCarStore } from "./store";
 
 
+
 function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
