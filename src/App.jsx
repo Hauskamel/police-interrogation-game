@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei"
+import {KeyboardControls, OrbitControls} from "@react-three/drei"
 
 import { Road } from "./components/Road";
 import { Car } from "./components/Car";
@@ -11,6 +11,7 @@ import {useEffect,} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 
 import { useCarStore } from "./store";
+import {Startmenu} from "./components/Startmenu.jsx";
 
 
 function App() {
@@ -32,19 +33,22 @@ function App() {
     }, [addCar]);
 
     return (
-        <Canvas camera={ {position: [7, 14, -16], fov: 70} } >
-            <ambientLight />
-            <directionalLight position={ [5,5,5] } />
-            <OrbitControls />
+        <>
+            <Canvas camera={ {position: [7, 14, -16], fov: 70} } >
+                <ambientLight />
+                <directionalLight position={ [5,5,5] } />
+                <OrbitControls />
 
-            <Road />
-            {cars.map((car) => (
-                <Car key={car.id} car={car} />
-            ))}
-            <Streetbay />
-            <Policeman />
+                <Road />
+                {cars.map((car) => (
+                    <Car key={car.id} car={car} />
+                ))}
+                <Streetbay />
+                <Policeman />
 
-        </Canvas>
+            </Canvas>
+            <Startmenu />
+        </>
     )
 }
 

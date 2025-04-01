@@ -1,5 +1,19 @@
 import { create } from "zustand";
 
+export const gameStates = {
+    MENU: "MENU",
+    GAME: "GAME",
+}
+
+export const useGameStore = create((set) => ({
+    gameState: gameStates.MENU,
+    startGame: () => {
+        set({
+            gameState: gameStates.GAME,
+        });
+    },
+}));
+
 export const useCarStore = create((set) => ({
     cars: [],
     addCar: (newCar) =>
