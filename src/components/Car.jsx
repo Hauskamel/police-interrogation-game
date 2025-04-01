@@ -3,29 +3,43 @@ import {useMemo, useRef} from "react";
 import { useFrame } from "@react-three/fiber";
 import { useCarStore } from "../store";
 
-function Car ({ car }) {
+function Car ({ car, streetBayEnteringCoordinates }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
 
-    const {id, stopped} = car;
+    const { id, stopped, status } = car;
 
     const removeCar = useCarStore((state) => state.removeCar);
     const stopCar = useCarStore((state) => state.stopCar);
 
     useFrame(() => {
+        if (!carRef.current) return
 
-        if (!carRef.current) return;
+        switch (status) {
 
-        if (!stopped) {
-            carRef.current.position.x -= 0.03;
-            if (carRef.current.position.x < -4) {
-                stopCar(id);
-            }
-            if (carRef.current.position.x < -45) {
-                removeCar(id);
-            }
+            case "entering":
+                console.log("Test")
+
+            default:
+                console.log(carRef.current.position)
+                if (!stopped) {
+                    carRef.current.position.x -= 0.03;
+                    if (carRef.current.position.x < -4) {
+                        stopCar(id);
+                    }
+                    if (carRef.current.position.x < -45) {
+                        removeCar(id);
+                    }
+
+                    if (carRef.current.position.x )
+                }
+
+                if (status === "entering") {
+
+                }
         }
+
     });
 
     return (

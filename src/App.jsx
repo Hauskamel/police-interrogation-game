@@ -1,48 +1,43 @@
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei"
+import {Canvas} from "@react-three/fiber";
+import {OrbitControls} from "@react-three/drei"
 
-import { Road } from "./components/Road";
-import { Car } from "./components/Car";
-import { Policeman } from "./components/Policeman";
+import {Road} from "./components/Road";
+import {Car} from "./components/Car";
+import {Policeman} from "./components/Policeman";
 
 import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
 import {useEffect,} from "react";
-import {generateUUID, randInt} from "three/src/math/MathUtils.js";
+import {generateUUID} from "three/src/math/MathUtils.js";
 
-import { useCarStore } from "./store";
+import {useCarStore } from "./store";
 
 
 function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
 
+    // spawns new car
     useEffect(() => {
-        let respawnTime = randInt(10000, 18000);
-
-        const intervalId = setInterval(() => {
-            const newCar = {
-                id: generateUUID(),
-                stopped: false,
-            };
-            addCar(newCar);
-        }, respawnTime);
-
-        return () => clearInterval(intervalId);
-    }, [addCar]);
+        const newCar = {
+            id: generateUUID(),
+            stopped: false,
+        };
+        addCar(newCar);
+    }, []);
 
     return (
-        <Canvas camera={ {position: [7, 14, -16], fov: 70} } >
-            <ambientLight />
-            <directionalLight position={ [5,5,5] } />
-            <OrbitControls />
+        <Canvas camera={{position: [7, 14, -16], fov: 70}}>
+            <ambientLight/>
+            <directionalLight position={[5, 5, 5]}/>
+            <OrbitControls/>
 
-            <Road />
+            <Road/>
             {cars.map((car) => (
-                <Car key={car.id} car={car} />
+                <Car key={car.id} car={car}/>
             ))}
-            <Streetbay />
-            <Policeman />
+            <Streetbay/>
+            <Policeman/>
 
         </Canvas>
     )
