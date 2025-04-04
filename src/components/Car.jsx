@@ -20,17 +20,16 @@ function Car ({ car }) {
 
 
 
-    // Define points to follow
-    const pathPoints = [
-        new THREE.Vector3(5, 0, 0),
-        new THREE.Vector3(3, 0, 0),
-        new THREE.Vector3(2.5, 0, -1),
-        new THREE.Vector3(0, 0, -1.8),
-        new THREE.Vector3(-2.2, 0, -2),
-    ];
+
 
     // Create a CatmullRomCurve3 with the points
-    const curve = new THREE.CatmullRomCurve3(pathPoints);
+    const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(5, 0, 0),
+        new THREE.Vector3(3, 0, 0),
+        new THREE.Vector3(1.5, 0, -1),
+        new THREE.Vector3(0, 0, -1.9),
+        new THREE.Vector3(-2.2, 0, -2),
+    ]);
 
 
 
@@ -55,22 +54,21 @@ function Car ({ car }) {
 
 
 
-                const carPositionZ = Math.floor(carRef.current.position.z * 100) / 100;
-                console.log("Car position Z: " + carPositionZ);
-                console.log("Car position X: " + carPositionX);
+
+
+
 
 
                 // TODO: rework - this is not clean code - 
                 // car stops according to z-axis
                 if (carPositionX < -1.9) {
-                    console.log(carRef.current.position.x);
-                    
                     stopCar(id);
-                    console.log("this statement now executes");
-                    
                 }
 
 
+
+
+                
 
                 if (carRef.current.position.x < -45) {
                     removeCar(id);
@@ -81,7 +79,14 @@ function Car ({ car }) {
     });
 
     return (
+
+        <>
+        <mesh position={ [10, 0, 0] }>
+            <tubeGeometry args={[curve, 100, .2, 5, false]} />
+            <meshStandardMaterial color="green" wireframe={false}></meshStandardMaterial>
+        </mesh>
         <primitive object={ scene } ref={ carRef } position={ [10, 0, 0] } />
+        </>
     )
 }
 
