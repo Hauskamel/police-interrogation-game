@@ -20,12 +20,13 @@ function Car ({ car }) {
 
 
 
-    // Define points for the CatmullRomCurve3
+    // Define points to follow
     const pathPoints = [
-        new THREE.Vector3(6.5, 0, 0),
-        new THREE.Vector3(4, 0, -.5),
-        new THREE.Vector3(3, 0, -1),
-        new THREE.Vector3(-2.5, 0, -2),
+        new THREE.Vector3(5, 0, 0),
+        new THREE.Vector3(3, 0, 0),
+        new THREE.Vector3(2.5, 0, -1),
+        new THREE.Vector3(0, 0, -1.8),
+        new THREE.Vector3(-2.2, 0, -2),
     ];
 
     // Create a CatmullRomCurve3 with the points
@@ -41,9 +42,8 @@ function Car ({ car }) {
             if (!stopped) {
                 carRef.current.position.x -= 0.03;
 
-
-                // TODO: coordinate needs to be more specific (for now hardcoded '6.5' is ok)
-                if (carPositionX < 6.5) {
+                // TODO: coordinate needs to be more specific (for now hardcoded '5' is ok)
+                if (carPositionX < 5) {
                     console.log("entering streetbay...");
                     setT((prevT) => (prevT + .005) % 1); // loop animation
 
@@ -55,20 +55,22 @@ function Car ({ car }) {
 
 
 
-                const carPositionZ = Math.floor(carRef.current.position.z * 10) / 10;
-                console.log(carPositionZ);
+                const carPositionZ = Math.floor(carRef.current.position.z * 100) / 100;
+                console.log("Car position Z: " + carPositionZ);
+                console.log("Car position X: " + carPositionX);
 
-                if (carPositionZ === -2) {
+
+                // TODO: rework - this is not clean code - 
+                // car stops according to z-axis
+                if (carPositionX < -1.9) {
+                    console.log(carRef.current.position.x);
+                    
                     stopCar(id);
+                    console.log("this statement now executes");
                     
                 }
 
 
-
-
-                // if (carRef.current.position.x < -4) {
-                    // stopCar(id);
-                // }
 
                 if (carRef.current.position.x < -45) {
                     removeCar(id);

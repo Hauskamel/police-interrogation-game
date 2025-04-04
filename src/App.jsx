@@ -29,6 +29,11 @@ function App() {
 
     return (
         <Canvas camera={{position: [7, 14, -16], fov: 70}}>
+
+
+            <axesHelper/>
+
+
             <ambientLight/>
             <directionalLight position={[5, 5, 5]}/>
             <OrbitControls/>
