@@ -7,7 +7,7 @@ function Policeman () {
 
     
     return (
-        <primitive object={ scene } ref={policemanRef} position={ [ 0, 0, 0] } />
+        <primitive object={ scene } ref={policemanRef} position={ [ 8, .5, -4] } />
     )
 }
 

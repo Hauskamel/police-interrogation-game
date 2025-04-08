@@ -43,7 +43,7 @@ function App() {
                 <Car key={car.id} car={car}/>
             ))}
             <Streetbay/>
-            <Policeman/>
+            <Policeman />
 
         </Canvas>
     )
