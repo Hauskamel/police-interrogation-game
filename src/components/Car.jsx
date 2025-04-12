@@ -23,8 +23,9 @@ function Car({car}) {
     const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(15, 0, 0),
         new THREE.Vector3(13, 0, 0),
-        new THREE.Vector3(10, 0, -1.9),
-        new THREE.Vector3(8.2, 0, -2),
+        new THREE.Vector3(10, 0, -1.7),
+        new THREE.Vector3(9, 0, -2),
+        new THREE.Vector3(8, 0, -2),
     ]);
 
 
@@ -35,27 +36,24 @@ function Car({car}) {
 
             // TODO: coordinate needs to be more specific (for now hardcoded '15' is ok)
             if (carPositionX > 15) {
-                carRef.current.position.x -= 0.03;
-            }
+                carRef.current.position.x -= 0.03; // car driving on road
 
-
-            else {
+            } else {
                 setT((prevT) => (prevT + .005) % 1); // loop animation
 
                 const position = curve.getPoint(t); // Get the position at t
                 const tangent = curve.getTangent(t);
-                const lookAtTarget = position.clone().add(tangent)
+                const lookAtTarget = position.clone().add(tangent);
 
-
-                carRef.current.position.copy(position)
-                carRef.current.lookAt(lookAtTarget)
-
+                carRef.current.position.copy(position);
+                carRef.current.lookAt(lookAtTarget);
             }
 
+            console.log(t)
 
             // TODO: rework - this is not clean code -
             // car stops according to z-axis
-            if (carPositionX < -1.9) {
+            if (t.toFixed(3) == .995) {
                 stopCar(id);
             }
 
@@ -76,7 +74,7 @@ function Car({car}) {
             </mesh>
 
             {/* car */}
-            <primitive object={scene} ref={carRef} position={[20, 0, 0]}/>
+            <primitive object={scene} ref={carRef} rotation={[0, Math.PI / 2, 0]} position={[20, 0, 0]}/>
         </>
     )
 }
