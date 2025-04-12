@@ -4,6 +4,7 @@ import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 
 import {useCarStore} from "../store";
+import { log } from "three/tsl";
 
 function Car({car}) {
     const gltf = useGLTF("/models/car.glb");
@@ -18,13 +19,15 @@ function Car({car}) {
     const removeCar = useCarStore((state) => state.removeCar);
     const stopCar = useCarStore((state) => state.stopCar);
 
+    
+
 
     // Create a CatmullRomCurve3 with the points
     const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(15, 0, 0),
         new THREE.Vector3(13, 0, 0),
-        new THREE.Vector3(10, 0, -2),
-        new THREE.Vector3(8, 0, -2),
+        new THREE.Vector3(10, 0, -3),
+        new THREE.Vector3(8, 0, -3),
     ]);
 
 
@@ -35,24 +38,25 @@ function Car({car}) {
 
             // TODO: coordinate needs to be more specific (for now hardcoded '15' is ok)
             if (carPositionX > 15) {
-                carRef.current.position.x -= 0.03; // car driving on road
+                carRef.current.position.x -= 0.05; // car driving on road
 
             } else {
-                setT((prevT) => (prevT + .005) % 1); // loop animation
+                setT((prevT) => (prevT + .009) % 1); // loop animation
 
                 const position = curve.getPoint(t); // Get the position at t
                 const tangent = curve.getTangent(t);
+                
                 const lookAtTarget = position.clone().add(tangent);
 
                 carRef.current.position.copy(position);
                 carRef.current.lookAt(lookAtTarget);
             }
 
-            console.log(t)
-
             // TODO: rework - this is not clean code -
-            // car stops according to z-axis
-            if (t.toFixed(3) == .995) {
+
+
+            // car stops when car drove 99.9% of the roads lengthcurv
+            if (t.toFixed(3) == .999) {
                 stopCar(id);
             }
 
@@ -73,7 +77,7 @@ function Car({car}) {
             </mesh>
 
             {/* car */}
-            <primitive object={scene} ref={carRef} rotation={[0, Math.PI / 2, 0]} position={[20, 0, 0]}/>
+            <primitive object={scene} ref={carRef} rotation={[0, -Math.PI / 2, 0]} position={[20, 0, 0]}/>
         </>
     )
 }
