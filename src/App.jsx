@@ -1,16 +1,16 @@
-import { Canvas } from "@react-three/fiber";
-import {KeyboardControls, OrbitControls} from "@react-three/drei"
+import {Canvas} from "@react-three/fiber";
+import {OrbitControls} from "@react-three/drei"
 
-import { Road } from "./components/Road";
-import { Car } from "./components/Car";
-import { Policeman } from "./components/Policeman";
+import {Road} from "./components/Road";
+import {Car} from "./components/Car";
+import {Policeman} from "./components/Policeman";
 
 import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
-import {useEffect, useState,} from "react";
+import {useEffect, useState} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 
-import { useCarStore } from "./store";
+import {useCarStore} from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
 import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
 
@@ -20,6 +20,8 @@ function App() {
     const addCar = useCarStore((state) => state.addCar);
     const [selectedCarId, setSelectedCarId] = useState(null);
 
+
+    // spawns new car
     useEffect(() => {
         let respawnTime = randInt(2000, 3000);
 
@@ -36,10 +38,11 @@ function App() {
 
     return (
         <>
-            <Canvas camera={ {position: [7, 14, -16], fov: 70} } >
-                <ambientLight />
-                <directionalLight position={ [5,5,5] } />
-                <OrbitControls />
+        <Canvas camera={{position: [7, 14, -16], fov: 70}}>
+            <axesHelper/>
+            <ambientLight/>
+            <directionalLight position={[5, 5, 5]}/>
+            <OrbitControls/>
 
                 <Road />
                 {cars.map((car) => (
