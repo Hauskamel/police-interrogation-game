@@ -3,7 +3,7 @@ import {useMemo, useRef} from "react";
 import { useFrame } from "@react-three/fiber";
 import { useCarStore } from "../store";
 
-function Car ({ car }) {
+function Car ({ car, onSelect }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
@@ -18,7 +18,7 @@ function Car ({ car }) {
         if (!carRef.current) return;
 
         if (!stopped) {
-            carRef.current.position.x -= 0.03;
+            carRef.current.position.x -= 0.05;
             if (carRef.current.position.x < -4) {
                 stopCar(id);
             }
@@ -29,7 +29,15 @@ function Car ({ car }) {
     });
 
     return (
-        <primitive object={ scene } ref={ carRef } position={ [20, 0, 0] } />
+        <primitive
+            object={ scene }
+            ref={ carRef }
+            position={ [20, 0, 0] }
+            onClick={(e) => {
+                e.stopPropagation();
+                onSelect?.(car.id);
+            }}
+        />
     )
 }
 

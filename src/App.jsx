@@ -7,19 +7,21 @@ import { Policeman } from "./components/Policeman";
 
 import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
-import {useEffect,} from "react";
+import {useEffect, useState,} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 
 import { useCarStore } from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
+import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
 
 
 function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
+    const [selectedCarId, setSelectedCarId] = useState(null);
 
     useEffect(() => {
-        let respawnTime = randInt(10000, 18000);
+        let respawnTime = randInt(2000, 3000);
 
         const intervalId = setInterval(() => {
             const newCar = {
@@ -41,13 +43,20 @@ function App() {
 
                 <Road />
                 {cars.map((car) => (
-                    <Car key={car.id} car={car} />
+                    <Car key={car.id} car={car} onSelect={setSelectedCarId} />
                 ))}
                 <Streetbay />
                 <Policeman />
 
             </Canvas>
             <Startmenu />
+
+            {selectedCarId && (
+                <CarControlTextbox
+                    carId={selectedCarId}
+                    onClose={() => setSelectedCarId(null)}
+                />
+            )}
         </>
     )
 }
