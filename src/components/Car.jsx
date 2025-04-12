@@ -2,9 +2,7 @@ import {useGLTF} from "@react-three/drei";
 import {useMemo, useRef, useState} from "react";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
-
 import {useCarStore} from "../store";
-import { log } from "three/tsl";
 
 function Car({car}) {
     const gltf = useGLTF("/models/car.glb");
@@ -69,11 +67,11 @@ function Car({car}) {
     return (
         <>
             {/* tube*/}
-            <mesh ref={tubeRef}>
+            {/* <mesh ref={tubeRef}>
                 <tubeGeometry args={[curve, 100, .2, 5, false]}/>
                 <meshStandardMaterial color="yellow" wireframe={false}></meshStandardMaterial>
             </mesh>
-
+            */}
             {/* car */}
             <primitive object={scene} ref={carRef} rotation={[0, -Math.PI / 2, 0]} position={[20, 0, -.6]}/>
         </>
