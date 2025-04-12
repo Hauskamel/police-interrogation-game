@@ -82,7 +82,6 @@ function Car ({ car, onSelect }) {
                     onSelect?.(car.id);
                 }}
             />
-            <primitive object={scene} ref={carRef} rotation={[0, -Math.PI / 2, 0]} position={[20, 0, -.6]}/>
         </>
     )
 }
