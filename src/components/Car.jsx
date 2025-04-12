@@ -20,12 +20,10 @@ function Car({car}) {
     const stopCar = useCarStore((state) => state.stopCar);
 
     
-
-
     // Create a CatmullRomCurve3 with the points
     const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(15, 0, 0),
-        new THREE.Vector3(13, 0, 0),
+        new THREE.Vector3(15, 0,  -.6),
+        new THREE.Vector3(13, 0,  -.6),
         new THREE.Vector3(10, 0, -3),
         new THREE.Vector3(8, 0, -3),
     ]);
@@ -38,7 +36,7 @@ function Car({car}) {
 
             // TODO: coordinate needs to be more specific (for now hardcoded '15' is ok)
             if (carPositionX > 15) {
-                carRef.current.position.x -= 0.05; // car driving on road
+                carRef.current.position.x -= 0.03; // car driving on road
 
             } else {
                 setT((prevT) => (prevT + .009) % 1); // loop animation
@@ -77,7 +75,7 @@ function Car({car}) {
             </mesh>
 
             {/* car */}
-            <primitive object={scene} ref={carRef} rotation={[0, -Math.PI / 2, 0]} position={[20, 0, 0]}/>
+            <primitive object={scene} ref={carRef} rotation={[0, -Math.PI / 2, 0]} position={[20, 0, -.6]}/>
         </>
     )
 }
