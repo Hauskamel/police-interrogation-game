@@ -23,8 +23,7 @@ function Car({car}) {
     const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(15, 0, 0),
         new THREE.Vector3(13, 0, 0),
-        new THREE.Vector3(10, 0, -1.7),
-        new THREE.Vector3(9, 0, -2),
+        new THREE.Vector3(10, 0, -2),
         new THREE.Vector3(8, 0, -2),
     ]);
 
