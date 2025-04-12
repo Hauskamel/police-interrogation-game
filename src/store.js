@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import {create} from "zustand";
 
 export const gameStates = {
     MENU: "MENU",
@@ -26,6 +26,6 @@ export const useCarStore = create((set) => ({
         })),
     stopCar: (id) =>
         set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? {...car, stopped: true } : car)
-        })),
+            cars: state.cars.map((car) => car.id === id ? {...car, stopped: true} : car)
+        }))
 }));
