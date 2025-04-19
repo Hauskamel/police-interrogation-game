@@ -24,13 +24,18 @@ function App() {
     const [hoveringCar, setHoveringCar] = useState(false);
 
     // TODO: VARIABLENNAMEN NOCH UMBENENNEN
-    const [statusTest, setStatusTest] = useState()
+    const [status, setStatus] = useState()
 
     const carRefs = useRef({});
 
 
     // spawns new car
     useEffect(() => {
+
+
+        window.alert("es müssen jetzt die Textboxen individuell gestyled (positioniert) werden, damit sie nicht übereinander liegen, wie Stand jetzt.")
+
+
         let respawnTime = randInt(2000, 5000);
 
         const intervalId = setInterval(() => {
@@ -39,7 +44,7 @@ function App() {
                 stopped: false,
                 status: generateCarStatus()
             };
-            setStatusTest(newCar.status)
+            setStatus(newCar.status)
             addCar(newCar);
         }, respawnTime);
 
@@ -95,7 +100,8 @@ function App() {
                         onClose={() => setSelectedCarId(null)}
                     />
                     <CarStatusTextbox
-                        status={statusTest}
+                        status={status}
+                        onClose={() => setSelectedCarId(null)}
                         carId={selectedCarId}
                     />
                 </>

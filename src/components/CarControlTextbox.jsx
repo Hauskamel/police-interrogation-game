@@ -29,7 +29,7 @@ export const CarControlTextbox = ({carId, onClose}) => {
                     >
                         Weiterfahren
                     </button>
-                </div>
+                </div>                
             </BaseTextbox>
         </>
     );
