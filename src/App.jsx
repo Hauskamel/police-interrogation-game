@@ -9,10 +9,12 @@ import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
 import {createRef, useEffect, useRef, useState} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
+import {generateCarStatus} from "./utils/generateCarStatus.js";
 
 import {useCarStore} from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
 import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
+import {CarStatusTextbox} from "./components/CarStatusTextbox.jsx";
 
 
 function App() {
@@ -20,6 +22,10 @@ function App() {
     const addCar = useCarStore((state) => state.addCar);
     const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
+
+    // TODO: VARIABLENNAMEN NOCH UMBENENNEN
+    const [statusTest, setStatusTest] = useState()
+
     const carRefs = useRef({});
 
 
@@ -31,7 +37,9 @@ function App() {
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
+                status: generateCarStatus()
             };
+            setStatusTest(newCar.status)
             addCar(newCar);
         }, respawnTime);
 
@@ -81,10 +89,16 @@ function App() {
 
             {/* Todo: Textbox fade-out animation onClose after car reaches police checkpoint */}
             {selectedCarId && (
-                <CarControlTextbox
-                    carId={selectedCarId}
-                    onClose={() => setSelectedCarId(null)}
-                />
+                <>
+                    <CarControlTextbox
+                        carId={selectedCarId}
+                        onClose={() => setSelectedCarId(null)}
+                    />
+                    <CarStatusTextbox
+                        status={statusTest}
+                        carId={selectedCarId}
+                    />
+                </>
             )}
         </div>
     )
