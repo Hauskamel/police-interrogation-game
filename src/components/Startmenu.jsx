@@ -8,7 +8,7 @@ export const Startmenu = () => {
     return (
         <>
             <div className={`startmenu ${gameState !== gameStates.MENU ? 'startmenu--hidden' : ''}`}>
-                <h1>Krasses Polizeispiel</h1>
+                <h1>LSPD: Traffic Ops</h1>
                 <button onClick={() => startGame()}>Spielen</button>
                 <button>Optionen</button>
             </div>
