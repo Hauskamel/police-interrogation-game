@@ -9,12 +9,12 @@ import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
 import {createRef, useEffect, useRef, useState} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
-import {generateCarAndDriverStatus} from "./utils/generateCarAndDriverStatus.js";
+import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
 import {useCarStore} from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
 import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
-import {CarStatusTextbox} from "./components/CarStatusTextbox.jsx";
+import {CarAndDriverProfileTextbox} from "./components/CarAndDriverProfileTextbox.jsx";
 
 
 function App() {
@@ -24,12 +24,15 @@ function App() {
     const addCar = useCarStore((state) => state.addCar);
     const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
-    const [selectedCarDriverAndCarStatus, setSelectedCarDriverAndCarStatus] = useState({})
+    const [selectedCarDriverAndCarProfile, setSelectedCarDriverAndCarProfile] = useState({})
 
     
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
+
+
+    window.alert("es darf immer nur das profil von dem auto, welches kontrolliert wird, angezeigt werden.")
     
 
 
@@ -37,7 +40,7 @@ function App() {
     // function executes when car is selected (onSelect)
     function handleSelectedCar (id) {
         setSelectedCarId(id);
-        setSelectedCarDriverAndCarStatus(cars.find(carId => carId.id === id).status)          
+        setSelectedCarDriverAndCarProfile(cars.find(car => car.id === id).profileInformation)          
     }
 
 
@@ -52,7 +55,7 @@ function App() {
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
-                status: generateCarAndDriverStatus()
+                profileInformation: generateCarAndDriverProfile()
             };
             addCar(newCar);
         }, respawnTime);
@@ -115,12 +118,14 @@ function App() {
             {selectedCarId && (
                 <>
                     <CarControlTextbox
-                        carId={selectedCarId}
+                        selectedCarId={selectedCarId}
                         onClose={() => setSelectedCarId(null)}
                     />
-                    <CarStatusTextbox
-                        carId={selectedCarId}
-                        status={selectedCarDriverAndCarStatus}
+
+                    <CarAndDriverProfileTextbox
+                        selectedCarId={selectedCarId}
+                        stoppedCar={cars.find(car => car.stopped)}
+                        profile={selectedCarDriverAndCarProfile}
                         onClose={() => setSelectedCarId(null)}
                     />
                 </>

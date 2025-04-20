@@ -18,7 +18,7 @@ function Car ({ car, onSelect, onHoverChange }) {
     const removeCar = useCarStore((state) => state.removeCar);
     const stopCar = useCarStore((state) => state.stopCar);
 
-    // Create a CatmullRomCurve3 with the points
+    // Create a Curve with the given Vector3 coordinates
     const curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(15, 0,  -.6),
         new THREE.Vector3(13, 0,  -.6),
@@ -42,7 +42,6 @@ function Car ({ car, onSelect, onHoverChange }) {
 
             const position = curve.getPoint(t); // Get the position at t
             const tangent = curve.getTangent(t);
-
             const lookAtTarget = position.clone().add(tangent);
 
             carRef.current.position.copy(position);
@@ -59,6 +58,8 @@ function Car ({ car, onSelect, onHoverChange }) {
 
     return (
         <>
+            {/* ####################### TUBE DIENT ZUR VERANSCHAULICHUNG DER KURVE ####################### */}
+            {/* ##################################### DO NOT DELETE ###################################### */}
             {/* tube*/}
             {/* <mesh ref={tubeRef}>
                 <tubeGeometry args={[curve, 100, .2, 5, false]}/>
