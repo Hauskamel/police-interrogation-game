@@ -11,6 +11,7 @@ export function CarStatusTextbox ( {carId, status} ) {
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {carId}</p>
                 <p className="text-gray-500 text-xs">Fahrer betrunken: {status.drunk ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">{status.drunk ? "Alkoholpegel: " + status.alcoholLevel : ""}</p>
                 <p className="text-gray-500 text-xs">Fahrer high: {status.high ? "true" : "false"}</p>
                 <p className="text-gray-500 text-xs">Fahrer gesucht: {status.wanted ? "true" : "false"}</p>
             </BaseTextbox>
