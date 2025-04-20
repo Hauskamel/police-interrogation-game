@@ -5,11 +5,11 @@ export const BaseTextbox = ({ title, onClose, children, carId }) => {
     const [shouldRender, setShouldRender] = useState(true); // control unmount
 
     const handleClose = () => {
-        setIsVisible(false); // trigger fade-out
+        setIsVisible(false);                // trigger fade-out
         setTimeout(() => {
-            setShouldRender(false); // unmount after animation
-            onClose();              // optional callback
-        }, 150); // match fade-out duration
+            setShouldRender(false);         // unmount after animation
+            onClose();                      // optional callback
+        }, 150);                            // match fade-out duration
     };
 
     useEffect(() => {

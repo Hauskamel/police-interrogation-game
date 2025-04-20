@@ -18,31 +18,42 @@ import {CarStatusTextbox} from "./components/CarStatusTextbox.jsx";
 
 
 function App() {
+    // ##################################################
+    // ##################### STATES #####################
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
     const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
+    const [selectedCarDriverAndCarStatus, setSelectedCarDriverAndCarStatus] = useState({})
 
-    // TODO: VARIABLENNAMEN NOCH UMBENENNEN
-    const [driverAndCarStatus, setDriverAndCarStatus] = useState()
-
+    
+    // ##################################################
+    // ################### REFERENCES ###################
     const carRefs = useRef({});
+    
+
+
+
+    // function executes when car is selected (onSelect)
+    function handleSelectedCar (id) {
+        setSelectedCarId(id);
+        setSelectedCarDriverAndCarStatus(cars.find(carId => carId.id === id).status)          
+    }
 
 
     // spawns new car
     useEffect(() => {
-        window.alert("jedes Mal wenn ein neues Auto spawned wird der status geupdated (status von auto 2 wird bei dessen Spawn bei textbox von auto 1 angezeigt).")
-
-
         let respawnTime = randInt(2000, 5000);
 
+        // respawn interval 
         const intervalId = setInterval(() => {
+
+            // car object 
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
                 status: generateCarAndDriverStatus()
             };
-            setDriverAndCarStatus(newCar.status)
             addCar(newCar);
         }, respawnTime);
 
@@ -54,21 +65,34 @@ function App() {
 
         const selectedCar = cars.find(car => car.id === selectedCarId);
         if (selectedCar && selectedCar.positionX < 15) {
+            // reset selected Car Id when Car has passed certain position
             setSelectedCarId(null);
         }
     }, [cars, selectedCarId]);
 
+
+
+    // ##################################################
+    // ############# RENDERED HTML COMPONENT ############
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}` }>
             <Canvas camera={{position: [7, 14, -16], fov: 70}}>
+                {/* GAME COMPONENTS */}
                 <axesHelper/>
-                <ambientLight/>
-                <directionalLight position={[5, 5, 5]}/>
                 <OrbitControls/>
 
-                <Road />
 
+                {/* LIHGTS */}
+                <ambientLight/>
+                <directionalLight position={[5, 5, 5]}/>
+
+
+                {/* GAME COMPONENTS */}
+                <Road />
+                <Streetbay />
+                <Policeman />
                 {cars.map((car) => {
+                    // if no refference on a car id in the "cars" store (store.js) exists, create a new reference to that id
                     if (!carRefs.current[car.id]) {
                         carRefs.current[car.id] = createRef();
                     }
@@ -78,14 +102,11 @@ function App() {
                             key={car.id}
                             car={car}
                             ref={carRefs.current[car.id]}
-                            onSelect={setSelectedCarId}
+                            onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
                         />
                     );
                 })}
-
-                <Streetbay />
-                <Policeman />
 
             </Canvas>
             <Startmenu />
@@ -98,9 +119,9 @@ function App() {
                         onClose={() => setSelectedCarId(null)}
                     />
                     <CarStatusTextbox
-                        status={driverAndCarStatus}
-                        onClose={() => setSelectedCarId(null)}
                         carId={selectedCarId}
+                        status={selectedCarDriverAndCarStatus}
+                        onClose={() => setSelectedCarId(null)}
                     />
                 </>
             )}
