@@ -4,8 +4,6 @@ import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
-import {generateCarStatus} from "../utils/generateCarStatus.js";
-
 function Car ({ car, onSelect, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);

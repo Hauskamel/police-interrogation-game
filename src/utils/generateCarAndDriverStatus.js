@@ -1,4 +1,4 @@
-export function generateCarStatus () {
+export function generateCarAndDriverStatus () {
     return {
         drunk: Math.random() < .2,
         high: Math.random() < .2,

@@ -9,7 +9,7 @@ import './App.css'
 import {Streetbay} from "./components/Streetbay.jsx";
 import {createRef, useEffect, useRef, useState} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
-import {generateCarStatus} from "./utils/generateCarStatus.js";
+import {generateCarAndDriverStatus} from "./utils/generateCarAndDriverStatus.js";
 
 import {useCarStore} from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
@@ -24,16 +24,14 @@ function App() {
     const [hoveringCar, setHoveringCar] = useState(false);
 
     // TODO: VARIABLENNAMEN NOCH UMBENENNEN
-    const [status, setStatus] = useState()
+    const [driverAndCarStatus, setDriverAndCarStatus] = useState()
 
     const carRefs = useRef({});
 
 
     // spawns new car
     useEffect(() => {
-
-
-        window.alert("es müssen jetzt die Textboxen individuell gestyled (positioniert) werden, damit sie nicht übereinander liegen, wie Stand jetzt.")
+        window.alert("jedes Mal wenn ein neues Auto spawned wird der status geupdated (status von auto 2 wird bei dessen Spawn bei textbox von auto 1 angezeigt).")
 
 
         let respawnTime = randInt(2000, 5000);
@@ -42,9 +40,9 @@ function App() {
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
-                status: generateCarStatus()
+                status: generateCarAndDriverStatus()
             };
-            setStatus(newCar.status)
+            setDriverAndCarStatus(newCar.status)
             addCar(newCar);
         }, respawnTime);
 
@@ -100,7 +98,7 @@ function App() {
                         onClose={() => setSelectedCarId(null)}
                     />
                     <CarStatusTextbox
-                        status={status}
+                        status={driverAndCarStatus}
                         onClose={() => setSelectedCarId(null)}
                         carId={selectedCarId}
                     />
