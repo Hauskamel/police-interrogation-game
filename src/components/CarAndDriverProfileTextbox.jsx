@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
-export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, carAndDriverProfile, onClose} ) {
+// component is only visible on stopped car since no information about driver or vehicle is known or relevant
+export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, carAndDriverProfile} ) {
 
     // check if no car has been stopped OR user clicked on a car that is not the stopped car
     if (!stoppedCar || stoppedCar.id !== selectedCarId) return;
 
     return (
         <>
-            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} className="car-and-driver-profile-textbox" onClose={onClose}>
+            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} className="car-and-driver-profile-textbox">
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {selectedCarId}</p>
 

@@ -40,7 +40,7 @@ function App() {
     // function executes when car is selected (onSelect)
     function handleSelectedCar (id) {
         setSelectedCarId(id);
-        setSelectedCarDriverAndCarProfile(cars.find(car => car.id === id).profileInformation)          
+        setSelectedCarDriverAndCarProfile(cars.find(car => car.id === id).profileInformation)
     }
 
 
@@ -62,7 +62,7 @@ function App() {
 
         return () => clearInterval(intervalId);
     }, [addCar]);
-    
+
 
     useEffect(() => {
         if (!selectedCarId) return;
@@ -129,7 +129,6 @@ function App() {
                         selectedCarId={selectedCarId}
                         stoppedCar={cars.find(car => car.stopped)}
                         carAndDriverProfile={selectedCarDriverAndCarProfile}
-                        onClose={() => selectedCarId !== stoppedCar.id ? setSelectedCarId(null) : setSelectedCarId(selectedCarId)}
                     />
                 </>
             )}
