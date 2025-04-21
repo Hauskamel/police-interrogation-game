@@ -2,13 +2,10 @@ import { useEffect } from "react";
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
 
-export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, profile} ) {
+export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, carAndDriverProfile} ) {
 
-    console.log(stoppedCar);
-    
-
-
-    if (!stoppedCar.id === selectedCarId) return;
+    // check if no car has been stopped OR user clicked on a car that is not the stopped car
+    if (!stoppedCar || stoppedCar.id !== selectedCarId) return;
 
     return (
         <>
@@ -17,11 +14,11 @@ export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, profile
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {selectedCarId}</p>
 
-                <p className="text-gray-500 text-xs">Fahrer betrunken: {profile.drunk ? "true" : "false"}</p>
-                <p className="text-gray-500 text-xs">{profile.drunk ? "Alkoholpegel: " + profile.alcoholLevel : ""}</p>
+                <p className="text-gray-500 text-xs">Fahrer betrunken: {carAndDriverProfile.drunk ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">{carAndDriverProfile.drunk ? "Alkoholpegel: " + carAndDriverProfile.alcoholLevel : ""}</p>
                 
-                <p className="text-gray-500 text-xs">Fahrer high: {profile.high ? "true" : "false"}</p>
-                <p className="text-gray-500 text-xs">Fahrer gesucht: {profile.wanted ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">Fahrer high: {carAndDriverProfile.high ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">Fahrer gesucht: {carAndDriverProfile.wanted ? "true" : "false"}</p>
             </BaseTextbox>
         </>
     )

@@ -17,6 +17,9 @@ import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
 import {CarAndDriverProfileTextbox} from "./components/CarAndDriverProfileTextbox.jsx";
 
 
+// window.alert("es darf immer nur das profil von dem auto, welches kontrolliert wird, angezeigt werden.")
+
+
 function App() {
     // ##################################################
     // ##################### STATES #####################
@@ -30,9 +33,6 @@ function App() {
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
-
-
-    window.alert("es darf immer nur das profil von dem auto, welches kontrolliert wird, angezeigt werden.")
     
 
 
@@ -67,8 +67,10 @@ function App() {
         if (!selectedCarId) return;
 
         const selectedCar = cars.find(car => car.id === selectedCarId);
-        if (selectedCar && selectedCar.positionX < 15) {
-            // reset selected Car Id when Car has passed certain position
+        const stoppedCar = cars.find(car => car.stopped);
+        
+        if (selectedCar && selectedCar.positionX < 15 && selectedCar !== stoppedCar) {
+            // reset selected Car Id when Car has passed certain position AND car is not stopped car
             setSelectedCarId(null);
         }
     }, [cars, selectedCarId]);
@@ -119,14 +121,14 @@ function App() {
                 <>
                     <CarControlTextbox
                         selectedCarId={selectedCarId}
-                        onClose={() => setSelectedCarId(null)}
+                        onClose={() => selectedCarId !== stoppedCar.id ? setSelectedCarId(null) : setSelectedCarId(selectedCarId) }
                     />
 
                     <CarAndDriverProfileTextbox
                         selectedCarId={selectedCarId}
                         stoppedCar={cars.find(car => car.stopped)}
-                        profile={selectedCarDriverAndCarProfile}
-                        onClose={() => setSelectedCarId(null)}
+                        carAndDriverProfile={selectedCarDriverAndCarProfile}
+                        onClose={() => selectedCarId !== stoppedCar.id ? setSelectedCarId(null) : setSelectedCarId(selectedCarId)}
                     />
                 </>
             )}
