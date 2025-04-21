@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-export const BaseTextbox = ({ title, onClose, children, carId }) => {
+export const BaseTextbox = ({ title, className, onClose, children, carId }) => {
     const [isVisible, setIsVisible] = useState(true); // for fade state
     const [shouldRender, setShouldRender] = useState(true); // control unmount
 
@@ -18,9 +18,10 @@ export const BaseTextbox = ({ title, onClose, children, carId }) => {
     }, [carId]);
 
     if (!shouldRender) return null;
+    
 
     return (
-        <div className={`absolute bottom-8 left-8 z-30 w-72 sm:w-80 bg-pink-50 border border-pink-200 rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
+        <div className={`${className === "car-control-textbox" ? "bottom-8" : "bottom-50"} absolute left-8 z-30 w-72 sm:w-80 bg-pink-50 border border-pink-200 rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
             <div className="flex justify-between items-center">
                 {title && (
                     <h3 className="text-lg font-bold text-gray-900 tracking-tight">

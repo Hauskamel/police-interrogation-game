@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
-
 export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, carAndDriverProfile} ) {
 
     // check if no car has been stopped OR user clicked on a car that is not the stopped car
@@ -9,8 +8,7 @@ export function CarAndDriverProfileTextbox ( {selectedCarId, stoppedCar, carAndD
 
     return (
         <>
-            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"}>
-            
+            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} className="car-and-driver-profile-textbox">
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {selectedCarId}</p>
 

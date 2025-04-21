@@ -7,7 +7,7 @@ export const CarControlTextbox = ({selectedCarId, onClose}) => {
 
     return (
         <>
-            <BaseTextbox title="Fahrzeug Optionen" onClose={onClose} >
+            <BaseTextbox title="Fahrzeug Optionen" className="car-control-textbox" onClose={onClose} >
                 <p className="text-gray-500 text-xs">ID: {selectedCarId}</p>
                 <div className="flex gap-2">
                     <button

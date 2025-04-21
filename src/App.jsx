@@ -62,6 +62,7 @@ function App() {
 
         return () => clearInterval(intervalId);
     }, [addCar]);
+    
 
     useEffect(() => {
         if (!selectedCarId) return;
