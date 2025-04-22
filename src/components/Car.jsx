@@ -4,11 +4,10 @@ import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
-function Car ({ car, onSelect, onHoverChange }) {
+function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
-    const updateCarPosition = useCarStore((state) => state.updateCarPosition);
     const tubeRef = useRef();
 
     const [t, setT] = useState(0);
@@ -16,7 +15,8 @@ function Car ({ car, onSelect, onHoverChange }) {
     const {id, stopped} = car;
 
     const removeCar = useCarStore((state) => state.removeCar);
-    const stopCar = useCarStore((state) => state.stopCar);
+    const updateCarPosition = useCarStore((state) => state.updateCarPosition);
+
 
     // Create a Curve with the given Vector3 coordinates
     const curve = new THREE.CatmullRomCurve3([
@@ -28,6 +28,7 @@ function Car ({ car, onSelect, onHoverChange }) {
 
     useFrame(() => {
         const carPositionX = Math.floor(carRef.current.position.x * 100) / 100
+
         updateCarPosition(car.id, carPositionX);
 
         if (!carRef.current) return;
@@ -61,11 +62,11 @@ function Car ({ car, onSelect, onHoverChange }) {
             {/* ####################### TUBE DIENT ZUR VERANSCHAULICHUNG DER KURVE ####################### */}
             {/* ##################################### DO NOT DELETE ###################################### */}
             {/* tube*/}
-            {/* <mesh ref={tubeRef}>
+            <mesh ref={tubeRef}>
                 <tubeGeometry args={[curve, 100, .2, 5, false]}/>
                 <meshStandardMaterial color="yellow" wireframe={false}></meshStandardMaterial>
             </mesh>
-            */}
+            
             {/* car */}
             <primitive
                 object={ scene }
@@ -82,8 +83,10 @@ function Car ({ car, onSelect, onHoverChange }) {
                 }}
                 onClick={(e) => {
                     e.stopPropagation();
-                    if (car.positionX > 15) {
-                        onSelect?.(car.id);
+
+                    // makes car selectable if position is > 15 or the clicked car is the stopped car
+                    if (car.positionX > 15 || isStoppedCar) {
+                        onSelect?.(car);
                     }
                 }}
             />

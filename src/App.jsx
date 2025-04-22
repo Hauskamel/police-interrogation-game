@@ -1,17 +1,17 @@
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
+import {createRef, useEffect, useRef, useState} from "react";
+import {useCarStore} from "./store";
 
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
+import {Streetbay} from "./components/Streetbay.jsx";
 
 import './App.css'
-import {Streetbay} from "./components/Streetbay.jsx";
-import {createRef, useEffect, useRef, useState} from "react";
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
-import {useCarStore} from "./store";
 import {Startmenu} from "./components/Startmenu.jsx";
 import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
 import {CarAndDriverProfileTextbox} from "./components/CarAndDriverProfileTextbox.jsx";
@@ -25,9 +25,16 @@ function App() {
     // ##################### STATES #####################
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
-    const [selectedCarId, setSelectedCarId] = useState(null);
+
+
+
+    // NOTE: VERSUCH 2 ### AB HIER WIEDER NORMALZUSTAND
+    const [selectedCar, setSelectedCar] = useState(null);
+
+
+
+    // const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
-    const [selectedCarDriverAndCarProfile, setSelectedCarDriverAndCarProfile] = useState({})
 
     
     // ##################################################
@@ -38,9 +45,8 @@ function App() {
 
 
     // function executes when car is selected (onSelect)
-    function handleSelectedCar (id) {
-        setSelectedCarId(id);
-        setSelectedCarDriverAndCarProfile(cars.find(car => car.id === id).profileInformation)
+    function handleSelectedCar (carObject) {
+        setSelectedCar(carObject);
     }
 
 
@@ -64,17 +70,17 @@ function App() {
     }, [addCar]);
 
 
+    
     useEffect(() => {
-        if (!selectedCarId) return;
-
-        const selectedCar = cars.find(car => car.id === selectedCarId);
+        if (!selectedCar) return;
+        // const selectedCarDummy = cars.find(car => car.id === selectedCar.id);
         const stoppedCar = cars.find(car => car.stopped);
         
-        if (selectedCar && selectedCar.positionX < 15 && selectedCar !== stoppedCar) {
+        if (selectedCar && selectedCar.positionX < 15 && selectedCar.id !== stoppedCar.id) {
             // reset selected Car Id when Car has passed certain position AND car is not stopped car
-            setSelectedCarId(null);
+            setSelectedCar(null);
         }
-    }, [cars, selectedCarId]);
+    }, [cars, selectedCar]);
 
 
 
@@ -109,6 +115,7 @@ function App() {
                             car={car}
                             ref={carRefs.current[car.id]}
                             onSelect={handleSelectedCar}
+                            isStoppedCar={cars.find(elem => elem.stopped)}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
                         />
                     );
@@ -118,17 +125,16 @@ function App() {
             <Startmenu />
 
             {/* Todo: Textbox fade-out animation onClose after car reaches police checkpoint */}
-            {selectedCarId && (
+            {selectedCar && (
                 <>
                     <CarControlTextbox
-                        selectedCarId={selectedCarId}
-                        onClose={() => selectedCarId !== stoppedCar.id ? setSelectedCarId(null) : setSelectedCarId(selectedCarId) }
+                        selectedCar={selectedCar}
+                        onClose={() => setSelectedCar(null)}
                     />
 
                     <CarAndDriverProfileTextbox
-                        selectedCarId={selectedCarId}
+                        selectedCar={selectedCar}
                         stoppedCar={cars.find(car => car.stopped)}
-                        carAndDriverProfile={selectedCarDriverAndCarProfile}
                     />
                 </>
             )}
