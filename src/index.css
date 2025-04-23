@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @theme {
     --animate-fade-in: fade-in 150ms ease-in-out;
     --animate-fade-out: fade-out 150ms ease-in-out;
@@ -72,7 +73,14 @@ h1 {
   a:hover {
     color: #747bff;
   }
-  button {
+
+  /* NOTE: ORIGINAL (MIT PETZI ABER NOCHMAL ABKLÄREN, OB STYLES SO PASSEN - LAUT VS CODE HAB ICH (LUKAS) DIE STYLES EINGEFÜGT KANN MICH ABER NICHT DRAN ERINNERN DAS JE GETAN ZU HABEN */
+  /* button {
     background-color: #f9f9f9;
+  } */
+
+  /* NOTE: VORÜBERGEHENED */
+  button {
+    color: white
   }
 }

@@ -17,8 +17,6 @@ import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
 import {CarAndDriverProfileTextbox} from "./components/CarAndDriverProfileTextbox.jsx";
 
 
-// window.alert("es darf immer nur das profil von dem auto, welches kontrolliert wird, angezeigt werden.")
-
 
 function App() {
     // ##################################################
@@ -26,10 +24,15 @@ function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
 
-
-
     // NOTE: VERSUCH 2 ### AB HIER WIEDER NORMALZUSTAND
     const [selectedCar, setSelectedCar] = useState(null);
+
+
+    const [stoppedCar, setStoppedCar] = useState()
+
+
+    console.log(stoppedCar);
+    
 
 
 
@@ -50,13 +53,15 @@ function App() {
     }
 
 
+
+
+
     // spawns new car
     useEffect(() => {
         let respawnTime = randInt(2000, 5000);
 
         // respawn interval 
         const intervalId = setInterval(() => {
-
             // car object 
             const newCar = {
                 id: generateUUID(),
@@ -65,7 +70,6 @@ function App() {
             };
             addCar(newCar);
         }, respawnTime);
-
         return () => clearInterval(intervalId);
     }, [addCar]);
 
@@ -74,13 +78,13 @@ function App() {
     useEffect(() => {
         if (!selectedCar) return;
         // const selectedCarDummy = cars.find(car => car.id === selectedCar.id);
-        const stoppedCar = cars.find(car => car.stopped);
+        setStoppedCar(cars.find(car => car.stopped))
         
-        if (selectedCar && selectedCar.positionX < 15 && selectedCar.id !== stoppedCar.id) {
+        if (selectedCar && selectedCar.position.x < 15 && selectedCar.id !== stoppedCar.id) {
             // reset selected Car Id when Car has passed certain position AND car is not stopped car
             setSelectedCar(null);
         }
-    }, [cars, selectedCar]);
+    }, [cars, selectedCar, stoppedCar]);
 
 
 
@@ -102,7 +106,8 @@ function App() {
                 {/* GAME COMPONENTS */}
                 <Road />
                 <Streetbay />
-                <Policeman />
+                <Policeman position={[8,.5,-4]} />
+
                 {cars.map((car) => {
                     // if no refference on a car id in the "cars" store (store.js) exists, create a new reference to that id
                     if (!carRefs.current[car.id]) {
@@ -112,10 +117,10 @@ function App() {
                     return (
                         <Car
                             key={car.id}
-                            car={car}
                             ref={carRefs.current[car.id]}
+
+                            car={car}
                             onSelect={handleSelectedCar}
-                            isStoppedCar={cars.find(elem => elem.stopped)}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
                         />
                     );
@@ -132,10 +137,15 @@ function App() {
                         onClose={() => setSelectedCar(null)}
                     />
 
-                    <CarAndDriverProfileTextbox
+                    {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
+                    {stoppedCar && stoppedCar.position.z === -3 && (
+                        <CarAndDriverProfileTextbox
                         selectedCar={selectedCar}
                         stoppedCar={cars.find(car => car.stopped)}
                     />
+                    )}
+
+
                 </>
             )}
         </div>

@@ -19,7 +19,7 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
                             onClick={() => {
                                 stopCar(selectedCar.id);
                             }}
-                            className="w-full bg-red-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
+                            className="w-full !bg-red-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                         >
                             Anhalten
                         </button>

@@ -4,7 +4,7 @@ import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
-function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
+function Car ({ car, onSelect, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
@@ -16,6 +16,7 @@ function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
 
     const removeCar = useCarStore((state) => state.removeCar);
     const updateCarPosition = useCarStore((state) => state.updateCarPosition);
+    const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
 
 
     // Create a Curve with the given Vector3 coordinates
@@ -28,8 +29,14 @@ function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
 
     useFrame(() => {
         const carPositionX = Math.floor(carRef.current.position.x * 100) / 100
+        
+        if (car.stopped) {
+            const carPositionZ = Math.floor(carRef.current.position.z * 100) / 100
+            updateStoppedCarPosition(car.id, carPositionX, carPositionZ);
 
-        updateCarPosition(car.id, carPositionX);
+        } else {
+            updateCarPosition(car.id, carPositionX);
+        }
 
         if (!carRef.current) return;
 
@@ -56,6 +63,16 @@ function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
             removeCar(id);
         }
     });
+
+
+
+
+
+
+
+
+
+
 
     return (
         <>
@@ -85,7 +102,7 @@ function Car ({ car, onSelect, onHoverChange, isStoppedCar }) {
                     e.stopPropagation();
 
                     // makes car selectable if position is > 15 or the clicked car is the stopped car
-                    if (car.positionX > 15 || isStoppedCar) {
+                    if (car.position.x > 15 || car.stopped) {
                         onSelect?.(car);
                     }
                 }}
