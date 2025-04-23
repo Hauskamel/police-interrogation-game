@@ -4,52 +4,51 @@ import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
+
+import { bayEntry } from '../utils/streetbayEntries/streetbayEntries.js'
+
+
 function Car ({ car, onSelect, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
     const tubeRef = useRef();
 
+    // distance of driven curve (when entering bay) from 0 to 1
     const [t, setT] = useState(0);
 
+    // creating object from car prop
     const {id, stopped} = car;
 
     const removeCar = useCarStore((state) => state.removeCar);
     const updateCarPosition = useCarStore((state) => state.updateCarPosition);
     const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
 
-
-    // Create a Curve with the given Vector3 coordinates
-    const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(15, 0,  -.6),
-        new THREE.Vector3(13, 0,  -.6),
-        new THREE.Vector3(10, 0, -3),
-        new THREE.Vector3(8, 0, -3),
-    ]);
-
+    // animation loop
     useFrame(() => {
+        // return when no refference to a car exists (no animation needed)
+        if (!carRef.current) return;        
+
         const carPositionX = Math.floor(carRef.current.position.x * 100) / 100
-        
         if (car.stopped) {
+            // when car is stopped -> position.z is relevent to trigger 'CarAndDriverProfileTextbox'
             const carPositionZ = Math.floor(carRef.current.position.z * 100) / 100
             updateStoppedCarPosition(car.id, carPositionX, carPositionZ);
-
         } else {
+            // when car is not stopped -> position.z is not relevant
             updateCarPosition(car.id, carPositionX);
         }
-
-        if (!carRef.current) return;
-
-        // TODO: coordinate needs to be more specific (for now hardcoded '15' is ok)
-        if (carPositionX < 15 && stopped) {
-
+        
+        // check if car passed first entry point of bay
+        if (carPositionX < bayEntry.points[0].x && stopped) {
+            // track driven distance of entry
             setT((prevT) => {
                 const nextT = prevT + 0.009;
                 return nextT > 1 ? 1 : nextT;
             });
 
-            const position = curve.getPoint(t); // Get the position at t
-            const tangent = curve.getTangent(t);
+            const position = bayEntry.getPoint(t); // Get the position at t
+            const tangent = bayEntry.getTangent(t);
             const lookAtTarget = position.clone().add(tangent);
 
             carRef.current.position.copy(position);
@@ -66,23 +65,15 @@ function Car ({ car, onSelect, onHoverChange }) {
 
 
 
-
-
-
-
-
-
-
-
     return (
         <>
             {/* ####################### TUBE DIENT ZUR VERANSCHAULICHUNG DER KURVE ####################### */}
             {/* ##################################### DO NOT DELETE ###################################### */}
             {/* tube*/}
-            <mesh ref={tubeRef}>
-                <tubeGeometry args={[curve, 100, .2, 5, false]}/>
+            {/* <mesh ref={tubeRef}>
+                <tubeGeometry args={[bayEntry, 100, .2, 5, false]}/>
                 <meshStandardMaterial color="yellow" wireframe={false}></meshStandardMaterial>
-            </mesh>
+            </mesh> */}
             
             {/* car */}
             <primitive
@@ -101,7 +92,7 @@ function Car ({ car, onSelect, onHoverChange }) {
                 onClick={(e) => {
                     e.stopPropagation();
 
-                    // makes car selectable if position is > 15 or the clicked car is the stopped car
+                    // makes car selectable if position.x is > 15 OR the clicked car is the stopped car
                     if (car.position.x > 15 || car.stopped) {
                         onSelect?.(car);
                     }

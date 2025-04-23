@@ -3,6 +3,10 @@ import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
+
+import { bayEntry } from './utils/streetbayEntries/streetbayEntries.js'
+
+
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
@@ -24,16 +28,8 @@ function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
 
-    // NOTE: VERSUCH 2 ### AB HIER WIEDER NORMALZUSTAND
     const [selectedCar, setSelectedCar] = useState(null);
-
-
     const [stoppedCar, setStoppedCar] = useState()
-
-
-    console.log(stoppedCar);
-    
-
 
 
     // const [selectedCarId, setSelectedCarId] = useState(null);
@@ -43,18 +39,11 @@ function App() {
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
-    
-
-
 
     // function executes when car is selected (onSelect)
     function handleSelectedCar (carObject) {
         setSelectedCar(carObject);
     }
-
-
-
-
 
     // spawns new car
     useEffect(() => {
@@ -74,14 +63,15 @@ function App() {
     }, [addCar]);
 
 
-    
+    // effect for making car (not) selectable
     useEffect(() => {
         if (!selectedCar) return;
-        // const selectedCarDummy = cars.find(car => car.id === selectedCar.id);
-        setStoppedCar(cars.find(car => car.stopped))
-        
-        if (selectedCar && selectedCar.position.x < 15 && selectedCar.id !== stoppedCar.id) {
-            // reset selected Car Id when Car has passed certain position AND car is not stopped car
+
+        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
+
+        // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
+        if ((selectedCar.position.x < bayEntry.points[0].x) && (selectedCar.id !== stoppedCar?.id)) {
+            // resets selected car (no car selected)
             setSelectedCar(null);
         }
     }, [cars, selectedCar, stoppedCar]);
@@ -97,11 +87,9 @@ function App() {
                 <axesHelper/>
                 <OrbitControls/>
 
-
                 {/* LIHGTS */}
                 <ambientLight/>
                 <directionalLight position={[5, 5, 5]}/>
-
 
                 {/* GAME COMPONENTS */}
                 <Road />
