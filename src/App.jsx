@@ -4,7 +4,7 @@ import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
 
-import { bayEntry } from './utils/streetbayEntries/streetbayEntries.js'
+import { streetbayEntry } from './utils/streetbayEntries/streetbayEntries.js'
 
 
 import {Road} from "./components/Road";
@@ -70,8 +70,8 @@ function App() {
         if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
 
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
-        if ((selectedCar.position.x < bayEntry.points[0].x) && (selectedCar.id !== stoppedCar?.id)) {
-            // resets selected car (no car selected)
+        if ((selectedCar.position.x < streetbayEntry.points[0].x) && (selectedCar.id !== stoppedCar?.id)) {
+            // resets selected car
             setSelectedCar(null);
         }
     }, [cars, selectedCar, stoppedCar]);
@@ -98,6 +98,7 @@ function App() {
 
                 {cars.map((car) => {
                     // if no refference on a car id in the "cars" store (store.js) exists, create a new reference to that id
+                    // NOTE: Stimmt dieser Kommentar?
                     if (!carRefs.current[car.id]) {
                         carRefs.current[car.id] = createRef();
                     }

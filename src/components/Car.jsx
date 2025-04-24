@@ -5,7 +5,7 @@ import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
 
-import { bayEntry } from '../utils/streetbayEntries/streetbayEntries.js'
+import { streetbayEntry } from '../utils/streetbayEntries/streetbayEntries.js';
 
 
 function Car ({ car, onSelect, onHoverChange }) {
@@ -40,15 +40,15 @@ function Car ({ car, onSelect, onHoverChange }) {
         }
         
         // check if car passed first entry point of bay
-        if (carPositionX < bayEntry.points[0].x && stopped) {
+        if (carPositionX < streetbayEntry.points[0].x && stopped) {
             // track driven distance of entry
             setT((prevT) => {
                 const nextT = prevT + 0.009;
                 return nextT > 1 ? 1 : nextT;
             });
 
-            const position = bayEntry.getPoint(t); // Get the position at t
-            const tangent = bayEntry.getTangent(t);
+            const position = streetbayEntry.getPoint(t); // Get the position at t
+            const tangent = streetbayEntry.getTangent(t);
             const lookAtTarget = position.clone().add(tangent);
 
             carRef.current.position.copy(position);
@@ -71,7 +71,7 @@ function Car ({ car, onSelect, onHoverChange }) {
             {/* ##################################### DO NOT DELETE ###################################### */}
             {/* tube*/}
             {/* <mesh ref={tubeRef}>
-                <tubeGeometry args={[bayEntry, 100, .2, 5, false]}/>
+                <tubeGeometry args={[streetbayEntry, 100, .2, 5, false]}/>
                 <meshStandardMaterial color="yellow" wireframe={false}></meshStandardMaterial>
             </mesh> */}
             
