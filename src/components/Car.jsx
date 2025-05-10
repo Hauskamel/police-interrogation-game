@@ -5,7 +5,7 @@ import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
 
-import { streetbayEntry } from '../utils/streetbayEntries/streetbayEntries.js';
+import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntries.js';
 
 
 function Car ({ car, onSelect, onHoverChange }) {
@@ -40,7 +40,7 @@ function Car ({ car, onSelect, onHoverChange }) {
         }
         
         // check if car passed first entry point of bay
-        if (carPositionX < streetbayEntry.points[0].x && stopped) {
+        if (carPositionX < entry1Coordinates[0] && stopped) {
             // track driven distance of entry
             setT((prevT) => {
                 const nextT = prevT + 0.009;

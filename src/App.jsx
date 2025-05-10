@@ -4,7 +4,7 @@ import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
 
-import { streetbayEntry } from './utils/streetbayEntries/streetbayEntries.js'
+import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntries.js'
 
 
 import {Road} from "./components/Road";
@@ -70,7 +70,7 @@ function App() {
         if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
 
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
-        if ((selectedCar.position.x < streetbayEntry.points[0].x) && (selectedCar.id !== stoppedCar?.id)) {
+        if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
             setSelectedCar(null);
         }
