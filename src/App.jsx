@@ -17,8 +17,9 @@ import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
 import {Startmenu} from "./components/Startmenu.jsx";
-import {CarControlTextbox} from "./components/CarControlTextbox.jsx";
-import {CarAndDriverProfileTextbox} from "./components/CarAndDriverProfileTextbox.jsx";
+import {CarControlTextbox} from "./components/textboxes/CarControlTextbox.jsx";
+import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox.jsx";
+import {DriverLicence} from "./components/DriverLicence.jsx";
 
 
 
@@ -134,6 +135,7 @@ function App() {
                     />
                     )}
 
+                    <DriverLicence />
 
                 </>
             )}
