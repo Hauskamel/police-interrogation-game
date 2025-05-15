@@ -8,7 +8,7 @@ export function CarAndDriverProfileTextbox ( {selectedCar, stoppedCar} ) {
 
     return (
         <>
-            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} className="car-and-driver-profile-textbox">
+            <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} margin="bottom-60">
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {selectedCar.id}</p>
 
