@@ -19,7 +19,8 @@ import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.j
 import {Startmenu} from "./components/Startmenu.jsx";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox.jsx";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox.jsx";
-import {DriverLicence} from "./components/DriverLicence.jsx";
+import {DriversLicence} from "./components/textboxes/DriversLicence.jsx";
+import {DocumentDock} from "./components/DocumentDock.jsx";
 
 
 
@@ -36,7 +37,9 @@ function App() {
     // const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
 
-    
+    const [currentDoc, setCurrentDoc] = useState("driverLicense");
+
+
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
@@ -129,14 +132,21 @@ function App() {
 
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
                     {stoppedCar && stoppedCar.position.z === -3 && (
-                        <CarAndDriverProfileTextbox
-                        selectedCar={selectedCar}
-                        stoppedCar={cars.find(car => car.stopped)}
-                    />
+                        <>
+                            <CarAndDriverProfileTextbox
+                                selectedCar={selectedCar}
+                                stoppedCar={cars.find(car => car.stopped)}
+                            />
+
+                            {currentDoc === "driverLicense" && <DriversLicence profile={selectedCar.profileInformation}/>}
+
+                            <DocumentDock
+                                activeDocs={['driverLicense', 'carDocs']}
+                                currentDoc={'driverLicense'}
+                                onSelect={(doc) => setCurrentDoc(doc)}
+                            />
+                        </>
                     )}
-
-                    <DriverLicence />
-
                 </>
             )}
         </div>
