@@ -6,15 +6,14 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
     const stopCar = useCarStore((state) => state.stopCar);
     const continueCar = useCarStore((state) => state.continueCar);
 
-
-    const carIsStopped = cars.find((car) => car.stopped)
+    const stoppedCar = cars.find((car) => car.stopped)
 
     return (
         <>
-            <BaseTextbox title="Fahrzeug Optionen" className="car-control-textbox" onClose={onClose} >
+            <BaseTextbox title="Fahrzeug Optionen" margin="bottom-6" onClose={onClose} >
                 <p className="text-gray-500 text-xs">ID: {selectedCar.id}</p>
                 <div className="flex gap-2">
-                    {!carIsStopped && (
+                    {!stoppedCar && (
                         <button
                             onClick={() => {
                                 stopCar(selectedCar.id);
@@ -24,8 +23,8 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
                             Anhalten
                         </button>
                     )}
-                    
-                    {!carIsStopped || selectedCar.id === carIsStopped.id && (
+
+                    {!stoppedCar || selectedCar.id === stoppedCar.id && (
                         <button
                             onClick={() => {
                                 continueCar(selectedCar.id);
@@ -37,7 +36,15 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
                         </button>
                     )}
                     
-                </div>                
+                </div>
+
+                {stoppedCar && stoppedCar.position.z === -3 && (
+                    <div>
+                        <button className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer">
+                            <p>Führerschein-/Fahrzeugpapiere</p>
+                        </button>
+                    </div>
+                )}
             </BaseTextbox>
         </>
     );
