@@ -3,25 +3,21 @@ import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
-
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntries.js'
-
 
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
-import {Streetbay} from "./components/Streetbay.jsx";
+import {Streetbay} from "./components/Streetbay";
 
 import './App.css'
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
-import {Startmenu} from "./components/Startmenu.jsx";
-import {CarControlTextbox} from "./components/textboxes/CarControlTextbox.jsx";
-import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox.jsx";
-import {DriversLicence} from "./components/textboxes/DriversLicence.jsx";
-import {DocumentDock} from "./components/DocumentDock.jsx";
-
+import {Startmenu} from "./components/Startmenu";
+import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
+import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
+import {DocumentManager} from "./components/DocumentManager";
 
 
 function App() {
@@ -32,13 +28,7 @@ function App() {
 
     const [selectedCar, setSelectedCar] = useState(null);
     const [stoppedCar, setStoppedCar] = useState()
-
-
-    // const [selectedCarId, setSelectedCarId] = useState(null);
     const [hoveringCar, setHoveringCar] = useState(false);
-
-    const [currentDoc, setCurrentDoc] = useState("driverLicense");
-
 
     // ##################################################
     // ################### REFERENCES ###################
@@ -79,7 +69,6 @@ function App() {
             setSelectedCar(null);
         }
     }, [cars, selectedCar, stoppedCar]);
-
 
 
     // ##################################################
@@ -138,13 +127,10 @@ function App() {
                                 stoppedCar={cars.find(car => car.stopped)}
                             />
 
-                            {currentDoc === "driverLicense" && <DriversLicence profile={selectedCar.profileInformation}/>}
+                            {(stoppedCar.handedOutDriversLicense || stoppedCar.handedOutVehicleDocuments) && (
+                                <DocumentManager selectedCar={selectedCar} />
+                            )}
 
-                            <DocumentDock
-                                activeDocs={['driverLicense', 'carDocs']}
-                                currentDoc={'driverLicense'}
-                                onSelect={(doc) => setCurrentDoc(doc)}
-                            />
                         </>
                     )}
                 </>

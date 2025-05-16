@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import { Minus, Plus } from 'lucide-react';
 
-export const BaseTextbox = ({ title, width, height, className, onClose, children, carId, isCloseable = true, isMinimizable = false, withoutHeader = false }) => {
+export const BaseTextbox = ({ title, width, height, margin, onClose, children, carId, isCloseable = true, isMinimizable = false, withoutHeader = false }) => {
     const [isVisible, setIsVisible] = useState(true); // for fade state
     const [minimized, setMinimized] = useState(false);
     const [shouldRender, setShouldRender] = useState(true); // control unmount
@@ -23,7 +23,7 @@ export const BaseTextbox = ({ title, width, height, className, onClose, children
 
     return (
         <div
-            className={`${className === "car-control-textbox" ? "bottom-8" : "bottom-50"} absolute left-8 z-30 sm:w-80 bg-pink-50 border border-pink-200 rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            className={`${margin} absolute left-8 z-30 sm:w-80 bg-pink-50 border border-pink-200 rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
             style={{
                 width: `${width}px`,
                 height: minimized ? '50px' : `${height}px`

@@ -1,17 +1,16 @@
 import { FaIdCard, FaCar } from "react-icons/fa";
 
 const ICONS = {
-    driverLicense: <FaIdCard />,
+    driversLicense: <FaIdCard />,
     carDocs: <FaCar />,
 };
 
 const LABELS = {
-    driverLicense: "DL",
+    driversLicense: "DL",
     carDocs: "CAR",
-    idCard: "ID",
 };
 
-function DocumentDock({ activeDocs = [], currentDoc, onSelect }) {
+function DocumentDock({ activeDocs = [], currentDoc, onSelect, isVisible }) {
     if (activeDocs.length === 0) return null;
 
     return (
@@ -22,13 +21,13 @@ function DocumentDock({ activeDocs = [], currentDoc, onSelect }) {
                     title={LABELS[doc] || doc}
                     onClick={() => onSelect(doc)}
                     className={`w-10 h-10 flex items-center justify-center rounded-lg border text-xl transition
-            ${
-                        currentDoc === doc
+                        ${currentDoc === doc && isVisible
                             ? "bg-blue-600 text-white border-blue-700"
                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    }`}
+                        }
+                    `}
                 >
-                    {ICONS[doc] || <FaFileAlt />}
+                    {ICONS[doc]}
                 </button>
             ))}
         </div>

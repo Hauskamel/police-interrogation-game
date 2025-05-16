@@ -3,24 +3,24 @@ export const driverImageProfiles = {
         gender: 'male',
         ageRange: [60, 75],
         firstNames: ['Peter', 'Michael', 'Alexander'],
-        eyeColor: 'brown'
+        eyeColor: 'braun'
     },
     'driver2.jpg': {
         gender: 'male',
         ageRange: [24, 35],
         firstNames: ['Rahul', 'Kiran', 'Himal', 'Arjun'],
-        eyeColor: 'brown'
+        eyeColor: 'braun'
     },
     'driver3.jpg': {
         gender: 'male',
         ageRange: [30, 42],
         firstNames: ['Louis', 'Gabriel', 'Arthur', 'Bastien'],
-        eyeColor: 'brown'
+        eyeColor: 'braun'
     },
     'driver4.jpg': {
         gender: 'male',
         ageRange: [50, 65],
         firstNames: ['Felix', 'Anton', 'Paul'],
-        eyeColor: 'brown'
+        eyeColor: 'braun'
     },
 };

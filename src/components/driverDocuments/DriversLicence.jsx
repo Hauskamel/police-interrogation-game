@@ -1,10 +1,8 @@
-import {BaseTextbox} from "./BaseTextbox.jsx";
-
-export function DriversLicence ({ profile, }) {
+export function DriversLicence ({ profile }) {
 
     return (
         <>
-            <div className="absolute bottom-8 right-8 w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-4 border-gray-800 rounded-2xl shadow-md p-4">
+            <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-4 border-gray-800 rounded-2xl shadow-md p-4">
                 <div>
                     <div className="font-bold text-lg text-gray-800">Führerschein</div>
                     <div className="text-xs italic text-gray-700">Republik Arcadia</div>
@@ -18,6 +16,7 @@ export function DriversLicence ({ profile, }) {
                                 className="col-span-2 w-28 h-28"
                             />
                         </div>
+                        {/* Todo: create randomized licence classes with one matching the vehicle */}
                         <div className="mt-1">
                             <div className="font-semibold text-sm text-gray-800">D / M</div>
                         </div>
