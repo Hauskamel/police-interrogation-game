@@ -6,8 +6,8 @@ const ICONS = {
 };
 
 const LABELS = {
-    driversLicense: "DL",
-    carDocs: "CAR",
+    driversLicense: "Führerschein",
+    carDocs: "Fahrzeugpapiere",
 };
 
 function DocumentDock({ activeDocs = [], currentDoc, onSelect, isVisible }) {
