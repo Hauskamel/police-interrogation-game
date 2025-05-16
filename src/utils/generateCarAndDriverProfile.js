@@ -52,6 +52,8 @@ export function generateCarAndDriverProfile () {
     const licenseNumber = `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`;
 
     const drunk = Math.random() < .2;
+    const high = Math.random() < .2;
+    const wanted = Math.random() < .2;
 
     const profileInformation = {
         driverImage,
@@ -67,8 +69,8 @@ export function generateCarAndDriverProfile () {
         address: faker.location.streetAddress(),
         issueDate: formattedIssueDate,
         drunk,
-        high: Math.random() < .2,
-        wanted: Math.random() < .2,
+        high,
+        wanted,
     }
 
     // conditionally rendered

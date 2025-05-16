@@ -43,10 +43,9 @@ export function DriversLicence ({ profile }) {
                                 {profile.height}
                             </span>
                         </div>
-                        </div>
                     </div>
                 </div>
-
+            </div>
         </>
     )
 }
