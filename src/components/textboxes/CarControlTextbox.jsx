@@ -1,5 +1,5 @@
-import {BaseTextbox} from './BaseTextbox';
-import {useCarStore} from "../store";
+import {BaseTextbox} from './BaseTextbox.jsx';
+import {useCarStore} from "../../store.js";
 
 export const CarControlTextbox = ({selectedCar, onClose}) => {
     const cars = useCarStore((state) => state.cars)
