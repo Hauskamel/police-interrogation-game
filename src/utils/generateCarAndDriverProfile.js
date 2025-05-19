@@ -9,6 +9,11 @@ function getRandomImage(exclude = null) {
 }
 
 export function generateCarAndDriverProfile () {
+
+
+    // ######## DRIVER INFORMATION ########
+    // ####################################
+
     const driverImage = getRandomImage();
     const imageProfile = driverImageProfiles[driverImage];
 
@@ -55,6 +60,17 @@ export function generateCarAndDriverProfile () {
     const high = Math.random() < .2;
     const wanted = Math.random() < .2;
 
+
+
+    // ########## CAR INFORMATION ##########
+    // #####################################
+
+    const carRegistrationNumber = faker.vehicle.vrm();
+    const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
+
+    const vehicleName = faker.vehicle.vehicle()
+
+
     const profileInformation = {
         driverImage,
         licenceImage,
@@ -71,6 +87,8 @@ export function generateCarAndDriverProfile () {
         drunk,
         high,
         wanted,
+        plateNumber,
+        vehicleName
     }
 
     // conditionally rendered
