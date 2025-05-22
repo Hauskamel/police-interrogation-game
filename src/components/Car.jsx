@@ -55,7 +55,7 @@ function Car ({ car, onSelect, onHoverChange }) {
             carRef.current.lookAt(lookAtTarget);
 
         } else {
-            carRef.current.position.x -= 0.06; // car driving on road
+            carRef.current.position.x -= 0.1; // car driving on road
         }
 
         if (carRef.current.position.x < -40) {

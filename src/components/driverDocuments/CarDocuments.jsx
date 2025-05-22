@@ -6,7 +6,7 @@ export function CarDocuments ({profile}) {
         <>
             <div
                 // TODO: HIER MARGIN LEFT WIEDER ENTFERNEN
-                className="ml-36 w-[300px] h-[450px] bg-[url(/images/vehicle-document-bg.jpg)] bg-contain rounded-2xl  shadow-md p-4">
+                className="ml-36 absolute w-[300px] h-[450px] bg-[url(/images/vehicle-document-bg.jpg)] bg-contain rounded-2xl  shadow-md p-4">
                 <div className="text-black text-left">
                     <h4>Fahrzeugschein</h4>
                     <h3>Republik</h3>

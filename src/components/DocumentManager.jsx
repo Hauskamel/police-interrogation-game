@@ -3,48 +3,59 @@ import AnimatedDocument from "./driverDocuments/AnimatedDocument";
 import {DocumentDock} from "./DocumentDock";
 
 import {DriversLicence} from "./driverDocuments/DriversLicence";
-import {CarDocuments} from "./driverDocuments/CarDocuments.jsx"
+import {CarDocuments} from "./driverDocuments/CarDocuments.jsx";
 
 function DocumentManager({selectedCar}) {
-    const [currentDoc, setCurrentDoc] = useState(null);
-    const [docIsVisible, setDocIsVisible] = useState(false);
-
     const activeDocs = ["driversLicense", "carDocs"];
 
+    const [openDocs, setOpenDocs] = useState(() => 
+        Object.entries(activeDocs.map(doc => [doc, false]))
+    );
+    
+
+
+
+
     const toggleDoc = (doc) => {
-        if (currentDoc === doc) {
-            setDocIsVisible((prev) => !prev);
-        } else {
-            setCurrentDoc(doc);
-            setDocIsVisible(true);
-        }
+        setOpenDocs(prev => ({
+            ...prev,
+            [doc]: !prev[doc]
+        }))
     };
+    
 
-    let documentContent = null;
-
-    if (docIsVisible) {
-        if (currentDoc === "driversLicense" && selectedCar) {
-            documentContent = (
-                <DriversLicence profile={selectedCar.profileInformation}/>
-            );
-        } else if (currentDoc === "carDocs") {
-            documentContent = (
-                <CarDocuments profile={selectedCar.profileInformation}></CarDocuments>
-                )
-        }
+    let documentContent = [];
+    
+    if (openDocs["driversLicense"]) {
+        documentContent.push(
+            <DriversLicence 
+                key="driversLicense"
+                profile={selectedCar.profileInformation}
+            />
+        )  
+    } 
+    if (openDocs["carDocs"]) {
+        documentContent.push(
+            <CarDocuments 
+                key={"carDocs"}
+                profile={selectedCar.profileInformation}>
+            </CarDocuments>
+        )
     }
+    
+    
+
 
     return (
         <>
-            <AnimatedDocument isVisible={docIsVisible}>
+            <AnimatedDocument>
                 {documentContent}
             </AnimatedDocument>
 
             <DocumentDock
                 activeDocs={activeDocs}
-                currentDoc={currentDoc}
+                openDocs={openDocs}
                 onSelect={toggleDoc}
-                isVisible={docIsVisible}
             />
         </>
     );
