@@ -2,7 +2,7 @@ export function DriversLicence ({ profile }) {
 
     return (
         <>
-            <div className="w-[450px] h-[250px] absolute right-0 bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
+            <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
                 <div>
                     <div className="font-bold text-lg text-gray-800">Führerschein</div>
                     <div className="text-xs italic text-gray-700">Republik Arcadia</div>
