@@ -1,11 +1,11 @@
 import {useState} from "react";
-import AnimatedDocument from "./driverDocuments/AnimatedDocument";
-import {DocumentDock} from "./DocumentDock";
+import BaseDocument from "../driverDocuments/BaseDocument.jsx";
+import {DocumentBar} from "./../DocumentBar";
 
-import {DriversLicence} from "./driverDocuments/DriversLicence";
-import {CarDocuments} from "./driverDocuments/CarDocuments.jsx"
+import {DriversLicence} from "./../driverDocuments/DriversLicence";
+import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
 
-function DocumentManager({selectedCar}) {
+export function DocumentManager({selectedCar}) {
     const [currentDoc, setCurrentDoc] = useState(null);
     const [docIsVisible, setDocIsVisible] = useState(false);
 
@@ -23,24 +23,24 @@ function DocumentManager({selectedCar}) {
     let documentContent = null;
 
     if (docIsVisible) {
-        if (currentDoc === "driversLicense" && selectedCar) {
+        if (currentDoc === "driversLicense") {
             documentContent = (
-                <DriversLicence profile={selectedCar.profileInformation}/>
+                <DriversLicence profile={selectedCar?.profileInformation}/>
             );
         } else if (currentDoc === "carDocs") {
             documentContent = (
-                <CarDocuments profile={selectedCar.profileInformation}></CarDocuments>
-                )
+                <CarDocuments profile={selectedCar?.profileInformation}></CarDocuments>
+            );
         }
     }
 
     return (
         <>
-            <AnimatedDocument isVisible={docIsVisible}>
+            <BaseDocument isVisible={docIsVisible}>
                 {documentContent}
-            </AnimatedDocument>
+            </BaseDocument>
 
-            <DocumentDock
+            <DocumentBar
                 activeDocs={activeDocs}
                 currentDoc={currentDoc}
                 onSelect={toggleDoc}
@@ -49,5 +49,3 @@ function DocumentManager({selectedCar}) {
         </>
     );
 }
-
-export {DocumentManager}

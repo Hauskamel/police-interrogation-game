@@ -61,10 +61,8 @@ export function generateCarAndDriverProfile () {
     const wanted = Math.random() < .2;
 
 
-
     // ########## CAR INFORMATION ##########
     // #####################################
-
     const carRegistrationNumber = faker.vehicle.vrm();
     const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
 
