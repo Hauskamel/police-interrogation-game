@@ -4,11 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function AnimatedDocument({ children }) {
 
-    console.log(children);
-    
-
     return (
-        <div className="fixed bottom-28 top-80 right-4 w-[450px] h-[250px] space-y-4">
+        <div className="fixed top-80 right-10">
             <AnimatePresence>
                 
                 {React.Children.map(children, (child) =>
