@@ -5,7 +5,7 @@ export default function AnimatedDocument({ isVisible, children }) {
         <AnimatePresence>
             {isVisible && (
                 <motion.div
-                    className="fixed bottom-28 right-8 w-[450px] h-[250px]"
+                    className="fixed bottom-28 top-80 right-4 w-[450px] h-[250px]"
                     initial={{ opacity: 0, scale: 0.8, y: 50 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.8, y: 50 }}

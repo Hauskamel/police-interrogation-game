@@ -1,9 +1,11 @@
+import {useState} from "react";
 import AnimatedDocument from "./driverDocuments/AnimatedDocument";
 import {DocumentDock} from "./DocumentDock";
-import {DriversLicence} from "./driverDocuments/DriversLicence";
-import {useState} from "react";
 
-function DocumentManager({ selectedCar }) {
+import {DriversLicence} from "./driverDocuments/DriversLicence";
+import {CarDocuments} from "./driverDocuments/CarDocuments.jsx"
+
+function DocumentManager({selectedCar}) {
     const [currentDoc, setCurrentDoc] = useState(null);
     const [docIsVisible, setDocIsVisible] = useState(false);
 
@@ -23,10 +25,12 @@ function DocumentManager({ selectedCar }) {
     if (docIsVisible) {
         if (currentDoc === "driversLicense" && selectedCar) {
             documentContent = (
-                <DriversLicence profile={selectedCar.profileInformation} />
+                <DriversLicence profile={selectedCar.profileInformation}/>
             );
         } else if (currentDoc === "carDocs") {
-            // Todo: add carDocs component here
+            documentContent = (
+                <CarDocuments profile={selectedCar.profileInformation}></CarDocuments>
+                )
         }
     }
 
