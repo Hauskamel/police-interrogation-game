@@ -63,10 +63,14 @@ export default function BaseDocument({ children }) {
         e.stopPropagation();
         e.preventDefault();
     };
+
+
+    console.log(children);
+    
     
 
     return (
-        <div className="fixed top-0 w-full h-full">
+        <div className="fixed top-0 ">
             <AnimatePresence>
                 
                 {React.Children.map(children, (child) =>

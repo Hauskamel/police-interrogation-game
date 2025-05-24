@@ -17,8 +17,6 @@ export function DocumentManager({selectedCar}) {
 
 
     const toggleDoc = (doc) => {
-        console.log(doc);
-        
         setOpenDocs(prev => ({
             ...prev,
             [doc]: !prev[doc]
@@ -45,13 +43,24 @@ export function DocumentManager({selectedCar}) {
     }
     
 
-
     return (
         <>
 
-            <BaseDocument>
-                {documentContent}
-            </BaseDocument>
+            {
+                
+                documentContent.map((openDocument,i) => {
+
+                    console.log(openDocument);
+                    
+
+                    return (
+                        <BaseDocument key={openDocument.key}>
+                            {openDocument}
+                        </BaseDocument>
+                    )
+                    
+                })
+            }
 
             <DocumentBar
                 activeDocs={activeDocs}
