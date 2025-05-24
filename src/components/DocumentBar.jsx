@@ -10,7 +10,9 @@ const LABELS = {
     carDocs: "Fahrzeugpapiere",
 };
 
-function DocumentDock({ activeDocs = [], openDocs = {}, onSelect }) {
+
+export function DocumentBar({ activeDocs = [], openDocs, onSelect }) {
+
     if (activeDocs.length === 0) return null;
 
     return (
@@ -38,5 +40,3 @@ function DocumentDock({ activeDocs = [], openDocs = {}, onSelect }) {
         </div>
     );
 }
-
-export { DocumentDock }

@@ -5,7 +5,7 @@ import * as THREE from "three";
 import {useCarStore} from "../store.js";
 
 
-import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntries.js';
+import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntry.js';
 
 
 function Car ({ car, onSelect, onHoverChange }) {

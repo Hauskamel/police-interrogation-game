@@ -1,11 +1,11 @@
 import {useState} from "react";
-import AnimatedDocument from "./driverDocuments/AnimatedDocument";
-import {DocumentDock} from "./DocumentDock";
+import BaseDocument from "../driverDocuments/BaseDocument.jsx";
+import {DocumentBar} from "./../DocumentBar";
 
-import {DriversLicence} from "./driverDocuments/DriversLicence";
-import {CarDocuments} from "./driverDocuments/CarDocuments.jsx";
+import {DriversLicence} from "./../driverDocuments/DriversLicence";
+import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
 
-function DocumentManager({selectedCar}) {
+export function DocumentManager({selectedCar}) {
     const activeDocs = ["driversLicense", "carDocs"];
 
     const [openDocs, setOpenDocs] = useState(() => 
@@ -17,12 +17,13 @@ function DocumentManager({selectedCar}) {
 
 
     const toggleDoc = (doc) => {
+        console.log(doc);
+        
         setOpenDocs(prev => ({
             ...prev,
             [doc]: !prev[doc]
         }))
     };
-    
 
     let documentContent = [];
     
@@ -33,7 +34,7 @@ function DocumentManager({selectedCar}) {
                 profile={selectedCar.profileInformation}
             />
         )  
-    } 
+    }
     if (openDocs["carDocs"]) {
         documentContent.push(
             <CarDocuments 
@@ -43,16 +44,16 @@ function DocumentManager({selectedCar}) {
         )
     }
     
-    
 
 
     return (
         <>
-            <AnimatedDocument>
-                {documentContent}
-            </AnimatedDocument>
 
-            <DocumentDock
+            <BaseDocument>
+                {documentContent}
+            </BaseDocument>
+
+            <DocumentBar
                 activeDocs={activeDocs}
                 openDocs={openDocs}
                 onSelect={toggleDoc}
@@ -60,5 +61,3 @@ function DocumentManager({selectedCar}) {
         </>
     );
 }
-
-export {DocumentManager}

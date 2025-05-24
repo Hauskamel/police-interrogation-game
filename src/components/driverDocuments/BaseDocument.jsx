@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from "react"
 
 import { motion, AnimatePresence } from "framer-motion";
-import { log } from "three/src/nodes/TSL.js";
 
 
 
-export default function AnimatedDocument({ children }) {
+export default function BaseDocument({ children }) {
 
     const [pos, setPos] = useState({x:0, y:0});
     const [dragging, setDragging] = useState(false);

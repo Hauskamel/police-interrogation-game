@@ -1,7 +1,4 @@
 export function CarDocuments ({profile}) {
-
-
-
     return (
         <>
             <div
