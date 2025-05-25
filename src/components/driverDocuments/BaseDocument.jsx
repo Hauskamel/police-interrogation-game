@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from "react"
-
 import { motion, AnimatePresence } from "framer-motion";
 
 
 
 export default function BaseDocument({ children }) {
 
-    const [pos, setPos] = useState({x:0, y:0});
+    const [documentPosition, setDocumentPosition] = useState({x:0, y:0});
     const [dragging, setDragging] = useState(false);
-    const [rel, setRel] = useState(null);
+    const [offset, setOffset] = useState(null);
     const ref = useRef();
 
     useEffect(() => {
@@ -33,10 +32,11 @@ export default function BaseDocument({ children }) {
         const rect = ref.current.getBoundingClientRect()
 
         setDragging(true);
-        setRel({
+        setOffset({
             x: e.pageX - rect.left,
             y: e.pageY - rect.top
         });
+        
 
         e.stopPropagation();
         e.preventDefault();
@@ -50,27 +50,24 @@ export default function BaseDocument({ children }) {
 
     const onMouseMove = (e) => {
         if (!dragging) return;
+        
 
         if (e.pageX < 0) return;
         if (e.pageY < 0) return;
         
-        setPos({
-            x: e.pageX,
-            y: e.pageY
+        setDocumentPosition({
+            x: e.pageX - offset.x, // set 'x' to x-coordinate of cursor
+            y: e.pageY - offset.y  // set 'y' to y-coordinate of cursor
         });
         
-
         e.stopPropagation();
         e.preventDefault();
     };
-
-
-    console.log(children);
     
     
 
     return (
-        <div className="fixed top-0 ">
+        <div className="fixed top-8 left-8">
             <AnimatePresence>
                 
                 {React.Children.map(children, (child) =>
@@ -86,8 +83,8 @@ export default function BaseDocument({ children }) {
                                 onMouseDown={onMouseDown}
                                 style={{
                                     position: 'absolute',
-                                    left: `${pos.x}px`,
-                                    top: `${pos.y}px`,
+                                    left: `${documentPosition.x}px`,
+                                    top: `${documentPosition.y}px`,
                                     cursor: 'move'
                                 }}
                             >

@@ -47,19 +47,12 @@ export function DocumentManager({selectedCar}) {
         <>
 
             {
-                
                 documentContent.map((openDocument,i) => {
-
-                    console.log(openDocument);
-                    
-
                     return (
                         <BaseDocument key={openDocument.key}>
                             {openDocument}
                         </BaseDocument>
-                    )
-                    
-                })
+                )})
             }
 
             <DocumentBar
