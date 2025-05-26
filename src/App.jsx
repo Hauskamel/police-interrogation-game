@@ -118,19 +118,18 @@ function App() {
                         onClose={() => setSelectedCar(null)}
                     />
 
-                    // Todo: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei
+                    {/* TODO: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei */}
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
                     {stoppedCar && stoppedCar.position.z === -3 && (
                         <>
-                            // Todo: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken?
+                            {/* TODO: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken? */}
                             <CarAndDriverProfileTextbox
                                 selectedCar={selectedCar}
                                 stoppedCar={cars.find(car => car.stopped)}
                             />
-
-                            {(stoppedCar.handedOutDriversLicense || stoppedCar.handedOutVehicleDocuments) && (
-                                <DocumentManager selectedCar={selectedCar} />
-                            )}
+                            
+                            <DocumentManager selectedCar={selectedCar} />
+                            
                         </>
                     )}
                 </>

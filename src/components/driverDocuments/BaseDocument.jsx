@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function BaseDocument({ children }) {
 
-    const [documentPosition, setDocumentPosition] = useState({x:0, y:0});
+    const [documentPosition, setDocumentPosition] = useState({x:32, y:32});
     const [dragging, setDragging] = useState(false);
     const [offset, setOffset] = useState(null);
     const ref = useRef();
@@ -36,6 +36,12 @@ export default function BaseDocument({ children }) {
             x: e.pageX - rect.left,
             y: e.pageY - rect.top
         });
+
+        console.log("cursor position x: " + e.pageX)
+        console.log("cursor position y: " + e.pageY)
+
+        console.log("document position x:" + document.x);
+        
         
 
         e.stopPropagation();
@@ -49,16 +55,24 @@ export default function BaseDocument({ children }) {
     };
 
     const onMouseMove = (e) => {
-        if (!dragging) return;
-        
+        if (!dragging) return;        
 
-        if (e.pageX < 0) return;
-        if (e.pageY < 0) return;
+        if (e.pageX < 0 || e.pageX > window.innerWidth ) return;
+        if (e.pageY < 0 || e.pageY > window.innerHeight ) return;
         
         setDocumentPosition({
             x: e.pageX - offset.x, // set 'x' to x-coordinate of cursor
             y: e.pageY - offset.y  // set 'y' to y-coordinate of cursor
         });
+
+
+        console.log("offset x:" + offset.x)
+        console.log("offset y:" + offset.y)
+
+
+
+        console.log("document position:" + documentPosition.x);
+        
         
         e.stopPropagation();
         e.preventDefault();
@@ -67,7 +81,7 @@ export default function BaseDocument({ children }) {
     
 
     return (
-        <div className="fixed top-8 left-8">
+        <div className="fixed top-0 left-0">
             <AnimatePresence>
                 
                 {React.Children.map(children, (child) =>

@@ -12,10 +12,6 @@ export function DocumentManager({selectedCar}) {
         Object.entries(activeDocs.map(doc => [doc, false]))
     );
     
-
-
-
-
     const toggleDoc = (doc) => {
         setOpenDocs(prev => ({
             ...prev,
@@ -45,7 +41,6 @@ export function DocumentManager({selectedCar}) {
 
     return (
         <>
-
             {
                 documentContent.map((openDocument,i) => {
                     return (
