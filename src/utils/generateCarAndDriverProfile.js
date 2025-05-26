@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { driverImageProfiles } from './driverImageProfiles';
+import { carProfiles } from './carProfiles';
 
 const driverImages = Object.keys(driverImageProfiles);
+const carBrands = Object.keys(carProfiles)
 
 function getRandomImage(exclude = null) {
     const filtered = exclude ? driverImages.filter(img => img !== exclude) : driverImages;
@@ -16,6 +18,8 @@ export function generateCarAndDriverProfile () {
 
     const driverImage = getRandomImage();
     const imageProfile = driverImageProfiles[driverImage];
+    const carProfiles = 
+
 
     let licenceImage = driverImage;
     if (Math.random() < 0.1) {
