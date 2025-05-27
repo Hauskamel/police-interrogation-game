@@ -13,13 +13,11 @@ function getRandomImage(exclude = null) {
     return faker.helpers.arrayElement(driverImagesFilter);
 }
 
-
 function getRandomCarBrand(exclude = null) {
     const carBrandFilter = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
     const carBrand = faker.helpers.arrayElement(carBrandFilter)
     return carBrand
 }
-
 
 export function generateCarAndDriverProfile () {
     // ######## DRIVER INFORMATION ########
@@ -35,11 +33,6 @@ export function generateCarAndDriverProfile () {
         } while (licenceImage === driverImage);
     }
 
-    
-    
-
-
-
     // driver gender
     const prefix = faker.person.prefix(imageProfile.gender);
 
@@ -52,7 +45,6 @@ export function generateCarAndDriverProfile () {
         min: imageProfile.ageRange[0],
         max: imageProfile.ageRange[1],
     });
-    
 
     // driver brith data
     const birthYear = new Date().getFullYear() - age;
@@ -91,18 +83,23 @@ export function generateCarAndDriverProfile () {
 
     // ########## CAR INFORMATION ##########
     // #####################################
-
     // car brand
     const brandName = getRandomCarBrand();
     const carProfile = carProfiles[brandName]
 
+    // car model
     const brandModel =  carProfile.models[Math.floor(Math.random() * carProfile.models.length)]
 
-
+    // car registration
     const carRegistrationNumber = faker.vehicle.vrm();
+
+    // car plate
     const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
 
-    // const approvalDate = 
+
+
+    // #########################################################################################################################################################################################################
+
 
 
     const profileInformation = {
