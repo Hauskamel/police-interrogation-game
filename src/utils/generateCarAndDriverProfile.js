@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { driverImageProfiles } from './driverImageProfiles';
 import { carProfiles } from './carProfiles';
+import { log } from 'three/src/nodes/TSL.js';
 
 const driverImages = Object.keys(driverImageProfiles);
 const carBrands = Object.keys(carProfiles)
@@ -12,6 +13,14 @@ function getRandomImage(exclude = null) {
     return faker.helpers.arrayElement(driverImagesFilter);
 }
 
+
+function getRandomCarBrand(exclude = null) {
+    const carBrandFilter = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
+    const carBrand = faker.helpers.arrayElement(carBrandFilter)
+    return carBrand
+}
+
+
 export function generateCarAndDriverProfile () {
     // ######## DRIVER INFORMATION ########
     // #####################################
@@ -19,12 +28,17 @@ export function generateCarAndDriverProfile () {
     // driver Image
     const driverImage = getRandomImage();
     const imageProfile = driverImageProfiles[driverImage];
-    const licenceImage = driverImage;
+    let licenceImage = driverImage;
     if (Math.random() < 0.1) {
         do {
             licenceImage = getRandomImage(driverImage);
         } while (licenceImage === driverImage);
     }
+
+    
+    
+
+
 
     // driver gender
     const prefix = faker.person.prefix(imageProfile.gender);
@@ -77,10 +91,16 @@ export function generateCarAndDriverProfile () {
 
     // ########## CAR INFORMATION ##########
     // #####################################
+
+    // car brand
+    const brandName = getRandomCarBrand();
+    const carProfile = carProfiles[brandName]
+
+    const brandModel =  carProfile.models[Math.floor(Math.random() * carProfile.models.length)]
+
+
     const carRegistrationNumber = faker.vehicle.vrm();
     const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
-
-    const brandName = faker.vehicle.vehicle()
 
     // const approvalDate = 
 
@@ -102,7 +122,8 @@ export function generateCarAndDriverProfile () {
         high,
         wanted,
         plateNumber,
-        brandName
+        brandName,
+        brandModel
     }
 
     // conditionally rendered
