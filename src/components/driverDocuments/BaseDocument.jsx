@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function AnimatedDocument({ isVisible, children }) {
+export default function BaseDocument({ isVisible, children }) {
     return (
         <AnimatePresence>
             {isVisible && (

@@ -1,14 +1,11 @@
 import {useGLTF} from "@react-three/drei";
-import {useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
 import {useCarStore} from "../store.js";
+import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntry.js';
 
-
-import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntries.js';
-
-
-function Car ({ car, onSelect, onHoverChange }) {
+function Car ({ car, onSelect, onHoverChange, onAutomaticDeselect, stoppedCar }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
     const carRef = useRef();
@@ -23,6 +20,18 @@ function Car ({ car, onSelect, onHoverChange }) {
     const removeCar = useCarStore((state) => state.removeCar);
     const updateCarPosition = useCarStore((state) => state.updateCarPosition);
     const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
+
+    // Deselect car if it passes bay entry and is not currently stopped
+    useEffect(() => {
+        if (!carRef.current || !onAutomaticDeselect) return;
+
+        const carX = carRef.current.position.x;
+
+        if (carX < entry1Coordinates[0] && !stoppedCar) {
+            onAutomaticDeselect(car.id);
+        }
+
+    }, [car.id, onAutomaticDeselect, stoppedCar]);
 
     // animation loop
     useFrame(() => {
@@ -63,8 +72,6 @@ function Car ({ car, onSelect, onHoverChange }) {
         }
     });
 
-
-
     return (
         <>
             {/* ####################### TUBE DIENT ZUR VERANSCHAULICHUNG DER KURVE ####################### */}
@@ -93,7 +100,7 @@ function Car ({ car, onSelect, onHoverChange }) {
                     e.stopPropagation();
 
                     // makes car selectable if position.x is > 15 OR the clicked car is the stopped car
-                    if (car.position.x > 15 || car.stopped) {
+                    if (car.position?.x > entry1Coordinates[0] || stoppedCar) {
                         onSelect?.(car);
                     }
                 }}

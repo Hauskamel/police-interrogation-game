@@ -3,21 +3,19 @@ import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
-import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntries.js'
-
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
 import {Streetbay} from "./components/Streetbay";
 
-import './App.css'
+import './../assets/css/App.css'
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
 import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
 import {Startmenu} from "./components/Startmenu";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
-import {DocumentManager} from "./components/DocumentManager";
+import {DocumentManager} from "./components/manager/DocumentManager";
 
 
 function App() {
@@ -34,11 +32,11 @@ function App() {
     // ################### REFERENCES ###################
     const carRefs = useRef({});
 
-    // function executes when car is selected (onSelect)
     function handleSelectedCar (carObject) {
         setSelectedCar(carObject);
     }
 
+    // Todo: auslagern in Car.jsx
     // spawns new car
     useEffect(() => {
         let respawnTime = randInt(2000, 5000);
@@ -57,26 +55,12 @@ function App() {
     }, [addCar]);
 
 
-    // effect for making car (not) selectable
-    useEffect(() => {
-        if (!selectedCar) return;
-
-        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
-
-        // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
-        if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
-            // resets selected car
-            setSelectedCar(null);
-        }
-    }, [cars, selectedCar, stoppedCar]);
-
-
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}` }>
             <Canvas camera={{position: [7, 14, -16], fov: 70}}>
-                {/* GAME COMPONENTS */}
+                {/* UTIL COMPONENTS */}
                 <axesHelper/>
                 <OrbitControls/>
 
@@ -91,7 +75,6 @@ function App() {
 
                 {cars.map((car) => {
                     // if no refference on a car id in the "cars" store (store.js) exists, create a new reference to that id
-                    // NOTE: Stimmt dieser Kommentar?
                     if (!carRefs.current[car.id]) {
                         carRefs.current[car.id] = createRef();
                     }
@@ -100,10 +83,13 @@ function App() {
                         <Car
                             key={car.id}
                             ref={carRefs.current[car.id]}
-
                             car={car}
                             onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
+                            onAutomaticDeselect={(id) => {
+                                if (selectedCar?.id === id) setSelectedCar(null);
+                            }}
+                            stoppedCar={car.stopped}
                         />
                     );
                 })}
@@ -119,9 +105,11 @@ function App() {
                         onClose={() => setSelectedCar(null)}
                     />
 
+                    // Todo: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
                     {stoppedCar && stoppedCar.position.z === -3 && (
                         <>
+                            // Todo: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken?
                             <CarAndDriverProfileTextbox
                                 selectedCar={selectedCar}
                                 stoppedCar={cars.find(car => car.stopped)}
@@ -130,7 +118,6 @@ function App() {
                             {(stoppedCar.handedOutDriversLicense || stoppedCar.handedOutVehicleDocuments) && (
                                 <DocumentManager selectedCar={selectedCar} />
                             )}
-
                         </>
                     )}
                 </>
