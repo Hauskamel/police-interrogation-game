@@ -45,15 +45,5 @@ export const useCarStore = create((set) => ({
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x, z: z} } : car)
         })
-    ),
-    setVisibilityStatusDriversLicense: (id, status) => 
-        set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? { ...car, handedOutDriversLicense: status } : car)
-        })
-    ),
-    setVisibilityStatusVehicleDocuments: (id, status) => 
-        set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? { ...car, handedOutVehicleDocuments: status } : car)
-        })
-    ),
+    )
 }));

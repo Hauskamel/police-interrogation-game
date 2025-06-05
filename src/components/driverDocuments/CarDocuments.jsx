@@ -2,8 +2,7 @@ export function CarDocuments ({profile}) {
     return (
         <>
             <div
-                // TODO: HIER MARGIN LEFT WIEDER ENTFERNEN
-                className="ml-36 w-[300px] h-[450px] bg-[url(/images/vehicle-document-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
+                className="w-[300px] h-[450px] bg-[url(/images/vehicle-document-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
                 <div className="text-black text-left">
                     <h4>Fahrzeugschein</h4>
                     <h3>Republik</h3>
