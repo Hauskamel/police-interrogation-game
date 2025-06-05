@@ -5,8 +5,7 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
     const cars = useCarStore((state) => state.cars)
     const stopCar = useCarStore((state) => state.stopCar);
     const continueCar = useCarStore((state) => state.continueCar);
-    // const setVisibilityStatusDriversLicense = useCarStore((state) => state.setVisibilityStatusDriversLicense)
-    // const setVisibilityStatusVehicleDocuments = useCarStore((state) => state.setVisibilityStatusVehicleDocuments)
+
 
     const stoppedCar = cars.find((car) => car.stopped)
 
