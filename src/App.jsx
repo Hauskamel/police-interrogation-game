@@ -3,6 +3,8 @@ import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 import {useCarStore} from "./store";
 
+import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
+
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
@@ -41,9 +43,9 @@ function App() {
     useEffect(() => {
         let respawnTime = randInt(2000, 5000);
 
-        // respawn interval 
+        // respawn interval
         const intervalId = setInterval(() => {
-            // car object 
+            // car object
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
@@ -53,6 +55,20 @@ function App() {
         }, respawnTime);
         return () => clearInterval(intervalId);
     }, [addCar]);
+
+    // Todo: auslagern in Car.jsx
+    // effect for making car (not) selectable
+    useEffect(() => {
+        if (!selectedCar) return;
+
+        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
+
+        // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
+        if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
+            // resets selected car
+            setSelectedCar(null);
+        }
+    }, [cars, selectedCar, stoppedCar]);
 
 
     // ##################################################
@@ -83,13 +99,10 @@ function App() {
                         <Car
                             key={car.id}
                             ref={carRefs.current[car.id]}
+
                             car={car}
                             onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
-                            onAutomaticDeselect={(id) => {
-                                if (selectedCar?.id === id) setSelectedCar(null);
-                            }}
-                            stoppedCar={car.stopped}
                         />
                     );
                 })}
@@ -114,9 +127,9 @@ function App() {
                                 selectedCar={selectedCar}
                                 stoppedCar={cars.find(car => car.stopped)}
                             />
-                            
+
                             <DocumentManager selectedCar={selectedCar} />
-                            
+
                         </>
                     )}
                 </>
