@@ -37,13 +37,6 @@ export default function BaseDocument({ children }) {
             y: e.pageY - rect.top
         });
 
-        console.log("cursor position x: " + e.pageX)
-        console.log("cursor position y: " + e.pageY)
-
-        console.log("document position x:" + document.x);
-        
-        
-
         e.stopPropagation();
         e.preventDefault();
     }
@@ -64,15 +57,6 @@ export default function BaseDocument({ children }) {
             x: e.pageX - offset.x, // set 'x' to x-coordinate of cursor
             y: e.pageY - offset.y  // set 'y' to y-coordinate of cursor
         });
-
-
-        console.log("offset x:" + offset.x)
-        console.log("offset y:" + offset.y)
-
-
-
-        console.log("document position:" + documentPosition.x);
-        
         
         e.stopPropagation();
         e.preventDefault();

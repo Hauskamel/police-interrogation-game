@@ -18,6 +18,7 @@ import {Startmenu} from "./components/Startmenu";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
 import {DocumentManager} from "./components/manager/DocumentManager";
+import {CarOccupantsInformationTextbox} from "./components/textboxes/CarOccupantsInformationTextbox.jsx";
 
 
 function App() {
@@ -71,6 +72,22 @@ function App() {
     }, [cars, selectedCar, stoppedCar]);
 
 
+
+    let occupants;
+    if (stoppedCar?.position.z !== -3 || !stoppedCar) {
+        occupants =
+            <CarOccupantsInformationTextbox />
+    } else {
+        occupants =
+            <CarOccupantsInformationTextbox
+                selectedCar={selectedCar}
+                stoppedCar={cars.find(car => car.stopped)}
+            />
+    }
+
+
+
+
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
@@ -117,6 +134,14 @@ function App() {
                         selectedCar={selectedCar}
                         onClose={() => setSelectedCar(null)}
                     />
+
+
+
+
+                    {occupants}
+
+
+
 
                     {/* TODO: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei */}
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
