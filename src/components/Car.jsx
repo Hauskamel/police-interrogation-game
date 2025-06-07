@@ -31,8 +31,14 @@ function Car ({ car, onSelect, onHoverChange, stoppedCar }) {
     const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
 
 
+    console.log("Test");
+    
+
     // useCarAnimation hook to handle car animation logic
     useCarAnimation(car, carRef, updateCarPosition, updateStoppedCarPosition, removeCar);
+
+
+    console.log("nach CarAnimation");
 
 
     const handlePointerOver = useCallback((e) => {
