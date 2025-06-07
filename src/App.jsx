@@ -116,7 +116,6 @@ function App() {
                         <Car
                             key={car.id}
                             ref={carRefs.current[car.id]}
-
                             car={car}
                             onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
