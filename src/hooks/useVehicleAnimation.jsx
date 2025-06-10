@@ -5,9 +5,16 @@ import { entry1Coordinates, streetbayEntry } from "../utils/streetbayEntries/str
 
 import { useVehicleMovement } from "./useVehicleMovement";
 
-export function useVehicleAnimation(car, carRef, updateCarPosition, updateStoppedCarPosition, removeCar) {
+export function useVehicleAnimation(car, carRef, removeCar) {
+    const updateCarPosition = useCarStore((state) => state.updateCarPosition);
+    const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
     const previousPositionRef = useRef(null);
     const carIsStopped = car.stopped;
+
+
+
+    // FIXME: Hier stimmt was mit dem updateStoppedCarPosition und updateCarPosition - ich versuche diese gerade in dei useVehicleAnimation hook einzubauen
+
 
     // distance of driven curve (when entering bay) from 0 to 1 (to policeman)
     const [t, setT] = useState(0);

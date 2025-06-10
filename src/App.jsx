@@ -116,6 +116,7 @@ function App() {
                         <Car
                             key={car.id}
                             ref={carRefs.current[car.id]}
+                            
                             car={car}
                             onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
@@ -144,6 +145,7 @@ function App() {
 
                     {/* TODO: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei */}
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
+                    {/* Junge, was jez */}
                     {stoppedCar && stoppedCar.position.z === -3 && (
                         <>
                             {/* TODO: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken? */}
