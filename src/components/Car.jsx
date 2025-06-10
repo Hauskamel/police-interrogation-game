@@ -9,8 +9,12 @@ import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/str
 
 // ######## HOOKS ########
 // #######################
-import { useCarAnimation } from "../hooks/useCarAnimation.jsx";
+import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
 
+function useClonedScene (gltf) {
+    // using memo to prevent unnecessary recoloring of the screen
+    return useMemo(() => gltf.scene.clone(), [gltf.scene]);
+}
 
 // ######## constants ########
 // ###########################
@@ -20,25 +24,17 @@ const DEFAULT_ROTATION = new THREE.Euler(0, -Math.PI / 2, 0);
 
 function Car ({ car, onSelect, onHoverChange, stoppedCar }) {
     const gltf = useGLTF("/models/car.glb");
-    const scene = useMemo(() => gltf.scene.clone(), [gltf.scene]);
-    const carRef = useRef();
 
-    // creating object from car prop
-    const {id, stopped} = car;
+    const scene = useClonedScene(gltf);
+    const carRef = useRef();
 
     const removeCar = useCarStore((state) => state.removeCar);
     const updateCarPosition = useCarStore((state) => state.updateCarPosition);
     const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
 
 
-    console.log("Test");
-    
-
-    // useCarAnimation hook to handle car animation logic
-    useCarAnimation(car, carRef, updateCarPosition, updateStoppedCarPosition, removeCar);
-
-
-    console.log("nach CarAnimation");
+    // useVehicleAnimation hook for vehicle animation (driving, stopping,...)
+    useVehicleAnimation(car, carRef, updateCarPosition, updateStoppedCarPosition, removeCar);
 
 
     const handlePointerOver = useCallback((e) => {

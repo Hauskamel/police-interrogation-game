@@ -1,8 +1,8 @@
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
-import {useCarStore} from "./store";
 
+import {useCarStore} from "./store";
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
 
 import {Road} from "./components/Road";
