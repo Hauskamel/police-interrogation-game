@@ -11,6 +11,7 @@ import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformat
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
+import { useTextboxAnimation } from "../hooks/useTextboxAnimation.jsx";
 
 function useClonedScene (gltf) {
     // using memo to prevent unnecessary recoloring of the screen
@@ -27,11 +28,10 @@ function Car ({ car, onSelect, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
 
     const scene = useClonedScene(gltf);
-    const carRef = useRef();
+    const carRef = useRef(null);
 
     const removeCar = useCarStore((state) => state.removeCar);
     
-    const {id} = car;
 
 
     const handlePointerOver = useCallback((e) => {
@@ -54,13 +54,13 @@ function Car ({ car, onSelect, onHoverChange }) {
 
     // useVehicleAnimation hook for vehicle animation (driving, stopping,...)
     useVehicleAnimation(car, carRef, removeCar);
+
+    useTextboxAnimation(car );
     
 
     return (
         <>
-            <Html
-
-                position={car}>
+            <Html>
                 <CarOccupantsInformationTextbox />
             </Html>
             

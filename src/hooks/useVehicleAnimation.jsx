@@ -2,18 +2,15 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
 import { entry1Coordinates, streetbayEntry } from "../utils/streetbayEntries/streetbayEntry";
+import { useCarStore } from "../store";
 
 import { useVehicleMovement } from "./useVehicleMovement";
 
 export function useVehicleAnimation(car, carRef, removeCar) {
-    const updateCarPosition = useCarStore((state) => state.updateCarPosition);
-    const updateStoppedCarPosition = useCarStore((state) => state.updateStoppedCarPosition);
+    const carPosition = useCarStore((state) => state.carPosition);
+    const stoppedCarPosition = useCarStore((state) => state.stoppedCarPosition);
     const previousPositionRef = useRef(null);
     const carIsStopped = car.stopped;
-
-
-
-    // FIXME: Hier stimmt was mit dem updateStoppedCarPosition und updateCarPosition - ich versuche diese gerade in dei useVehicleAnimation hook einzubauen
 
 
     // distance of driven curve (when entering bay) from 0 to 1 (to policeman)
@@ -24,16 +21,14 @@ export function useVehicleAnimation(car, carRef, removeCar) {
 
         const currentPositionX = Math.floor(carRef.current.position.x * 100) / 100;
         
-        
         if (carIsStopped) {
-
             const currentPositionZ = Math.floor(carRef.current.position.z * 100) / 100;
             
-            if (!previousPositionRef.current || 
-                previousPositionRef.current.x !== currentPositionX || 
+            if (!previousPositionRef.current ||
+                previousPositionRef.current.x !== currentPositionX ||
                 previousPositionRef.current.z !== currentPositionZ) 
             {
-                updateStoppedCarPosition(car.id, currentPositionX, currentPositionZ);
+                stoppedCarPosition(car.id, currentPositionX, currentPositionZ);
                 previousPositionRef.current = { 
                     x: currentPositionX,
                     z: currentPositionZ 
@@ -41,11 +36,10 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             }
 
         } else {
-            
             if (!previousPositionRef.current ||
                 previousPositionRef.current.x !== currentPositionX) 
             {
-                updateCarPosition(car.id, currentPositionX);
+                carPosition(car.id, currentPositionX);
                 previousPositionRef.current = { 
                     x: currentPositionX
                  };

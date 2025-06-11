@@ -36,12 +36,12 @@ export const useCarStore = create((set) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: false } : car)
         })
     ),
-    updateCarPosition: (id, x) =>
+    carPosition: (id, x) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x} } : car)
         })
     ),
-    updateStoppedCarPosition: (id, x, z) =>
+    stoppedCarPosition: (id, x, z) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x, z: z} } : car)
         })
