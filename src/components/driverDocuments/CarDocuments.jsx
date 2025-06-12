@@ -26,12 +26,23 @@ export function CarDocuments ({profile}) {
                             </p>
                         </div>
 
-                        <div className="mt-3">
-                            <p>{profile.vehicleName}</p>
-                            <p>
-                                <strong className="upper">Fahrzeug</strong>
-                            </p>
+                        <div className="flex">
+                            <div className="w-2/3 mt-3">
+                                <p>{profile.brandName}</p>
+                                <p>
+                                    <strong className="upper">Hersteller</strong>
+                                </p>
+                            </div>
+
+                            <div className="w-1/3 mt-3">
+                                <p>{profile.brandModel}</p>
+                                <p>
+                                    <strong className="upper">Modell</strong>
+                                </p>
+                            </div>
                         </div>
+
+                        
 
                     </div>
                 </div>

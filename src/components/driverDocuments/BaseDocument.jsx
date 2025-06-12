@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 
 export default function BaseDocument({ children }) {
-
+    // x and y 32px becuase of 'left-8' css style on 'motion.div'
     const [documentPosition, setDocumentPosition] = useState({x:32, y:32});
     const [dragging, setDragging] = useState(false);
     const [offset, setOffset] = useState(null);
