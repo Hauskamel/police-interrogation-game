@@ -29,10 +29,10 @@ function Car ({ car, onHoverChange }) {
     const carRef = useRef(null);
 
 
-    const selectedCar = useCarStore((state) => state.selectedCar)
-    const removeCar = useCarStore((state) => state.removeCar);
-
     const setSelectedCar = useCarStore((state) => state.setSelectedCar);
+    const selectedCar = useCarStore((state) => state.selectedCar)
+
+    const removeCar = useCarStore((state) => state.removeCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
 
@@ -71,7 +71,7 @@ function Car ({ car, onHoverChange }) {
     }, [car, setSelectedCar]);
 
 
-    // useVehicleAnimation hook for vehicle animation (driving, stopping,...)
+    // hook for vehicle animation (driving, stopping,...)
     useVehicleAnimation(car, carRef, removeCar);
     
 

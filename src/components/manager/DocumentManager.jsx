@@ -8,7 +8,7 @@ import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
 export function DocumentManager({selectedCar}) {
     const activeDocs = ["driversLicense", "carDocs"];
 
-    const [openDocs, setOpenDocs] = useState(() => 
+    const [openDocs, setOpenDocs] = useState(() =>
         Object.entries(activeDocs.map(doc => [doc, false]))
     );
     

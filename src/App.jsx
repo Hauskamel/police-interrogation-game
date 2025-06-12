@@ -9,6 +9,8 @@ import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
 import {Streetbay} from "./components/Streetbay";
+import {DocumentManager} from "./components/manager/DocumentManager";
+import { Notebook } from "./components/manager/Notebook.jsx";
 
 import './../assets/css/App.css'
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
@@ -17,7 +19,6 @@ import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.j
 import {Startmenu} from "./components/Startmenu";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
-import {DocumentManager} from "./components/manager/DocumentManager";
 
 
 function App() {
@@ -127,6 +128,7 @@ function App() {
                             />
 
                             <DocumentManager selectedCar={selectedCar} />
+                            <Notebook />
 
                         </>
                     )}
