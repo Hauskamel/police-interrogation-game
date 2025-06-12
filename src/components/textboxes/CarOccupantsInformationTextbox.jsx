@@ -1,12 +1,13 @@
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
 export function CarOccupantsInformationTextbox({selectedCar, stoppedCar}) {
-
+    
     if (stoppedCar?.id !== selectedCar?.id) return;
+
 
     return (
         <>
-            <BaseTextbox title={"Fahrzeuginsassen"} margin="bottom-120" isCloseable={false}>
+            <BaseTextbox title={"Fahrzeuginsassen"} isCloseable={false}>
                 <div className="flex">
                     {!stoppedCar ?
                         // TODO: Stand jetzt wird beim anklicken eines 2. Fahrzeugs noch das Bild des vorgängers angezeigt

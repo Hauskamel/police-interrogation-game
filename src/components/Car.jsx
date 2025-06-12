@@ -1,18 +1,16 @@
 import {useGLTF, Html} from "@react-three/drei";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useFrame} from "@react-three/fiber";
+import {useCallback, useMemo, useRef, useState} from "react";
 import * as THREE from "three";
 import PropTypes from "prop-types";
 
 import {useCarStore} from "../store.js";
-import { entry1Coordinates, streetbayEntry } from '../utils/streetbayEntries/streetbayEntry.js';
+import { entry1Coordinates } from '../utils/streetbayEntries/streetbayEntry.js';
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
 
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
 import { useTextboxAnimation } from "../hooks/useTextboxAnimation.jsx";
-
 function useClonedScene (gltf) {
     // using memo to prevent unnecessary recoloring of the screen
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
@@ -24,14 +22,34 @@ const DEFAULT_POSITION = new THREE.Vector3(35, 0, -0.6);
 const DEFAULT_ROTATION = new THREE.Euler(0, -Math.PI / 2, 0);
 
 
-function Car ({ car, onSelect, onHoverChange }) {
-    const gltf = useGLTF("/models/car.glb");
 
+
+function Car ({ car, onHoverChange }) {
+    const gltf = useGLTF("/models/car.glb");
     const scene = useClonedScene(gltf);
     const carRef = useRef(null);
 
+
+    const selectedCar = useCarStore((state) => state.selectedCar)
     const removeCar = useCarStore((state) => state.removeCar);
-    
+
+    const setSelectedCar = useCarStore((state) => state.setSelectedCar);
+    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
+
+
+    let occupants;
+    if (stoppedCar?.position.z !== -3 || !stoppedCar) {
+        occupants = (
+            <CarOccupantsInformationTextbox />
+        )
+    } else {
+        occupants = (
+            <CarOccupantsInformationTextbox
+                selectedCar={selectedCar}
+                stoppedCar={stoppedCar}
+            />
+        )
+    }
 
 
     const handlePointerOver = useCallback((e) => {
@@ -47,24 +65,27 @@ function Car ({ car, onSelect, onHoverChange }) {
     const handleClick = useCallback((e) => {
         e.stopPropagation();
         if (car.position?.x > entry1Coordinates[0]) {
-            onSelect?.(car);
+            setSelectedCar(car)
+            // onSelect?.(car);
+            // setSelectedCar(car.id);
         };
-    }, [car, onSelect]);
+    }, [car, setSelectedCar]);
 
 
     // useVehicleAnimation hook for vehicle animation (driving, stopping,...)
     useVehicleAnimation(car, carRef, removeCar);
-
-    useTextboxAnimation(car );
+    useTextboxAnimation(car);
     
 
     return (
         <>
-            <Html>
-                <CarOccupantsInformationTextbox />
-            </Html>
+            {selectedCar && car.id === selectedCar.id &&
+                <Html position={car.position ? [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] : [0,0,0]}>
+                    {occupants}
+                </Html>
+            }
             
-        
+            
             {/* car */}
             <primitive
                 object={ scene }
@@ -90,13 +111,13 @@ Car.propTypes = {
             x: PropTypes.number.isRequired
         })
     }).isRequired,
-    onSelect: PropTypes.func,
+    // onSelect: PropTypes.func,
     onHoverChange: PropTypes.func,
     
 }
 
 Car.defaultProps = {
-    onSelect: null,
+    // onSelect: null,
     onHoverChange: null,
     
     position: DEFAULT_POSITION,
@@ -104,9 +125,3 @@ Car.defaultProps = {
 }
 
 export { Car }
-
-
-
-
-
-// TODO: Morgen dann anschauen, wie 2D Text dem Model folgt

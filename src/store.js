@@ -16,6 +16,7 @@ export const useGameStore = create((set) => ({
 
 export const useCarStore = create((set) => ({
     cars: [],
+    selectedCar: undefined,
     addCar: (newCar) =>
         set((state) => ({
             cars: [...state.cars, newCar],
@@ -35,6 +36,11 @@ export const useCarStore = create((set) => ({
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: false } : car)
         })
+    ),
+    setSelectedCar: (car) =>
+        set({
+            selectedCar: car
+        }
     ),
     carPosition: (id, x) =>
         set((state) => ({
