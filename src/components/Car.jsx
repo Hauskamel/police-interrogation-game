@@ -1,5 +1,5 @@
 import {useGLTF, Html} from "@react-three/drei";
-import {useCallback, useMemo, useRef, useState} from "react";
+import {useCallback, useMemo, useRef} from "react";
 import * as THREE from "three";
 import PropTypes from "prop-types";
 
@@ -10,7 +10,6 @@ import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformat
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
-import { useTextboxAnimation } from "../hooks/useTextboxAnimation.jsx";
 function useClonedScene (gltf) {
     // using memo to prevent unnecessary recoloring of the screen
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
@@ -74,7 +73,6 @@ function Car ({ car, onHoverChange }) {
 
     // useVehicleAnimation hook for vehicle animation (driving, stopping,...)
     useVehicleAnimation(car, carRef, removeCar);
-    useTextboxAnimation(car);
     
 
     return (

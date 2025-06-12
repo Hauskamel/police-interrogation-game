@@ -4,8 +4,6 @@ import { useState } from "react";
 import { entry1Coordinates, streetbayEntry } from "../utils/streetbayEntries/streetbayEntry";
 import { useCarStore } from "../store";
 
-import { useVehicleMovement } from "./useVehicleMovement";
-
 export function useVehicleAnimation(car, carRef, removeCar) {
     const carPosition = useCarStore((state) => state.carPosition);
     const stoppedCarPosition = useCarStore((state) => state.stoppedCarPosition);
