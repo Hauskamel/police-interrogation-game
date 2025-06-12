@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { driverImageProfiles } from './driverImageProfiles';
 import { carProfiles } from './carProfiles';
-import { log } from 'three/src/nodes/TSL.js';
 
 const driverImages = Object.keys(driverImageProfiles);
 const carBrands = Object.keys(carProfiles)

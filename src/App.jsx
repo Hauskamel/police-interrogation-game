@@ -1,8 +1,8 @@
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
-import {useCarStore} from "./store";
 
+import {useCarStore} from "./store";
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
 
 import {Road} from "./components/Road";
@@ -26,19 +26,18 @@ function App() {
     const cars = useCarStore((state) => state.cars);
     const addCar = useCarStore((state) => state.addCar);
 
-    const [selectedCar, setSelectedCar] = useState(null);
-    const [stoppedCar, setStoppedCar] = useState()
+    const setSelectedCar = useCarStore((state) => state.setSelectedCar)
+    const selectedCar = useCarStore((state) => state.selectedCar)
+    
+    const [stoppedCar, setStoppedCar] = useState();
     const [hoveringCar, setHoveringCar] = useState(false);
+
 
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
 
-    function handleSelectedCar (carObject) {
-        setSelectedCar(carObject);
-    }
 
-    // Todo: auslagern in Car.jsx
     // spawns new car
     useEffect(() => {
         let respawnTime = randInt(2000, 5000);
@@ -56,7 +55,6 @@ function App() {
         return () => clearInterval(intervalId);
     }, [addCar]);
 
-    // Todo: auslagern in Car.jsx
     // effect for making car (not) selectable
     useEffect(() => {
         if (!selectedCar) return;
@@ -66,7 +64,7 @@ function App() {
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
-            setSelectedCar(null);
+            selectedCar(null);
         }
     }, [cars, selectedCar, stoppedCar]);
 
@@ -99,9 +97,7 @@ function App() {
                         <Car
                             key={car.id}
                             ref={carRefs.current[car.id]}
-
                             car={car}
-                            onSelect={handleSelectedCar}
                             onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
                         />
                     );
@@ -117,9 +113,11 @@ function App() {
                         selectedCar={selectedCar}
                         onClose={() => setSelectedCar(null)}
                     />
+                    
 
                     {/* TODO: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei */}
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
+                    {/* Junge, was jez */}
                     {stoppedCar && stoppedCar.position.z === -3 && (
                         <>
                             {/* TODO: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken? */}
