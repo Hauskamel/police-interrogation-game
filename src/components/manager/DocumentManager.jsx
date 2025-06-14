@@ -25,7 +25,7 @@ export function DocumentManager({selectedCar}) {
         documentContent.push(
             <DriversLicence 
                 key="driversLicense"
-                profile={selectedCar.profileInformation}
+                profile={selectedCar.driverProfile}
             />
         )  
     }
@@ -33,7 +33,7 @@ export function DocumentManager({selectedCar}) {
         documentContent.push(
             <CarDocuments 
                 key={"carDocs"}
-                profile={selectedCar.profileInformation}>
+                profile={selectedCar.carProfile}>
             </CarDocuments>
         )
     }

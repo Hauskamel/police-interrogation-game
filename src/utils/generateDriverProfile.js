@@ -1,10 +1,7 @@
-import { faker } from '@faker-js/faker';
-import { driverImageProfiles } from './driverImageProfiles';
-import { carProfiles } from './carProfiles';
+import {driverImageProfiles} from "../utils/driverImageProfiles"
+import { faker } from "@faker-js/faker";
 
 const driverImages = Object.keys(driverImageProfiles);
-const carBrands = Object.keys(carProfiles)
-
 function getRandomImage(exclude = null) {
     // driverImagesFilter takes all images except the passed via parameter - if no paramter is passed (= null) the entire array is passed
     const driverImagesFilter = exclude ? driverImages.filter(img => img !== exclude) : driverImages;
@@ -12,13 +9,8 @@ function getRandomImage(exclude = null) {
     return faker.helpers.arrayElement(driverImagesFilter);
 }
 
-function getRandomCarBrand(exclude = null) {
-    const carBrandFilter = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
-    const carBrand = faker.helpers.arrayElement(carBrandFilter)
-    return carBrand
-}
 
-export function generateCarAndDriverProfile () {
+export function generateDriverProfile () {
     // ######## DRIVER INFORMATION ########
     // #####################################
 
@@ -58,6 +50,9 @@ export function generateCarAndDriverProfile () {
     // driver height
     const height = Math.floor(Math.random() * (205 - 160 + 1)) + 160;
 
+
+
+
     // driverslicense date data 
     const minIssueYear = birthYear + 18;
     const maxIssueYear = Math.min(minIssueYear + 7, new Date().getFullYear());
@@ -71,61 +66,40 @@ export function generateCarAndDriverProfile () {
 
 
 
-    // TODO: Darüber bitte nochmal besprechen - soll das in diesem File generiert werden? Oder lieber ausgelagert werden`
+
     // ######## DRIVER SOBRIETY ########
     // #####################################
     const drunk = Math.random() < .2;
     const high = Math.random() < .2;
     const wanted = Math.random() < .2;
 
-
-
-    // ########## CAR INFORMATION ##########
-    // #####################################
-    // car brand
-    const brandName = getRandomCarBrand();
-    const carProfile = carProfiles[brandName]
-
-    // car model
-    const brandModel =  carProfile.models[Math.floor(Math.random() * carProfile.models.length)]
-
-    // car registration
-    const carRegistrationNumber = faker.vehicle.vrm();
-
-    // car plate
-    const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
+    // conditionally rendered
+    if (drunk) {
+        driverProfile.alcoholLevel = (Math.random() * 0.15 + 0.05).toFixed(2) // range of 0.05 - 0.20
+    }
 
 
 
-    // #########################################################################################################################################################################################################
-
-
-
-    const profileInformation = {
+    const profile = {
         driverImage,
         licenceImage,
         prefix,
+        prefix,
         firstName,
         lastName,
+        address: faker.location.streetAddress(),
         gender: imageProfile.gender,
         birthDate,
         eyeColor: imageProfile.eyeColor,
         height,
-        licenseNumber,
-        address: faker.location.streetAddress(),
         issueDate: formattedIssueDate,
+        licenseNumber,
         drunk,
         high,
-        wanted,
-        plateNumber,
-        brandName,
-        brandModel
+        wanted
     }
 
-    // conditionally rendered
-    if (drunk) {
-        profileInformation.alcoholLevel = (Math.random() * 0.15 + 0.05).toFixed(2) // range of 0.05 - 0.20
-    }
+    return profile
 
-    return profileInformation
+
 }

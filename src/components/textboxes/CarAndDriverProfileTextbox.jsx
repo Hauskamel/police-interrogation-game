@@ -12,11 +12,11 @@ export function CarAndDriverProfileTextbox ( {selectedCar, stoppedCar} ) {
                 {/* // TODO: Fahrernamen generieren lassen  */}
                 <p className="text-gray-500 text-xs">Fahrername: {selectedCar.id}</p>
 
-                <p className="text-gray-500 text-xs">Fahrer betrunken: {selectedCar.profileInformation.drunk ? "true" : "false"}</p>
-                <p className="text-gray-500 text-xs">{selectedCar.profileInformation.drunk ? "Alkoholpegel: " + selectedCar.profileInformation.alcoholLevel : ""}</p>
+                <p className="text-gray-500 text-xs">Fahrer betrunken: {selectedCar.driverProfile.drunk ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">{selectedCar.driverProfile.drunk ? "Alkoholpegel: " + selectedCar.driverProfile.alcoholLevel : ""}</p>
                 
-                <p className="text-gray-500 text-xs">Fahrer high: {selectedCar.profileInformation.high ? "true" : "false"}</p>
-                <p className="text-gray-500 text-xs">Fahrer gesucht: {selectedCar.profileInformation.wanted ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">Fahrer high: {selectedCar.driverProfile.high ? "true" : "false"}</p>
+                <p className="text-gray-500 text-xs">Fahrer gesucht: {selectedCar.driverProfile.wanted ? "true" : "false"}</p>
             </BaseTextbox>
         </>
     )

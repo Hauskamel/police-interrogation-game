@@ -14,11 +14,13 @@ import { Notebook } from "./components/manager/Notebook.jsx";
 
 import './../assets/css/App.css'
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
-import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
 import {Startmenu} from "./components/Startmenu";
+import { generateDriverProfile } from "./utils/generateDriverProfile.js";
+import { generateCarProfile } from "./utils/generateCarProfile.js";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
+
 
 
 function App() {
@@ -49,7 +51,8 @@ function App() {
             const newCar = {
                 id: generateUUID(),
                 stopped: false,
-                profileInformation: generateCarAndDriverProfile()
+                driverProfile: generateDriverProfile(),
+                carProfile: generateCarProfile()
             };
             addCar(newCar);
         }, respawnTime);
