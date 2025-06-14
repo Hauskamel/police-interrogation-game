@@ -8,9 +8,7 @@ import { LuNotebook } from "react-icons/lu";
 
 export function Notebook () {
     const [isOpen, setIsOpen] = useState(false)
-
     
-
 
     return (
         <>
@@ -29,17 +27,19 @@ export function Notebook () {
             </button>
 
             { isOpen &&
-                <div id="notebook" class="fixed bottom-25 right-4 w-150 h-100 flex shadow-lg border border-gray-400 bg-white rounded-lg overflow-hidden">
-    
-                    <div class="w-1/2 h-full p-4 bg-yellow-100 border-r border-gray-300">
-                        <WantedList />
-                    </div>
+                <div className="fixed bottom-25 bg-no-repeat bg-cover right-4 bg-[url(/images/notebook.png)] w-150 h-105  bg-contain">
+                    
 
-    
-                    <div class="w-1/2 h-full p-4 bg-yellow-50">
-                        <p class="text-sm text-gray-800">Das ist die rechte Seite</p>
-                    </div>
+                        <div className="w-1/2 h-full pt-15 pl-10 pr-10 text-gray-800 border-r border-gray-300">
+                            <WantedList />
+                        </div>
 
+
+                        <div className="w-1/2 h-full p-4">
+                            <p className="text-sm text-gray-800">Das ist die rechte Seite</p>
+                        </div>
+
+                    
                 </div>
             }
             

@@ -18,11 +18,6 @@ export function generateDriverProfile () {
     const driverImage = getRandomImage();
     const imageProfile = driverImageProfiles[driverImage];
     let licenceImage = driverImage;
-    if (Math.random() < 0.1) {
-        do {
-            licenceImage = getRandomImage(driverImage);
-        } while (licenceImage === driverImage);
-    }
 
     // driver gender
     const prefix = faker.person.prefix(imageProfile.gender);
@@ -73,12 +68,6 @@ export function generateDriverProfile () {
     const high = Math.random() < .2;
     const wanted = Math.random() < .2;
 
-    // conditionally rendered
-    if (drunk) {
-        driverProfile.alcoholLevel = (Math.random() * 0.15 + 0.05).toFixed(2) // range of 0.05 - 0.20
-    }
-
-
 
     const profile = {
         driverImage,
@@ -95,6 +84,7 @@ export function generateDriverProfile () {
         issueDate: formattedIssueDate,
         licenseNumber,
         drunk,
+        alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
         high,
         wanted
     }
