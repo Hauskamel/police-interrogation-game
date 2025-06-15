@@ -68,8 +68,6 @@ function App() {
                 criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
             }
 
-            
-
             let newCar;
             criminal ? newCar = {
                 ...criminal,
@@ -81,8 +79,6 @@ function App() {
                 driverProfile: generateDriverProfile(),
                 carProfile: generateCarProfile()
             }
-
-            console.log(criminal ? newCar : "normal");            
 
             addCar(newCar);
         }, respawnTime);
