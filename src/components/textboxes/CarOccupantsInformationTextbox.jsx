@@ -15,8 +15,8 @@ export function CarOccupantsInformationTextbox({selectedCar, stoppedCar}) {
                         </>
                         :
                         <>
-                            <img src={`/images/driver/${stoppedCar.profileInformation.driverImage}`} className="w-16 h-16 rounded-full"/>
-                            <p className="text-gray-500 text-xs">{stoppedCar.profileInformation.firstName} {stoppedCar.profileInformation.lastName}</p>
+                            <img src={`/images/driver/${stoppedCar.driverProfile.driverImage}`} className="w-16 h-16 rounded-full"/>
+                            <p className="text-gray-500 text-xs">{stoppedCar.driverProfile.firstName} {stoppedCar.driverProfile.lastName}</p>
                         </>
                         
                     }

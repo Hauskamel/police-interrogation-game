@@ -8,7 +8,7 @@ import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
 export function DocumentManager({selectedCar}) {
     const activeDocs = ["driversLicense", "carDocs"];
 
-    const [openDocs, setOpenDocs] = useState(() => 
+    const [openDocs, setOpenDocs] = useState(() =>
         Object.entries(activeDocs.map(doc => [doc, false]))
     );
     
@@ -25,7 +25,7 @@ export function DocumentManager({selectedCar}) {
         documentContent.push(
             <DriversLicence 
                 key="driversLicense"
-                profile={selectedCar.profileInformation}
+                profile={selectedCar.driverProfile}
             />
         )  
     }
@@ -33,7 +33,7 @@ export function DocumentManager({selectedCar}) {
         documentContent.push(
             <CarDocuments 
                 key={"carDocs"}
-                profile={selectedCar.profileInformation}>
+                profile={selectedCar.carProfile}>
             </CarDocuments>
         )
     }

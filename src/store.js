@@ -14,6 +14,15 @@ export const useGameStore = create((set) => ({
     },
 }));
 
+export const useWantedListStore = create((set) => ({
+    wantedList: [],
+    setWantedList: (array) =>
+        set({
+            wantedList: array
+        }
+    ),
+}))
+
 export const useCarStore = create((set) => ({
     cars: [],
     selectedCar: undefined,

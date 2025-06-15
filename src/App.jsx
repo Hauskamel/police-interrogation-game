@@ -2,22 +2,27 @@ import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 
-import {useCarStore} from "./store";
+import {gameStates, useGameStore, useCarStore, useWantedListStore} from "./store";
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
 
 import {Road} from "./components/Road";
 import {Car} from "./components/Car";
 import {Policeman} from "./components/Policeman";
 import {Streetbay} from "./components/Streetbay";
+import {DocumentManager} from "./components/manager/DocumentManager";
+import { Notebook } from "./components/manager/Notebook.jsx";
 
 import './../assets/css/App.css'
 import {generateUUID, randInt} from "three/src/math/MathUtils.js";
-import {generateCarAndDriverProfile} from "./utils/generateCarAndDriverProfile.js";
 
 import {Startmenu} from "./components/Startmenu";
+import { generateDriverProfile } from "./utils/generateDriverProfile.js";
+import { generateCarProfile } from "./utils/generateCarProfile.js";
 import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
 import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
-import {DocumentManager} from "./components/manager/DocumentManager";
+
+import { generateWantedListProfiles } from "./utils/generateWantedListProfiles.js";
+
 
 
 function App() {
@@ -28,6 +33,10 @@ function App() {
 
     const setSelectedCar = useCarStore((state) => state.setSelectedCar)
     const selectedCar = useCarStore((state) => state.selectedCar)
+    const gameState = useGameStore((state) => state.gameState)
+
+    const setWantedList = useWantedListStore((state) => state.setWantedList)
+    const wantedList = useWantedListStore((state) => state.wantedList)
     
     const [stoppedCar, setStoppedCar] = useState();
     const [hoveringCar, setHoveringCar] = useState(false);
@@ -38,22 +47,43 @@ function App() {
     const carRefs = useRef({});
 
 
+    // creates wanted list profiles
+    useEffect(() => {
+        if (gameState === gameStates.GAME) {
+            setWantedList(generateWantedListProfiles())
+        }   
+    }, [gameState])
+
+
     // spawns new car
     useEffect(() => {
         let respawnTime = randInt(2000, 5000);
 
         // respawn interval
         const intervalId = setInterval(() => {
-            // car object
-            const newCar = {
+            const spawnCarOfWantedList = Math.random() < 0.5
+            
+            let criminal = null
+            if (spawnCarOfWantedList) {                
+                criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
+            }
+
+            let newCar;
+            criminal ? newCar = {
+                ...criminal,
+                id: generateUUID(),
+                stopped: false
+            } : newCar = {
                 id: generateUUID(),
                 stopped: false,
-                profileInformation: generateCarAndDriverProfile()
-            };
+                driverProfile: generateDriverProfile(),
+                carProfile: generateCarProfile()
+            }
+
             addCar(newCar);
         }, respawnTime);
         return () => clearInterval(intervalId);
-    }, [addCar]);
+    }, [addCar, wantedList]);
 
     // effect for making car (not) selectable
     useEffect(() => {
@@ -105,6 +135,10 @@ function App() {
 
             </Canvas>
             <Startmenu />
+
+            {gameState === gameStates.GAME && 
+                <Notebook />
+            }
 
             {/* Todo: Textbox fade-out animation onClose after car reaches police checkpoint */}
             {selectedCar && (
