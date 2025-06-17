@@ -5,21 +5,22 @@ import {createRef, useEffect, useRef, useState} from "react";
 import {gameStates, useGameStore, useCarStore, useWantedListStore} from "./store";
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
 
-import {Road} from "./components/Road";
-import {Car} from "./components/Car";
-import {Policeman} from "./components/Policeman";
-import {Streetbay} from "./components/Streetbay";
-import {DocumentManager} from "./components/manager/DocumentManager";
+import { Road } from "./components/Road";
+import { Car } from "./components/Car";
+import { Policeman } from "./components/Policeman";
+import { Streetbay } from "./components/Streetbay";
+import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
+import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 
 import './../assets/css/App.css'
-import {generateUUID, randInt} from "three/src/math/MathUtils.js";
+import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
-import {Startmenu} from "./components/Startmenu";
+import { Startmenu } from "./components/Startmenu";
 import { generateDriverProfile } from "./utils/generateDriverProfile.js";
 import { generateCarProfile } from "./utils/generateCarProfile.js";
-import {CarControlTextbox} from "./components/textboxes/CarControlTextbox";
-import {CarAndDriverProfileTextbox} from "./components/textboxes/CarAndDriverProfileTextbox";
+import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
+import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
 import { generateWantedListProfiles } from "./utils/generateWantedListProfiles.js";
 
@@ -52,7 +53,7 @@ function App() {
         if (gameState === gameStates.GAME) {
             setWantedList(generateWantedListProfiles())
         }   
-    }, [gameState])
+    }, [gameState, setWantedList])
 
 
     // spawns new car
@@ -137,7 +138,10 @@ function App() {
             <Startmenu />
 
             {gameState === gameStates.GAME && 
+            <>
                 <Notebook />
+                <Policeradio />
+            </>
             }
 
             {/* Todo: Textbox fade-out animation onClose after car reaches police checkpoint */}
