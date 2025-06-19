@@ -12,13 +12,11 @@ import { Streetbay } from "./components/Streetbay";
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
+import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
 import './../assets/css/App.css'
-import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { Startmenu } from "./components/Startmenu";
-import { generateDriverProfile } from "./utils/generateDriverProfile.js";
-import { generateCarProfile } from "./utils/generateCarProfile.js";
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
@@ -29,12 +27,11 @@ import { generateWantedListProfiles } from "./utils/generateWantedListProfiles.j
 function App() {
     // ##################################################
     // ##################### STATES #####################
-    const cars = useCarStore((state) => state.cars);
-    const addCar = useCarStore((state) => state.addCar);
+    const gameState = useGameStore((state) => state.gameState)
 
+    const cars = useCarStore((state) => state.cars);
     const setSelectedCar = useCarStore((state) => state.setSelectedCar)
     const selectedCar = useCarStore((state) => state.selectedCar)
-    const gameState = useGameStore((state) => state.gameState)
 
     const setWantedList = useWantedListStore((state) => state.setWantedList)
     const wantedList = useWantedListStore((state) => state.wantedList)
@@ -42,10 +39,10 @@ function App() {
     const [stoppedCar, setStoppedCar] = useState();
     const [hoveringCar, setHoveringCar] = useState(false);
 
-
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
+
 
 
     // creates wanted list profiles
@@ -56,49 +53,23 @@ function App() {
     }, [gameState, setWantedList])
 
 
-    // spawns new car
-    useEffect(() => {
-        let respawnTime = randInt(2000, 5000);
-
-        // respawn interval
-        const intervalId = setInterval(() => {
-            const spawnCarOfWantedList = Math.random() < 0.5
-            
-            let criminal = null
-            if (spawnCarOfWantedList) {                
-                criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
-            }
-
-            let newCar;
-            criminal ? newCar = {
-                ...criminal,
-                id: generateUUID(),
-                stopped: false
-            } : newCar = {
-                id: generateUUID(),
-                stopped: false,
-                driverProfile: generateDriverProfile(),
-                carProfile: generateCarProfile()
-            }
-
-            addCar(newCar);
-        }, respawnTime);
-        return () => clearInterval(intervalId);
-    }, [addCar, wantedList]);
+    useCarSpawner(wantedList);
+    
 
     // effect for making car (not) selectable
     useEffect(() => {
         if (!selectedCar) return;
-
-        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
 
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
             selectedCar(null);
         }
-    }, [cars, selectedCar, stoppedCar]);
+    }, [cars, selectedCar]);
 
+    useEffect(() => {
+        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
+    }, [stoppedCar])
 
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############

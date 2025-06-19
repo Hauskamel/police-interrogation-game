@@ -65,8 +65,6 @@ function Car ({ car, onHoverChange }) {
         e.stopPropagation();
         if (car.position?.x > entry1Coordinates[0]) {
             setSelectedCar(car)
-            // onSelect?.(car);
-            // setSelectedCar(car.id);
         };
     }, [car, setSelectedCar]);
 
