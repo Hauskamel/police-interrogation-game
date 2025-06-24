@@ -8,6 +8,7 @@ import { useCarStore } from "../store.js";
 
 
 export function useCarSpawner (wantedList) {
+    
     const addCar = useCarStore((state) => state.addCar);
 
     // spawns new car
@@ -32,5 +33,5 @@ export function useCarSpawner (wantedList) {
                 addCar(newCar);
             }, respawnTime);
             return () => clearInterval(intervalId);
-        }, [addCar, wantedList]);
+        }, [addCar]);
 }

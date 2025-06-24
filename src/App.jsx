@@ -29,15 +29,17 @@ function App() {
     // ##################### STATES #####################
     const gameState = useGameStore((state) => state.gameState)
 
+    // cars
     const cars = useCarStore((state) => state.cars);
     const setSelectedCar = useCarStore((state) => state.setSelectedCar)
     const selectedCar = useCarStore((state) => state.selectedCar)
-
-    const setWantedList = useWantedListStore((state) => state.setWantedList)
-    const wantedList = useWantedListStore((state) => state.wantedList)
-    
+    // TODO: Diese States auch in store.js verlagern
     const [stoppedCar, setStoppedCar] = useState();
     const [hoveringCar, setHoveringCar] = useState(false);
+
+    // wanted list
+    const setWantedList = useWantedListStore((state) => state.setWantedList)
+    const wantedList = useWantedListStore((state) => state.wantedList)
 
     // ##################################################
     // ################### REFERENCES ###################
