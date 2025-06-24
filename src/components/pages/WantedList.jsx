@@ -1,8 +1,8 @@
-import { useWantedListStore } from "../../store"
+import { useNpcStore } from "../../store"
 
 
 export function WantedList () {
-    const wantedList = useWantedListStore((state) => state.wantedList)
+    const wantedList = useNpcStore((state) => state.wantedList)
 
 
     return (

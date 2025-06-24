@@ -6,7 +6,7 @@ import {
   gameStates,
   useGameStore,
   useCarStore,
-  useWantedListStore,
+  useNpcStore
 } from "./store";
 import { entry1Coordinates } from "./utils/streetbayEntries/streetbayEntry.js";
 
@@ -34,7 +34,7 @@ const STOPPED_CAR_Z = -3;
 // --- Custom Hooks ---
 // Handles wanted list logic
 function useWantedList(gameState) {
-  const setWantedList = useWantedListStore((state) => state.setWantedList);
+  const setWantedList = useNpcStore((state) => state.setWantedList);
   useEffect(() => {
     if (gameState === gameStates.GAME) {
       setWantedList(generateWantedListProfiles());
@@ -111,7 +111,7 @@ function App() {
   const setSelectedCar = useCarStore((state) => state.setSelectedCar);
   const selectedCar = useCarStore((state) => state.selectedCar);
   const gameState = useGameStore((state) => state.gameState);
-  const wantedList = useWantedListStore((state) => state.wantedList);
+  const wantedList = useNpcStore((state) => state.wantedList);
 
   // Local state
   const [hoveringCar, setHoveringCar] = useState(false);

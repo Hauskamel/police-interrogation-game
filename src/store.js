@@ -15,20 +15,20 @@ export const useGameStore = create((set) => ({
 }));
 
 // TODO: useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
+// TODO: Betrifft alle NPCs, mit denen interagiert wird
 //      - wantedList
 //      - vllt sowas wie 'steht ein verhafteter NPC zur Abholung bereit?'
 //      - verhafteter NPC Profile
-
-
-// TODO: REFACTOR - Das 'wantedList' Array in useNPCStore (oder so ähnlich) einfügen
-export const useWantedListStore = create((set) => ({
+export const useNpcStore = create ((set) => ({
     wantedList: [],
+    arrestedNpcs: [],
     setWantedList: (array) =>
         set({
             wantedList: array
         }
     ),
 }))
+
 
 export const useCarStore = create((set) => ({
     cars: [],
@@ -49,6 +49,11 @@ export const useCarStore = create((set) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: true} : car)
         })
     ),
+    setStoppedCar: (car) => 
+        set({
+            stoppedCar: car
+        }
+    ),
     continueCar: (id) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: false } : car)
@@ -59,13 +64,7 @@ export const useCarStore = create((set) => ({
             selectedCar: car
         }
     ),
-    // TODO: REFACTOR - Das mit 'stoppedCarPosition' zusammenfassen
-    carPosition: (id, x) =>
-        set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x} } : car)
-        })
-    ),
-    stoppedCarPosition: (id, x, z) =>
+    carPosition: (id, x, z) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x, z: z} } : car)
         })

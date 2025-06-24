@@ -2,7 +2,7 @@ import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
 import {createRef, useEffect, useRef, useState} from "react";
 
-import {gameStates, useGameStore, useCarStore, useWantedListStore} from "./store";
+import {gameStates, useGameStore, useCarStore, useNpcStore} from "./store";
 import {entry1Coordinates} from './utils/streetbayEntries/streetbayEntry.js'
 
 import { Road } from "./components/Road";
@@ -31,15 +31,18 @@ function App() {
 
     // cars
     const cars = useCarStore((state) => state.cars);
-    const setSelectedCar = useCarStore((state) => state.setSelectedCar)
-    const selectedCar = useCarStore((state) => state.selectedCar)
-    // TODO: Diese States auch in store.js verlagern
-    const [stoppedCar, setStoppedCar] = useState();
+    const setSelectedCar = useCarStore(state => state.setSelectedCar)
+    const selectedCar = useCarStore(state => state.selectedCar)
+
+    const setStoppedCar = useCarStore(state => state.setStoppedCar);
+    const stoppedCar = useCarStore(state => state.stoppedCar)
+
+    // NOTE: das ist ein local State - deshalb kein store.js nötig
     const [hoveringCar, setHoveringCar] = useState(false);
 
     // wanted list
-    const setWantedList = useWantedListStore((state) => state.setWantedList)
-    const wantedList = useWantedListStore((state) => state.wantedList)
+    const setWantedList = useNpcStore((state) => state.setWantedList)
+    const wantedList = useNpcStore((state) => state.wantedList)
 
     // ##################################################
     // ################### REFERENCES ###################
@@ -55,6 +58,7 @@ function App() {
     }, [gameState, setWantedList])
 
 
+    // hook to spawn car 
     useCarSpawner(wantedList);
     
 
@@ -65,6 +69,7 @@ function App() {
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
+            setSelectedCar(null);
             selectedCar(null);
         }
     }, [cars, selectedCar]);

@@ -19,6 +19,9 @@ export function useCarSpawner (wantedList) {
                 
                 let newCar;
                 if (spawnCarOfWantedList && wantedList.length) {
+                    // NOTE:
+                    // wantedList is a parameter of this function.
+                    // the passed value is a reference to the wantedList in the storage.js
                     const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
                     newCar = {...criminal, id :generateUUID(), stopped: false}
                 } else {

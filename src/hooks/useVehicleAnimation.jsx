@@ -22,11 +22,8 @@ export function useVehicleAnimation(car, carRef, removeCar) {
         if (carIsStopped) {
             const currentPositionZ = Math.floor(carRef.current.position.z * 100) / 100;
             
-            if (!previousPositionRef.current ||
-                previousPositionRef.current.x !== currentPositionX ||
-                previousPositionRef.current.z !== currentPositionZ) 
-            {
-                stoppedCarPosition(car.id, currentPositionX, currentPositionZ);
+            if (!previousPositionRef.current || previousPositionRef.current.x !== currentPositionX || previousPositionRef.current.z !== currentPositionZ) {
+                carPosition(car.id, currentPositionX, currentPositionZ);
                 previousPositionRef.current = { 
                     x: currentPositionX,
                     z: currentPositionZ 
@@ -34,14 +31,12 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             }
 
         } else {
-            if (!previousPositionRef.current ||
-                previousPositionRef.current.x !== currentPositionX) 
-            {
-                carPosition(car.id, currentPositionX);
-                previousPositionRef.current = { 
-                    x: currentPositionX
-                 };
-            }
+            if (!previousPositionRef.current || previousPositionRef.current.x !== currentPositionX) {
+                    carPosition(car.id, currentPositionX);
+                    previousPositionRef.current = { 
+                        x: currentPositionX
+                    };
+                }
         }
 
 

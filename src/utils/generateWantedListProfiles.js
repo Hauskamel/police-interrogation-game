@@ -1,8 +1,6 @@
-import { useState, useRef, useEffect } from "react";
 import { generateDriverProfile } from "../utils/generateDriverProfile";
 import { generateCarProfile } from "./generateCarProfile";
 
-import { useWantedListStore } from "../store";
 
 
 
