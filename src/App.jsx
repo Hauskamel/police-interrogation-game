@@ -37,15 +37,13 @@ function App() {
     const setStoppedCar = useCarStore(state => state.setStoppedCar);
     const stoppedCar = useCarStore(state => state.stoppedCar)
 
-    // NOTE: das ist ein local State - deshalb kein store.js nötig
-    const [hoveringCar, setHoveringCar] = useState(false);
-
     // wanted list
     const setWantedList = useNpcStore((state) => state.setWantedList)
     const wantedList = useNpcStore((state) => state.wantedList)
 
+    // NOTE: das ist ein local State - deshalb kein store.js nötig
+    const [hoveringCar, setHoveringCar] = useState(false);
 
-    console.log(stoppedCar);
     
 
     // ##################################################
@@ -66,21 +64,35 @@ function App() {
     useCarSpawner(wantedList);
     
 
+    
+
     // effect for making car (not) selectable
     useEffect(() => {
-        if (!selectedCar) return;
+        
+        
+        
+
+
+        // NOTE: wenn ein Fahrzeug angehalten wird (es wird selected -> dann gestopped) und dann auf ein anderes Auto selected wird, kann nicht mehr
+        // auf das gestoppte Auto zurückselected werden
+        if (!selectedCar || !selectedCar) return;
+
+        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
+            console.log(stoppedCar);
 
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
             setSelectedCar(null);
             selectedCar(null);
+            return;
         }
-    }, [cars, selectedCar]);
+    }, [cars, selectedCar, stoppedCar]);
 
-    useEffect(() => {
-        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
-    }, [setStoppedCar, stoppedCar])
+
+
+
+    
 
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
