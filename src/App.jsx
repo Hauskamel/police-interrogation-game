@@ -33,9 +33,7 @@ function App() {
     const cars = useCarStore((state) => state.cars);
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
     const selectedCar = useCarStore(state => state.selectedCar)
-
-    const setStoppedCar = useCarStore(state => state.setStoppedCar);
-    const stoppedCar = useCarStore(state => state.stoppedCar)
+    const stoppedCar = cars.find(car => car.stopped)
 
     // wanted list
     const setWantedList = useNpcStore((state) => state.setWantedList)
@@ -68,18 +66,13 @@ function App() {
 
     // effect for making car (not) selectable
     useEffect(() => {
-        
-        
-        
 
 
         // NOTE: wenn ein Fahrzeug angehalten wird (es wird selected -> dann gestopped) und dann auf ein anderes Auto selected wird, kann nicht mehr
         // auf das gestoppte Auto zurückselected werden
-        if (!selectedCar || !selectedCar) return;
-
-        if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
-            console.log(stoppedCar);
-
+        if (!selectedCar || !stoppedCar) return;
+        
+        
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
@@ -88,6 +81,7 @@ function App() {
             return;
         }
     }, [cars, selectedCar, stoppedCar]);
+
 
 
 
@@ -150,7 +144,7 @@ function App() {
                     {/* TODO: -3 ist die z-Position vom Policeman, müsste ausgelagert werden in eine Config Datei */}
                     {/* NOTE: -3 ist die Z-Koordinate des Autos, wenn es hält (siehe 'CatmullRomCurve3' in Car.jsx) */}
                     {/* Junge, was jez */}
-                    {stoppedCar && stoppedCar.position.z === -3 && (
+                    {stoppedCar && stoppedCar?.position.z === -3 && (
                         <>
                             {/* TODO: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken? */}
                             <CarAndDriverProfileTextbox
