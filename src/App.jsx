@@ -44,6 +44,10 @@ function App() {
     const setWantedList = useNpcStore((state) => state.setWantedList)
     const wantedList = useNpcStore((state) => state.wantedList)
 
+
+    console.log(stoppedCar);
+    
+
     // ##################################################
     // ################### REFERENCES ###################
     const carRefs = useRef({});
@@ -76,7 +80,7 @@ function App() {
 
     useEffect(() => {
         if (cars.find(car => car.stopped)) setStoppedCar(cars.find(car => car.stopped))
-    }, [stoppedCar])
+    }, [setStoppedCar, stoppedCar])
 
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
