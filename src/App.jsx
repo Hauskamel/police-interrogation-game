@@ -66,18 +66,14 @@ function App() {
 
     // effect for making car (not) selectable
     useEffect(() => {
-
-
         // NOTE: wenn ein Fahrzeug angehalten wird (es wird selected -> dann gestopped) und dann auf ein anderes Auto selected wird, kann nicht mehr
         // auf das gestoppte Auto zurückselected werden
         if (!selectedCar || !stoppedCar) return;
-        
-        
+
         // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
         if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
             // resets selected car
             setSelectedCar(null);
-            selectedCar(null);
             return;
         }
     }, [cars, selectedCar, stoppedCar]);

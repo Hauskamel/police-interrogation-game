@@ -63,7 +63,7 @@ function Car ({ car, onHoverChange }) {
 
     const handleClick = useCallback((e) => {
         e.stopPropagation();
-        if (car.position?.x > entry1Coordinates[0]) {
+        if (car.position?.x > entry1Coordinates[0] || car.id === stoppedCar.id) {
             setSelectedCar(car)
         };
     }, [car, setSelectedCar]);
