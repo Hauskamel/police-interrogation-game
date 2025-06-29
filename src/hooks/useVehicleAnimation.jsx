@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
-import { entry1Coordinates, streetbayEntry } from "../utils/streetbayEntries/streetbayEntry";
+import { streetbayEntry } from "../utils/streetbayEntries/streetbayEntry";
+import { STREETBAY_ENTRY_1 } from "../config/positions";
 import { useCarStore } from "../store";
 
 export function useVehicleAnimation(car, carRef, removeCar) {
@@ -40,7 +41,7 @@ export function useVehicleAnimation(car, carRef, removeCar) {
 
 
         // check if car passed first entry point of bay
-        if (currentPositionX < entry1Coordinates[0] && carIsStopped) {
+        if (currentPositionX < STREETBAY_ENTRY_1[0] && carIsStopped) {
             // track driven distance of entry
             setT((prevT) => {
                 const nextT = prevT + 0.009;

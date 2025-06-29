@@ -4,12 +4,12 @@ import * as THREE from "three";
 import PropTypes from "prop-types";
 
 import {useCarStore} from "../store.js";
-import { entry1Coordinates } from '../utils/streetbayEntries/streetbayEntry.js';
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
 
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
+import { STREETBAY_ENTRY_1 } from "../config/positions.js";
 function useClonedScene (gltf) {
     // using memo to prevent unnecessary recoloring of the screen
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
@@ -64,9 +64,7 @@ function Car ({ car, onHoverChange }) {
     const handleClick = useCallback((e) => {
         e.stopPropagation();
 
-        console.log(stoppedCar)
-
-        if (car.position?.x > entry1Coordinates[0] || car.id === stoppedCar.id) {
+        if (car.position?.x > STREETBAY_ENTRY_1[0] || car.id === stoppedCar.id) {
             setSelectedCar(car)
         };
     }, [car, setSelectedCar]);
