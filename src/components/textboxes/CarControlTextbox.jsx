@@ -1,5 +1,6 @@
 import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore} from "../../store.js";
+import { POLICE_CHECKPOINT } from '../../config/positions.js';
 
 export const CarControlTextbox = ({selectedCar, onClose}) => {
     const stopCar = useCarStore((state) => state.stopCar);
@@ -35,7 +36,7 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
                     
                 </div>
 
-                {stoppedCar && stoppedCar.position.z === -3 && (
+                {stoppedCar && stoppedCar.position.z === POLICE_CHECKPOINT && (
                     <div className="flex gap-2">
                         <button 
                             className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer"

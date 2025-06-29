@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { STREETBAY_ENTRY_1 } from "../../config/positions";
+import { STREETBAY_ENTRY_1 } from "../config/positions";
 
 
 // Create a Curve with the given Vector3 coordinates

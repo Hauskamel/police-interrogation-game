@@ -33,7 +33,6 @@ export const useNpcStore = create ((set) => ({
 export const useCarStore = create((set) => ({
     cars: [],
     selectedCar: undefined,
-    stoppedCar: undefined,
     addCar: (newCar) =>
         set((state) => ({
             cars: [...state.cars, newCar],
@@ -48,12 +47,6 @@ export const useCarStore = create((set) => ({
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: true} : car)
         })
-    ),
-    // TODO: bitte nachschauen, wie das mit dem stoppedCar global gelöst werden soll
-    setStoppedCar: (car) =>
-        set({
-            stoppedCar: car
-        }
     ),
     continueCar: (id) =>
         set((state) => ({

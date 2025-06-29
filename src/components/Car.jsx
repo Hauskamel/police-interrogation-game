@@ -1,6 +1,5 @@
 import {useGLTF, Html} from "@react-three/drei";
 import {useCallback, useMemo, useRef} from "react";
-import * as THREE from "three";
 import PropTypes from "prop-types";
 
 import {useCarStore} from "../store.js";
@@ -9,19 +8,11 @@ import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformat
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
-import { STREETBAY_ENTRY_1 } from "../config/positions.js";
+import { DEFAULT_POSITION, DEFAULT_ROTATION, POLICE_CHECKPOINT, STREETBAY_ENTRY_1 } from "../config/positions.js";
 function useClonedScene (gltf) {
     // using memo to prevent unnecessary recoloring of the screen
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
 }
-
-// ######## constants ########
-// ###########################
-const DEFAULT_POSITION = new THREE.Vector3(35, 0, -0.6);
-const DEFAULT_ROTATION = new THREE.Euler(0, -Math.PI / 2, 0);
-
-
-
 
 function Car ({ car, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
@@ -34,10 +25,8 @@ function Car ({ car, onHoverChange }) {
     const removeCar = useCarStore((state) => state.removeCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
-
-
     let occupants;
-    if (stoppedCar?.position.z !== -3 || !stoppedCar) {
+    if (stoppedCar?.position.z !== POLICE_CHECKPOINT || !stoppedCar) {
         occupants = (
             <CarOccupantsInformationTextbox />
         )
