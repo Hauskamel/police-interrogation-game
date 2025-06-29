@@ -14,13 +14,13 @@ import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
-import './../assets/css/App.css'
-
 import { Startmenu } from "./components/Startmenu";
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
-import { generateWantedListProfiles } from "./utils/generateWantedListProfiles.js";
+import { useSetWantedListEffect } from "./hooks/useSetWantedListEffect.jsx";
+
+import './../assets/css/App.css'
 
 
 
@@ -36,7 +36,6 @@ function App() {
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     // wanted list
-    const setWantedList = useNpcStore((state) => state.setWantedList)
     const wantedList = useNpcStore((state) => state.wantedList)
 
     // NOTE: das ist ein local State - deshalb kein store.js nötig
@@ -49,16 +48,29 @@ function App() {
     const carRefs = useRef({});
 
 
-    // creates wanted list profiles
-    useEffect(() => {
-        if (gameState === gameStates.GAME) {
-            setWantedList(generateWantedListProfiles())
-        }   
-    }, [gameState, setWantedList])
+    useSetWantedListEffect()
 
-
-    // hook to spawn car 
     useCarSpawner(wantedList);
+    
+
+    
+
+    // effect for making car (not) selectable
+    useEffect(() => {
+        if (!selectedCar || !stoppedCar) return;
+        
+        // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
+        if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
+            // resets selected car
+            setSelectedCar(null);
+            selectedCar(null);
+            return;
+        }
+    }, [cars, selectedCar, stoppedCar]);
+
+
+
+
 
     
 
