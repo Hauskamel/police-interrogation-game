@@ -28,12 +28,12 @@ function Car ({ car, onHoverChange }) {
     const scene = useClonedScene(gltf);
     const carRef = useRef(null);
 
-
     const setSelectedCar = useCarStore((state) => state.setSelectedCar);
     const selectedCar = useCarStore((state) => state.selectedCar)
 
     const removeCar = useCarStore((state) => state.removeCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
+
 
 
     let occupants;
@@ -63,6 +63,9 @@ function Car ({ car, onHoverChange }) {
 
     const handleClick = useCallback((e) => {
         e.stopPropagation();
+
+        console.log(stoppedCar)
+
         if (car.position?.x > entry1Coordinates[0] || car.id === stoppedCar.id) {
             setSelectedCar(car)
         };

@@ -49,7 +49,8 @@ export const useCarStore = create((set) => ({
             cars: state.cars.map((car) => car.id === id ? {...car, stopped: true} : car)
         })
     ),
-    setStoppedCar: (car) => 
+    // TODO: bitte nachschauen, wie das mit dem stoppedCar global gelöst werden soll
+    setStoppedCar: (car) =>
         set({
             stoppedCar: car
         }

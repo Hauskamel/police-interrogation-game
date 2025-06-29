@@ -6,7 +6,6 @@ import { useCarStore } from "../store";
 
 export function useVehicleAnimation(car, carRef, removeCar) {
     const carPosition = useCarStore((state) => state.carPosition);
-    const stoppedCarPosition = useCarStore((state) => state.stoppedCarPosition);
     const previousPositionRef = useRef(null);
     const carIsStopped = car.stopped;
 

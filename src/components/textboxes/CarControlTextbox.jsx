@@ -2,13 +2,9 @@ import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore} from "../../store.js";
 
 export const CarControlTextbox = ({selectedCar, onClose}) => {
-    const cars = useCarStore((state) => state.cars)
     const stopCar = useCarStore((state) => state.stopCar);
     const continueCar = useCarStore((state) => state.continueCar);
-    const setStoppedCar = useCarStore(state => state.setStoppedCar);
-
-
-    const stoppedCar = cars.find((car) => car.stopped)
+    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     return (
         <>

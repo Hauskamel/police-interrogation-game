@@ -33,7 +33,7 @@ function App() {
     const cars = useCarStore((state) => state.cars);
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
     const selectedCar = useCarStore(state => state.selectedCar)
-    const stoppedCar = cars.find(car => car.stopped)
+    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     // wanted list
     const setWantedList = useNpcStore((state) => state.setWantedList)
@@ -49,7 +49,6 @@ function App() {
     const carRefs = useRef({});
 
 
-
     // creates wanted list profiles
     useEffect(() => {
         if (gameState === gameStates.GAME) {
@@ -60,27 +59,6 @@ function App() {
 
     // hook to spawn car 
     useCarSpawner(wantedList);
-    
-
-    
-
-    // effect for making car (not) selectable
-    useEffect(() => {
-        // NOTE: wenn ein Fahrzeug angehalten wird (es wird selected -> dann gestopped) und dann auf ein anderes Auto selected wird, kann nicht mehr
-        // auf das gestoppte Auto zurückselected werden
-        if (!selectedCar || !stoppedCar) return;
-
-        // check if car has passed first bay entry point AND the selected Car is NOT the stopped car to make the stopped car still clickable
-        if ((selectedCar.position.x < entry1Coordinates[0]) && (selectedCar.id !== stoppedCar?.id)) {
-            // resets selected car
-            setSelectedCar(null);
-            return;
-        }
-    }, [cars, selectedCar, stoppedCar]);
-
-
-
-
 
     
 
