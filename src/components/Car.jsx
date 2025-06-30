@@ -97,15 +97,12 @@ Car.propTypes = {
             x: PropTypes.number.isRequired
         })
     }).isRequired,
-    // onSelect: PropTypes.func,
     onHoverChange: PropTypes.func,
     
 }
 
 Car.defaultProps = {
-    // onSelect: null,
     onHoverChange: null,
-    
     position: DEFAULT_POSITION,
     rotation: DEFAULT_ROTATION
 }

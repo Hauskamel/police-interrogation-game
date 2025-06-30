@@ -1,13 +1,16 @@
 import { FaIdCard, FaCar } from "react-icons/fa";
+import { LuNotebook } from "react-icons/lu";
 
 const ICONS = {
     driversLicense: <FaIdCard />,
     carDocs: <FaCar />,
+    notebook: <LuNotebook />
 };
 
 const LABELS = {
     driversLicense: "Führerschein",
     carDocs: "Fahrzeugpapiere",
+    notebook: "Notebook",
 };
 
 

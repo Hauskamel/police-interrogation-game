@@ -20,7 +20,6 @@ export function DocumentManager({selectedCar}) {
     };
 
     let documentContent = [];
-    
     if (openDocs["driversLicense"]) {
         documentContent.push(
             <DriversLicence 
