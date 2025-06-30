@@ -59,7 +59,7 @@ function Car ({ car, onHoverChange }) {
     }, [car, setSelectedCar]);
 
 
-    // hook for vehicle animation (driving, stopping,...)
+    // hook for vehicle animation (driving, stopping, following curve path, ...)
     useVehicleAnimation(car, carRef, removeCar);
     
 
