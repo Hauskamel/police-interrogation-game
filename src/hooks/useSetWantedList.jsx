@@ -10,6 +10,8 @@ export function useSetWantedList () {
     useEffect(() => {
         if (gameState === gameStates.GAME) {
             setWantedList(generateWantedListProfiles())
+
         }   
     }, [gameState, setWantedList])
+    
 }

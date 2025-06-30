@@ -10,7 +10,7 @@ function getRandomImage(exclude = null) {
 }
 
 
-export function generateDriverProfile () {
+export function generateDriverProfile (isWanted) {
     // ######## DRIVER INFORMATION ########
     // #####################################
 
@@ -46,8 +46,6 @@ export function generateDriverProfile () {
     const height = Math.floor(Math.random() * (205 - 160 + 1)) + 160;
 
 
-
-
     // driverslicense date data 
     const minIssueYear = birthYear + 18;
     const maxIssueYear = Math.min(minIssueYear + 7, new Date().getFullYear());
@@ -60,13 +58,14 @@ export function generateDriverProfile () {
     const licenseNumber = `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`;
 
 
-
-
     // ######## DRIVER SOBRIETY ########
     // #####################################
     const drunk = Math.random() < .2;
     const high = Math.random() < .2;
-    const wanted = Math.random() < .2;
+    const wanted = isWanted ? true : false
+    // NOTE: OFFENER PUNKT - MÖGLICHERWEISE IRRELEVANT, MÖGLICHERWEISE WICHTIG FÜR ZUKÜNFTIGE VORHABEN
+    // NOTE: hier noch weitere indizien als nur 'isWanted' hinzufügen
+    const arrestable = isWanted ? true : false 
 
 
     const profile = {
@@ -86,7 +85,8 @@ export function generateDriverProfile () {
         drunk,
         alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
         high,
-        wanted
+        wanted,
+        arrestable
     }
 
     return profile

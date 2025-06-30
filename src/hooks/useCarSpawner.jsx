@@ -4,12 +4,15 @@ import { generateDriverProfile } from "../utils/generateDriverProfile.js";
 import { generateCarProfile } from "../utils/generateCarProfile.js";
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
-import { useCarStore } from "../store.js";
+import { useCarStore, useNpcStore } from "../store.js";
 
 
-export function useCarSpawner (wantedList) {
-    
+
+
+
+export function useCarSpawner () {
     const addCar = useCarStore((state) => state.addCar);
+    const wantedList = useNpcStore((state) => state.wantedList)
 
     // spawns new car
         useEffect(() => {
@@ -28,13 +31,13 @@ export function useCarSpawner (wantedList) {
                     newCar = {
                         id: generateUUID(),
                         stopped: false,
-                        driverProfile: generateDriverProfile(),
+                        driverProfile: generateDriverProfile(false),
                         carProfile: generateCarProfile()
                     }   
                 }
     
                 addCar(newCar);
-            }, respawnTime);
+            }, respawnTime, wantedList);
             return () => clearInterval(intervalId);
-        }, [addCar]);
+        }, [addCar, wantedList]);
 }

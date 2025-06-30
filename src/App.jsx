@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {gameStates, useGameStore, useCarStore, useNpcStore} from "./store";
 
@@ -20,6 +20,8 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
+
+
 function App() {
     // ##################################################
     // ##################### STATES #####################
@@ -31,9 +33,6 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
-    // wanted list
-    const wantedList = useNpcStore((state) => state.wantedList)
-
     // NOTE: das ist ein local State - deshalb kein store.js nötig
     const [hoveringCar, setHoveringCar] = useState(false);
 
@@ -42,7 +41,10 @@ function App() {
     // ##################### HOOKS #####################
     const carRefs = useCarRefs(cars);
     useSetWantedList()
-    useCarSpawner(wantedList);
+
+    
+    useCarSpawner();
+    
 
     
     // ##################################################
