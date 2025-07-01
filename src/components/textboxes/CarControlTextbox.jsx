@@ -36,7 +36,7 @@ export const CarControlTextbox = ({selectedCar, onClose}) => {
                     
                 </div>
 
-                {stoppedCar && stoppedCar.position.z === POLICE_CHECKPOINT && (
+                {!stoppedCar || selectedCar.id === stoppedCar.id && (
                     <div className="flex gap-2">
                         <button 
                             className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer"

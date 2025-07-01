@@ -33,7 +33,7 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
-    // das ist ein local State - deshalb kein store.js nötig
+    // this is a local State - no store.js needed
     const [hoveringCar, setHoveringCar] = useState(false);
 
     
@@ -49,14 +49,8 @@ function App() {
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}` }>
             <Gamecanvas cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
-
             <Startmenu />
-            {gameState === gameStates.GAME && 
-                <>
-                    <Notebook />
-                    <Policeradio />
-                </>
-            }
+
             {/* TODO: Textbox fade-out animation onClose after car reaches police checkpoint */}
             {selectedCar && (
                 <>
@@ -64,19 +58,25 @@ function App() {
                         selectedCar={selectedCar}
                         onClose={() => setSelectedCar(null)}
                     />
-                    
-                    {stoppedCar && stoppedCar?.position.z === POLICE_CHECKPOINT && (
-                        <>
-                            {/* TODO: Brauchen wir diese Box in Zukunft? Soll sich der Spieler die Infos merken? */}
-                            <CarAndDriverProfileTextbox
-                                selectedCar={selectedCar}
-                                stoppedCar={cars.find(car => car.stopped)}
-                            />
-                            <DocumentManager selectedCar={selectedCar} />
-                        </>
-                    )}
                 </>
             )}
+
+
+            {stoppedCar && stoppedCar?.position.z === POLICE_CHECKPOINT && (
+                <>
+                    <Notebook />
+                    <Policeradio />
+
+                    {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
+                    <CarAndDriverProfileTextbox
+                        selectedCar={selectedCar}
+                        stoppedCar={cars.find(car => car.stopped)}
+                    />
+                    <DocumentManager selectedCar={selectedCar} />
+                </>
+            )}
+
+
         </div>
     )
 }
