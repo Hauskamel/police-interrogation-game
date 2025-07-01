@@ -15,7 +15,6 @@ export function WantedList () {
             {wantedList.map(criminal => {
                 return (
                     <div
-
                         className="flex mb-5">
                         <img src={`/images/driver/${criminal.driverProfile.licenceImage}`} className="w-20 h-20"/>
                         <div>

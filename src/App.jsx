@@ -33,20 +33,17 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
-    // NOTE: das ist ein local State - deshalb kein store.js nötig
+    // das ist ein local State - deshalb kein store.js nötig
     const [hoveringCar, setHoveringCar] = useState(false);
 
     
     // #################################################
     // ##################### HOOKS #####################
     const carRefs = useCarRefs(cars);
-    useSetWantedList()
-
-    
+    useSetWantedList();
     useCarSpawner();
     
 
-    
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
@@ -60,7 +57,7 @@ function App() {
                     <Policeradio />
                 </>
             }
-            {/* Todo: Textbox fade-out animation onClose after car reaches police checkpoint */}
+            {/* TODO: Textbox fade-out animation onClose after car reaches police checkpoint */}
             {selectedCar && (
                 <>
                     <CarControlTextbox

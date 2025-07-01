@@ -10,34 +10,35 @@ import { useCarStore, useNpcStore } from "../store.js";
 
 
 
-export function useCarSpawner () {
+export function useCarSpawner (cars) {
     const addCar = useCarStore((state) => state.addCar);
-    const wantedList = useNpcStore((state) => state.wantedList)
+    const wantedList = useNpcStore((state) => state.wantedList);
+
+    // TODO: hier noch schauen, dass ein Criminal mit der selben ID nicht 2x spawnen kann
+    // Bereits versucht cars (aus store.js) in useEffect array einzubauen, allerdings wird dann der Autospawn nicht richtig ausgeführt
 
     // spawns new car
-        useEffect(() => {
-            let respawnTime = randInt(2000, 5000);
-            const intervalId = setInterval(() => {
-                const spawnCarOfWantedList = Math.random() < 0.5;
-                
-                let newCar;
-                if (spawnCarOfWantedList && wantedList.length) {
-                    // NOTE:
-                    // wantedList is a parameter of this function.
-                    // the passed value is a reference to the wantedList in the storage.js
-                    const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
-                    newCar = {...criminal, id :generateUUID(), stopped: false}
-                } else {
-                    newCar = {
-                        id: generateUUID(),
-                        stopped: false,
-                        driverProfile: generateDriverProfile(false),
-                        carProfile: generateCarProfile()
-                    }   
+    useEffect(() => {
+        let respawnTime = randInt(2000, 5000);
+        const intervalId = setInterval(() => {
+            const spawnCarOfWantedList = Math.random() < 0.5;
+            let newCar;
+            if (spawnCarOfWantedList && wantedList.length) {
+                // NOTE:
+                // wantedList is a parameter of this function.
+                // the passed value is a reference to the wantedList in the storage.js
+                const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
+                newCar = {...criminal}
+            } else {
+                newCar = {
+                    id: generateUUID(),
+                    stopped: false,
+                    driverProfile: generateDriverProfile(false),
+                    carProfile: generateCarProfile()
                 }
-    
-                addCar(newCar);
-            }, respawnTime, wantedList);
-            return () => clearInterval(intervalId);
-        }, [addCar, wantedList]);
+            }
+            addCar(newCar);
+        }, respawnTime, wantedList);
+        return () => clearInterval(intervalId);
+    }, [addCar, wantedList]);
 }
