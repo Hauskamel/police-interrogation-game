@@ -10,7 +10,8 @@ import { useCarStore, useNpcStore } from "../store.js";
 
 
 
-export function useCarSpawner (cars) {
+export function useCarSpawner () {
+    const cars = useCarStore(state => state.cars)
     const addCar = useCarStore((state) => state.addCar);
     const wantedList = useNpcStore((state) => state.wantedList);
 
@@ -19,26 +20,26 @@ export function useCarSpawner (cars) {
 
     // spawns new car
     useEffect(() => {
+
         let respawnTime = randInt(2000, 5000);
         const intervalId = setInterval(() => {
-            const spawnCarOfWantedList = Math.random() < 0.5;
-            let newCar;
-            if (spawnCarOfWantedList && wantedList.length) {
-                // NOTE:
-                // wantedList is a parameter of this function.
-                // the passed value is a reference to the wantedList in the storage.js
-                const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
-                newCar = {...criminal}
-            } else {
-                newCar = {
-                    id: generateUUID(),
-                    stopped: false,
-                    driverProfile: generateDriverProfile(false),
-                    carProfile: generateCarProfile()
-                }
+        const spawnCarOfWantedList = Math.random() < 0.5;
+        let newCar;
+        if (spawnCarOfWantedList && wantedList.length) {
+            // wantedList is a parameter of this function.
+            // the passed value is a reference to the wantedList in the storage.js
+            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
+            newCar = {...criminal, id :generateUUID()}
+        } else {
+            newCar = {
+                id: generateUUID(),
+                stopped: false,
+                driverProfile: generateDriverProfile(false),
+                carProfile: generateCarProfile()
             }
-            addCar(newCar);
-        }, respawnTime, wantedList);
-        return () => clearInterval(intervalId);
+        }
+        addCar(newCar);
+    }, respawnTime, wantedList);
+    return () => clearInterval(intervalId);
     }, [addCar, wantedList]);
 }
