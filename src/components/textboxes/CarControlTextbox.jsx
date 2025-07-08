@@ -1,5 +1,9 @@
 import {BaseTextbox} from './BaseTextbox.jsx';
-import {useCarStore} from "../../store.js";
+import {useCarStore, useTextboxStore} from "../../store.js";
+
+
+import { closeTextbox } from "../../helpers/closeTextbox";
+
 
 export const CarControlTextbox = ({
     selectedCar, 
@@ -9,6 +13,13 @@ export const CarControlTextbox = ({
     const continueCar = useCarStore((state) => state.continueCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
+    // textboxes
+    const setTextboxVisibililty = useTextboxStore(state => state.setTextboxVisibilityState)
+
+
+
+
+    
     return (
         <>
             <BaseTextbox 
@@ -31,8 +42,8 @@ export const CarControlTextbox = ({
                     {!stoppedCar || selectedCar.id === stoppedCar.id && (
                         <button
                             onClick={() => {
+                                closeTextbox(setTextboxVisibililty , onClose)
                                 continueCar(selectedCar.id);
-                                onClose();
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"
                         >

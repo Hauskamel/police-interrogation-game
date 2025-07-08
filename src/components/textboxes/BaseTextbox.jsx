@@ -1,4 +1,5 @@
 import {useEffect} from "react";
+import { closeTextbox } from "../../helpers/closeTextbox";
 
 import { useTextboxStore } from "../../store";
 
@@ -25,10 +26,7 @@ export const BaseTextbox = ({
 
 
     const handleClose = () => {
-        setTextboxVisibililty(false);
-        setTimeout(() => {
-            onClose();
-        }, 150);
+        closeTextbox(setTextboxVisibililty,onClose);
     };
 
     useEffect(() => {
