@@ -1,7 +1,9 @@
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
-export function CarOccupantsInformationTextbox({selectedCar, stoppedCar}) {
-    
+export const CarOccupantsInformationTextbox = ({
+    selectedCar, 
+    stoppedCar
+}) => {
     if (stoppedCar?.id !== selectedCar?.id) return;
 
     return (

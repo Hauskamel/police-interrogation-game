@@ -64,3 +64,14 @@ export const useCarStore = create((set) => ({
         })
     )
 }));
+
+
+
+export const useTextboxStore = create(set => ({
+    textboxesVisible: false,
+    setTextboxVisibilityState: (state => {
+        set({
+            textboxesVisible: state
+        })
+    })
+}))

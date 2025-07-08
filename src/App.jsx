@@ -1,6 +1,6 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
-import {gameStates, useGameStore, useCarStore, useNpcStore} from "./store";
+import {useCarStore} from "./store";
 
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
@@ -25,15 +25,12 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 function App() {
     // ##################################################
     // ##################### STATES #####################
-    const gameState = useGameStore((state) => state.gameState)
-
     // cars
     const cars = useCarStore((state) => state.cars);
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
-    // this is a local State - no store.js needed
     const [hoveringCar, setHoveringCar] = useState(false);
 
     

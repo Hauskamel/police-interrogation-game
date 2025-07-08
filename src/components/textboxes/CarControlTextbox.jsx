@@ -1,15 +1,21 @@
 import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore} from "../../store.js";
-import { POLICE_CHECKPOINT } from '../../config/positions.js';
 
-export const CarControlTextbox = ({selectedCar, onClose}) => {
+export const CarControlTextbox = ({
+    selectedCar, 
+    onClose
+}) => {
     const stopCar = useCarStore((state) => state.stopCar);
     const continueCar = useCarStore((state) => state.continueCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     return (
         <>
-            <BaseTextbox title="Fahrzeug Optionen" margin="bottom-6" onClose={onClose} >
+            <BaseTextbox 
+                title="Fahrzeug Optionen" 
+                margin="bottom-6" 
+                onClose={onClose} 
+            >
                 <div className="flex gap-2">
                     {!stoppedCar && (
                         <button
