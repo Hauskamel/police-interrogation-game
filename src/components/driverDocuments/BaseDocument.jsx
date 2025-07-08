@@ -1,73 +1,18 @@
 import React, { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion";
+import { useDraggable } from "../../hooks/useDraggable";
 
 
 
 export default function BaseDocument({ children }) {
-    // x and y 32px becuase of 'left-8' css style on 'motion.div'
-    const [documentPosition, setDocumentPosition] = useState({x:32, y:32});
-    const [dragging, setDragging] = useState(false);
-    const [offset, setOffset] = useState(null);
-    const ref = useRef();
 
-    useEffect(() => {
-        if (dragging) {
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        } else {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp)
-        }
-
-        return () => {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        }
-    }, [dragging])
+    const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32})
 
 
-    function onMouseDown (e) {
-        if (e.button !== 0) return // only left mouse button allowed
-
-        const rect = ref.current.getBoundingClientRect()
-
-        setDragging(true);
-        setOffset({
-            x: e.pageX - rect.left,
-            y: e.pageY - rect.top
-        });
-
-        e.stopPropagation();
-        e.preventDefault();
-    }
-
-     const onMouseUp = (e) => {
-        setDragging(false);
-        e.stopPropagation();
-        e.preventDefault();
-    };
-
-    const onMouseMove = (e) => {
-        if (!dragging) return;        
-
-        if (e.pageX < 0 || e.pageX > window.innerWidth ) return;
-        if (e.pageY < 0 || e.pageY > window.innerHeight ) return;
-        
-        setDocumentPosition({
-            x: e.pageX - offset.x, // set 'x' to x-coordinate of cursor
-            y: e.pageY - offset.y  // set 'y' to y-coordinate of cursor
-        });
-        
-        e.stopPropagation();
-        e.preventDefault();
-    };
-    
-    
 
     return (
         <div className="fixed top-0 left-0">
-            <AnimatePresence>
-                
+            <AnimatePresence>   
                 {React.Children.map(children, (child) =>
                         child ? (
                             <motion.div
@@ -81,8 +26,8 @@ export default function BaseDocument({ children }) {
                                 onMouseDown={onMouseDown}
                                 style={{
                                     position: 'absolute',
-                                    left: `${documentPosition.x}px`,
-                                    top: `${documentPosition.y}px`,
+                                    left: `${position.x}px`,
+                                    top: `${position.y}px`,
                                     cursor: 'move'
                                 }}
                             >

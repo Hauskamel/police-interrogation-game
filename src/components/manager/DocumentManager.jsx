@@ -9,7 +9,8 @@ export function DocumentManager({selectedCar}) {
     const activeDocs = ["driversLicense", "carDocs"];
 
     const [openDocs, setOpenDocs] = useState(() =>
-        Object.entries(activeDocs.map(doc => [doc, false]))
+        Object.fromEntries(activeDocs.map(doc => [doc, false])) // returns an object: { driversLicense: false, carDocs: false } 
+                                                                // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
     );
     
     const toggleDoc = (doc) => {
@@ -19,34 +20,30 @@ export function DocumentManager({selectedCar}) {
         }))
     };
 
-    let documentContent = [];
-    if (openDocs["driversLicense"]) {
-        documentContent.push(
+    const docComponents = {
+        driversLicense: (
             <DriversLicence 
                 key="driversLicense"
                 profile={selectedCar.driverProfile}
             />
-        )  
-    }
-    if (openDocs["carDocs"]) {
-        documentContent.push(
+        ),
+        carDocs: (
             <CarDocuments 
                 key={"carDocs"}
                 profile={selectedCar.carProfile}>
             </CarDocuments>
         )
     }
-    
 
     return (
         <>
-            {
-                documentContent.map((openDocument,i) => {
-                    return (
-                        <BaseDocument key={openDocument.key}>
-                            {openDocument}
+            {activeDocs
+                    .filter(doc => openDocs[doc])
+                    .map(doc => (
+                        <BaseDocument key={doc}>
+                            {docComponents[doc]}
                         </BaseDocument>
-                )})
+                ))
             }
 
             <DocumentBar
