@@ -18,6 +18,13 @@ export function useCarSpawner () {
     // TODO: hier noch schauen, dass ein Criminal mit der selben ID nicht 2x spawnen kann
     // Bereits versucht cars (aus store.js) in useEffect array einzubauen, allerdings wird dann der Autospawn nicht richtig ausgeführt
 
+
+
+    cars.forEach(car => console.log(car.id));
+    
+
+
+
     // spawns new car
     useEffect(() => {
 

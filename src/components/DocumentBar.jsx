@@ -20,7 +20,7 @@ export function DocumentBar({ activeDocs = [], openDocs, onSelect }) {
 
     return (
         <div className="fixed bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300">
-            {activeDocs.map((doc) => {
+            {activeDocs.map(doc => {
                 const isOpen = openDocs[doc];
 
                 return (

@@ -46,11 +46,15 @@ function Car ({ car, onHoverChange }) {
     useVehicleAnimation(car, carRef, removeCar);
 
     
+    const carOccupantsTextboxPosition = car.position ? 
+        [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] 
+        : [0,0,0]
+
 
     return (
         <>
             {selectedCar && car.id === selectedCar.id && (
-                <Html position={car.position ? [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] : [0,0,0]}>
+                <Html position={carOccupantsTextboxPosition}>
                     <CarOccupants stoppedCar={stoppedCar} selectedCar={selectedCar} />
                 </Html>
             )}
