@@ -59,7 +59,7 @@ function App() {
             )}
 
 
-            {stoppedCar && stoppedCar?.position.z === POLICE_CHECKPOINT && (
+            {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
                 <>
                     <Notebook />
                     <Policeradio />

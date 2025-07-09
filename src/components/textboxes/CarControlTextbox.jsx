@@ -16,9 +16,6 @@ export const CarControlTextbox = ({
     // textboxes
     const setTextboxVisibililty = useTextboxStore(state => state.setTextboxVisibilityState)
 
-
-
-
     
     return (
         <>
@@ -42,7 +39,7 @@ export const CarControlTextbox = ({
                     {!stoppedCar || selectedCar.id === stoppedCar.id && (
                         <button
                             onClick={() => {
-                                closeTextbox(setTextboxVisibililty , onClose)
+                                closeTextbox(setTextboxVisibililty, onClose)
                                 continueCar(selectedCar.id);
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"

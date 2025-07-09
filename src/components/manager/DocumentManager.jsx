@@ -24,13 +24,13 @@ export function DocumentManager({selectedCar}) {
         driversLicense: (
             <DriversLicence 
                 key="driversLicense"
-                profile={selectedCar.driverProfile}
+                profile={selectedCar?.driverProfile}
             />
         ),
         carDocs: (
             <CarDocuments 
                 key={"carDocs"}
-                profile={selectedCar.carProfile}>
+                profile={selectedCar?.carProfile}>
             </CarDocuments>
         )
     }

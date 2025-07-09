@@ -1,6 +1,8 @@
 import {useGLTF, Html} from "@react-three/drei";
-import {useCallback, useMemo, useRef} from "react";
+import {useMemo, useRef} from "react";
 import PropTypes from "prop-types";
+
+import { DEFAULT_POSITION, DEFAULT_ROTATION, POLICE_CHECKPOINT } from "../config/positions.js";
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -8,69 +10,50 @@ import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformat
 // ######## HOOKS ########
 // #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
-import { DEFAULT_POSITION, DEFAULT_ROTATION, POLICE_CHECKPOINT, STREETBAY_ENTRY_1 } from "../config/positions.js";
+import { useVehicleInteraction } from "../hooks/useVehicleInteraction.jsx"
+
+
 function useClonedScene (gltf) {
-    // using memo to prevent unnecessary recoloring of the screen
+    // using memo to prevent unnecessary recoloring of the scene (car model)
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
 }
+
+function CarOccupants ({stoppedCar, selectedCar}) {
+    if (!stoppedCar ||stoppedCar?.position.z !== POLICE_CHECKPOINT) {
+        return <CarOccupantsInformationTextbox />
+    } 
+    return <CarOccupantsInformationTextbox selectedCar={selectedCar} stoppedCar={stoppedCar} />
+}
+
 
 function Car ({ car, onHoverChange }) {
     const gltf = useGLTF("/models/car.glb");
     const scene = useClonedScene(gltf);
+
+    // ##################################################
+    // ##################### STATES #####################
+    // cars
+    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
+    const selectedCar = useCarStore((state) => state.selectedCar)
+    const removeCar = useCarStore((state) => state.removeCar);
+
     const carRef = useRef(null);
 
-    const setSelectedCar = useCarStore((state) => state.setSelectedCar);
-    const selectedCar = useCarStore((state) => state.selectedCar)
 
-    const removeCar = useCarStore((state) => state.removeCar);
-    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
-
-    let occupants;
-    if (stoppedCar?.position.z !== POLICE_CHECKPOINT || !stoppedCar) {
-        occupants = (
-            <CarOccupantsInformationTextbox />
-        )
-    } else {
-        occupants = (
-            <CarOccupantsInformationTextbox
-                selectedCar={selectedCar}
-                stoppedCar={stoppedCar}
-            />
-        )
-    }
-
-
-    const handlePointerOver = useCallback((e) => {
-        e.stopPropagation();
-        onHoverChange?.(true);
-    }, [onHoverChange]);
-
-    const handlePointerOut = useCallback((e) => {
-        e.stopPropagation();
-        onHoverChange?.(false);
-    }, [onHoverChange]);
-
-    const handleClick = useCallback((e) => {
-        e.stopPropagation();
-
-        if (car.position?.x > STREETBAY_ENTRY_1[0] || car.id === stoppedCar.id) {
-            setSelectedCar(car)
-        };
-    }, [car, setSelectedCar]);
-
-
+    // handles pointerOver, pointerOut and click on the vehicle
+    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange)
     // hook for vehicle animation (driving, stopping, following curve path, ...)
     useVehicleAnimation(car, carRef, removeCar);
+
     
 
     return (
         <>
-            {selectedCar && car.id === selectedCar.id &&
+            {selectedCar && car.id === selectedCar.id && (
                 <Html position={car.position ? [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] : [0,0,0]}>
-                    {occupants}
+                    <CarOccupants stoppedCar={stoppedCar} selectedCar={selectedCar} />
                 </Html>
-            }
-            
+            )}
             
             {/* car */}
             <primitive

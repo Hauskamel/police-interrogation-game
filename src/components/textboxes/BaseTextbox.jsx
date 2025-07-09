@@ -25,6 +25,7 @@ export const BaseTextbox = ({
     const isVisible = useTextboxStore(state => state.textboxesVisible)
 
 
+    // TODO: schauen, wie ich anstelle der HelperFunction (closeTextbox) eine Hook eingebaut bekomme (useCloseTextbox)
     const handleClose = () => {
         closeTextbox(setTextboxVisibililty,onClose);
     };

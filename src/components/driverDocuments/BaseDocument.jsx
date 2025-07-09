@@ -1,14 +1,11 @@
-import React, { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion";
+import React from "react"
+import { AnimatePresence, motion } from "framer-motion";
 import { useDraggable } from "../../hooks/useDraggable";
 
 
 
 export default function BaseDocument({ children }) {
-
     const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32})
-
-
 
     return (
         <div className="fixed top-0 left-0">
