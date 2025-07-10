@@ -20,14 +20,9 @@ export function useCarSpawner () {
 
 
 
-    cars.forEach(car => console.log(car.id));
-    
-
-
 
     // spawns new car
     useEffect(() => {
-
         let respawnTime = randInt(2000, 5000);
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
