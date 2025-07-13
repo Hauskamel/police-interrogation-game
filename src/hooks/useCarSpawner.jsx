@@ -14,12 +14,7 @@ export function useCarSpawner () {
     const cars = useCarStore(state => state.cars)
     const addCar = useCarStore((state) => state.addCar);
     const wantedList = useNpcStore((state) => state.wantedList);
-
-    // TODO: hier noch schauen, dass ein Criminal mit der selben ID nicht 2x spawnen kann
-    // Bereits versucht cars (aus store.js) in useEffect array einzubauen, allerdings wird dann der Autospawn nicht richtig ausgeführt
-
-
-
+    
 
     // spawns new car
     useEffect(() => {

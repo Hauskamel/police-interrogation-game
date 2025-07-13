@@ -48,7 +48,6 @@ function App() {
             <Gamecanvas cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
             <Startmenu />
 
-            {/* TODO: Textbox fade-out animation onClose after car reaches police checkpoint */}
             {selectedCar && (
                 <>
                     <CarControlTextbox

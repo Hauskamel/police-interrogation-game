@@ -9,11 +9,14 @@ export const CarAndDriverProfileTextbox = ({
     // check if no car has been stopped OR user clicked on a car that is not the stopped car
     if (!stoppedCar || stoppedCar.id !== selectedCar?.id) return;
 
+    console.log(selectedCar);
+    
+
     return (
         <>
             <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} margin="bottom-60" isCloseable={false}>
-                {/* // TODO: Fahrernamen generieren lassen  */}
-                <p className="text-gray-500 text-xs">Fahrername: {selectedCar.id}</p>
+            <p className="text-gray-500 text-xs">id: {selectedCar.id}</p>
+                <p className="text-gray-500 text-xs">Fahrername: {selectedCar.driverProfile.firstName} {selectedCar.driverProfile.lastName}</p>
 
                 <p className="text-gray-500 text-xs">Fahrer betrunken: {selectedCar.driverProfile.drunk ? "true" : "false"}</p>
                 <p className="text-gray-500 text-xs">{selectedCar.driverProfile.drunk ? "Alkoholpegel: " + selectedCar.driverProfile.alcoholLevel : ""}</p>

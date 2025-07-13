@@ -14,8 +14,8 @@ export const useGameStore = create((set) => ({
     },
 }));
 
-// TODO: useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
-// TODO: Betrifft alle NPCs, mit denen interagiert wird
+//  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
+// Betrifft alle NPCs, mit denen interagiert wird
 //      - wantedList
 //      - vllt sowas wie 'steht ein verhafteter NPC zur Abholung bereit?'
 //      - verhafteter NPC Profile
