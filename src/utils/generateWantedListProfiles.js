@@ -1,8 +1,7 @@
-import { useState, useRef, useEffect } from "react";
 import { generateDriverProfile } from "../utils/generateDriverProfile";
 import { generateCarProfile } from "./generateCarProfile";
 
-import { useWantedListStore } from "../store";
+
 
 
 
@@ -11,7 +10,8 @@ export function generateWantedListProfiles () {
 
     while (criminals.length < 3) {
         const profile = {
-            driverProfile: generateDriverProfile(),
+            stopped: false,
+            driverProfile: generateDriverProfile(true),
             carProfile: generateCarProfile(),
             arrested: false
         }

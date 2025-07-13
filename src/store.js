@@ -14,14 +14,21 @@ export const useGameStore = create((set) => ({
     },
 }));
 
-export const useWantedListStore = create((set) => ({
+//  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
+// Betrifft alle NPCs, mit denen interagiert wird
+//      - wantedList
+//      - vllt sowas wie 'steht ein verhafteter NPC zur Abholung bereit?'
+//      - verhafteter NPC Profile
+export const useNpcStore = create ((set) => ({
     wantedList: [],
+    arrestedNpcs: [],
     setWantedList: (array) =>
         set({
             wantedList: array
         }
     ),
 }))
+
 
 export const useCarStore = create((set) => ({
     cars: [],
@@ -38,7 +45,7 @@ export const useCarStore = create((set) => ({
     ),
     stopCar: (id) =>
         set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? {...car, stopped: true } : car)
+            cars: state.cars.map((car) => car.id === id ? {...car, stopped: true} : car)
         })
     ),
     continueCar: (id) =>
@@ -51,14 +58,20 @@ export const useCarStore = create((set) => ({
             selectedCar: car
         }
     ),
-    carPosition: (id, x) =>
-        set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x} } : car)
-        })
-    ),
-    stoppedCarPosition: (id, x, z) =>
+    carPosition: (id, x, z) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x, z: z} } : car)
         })
     )
 }));
+
+
+
+export const useTextboxStore = create(set => ({
+    textboxesVisible: false,
+    setTextboxVisibilityState: (state => {
+        set({
+            textboxesVisible: state
+        })
+    })
+}))

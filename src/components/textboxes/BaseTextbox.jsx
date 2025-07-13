@@ -1,23 +1,37 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+import { closeTextbox } from "../../helpers/closeTextbox";
 
-export const BaseTextbox = ({ title, width, height, margin, onClose, children, carId, isCloseable = true}) => {
-    const [isVisible, setIsVisible] = useState(true); // for fade state
-    const [shouldRender, setShouldRender] = useState(true); // control unmount
+import { useTextboxStore } from "../../store";
+
+/**
+ * 2D Textbox on white background
+ * can be filled with text & buttons
+ * @param {boolean} isCloseable - to determine wether 'X' for closing is available or not (default: true)
+ * @param {function} onClose - Callback function when textbox is closed
+ */
+
+
+export const BaseTextbox = ({ 
+        title, 
+        width, 
+        height, 
+        margin, 
+        children,
+        onClose,
+        isCloseable = true
+}) => {
+    // textboxes
+    const setTextboxVisibililty = useTextboxStore(state => state.setTextboxVisibilityState)
+    const isVisible = useTextboxStore(state => state.textboxesVisible)
 
     const handleClose = () => {
-        setIsVisible(false);                // trigger fade-out
-        setTimeout(() => {
-            setShouldRender(false);         // unmount after animation
-            onClose();                      // optional callback
-        }, 150);                            // match fade-out duration
+        closeTextbox(setTextboxVisibililty,onClose);
     };
 
     useEffect(() => {
-        setShouldRender(true);
-        setIsVisible(true);
-    }, [carId]);
+        setTextboxVisibililty(true);
+    }, [setTextboxVisibililty]);
 
-    if (!shouldRender) return null;
 
     return (
         <div
@@ -37,7 +51,7 @@ export const BaseTextbox = ({ title, width, height, margin, onClose, children, c
 
                     {isCloseable && handleClose && (
                         <button
-                            onClick={handleClose}
+                            onClick={() => handleClose()}
                             className="text-gray-900 hover:text-gray-800 transition-colors text-lg cursor-pointer"
                             aria-label="Close"
                         >

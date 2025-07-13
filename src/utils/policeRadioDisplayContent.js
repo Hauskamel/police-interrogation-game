@@ -1,4 +1,4 @@
-export const RADIO_DISPLAY_CONTENT = [
+export const radioDisplayContent = [
     {
         label: "Call tow truck",
         initSpawn: true

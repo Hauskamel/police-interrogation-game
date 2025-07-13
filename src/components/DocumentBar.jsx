@@ -1,13 +1,17 @@
 import { FaIdCard, FaCar } from "react-icons/fa";
+import { LuNotebook } from "react-icons/lu";
 
+// TODO: NOTEBOOK AUS DOCUMENTBAR ENTFERNEN -> FÜR DIESE BUTTONS GIBT ES EINE NEUE GRUPPIERUNG (sie sollen nichts mit den Fahrzeug/Führerschein Dokumenten zutun haben)
 const ICONS = {
     driversLicense: <FaIdCard />,
     carDocs: <FaCar />,
+    notebook: <LuNotebook />
 };
 
 const LABELS = {
     driversLicense: "Führerschein",
     carDocs: "Fahrzeugpapiere",
+    notebook: "Notebook",
 };
 
 
@@ -17,7 +21,7 @@ export function DocumentBar({ activeDocs = [], openDocs, onSelect }) {
 
     return (
         <div className="fixed bottom-4 right-4 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300">
-            {activeDocs.map((doc) => {
+            {activeDocs.map(doc => {
                 const isOpen = openDocs[doc];
 
                 return (
