@@ -17,6 +17,7 @@ import './../assets/css/App.css'
 import { useCarRefs } from "./hooks/useCarRefs.jsx";
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 import { POLICE_CHECKPOINT } from "./config/positions.js";
+import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButton.jsx";
 
 
 
@@ -69,6 +70,10 @@ function App() {
                         stoppedCar={cars.find(car => car.stopped)}
                     />
                     <DocumentManager selectedCar={selectedCar} />
+
+
+                    <DiscrepancyButton />
+
                 </>
             )}
 
