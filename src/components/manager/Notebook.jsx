@@ -13,7 +13,7 @@ export function Notebook () {
     return (
         <>
             <button 
-                className="fixed bottom-5 right-35 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300"
+                className="fixed bottom-5 right-50 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300"
                 onClick={() => setIsOpen(prev => !prev)}
             >
                 <LuNotebook 

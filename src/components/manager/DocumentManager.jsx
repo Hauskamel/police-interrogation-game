@@ -4,14 +4,16 @@ import {DocumentBar} from "./../DocumentBar";
 
 import {DriversLicence} from "./../driverDocuments/DriversLicence";
 import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
+import { ProofOfInsurance } from "../driverDocuments/ProofOfInsurance.jsx";
 
 export function DocumentManager({selectedCar}) {
-    const activeDocs = ["driversLicense", "carDocs"];
+    const activeDocs = ["proofOfInsurance", "driversLicense", "carDocs"];
 
     const [openDocs, setOpenDocs] = useState(() =>
         Object.fromEntries(activeDocs.map(doc => [doc, false])) // returns an object: { driversLicense: false, carDocs: false } 
                                                                 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
     );
+    
     
     const toggleDoc = (doc) => {
         setOpenDocs(prev => ({
@@ -30,8 +32,17 @@ export function DocumentManager({selectedCar}) {
         carDocs: (
             <CarDocuments 
                 key={"carDocs"}
-                profile={selectedCar?.carProfile}>
+                car={selectedCar?.carProfile}
+                driver={selectedCar?.driverProfile}>
             </CarDocuments>
+        ),
+        proofOfInsurance: (
+            <ProofOfInsurance
+                key={"proofOfInsurance"}
+                car={selectedCar?.carProfile}
+                driver={selectedCar?.driverProfile}
+                >
+            </ProofOfInsurance>
         )
     }
 

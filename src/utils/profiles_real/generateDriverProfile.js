@@ -1,5 +1,6 @@
-import {driverImageProfiles} from "../utils/driverImageProfiles"
+import {driverImageProfiles} from "../driverImageProfiles"
 import { faker } from "@faker-js/faker";
+import { generateFakeDriverProfile } from "../profiles_fake/generateFakeDriverProfile";
 
 const driverImages = Object.keys(driverImageProfiles);
 function getRandomImage(exclude = null) {
@@ -89,7 +90,7 @@ export function generateDriverProfile (isWanted) {
         arrestable
     }
 
+    generateFakeDriverProfile(profile);
+
     return profile
-
-
 }

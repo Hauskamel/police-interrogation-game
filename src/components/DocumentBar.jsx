@@ -1,16 +1,19 @@
 import { FaIdCard, FaCar } from "react-icons/fa";
 import { LuNotebook } from "react-icons/lu";
+import { FaHelmetSafety } from "react-icons/fa6";
 
 // TODO: NOTEBOOK AUS DOCUMENTBAR ENTFERNEN -> FÜR DIESE BUTTONS GIBT ES EINE NEUE GRUPPIERUNG (sie sollen nichts mit den Fahrzeug/Führerschein Dokumenten zutun haben)
 const ICONS = {
     driversLicense: <FaIdCard />,
     carDocs: <FaCar />,
-    notebook: <LuNotebook />
+    notebook: <LuNotebook />,
+    proofOfInsurance: <FaHelmetSafety />
 };
 
 const LABELS = {
     driversLicense: "Führerschein",
     carDocs: "Fahrzeugpapiere",
+    proofOfInsurance: "Versicherungsnachweis",
     notebook: "Notebook",
 };
 

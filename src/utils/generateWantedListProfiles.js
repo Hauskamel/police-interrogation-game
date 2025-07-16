@@ -1,5 +1,5 @@
-import { generateDriverProfile } from "../utils/generateDriverProfile";
-import { generateCarProfile } from "./generateCarProfile";
+import { generateDriverProfile } from "./profiles_real/generateDriverProfile";
+import { generateCarProfile } from "./profiles_real/generateCarProfile";
 
 
 

@@ -33,6 +33,12 @@ function App() {
 
     const [hoveringCar, setHoveringCar] = useState(false);
 
+
+
+    console.log(selectedCar);
+    
+
+
     
     // #################################################
     // ##################### HOOKS #####################

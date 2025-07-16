@@ -11,7 +11,7 @@ export function Policeradio () {
             <>
                 <button 
                     onClick={() => setIsOpen(prev => !prev)}
-                    className="fixed bottom-5 right-50 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300"
+                    className="fixed bottom-5 right-65 flex gap-2 bg-white/90 p-2 rounded-xl shadow-lg border border-gray-300"
                 >
                     <IoIosRadio 
                         className={`w-8 h-8 flex items-center justify-center rounded-lg border text-xl transition

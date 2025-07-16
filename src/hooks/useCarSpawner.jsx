@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { generateDriverProfile } from "../utils/generateDriverProfile.js";
-import { generateCarProfile } from "../utils/generateCarProfile.js";
+import { generateDriverProfile } from "../utils/profiles_real/generateDriverProfile.js";
+import { generateCarProfile } from "../utils/profiles_real/generateCarProfile.js";
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
