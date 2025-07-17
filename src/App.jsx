@@ -1,13 +1,16 @@
 import {useState} from "react";
 
-import {useCarStore} from "./store";
+import {useCarStore, useGameStore} from "./store";
+
+import { Startmenu } from "./components/Startmenu";
+import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
+import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButton.jsx";
 
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
-import { Startmenu } from "./components/Startmenu";
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
@@ -17,7 +20,6 @@ import './../assets/css/App.css'
 import { useCarRefs } from "./hooks/useCarRefs.jsx";
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 import { POLICE_CHECKPOINT } from "./config/positions.js";
-import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButton.jsx";
 
 
 
@@ -34,6 +36,8 @@ function App() {
 
     const [hoveringCar, setHoveringCar] = useState(false);
 
+    const gameState = useGameStore(state => state.gameState)
+
     
     // #################################################
     // ##################### HOOKS #####################
@@ -45,8 +49,10 @@ function App() {
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
-        <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}` }>
+        <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
             <Gamecanvas cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
+            
+            <DiscrepancyOverlay />
             <Startmenu />
 
             {selectedCar && (

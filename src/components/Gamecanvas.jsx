@@ -9,7 +9,8 @@ import { POLICEMAN_POSITION } from "../config/positions";
 
 export function Gamecanvas({cars, carRefs, setHoveringCar}) {
     return (
-        <Canvas camera={{position: [7, 14, -16], fov: 70}}>
+        <div className="w-screen h-screen -z-5">
+            <Canvas camera={{position: [7, 14, -16], fov: 70}}>
             {/* UTIL COMPONENTS */}
             <axesHelper/>
             <OrbitControls/>
@@ -30,7 +31,9 @@ export function Gamecanvas({cars, carRefs, setHoveringCar}) {
                     />
                 );
             })}
+            </Canvas>
+        </div>
+        
 
-        </Canvas>
     )
 }

@@ -3,15 +3,23 @@ import { create } from "zustand";
 export const gameStates = {
     MENU: "MENU",
     GAME: "GAME",
+    DISCREPENDANCY: "DISCREPENDANCY"
 }
 
 export const useGameStore = create((set) => ({
     gameState: gameStates.MENU,
-    startGame: () => {
+
+    gameMode: () => {
         set({
-            gameState: gameStates.GAME,
+            gameState: gameStates.GAME
         });
     },
+    discrepancyMode: () => {
+        set({
+            gameState: gameStates.DISCREPENDANCY
+        })
+    }
+
 }));
 
 //  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
