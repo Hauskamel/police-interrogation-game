@@ -31,19 +31,29 @@ export const BaseHeadlineValueText = ({headline, data, image}) => {
     }, [information])
 
 
+    
+    
+
+    
+    
+
 
     return (
         <>
             <div onClick={handleClick}>
-                {
-                    data.map(([paragraph], index) => {
-                        console.log(Object.values(paragraph)[index]);
-                        console.log(index);
-                        return (
-                            <p>{Object.values(paragraph)}</p>
-                        )
 
-                    })
+                <strong>{headline}</strong>
+
+                {
+                   Array.isArray(data) ? (
+                        data.map(paragraph => {
+                            
+                            
+                                return Object.values(paragraph)[0]
+                        })
+                   ) : (
+                        <p>{data}</p>
+                   )
                 }
                 <p>
                     <strong className="upper">{information.headline}</strong>
