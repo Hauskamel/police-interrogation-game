@@ -1,4 +1,9 @@
-export function CarDocuments ({profile}) {
+import { BaseHeadlineValueText } from "../base-components/BaseHeadlineValueText"
+
+export function CarDocuments ({car, driver}) {
+
+
+
     return (
         <>
             <div
@@ -12,37 +17,13 @@ export function CarDocuments ({profile}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <div>
-                            <p>{profile.firstName} {profile.lastName}</p>
-                            <p>
-                                <strong className="upper">Fahrzeughalter</strong>
-                            </p>
-                        </div>
-
-                        <div className="mt-3">
-                            <p>{profile.plateNumber}</p>
-                            <p>
-                                <strong className="upper">Nummernschild</strong>
-                            </p>
-                        </div>
+                        <BaseHeadlineValueText headline="Fahrzeughalter" data={[{firstName: driver.firstName}, {lastName: driver.lastName}]} />                        
+                        <BaseHeadlineValueText headline="Nummernschild" data={car.plateNumber} />
 
                         <div className="flex">
-                            <div className="w-2/3 mt-3">
-                                <p>{profile.brandName}</p>
-                                <p>
-                                    <strong className="upper">Hersteller</strong>
-                                </p>
-                            </div>
-
-                            <div className="w-1/3 mt-3">
-                                <p>{profile.brandModel}</p>
-                                <p>
-                                    <strong className="upper">Modell</strong>
-                                </p>
-                            </div>
+                            <BaseHeadlineValueText headline="Hersteller" data={car.brandName} />
+                            <BaseHeadlineValueText headline="Modell" data={car.brandModel} />
                         </div>
-
-                        
 
                     </div>
                 </div>

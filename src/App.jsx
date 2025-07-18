@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {useCarStore, useGameStore} from "./store";
+import {useCarStore} from "./store";
 
 import { Startmenu } from "./components/Startmenu";
 import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
@@ -35,8 +35,6 @@ function App() {
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
     const [hoveringCar, setHoveringCar] = useState(false);
-
-    const gameState = useGameStore(state => state.gameState)
 
     
     // #################################################
@@ -77,13 +75,9 @@ function App() {
                     />
                     <DocumentManager selectedCar={selectedCar} />
 
-
                     <DiscrepancyButton />
-
                 </>
             )}
-
-
         </div>
     )
 }

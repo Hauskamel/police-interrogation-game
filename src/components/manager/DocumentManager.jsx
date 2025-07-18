@@ -1,5 +1,5 @@
 import {useState} from "react";
-import BaseDocument from "../driverDocuments/BaseDocument.jsx";
+import BaseDocument from "../base-components/BaseDocument.jsx";
 import {DocumentBar} from "./../DocumentBar";
 
 import {DriversLicence} from "./../driverDocuments/DriversLicence";
@@ -24,13 +24,14 @@ export function DocumentManager({selectedCar}) {
         driversLicense: (
             <DriversLicence 
                 key="driversLicense"
-                profile={selectedCar?.driverProfile}
+                driver={selectedCar?.driverProfile}
             />
         ),
         carDocs: (
             <CarDocuments 
                 key={"carDocs"}
-                profile={selectedCar?.carProfile}>
+                car={selectedCar?.carProfile}
+                driver={selectedCar?.driverProfile}>
             </CarDocuments>
         )
     }
