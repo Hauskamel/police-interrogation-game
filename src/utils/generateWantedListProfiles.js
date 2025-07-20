@@ -10,7 +10,6 @@ export function generateWantedListProfiles () {
 
     while (criminals.length < 3) {
         const profile = {
-            stopped: false,
             driverProfile: generateDriverProfile(true),
             carProfile: generateCarProfile(),
             arrested: false

@@ -11,7 +11,6 @@ import { useCarStore, useNpcStore } from "../store.js";
 
 
 export function useCarSpawner () {
-    const cars = useCarStore(state => state.cars)
     const addCar = useCarStore((state) => state.addCar);
     const wantedList = useNpcStore((state) => state.wantedList);
     

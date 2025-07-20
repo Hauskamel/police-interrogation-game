@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 
-export const BaseHeadlineValueText = ({headline, data}) => {
+export const BaseHeadlineText = ({headline, data}) => {
     const [information, setInformation] = useState({})
 
 

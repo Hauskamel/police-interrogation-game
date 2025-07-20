@@ -83,3 +83,9 @@ export const useTextboxStore = create(set => ({
         })
     })
 }))
+
+
+
+export const useDiscrepandancyComparisonStore = create(set => ({
+    compareArray: []
+}))

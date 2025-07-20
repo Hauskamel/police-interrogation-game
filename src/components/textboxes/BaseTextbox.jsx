@@ -35,7 +35,7 @@ export const BaseTextbox = ({
 
     return (
         <div
-            className={`${margin} absolute left-8 z-30 sm:w-80 bg-pink-50 border border-pink-200 rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            className={`${margin} absolute left-8 z-30 sm:w-80 bg-white rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
             style={{
                 width: `${width}px`,
                 height: `${height}px`

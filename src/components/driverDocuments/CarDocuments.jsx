@@ -1,4 +1,4 @@
-import { BaseHeadlineValueText } from "../base-components/BaseHeadlineValueText"
+import { BaseHeadlineText } from "../base-components/BaseHeadlineText"
 
 export function CarDocuments ({car, driver}) {
 
@@ -17,12 +17,12 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineValueText headline="Fahrzeughalter" data={[{firstName: driver.firstName}, {lastName: driver.lastName}]} />                        
-                        <BaseHeadlineValueText headline="Nummernschild" data={car.plateNumber} />
+                        <BaseHeadlineText headline="Fahrzeughalter" data={[{firstName: driver.firstName}, {lastName: driver.lastName}]} />                        
+                        <BaseHeadlineText headline="Nummernschild" data={car.plateNumber} />
 
                         <div className="flex">
-                            <BaseHeadlineValueText headline="Hersteller" data={car.brandName} />
-                            <BaseHeadlineValueText headline="Modell" data={car.brandModel} />
+                            <BaseHeadlineText headline="Hersteller" data={car.brandName} />
+                            <BaseHeadlineText headline="Modell" data={car.brandModel} />
                         </div>
 
                     </div>
