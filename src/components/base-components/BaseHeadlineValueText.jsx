@@ -1,18 +1,11 @@
+// This component is used in the drivers licence and car documents
+
 import { useEffect, useState } from "react"
 
 
-export const BaseHeadlineValueText = ({headline, data, image}) => {
+export const BaseHeadlineValueText = ({headline, data}) => {
     const [information, setInformation] = useState({})
 
-
-    if (image !== undefined) {
-        setInformation({
-            image: image
-        })
-    }
-
-    
-    
 
 
 

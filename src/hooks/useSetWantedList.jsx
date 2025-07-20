@@ -5,10 +5,11 @@ import { generateWantedListProfiles } from "../utils/generateWantedListProfiles.
 export function useSetWantedList () {
     const gameState = useGameStore((state) => state.gameState)
     const setWantedList = useNpcStore((state) => state.setWantedList)
+    
 
     // creates wanted list profiles
     useEffect(() => {
-        if (gameState === gameStates.GAME) {
+        if (gameState === gameStates.MENU) {
             setWantedList(generateWantedListProfiles())
 
         }   

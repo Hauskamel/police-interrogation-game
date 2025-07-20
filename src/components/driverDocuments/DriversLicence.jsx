@@ -1,5 +1,3 @@
-import { BaseHeadlineValueText } from "../base-components/BaseHeadlineValueText"
-
 export function DriversLicence ({ driver }) {
 
     return (
