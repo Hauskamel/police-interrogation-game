@@ -3,7 +3,7 @@ import { gameStates, useGameStore } from "../../store"
 export const DiscrepancyOverlay =  () => {
     const gameState = useGameStore(state => state.gameState);
 
-    if (gameState !== gameStates.DISCREPENDANCY) return;
+    if (gameState !== gameStates.DISCREPANCY) return;
 
     return (
         <>

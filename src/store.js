@@ -3,7 +3,7 @@ import { create } from "zustand";
 export const gameStates = {
     MENU: "MENU",
     GAME: "GAME",
-    DISCREPENDANCY: "DISCREPENDANCY"
+    DISCREPANCY: "DISCREPANCY"
 }
 
 export const useGameStore = create((set) => ({
@@ -16,7 +16,7 @@ export const useGameStore = create((set) => ({
     },
     discrepancyMode: () => {
         set({
-            gameState: gameStates.DISCREPENDANCY
+            gameState: gameStates.DISCREPANCY
         })
     }
 
@@ -86,6 +86,10 @@ export const useTextboxStore = create(set => ({
 
 
 
-export const useDiscrepandancyComparisonStore = create(set => ({
-    compareArray: []
+export const useDiscrepandancyCompareStore = create(set => ({
+    compareArray: [],
+    setInformationToCompareArray: (information) => 
+        set((state) => ({
+            compareArray: [...state.compareArray, information]
+    }))
 }))

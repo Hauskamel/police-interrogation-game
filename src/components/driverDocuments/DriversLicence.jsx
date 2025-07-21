@@ -1,3 +1,5 @@
+import { BaseHeadlineText } from "../base-components/BaseHeadlineText";
+
 export function DriversLicence ({ driver }) {
 
     return (
@@ -24,10 +26,20 @@ export function DriversLicence ({ driver }) {
 
                     <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                         <div className="mt-1">
-                            <div><strong>Name: </strong>{driver.firstName} {driver.lastName}</div>
-                            <div><strong>Geburtsdatum: </strong>{driver.birthDate}</div>
-                            <div><strong>Lizenznummer: </strong>{driver.licenseNumber}</div>
-                            <div><strong>Ausgabedatum: </strong>{driver.issueDate}</div>
+
+
+
+
+
+                            <BaseHeadlineText headline="Name" data={[driver.firstName, driver.lastName]}></BaseHeadlineText>
+                            <BaseHeadlineText headline="Geburtsdatum" data={driver.birthDate}></BaseHeadlineText>
+                            <BaseHeadlineText headline="Lizenznummer" data={driver.licenseNumber}></BaseHeadlineText>
+                            <BaseHeadlineText headline="Ausgabedatum" data={driver.issueDate}></BaseHeadlineText>
+
+
+
+
+
                         </div>
                         <div className="mt-4 flex justify-between w-4/5">
                             <span>

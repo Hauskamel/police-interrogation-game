@@ -17,7 +17,7 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineText headline="Fahrzeughalter" data={[{firstName: driver.firstName}, {lastName: driver.lastName}]} />                        
+                        <BaseHeadlineText headline="Fahrzeughalter" data={[driver.firstName, driver.lastName]} />                        
                         <BaseHeadlineText headline="Nummernschild" data={car.plateNumber} />
 
                         <div className="flex">

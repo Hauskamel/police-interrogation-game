@@ -1,9 +1,13 @@
 // Used in the wanted list component
+import { gameStates, useGameStore } from "../../store"
+
 
 export const BaseImageInformation = ({persona}) => {
+    const gameState = useGameStore((state) => state.gameState)
     
 
     function handleClick () {
+        if (gameState !== gameStates.DISCREPANCY) return
         console.log(persona)
     }
 

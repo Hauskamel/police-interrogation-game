@@ -1,0 +1,6 @@
+Zuletzt aufgehört bei:
+war dabei den das compareArray zu füllen (funktioniert jetzt)
+
+Nächsten Todos
+- compareArray logik überarbeiten bzw zuerst Gedanken machen
+- Animation/onClick HIghlighting der Informationen im Discrepancy Mode
