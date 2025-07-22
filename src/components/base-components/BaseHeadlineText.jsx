@@ -2,43 +2,47 @@
 
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
-import { generateUUID } from "three/src/math/MathUtils.js"
+
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
 export const BaseHeadlineText = ({headline, data}) => {
-    const [selected, setSelected] = useState(false)
+    const [isSelected, setIsSelected] = useState(false)
     const gameState = useGameStore(state => state.gameState)
 
-    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray)
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
+    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray)
+    const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state. removeInformationFromCompareArray)
+    
 
 
     const handleClick = () => {
-        if (gameState !== gameStates.DISCREPANCY || compareArray.length > 1) return
+        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return
         
-        // check if Headline/Text was already selected (already in compareArray)
-        if (selected) {
-            // removeInformationFromCompareArray(compareInformation)
-            setSelected(prev => !prev) // switches between true and false
-            return // return so not set again to compareArray
+        // check if Headline/Text was already isSelected (already in compareArray)
+        if (!isSelected) {
+            setIsSelected(prev => !prev)
+            setInformationToCompareArray({
+                id: compareArray[0] ? 2 : 1,
+                headline: headline,
+                data: data
+            })
         }
-        setSelected(prev => !prev)
-        setInformationToCompareArray({
-            headline: headline,
-            data: data
-        })
+
+        removeInformationFromCompareArray()
+        setIsSelected(prev => !prev) // switches between true and false
+        return // return so not set again to compareArray
+        
     }
 
     useEffect(() => {
         console.log(compareArray);
-        console.log("headline selected: ", selected);
-        
-    }, [selected, compareArray])
+        console.log("headline isSelected: ", isSelected);
+    }, [isSelected, compareArray])
 
 
     return (
         <>
-            <div onClick={handleClick}>
+            <div className={isSelected ? "text-orange-400" : ""} onClick={handleClick}>
                 <strong>{headline}</strong>
                 {
                     Array.isArray(data) ? (
