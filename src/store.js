@@ -3,7 +3,8 @@ import { create } from "zustand";
 export const gameStates = {
     MENU: "MENU",
     GAME: "GAME",
-    DISCREPANCY: "DISCREPANCY"
+    DISCREPANCY: "DISCREPANCY",
+    COMPARE: "COMPARE"
 }
 
 export const useGameStore = create((set) => ({
@@ -18,8 +19,12 @@ export const useGameStore = create((set) => ({
         set({
             gameState: gameStates.DISCREPANCY
         })
+    },
+    compareMode: () => {
+        set({
+            gameState: gameStates.COMPARE
+        })
     }
-
 }));
 
 //  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
@@ -75,6 +80,7 @@ export const useCarStore = create((set) => ({
 
 
 
+
 export const useTextboxStore = create(set => ({
     textboxesVisible: false,
     setTextboxVisibilityState: (state => {
@@ -83,6 +89,8 @@ export const useTextboxStore = create(set => ({
         })
     })
 }))
+
+
 
 
 

@@ -7,7 +7,10 @@ import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../s
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
 export const BaseHeadlineText = ({useCase, headline, data, id}) => {
     const [isSelected, setIsSelected] = useState(false)
-    const gameState = useGameStore(state => state.gameState)
+
+    const gameState = useGameStore(state => state.gameState);
+    const compareMode = useGameStore(state => state.compareMode);
+    const discrepancyMode = useGameStore(state => state.discrepancyMode);
 
 
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
@@ -36,19 +39,16 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
 
 
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
-
-        console.log(obj);
-        
         if (obj) removeInformationFromCompareArray(obj.id)
-        
         setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
     }
 
     useEffect(() => {
-        // console.log(compareArray);
-        // console.log("headline isSelected: ", isSelected);
-    }, [isSelected, compareArray])
+        if (compareArray.length === 2) {
+            compareMode();
+        } 
+    }, [compareArray])
 
 
     return (
