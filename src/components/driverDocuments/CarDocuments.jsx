@@ -1,6 +1,8 @@
+import { useState } from "react"
 import { BaseHeadlineText } from "../base-components/BaseHeadlineText"
 
 export function CarDocuments ({car, driver}) {
+    const [setId, id] = useState(0)
 
 
 
@@ -17,12 +19,12 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineText headline="Fahrzeughalter" data={[driver.firstName, driver.lastName]} />                        
-                        <BaseHeadlineText headline="Nummernschild" data={car.plateNumber} />
+                        <BaseHeadlineText useCase="cardocument" key={1} headline="Fahrzeughalter" data={[driver.firstName, driver.lastName]} />                        
+                        <BaseHeadlineText useCase="cardocument" key={2} data={car.plateNumber} />
 
                         <div className="flex">
-                            <BaseHeadlineText headline="Hersteller" data={car.brandName} />
-                            <BaseHeadlineText headline="Modell" data={car.brandModel} />
+                            <BaseHeadlineText useCase="cardocument" key={3} headline="Hersteller" data={car.brandName} />
+                            <BaseHeadlineText useCase="cardocument" key={4} headline="Modell" data={car.brandModel} />
                         </div>
 
                     </div>

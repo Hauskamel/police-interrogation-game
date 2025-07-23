@@ -33,7 +33,12 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
             return;
         }
 
-        const obj = compareArray.find(item => item.headline === headline && item.data === data && item.useCase === useCase && item.id === id)
+
+
+        const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
+
+        console.log(obj);
+        
         if (obj) removeInformationFromCompareArray(obj.id)
         
         setIsSelected(prev => !prev) // switches between true and false
@@ -41,8 +46,8 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
     }
 
     useEffect(() => {
-        console.log(compareArray);
-        console.log("headline isSelected: ", isSelected);
+        // console.log(compareArray);
+        // console.log("headline isSelected: ", isSelected);
     }, [isSelected, compareArray])
 
 
