@@ -31,10 +31,10 @@ export function DriversLicence ({ driver }) {
 
 
 
-                            <BaseHeadlineText headline="Name" data={[driver.firstName, driver.lastName]}></BaseHeadlineText>
-                            <BaseHeadlineText headline="Geburtsdatum" data={driver.birthDate}></BaseHeadlineText>
-                            <BaseHeadlineText headline="Lizenznummer" data={driver.licenseNumber}></BaseHeadlineText>
-                            <BaseHeadlineText headline="Ausgabedatum" data={driver.issueDate}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={1} headline="Name" data={[driver.firstName, driver.lastName]}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={2} headline="Geburtsdatum" data={driver.birthDate}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={3} headline="Lizenznummer" data={driver.licenseNumber}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={4} headline="Ausgabedatum" data={driver.issueDate}></BaseHeadlineText>
 
 
 
