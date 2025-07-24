@@ -33,7 +33,7 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
         // check if Headline/Text was already selected (already in compareArray)...
         if (!isSelected) {
             // ... if not safe set it to 'isSelected' the information to the 'compareArray'
-            setIsSelected(true)
+            setIsSelected(prev => !prev)
             setInformationToCompareArray({
                 id: id,
                 useCase: useCase,
@@ -45,8 +45,10 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
 
         // finds the clicked object by searchin the useCase f.e. 'driversLicence' and the id
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
+        console.log(obj.id);
+        
         if (obj) removeInformationFromCompareArray(obj.id)
-        setIsSelected(false) 
+        setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
     }
 
