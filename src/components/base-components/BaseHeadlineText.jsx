@@ -16,20 +16,24 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
     
 
 
+    // reset select status to sync with empty 'compareArray'
     useEffect(() => {
         if (gameState === gameStates.GAME) {
-            setIsSelected(false) // reset select status to sync with empty 'compareArray'
+            setIsSelected(false)
         }
     }, [compareArray])
 
 
+    // handling click event when comparing
     const handleClick = () => {
-        // . !isSelected is important to know wether this box is already in the compareArray or not
-        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return
+        // checks wether 'BaseHeadlineText' can be clicked on to compare 
+        // by checking the current gameState and the 'compareArray' length
+        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return // . !isSelected is important to know wether this box is already in the compareArray or not
         
-        // check if Headline/Text was already isSelected (already in compareArray)
+        // check if Headline/Text was already selected (already in compareArray)...
         if (!isSelected) {
-            setIsSelected(prev => !prev)
+            // ... if not safe set it to 'isSelected' the information to the 'compareArray'
+            setIsSelected(true)
             setInformationToCompareArray({
                 id: id,
                 useCase: useCase,
@@ -42,7 +46,7 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
         // finds the clicked object by searchin the useCase f.e. 'driversLicence' and the id
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
         if (obj) removeInformationFromCompareArray(obj.id)
-        setIsSelected(prev => !prev) // switches between true and false
+        setIsSelected(false) 
         return // return so not set again to compareArray
     }
 
