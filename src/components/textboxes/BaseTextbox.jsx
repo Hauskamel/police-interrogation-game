@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import { closeTextbox } from "../../helpers/closeTextbox";
+import { closeTextbox } from "../../utils/closeTextbox";
 
 import { useTextboxStore } from "../../store";
 

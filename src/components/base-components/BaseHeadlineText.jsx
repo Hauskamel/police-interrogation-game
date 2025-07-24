@@ -9,9 +9,6 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
     const [isSelected, setIsSelected] = useState(false)
 
     const gameState = useGameStore(state => state.gameState);
-    const compareMode = useGameStore(state => state.compareMode);
-    const discrepancyMode = useGameStore(state => state.discrepancyMode);
-
 
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
     const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray)
@@ -19,9 +16,15 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
     
 
 
+    useEffect(() => {
+        if (gameState === gameStates.GAME) {
+            setIsSelected(false) // reset select status to sync with empty 'compareArray'
+        }
+    }, [compareArray])
 
 
     const handleClick = () => {
+        // . !isSelected is important to know wether this box is already in the compareArray or not
         if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return
         
         // check if Headline/Text was already isSelected (already in compareArray)
@@ -36,19 +39,14 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
             return;
         }
 
-
-
+        // finds the clicked object by searchin the useCase f.e. 'driversLicence' and the id
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
         if (obj) removeInformationFromCompareArray(obj.id)
         setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
     }
 
-    useEffect(() => {
-        if (compareArray.length === 2) {
-            compareMode();
-        } 
-    }, [compareArray])
+    
 
 
     return (

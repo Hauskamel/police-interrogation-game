@@ -11,7 +11,6 @@ export function useSetWantedList () {
     useEffect(() => {
         if (gameState === gameStates.MENU) {
             setWantedList(generateWantedListProfiles())
-
         }   
     }, [gameState, setWantedList])
     

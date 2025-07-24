@@ -2,7 +2,7 @@ import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore, useTextboxStore} from "../../store.js";
 
 
-import { closeTextbox } from "../../helpers/closeTextbox";
+import { closeTextbox } from "../../utils/closeTextbox";
 
 
 export const CarControlTextbox = ({

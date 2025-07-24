@@ -106,4 +106,9 @@ export const useDiscrepandancyCompareStore = create(set => ({
             compareArray: state.compareArray.filter((information) => information.id !== id)
         })
     ),
+    clearCompareArray: () =>
+        set((state) => ({
+            compareArray: state.compareArray.splice(0, state.compareArray.lenght)
+        })
+    )
 }))

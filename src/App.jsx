@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-import {useCarStore} from "./store";
+import {useCarStore, useGameStore, gameStates} from "./store";
 
 import { Startmenu } from "./components/Startmenu";
 import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
@@ -10,11 +10,15 @@ import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
+import { useDiscrepandancyCompareStore } from "./store";
+
+import { useEffect } from "react";
 
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
 import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
+import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
 
 import './../assets/css/App.css'
 import { useCarRefs } from "./hooks/useCarRefs.jsx";
@@ -34,7 +38,14 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
+    const gameState = useGameStore((state) => state.gameState);
+    
+    const compareMode = useGameStore(state => state.compareMode);
+    const discrepancyMode = useGameStore(state => state.discrepancyMode);
+
     const [hoveringCar, setHoveringCar] = useState(false);
+
+    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
 
     
     // #################################################
@@ -42,6 +53,12 @@ function App() {
     const carRefs = useCarRefs(cars);
     useSetWantedList();
     useCarSpawner();
+
+    // sets overlay dependant of the current game mode
+    useOverlaySetter();
+    
+     
+
     
 
     // ##################################################
