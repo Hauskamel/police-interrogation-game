@@ -38,14 +38,8 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
-    const gameState = useGameStore((state) => state.gameState);
-    
-    const compareMode = useGameStore(state => state.compareMode);
-    const discrepancyMode = useGameStore(state => state.discrepancyMode);
-
     const [hoveringCar, setHoveringCar] = useState(false);
 
-    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
 
     
     // #################################################

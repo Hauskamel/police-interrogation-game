@@ -44,10 +44,8 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
         }
 
         // finds the clicked object by searchin the useCase f.e. 'driversLicence' and the id
-        const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
-        console.log(obj.id);
-        
-        if (obj) removeInformationFromCompareArray(obj.id)
+        const obj = compareArray.find(item => item.useCase === useCase && item.id === id)        
+        if (obj) removeInformationFromCompareArray(obj.useCase, obj.id)
         setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
     }
