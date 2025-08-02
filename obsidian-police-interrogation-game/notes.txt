@@ -1,6 +1,3 @@
-Zuletzt aufgehört bei:
-war dabei den das compareArray zu füllen (funktioniert jetzt)
+jetzt muss ein fake profil erstellt werden
 
-Nächsten Todos
-- compareArray logik überarbeiten bzw zuerst Gedanken machen
-- Animation/onClick HIghlighting der Informationen im Discrepancy Mode
+wie das profil manipuliert wird weiß ich noch nicht

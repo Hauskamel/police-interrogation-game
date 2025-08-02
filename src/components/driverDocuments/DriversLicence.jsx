@@ -13,7 +13,7 @@ export function DriversLicence ({ driver }) {
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
                             <img
-                                src={`/images/driver/${driver.licenceImage}`}
+                                src={`/images/driver/${driver.driverImage}`}
                                 alt="Licence Photo"
                                 className="col-span-2 w-28 h-28"
                             />

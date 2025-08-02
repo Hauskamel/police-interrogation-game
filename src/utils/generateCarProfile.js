@@ -25,12 +25,12 @@ export function generateCarProfile () {
     // car plate
     const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
 
-
-
     const profile = {
-        plateNumber,
         brandName,
-        brandModel
+        brandModel,
+        plateNumber,
+        carRegistrationNumber,
+        plateNumber
     }
 
     return profile;

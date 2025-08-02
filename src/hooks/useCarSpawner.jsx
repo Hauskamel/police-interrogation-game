@@ -2,6 +2,8 @@ import { useEffect } from "react";
 
 import { generateDriverProfile } from "../utils/generateDriverProfile.js";
 import { generateCarProfile } from "../utils/generateCarProfile.js";
+import { generateFakeDriverAndCarProfile } from "../utils/generateFakeDriverAndCarProfile.js";
+
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
@@ -33,6 +35,13 @@ export function useCarSpawner () {
                 driverProfile: generateDriverProfile(false),
                 carProfile: generateCarProfile()
             }
+        }
+        const manipulateProfile = Math.random() < 0.4
+        if (manipulateProfile) {
+            generateFakeDriverAndCarProfile(newCar.driverProfile, newCar.carProfile)
+        } else {
+            console.log("No fake proffile");
+            
         }
         addCar(newCar);
     }, respawnTime, wantedList);

@@ -17,7 +17,6 @@ export function generateDriverProfile (isWanted) {
     // driver Image
     const driverImage = getRandomImage();
     const imageProfile = driverImageProfiles[driverImage];
-    let licenceImage = driverImage;
 
     // driver gender
     const prefix = faker.person.prefix(imageProfile.gender);
@@ -70,7 +69,6 @@ export function generateDriverProfile (isWanted) {
 
     const profile = {
         driverImage,
-        licenceImage,
         prefix,
         prefix,
         firstName,

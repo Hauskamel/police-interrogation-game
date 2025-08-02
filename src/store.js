@@ -1,3 +1,4 @@
+import { testValueType } from "framer-motion";
 import { create } from "zustand";
 
 export const gameStates = {
@@ -94,16 +95,16 @@ export const useTextboxStore = create(set => ({
 
 
 
+
 export const useDiscrepandancyCompareStore = create(set => ({
     compareArray: [],
     setInformationToCompareArray: (information) => 
         set((state) => ({
             compareArray: [...state.compareArray, information]
     })),
-    // FIXME: das funktioniert noch nicht
     removeInformationFromCompareArray: (useCase, id) =>
         set((state) => ({
-            compareArray: state.compareArray.filter((information) => information.useCase !== useCase)
+            compareArray: state.compareArray.filter((information) => !(information.useCase === useCase && information.id === id))
         })
     ),
     clearCompareArray: () =>
