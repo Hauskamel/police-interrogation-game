@@ -1,15 +1,9 @@
-import { carProfiles } from './carProfiles';
-import { faker } from "@faker-js/faker";
-
-const carBrands = Object.keys(carProfiles)
-function getRandomCarBrand(exclude = null) {
-    const carBrandFilter = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
-    const carBrand = faker.helpers.arrayElement(carBrandFilter)
-    return carBrand
-}
+// NOTE: THIS ALGORYTHM MIGHT BE ALTERED TO WORK FOR BOTH - DRIVER AND CAR
+// NOTE: ----- for testing purposes its only for the car -----
 
 
-export function generateCarProfile () {
+// this is the actual/original/legitimate profile of the car 
+const generateRealCarProfile = () => {
     // ########## CAR INFORMATION ##########
     // #####################################
     // car brand
@@ -32,6 +26,28 @@ export function generateCarProfile () {
         carRegistrationNumber,
         plateNumber
     }
-
     return profile;
+}
+
+
+
+const randomPercentage = () => {
+    return Math.floor(Math.random() * 100);
+}
+
+if (randomPercentage > 50) {
+    createFakeProfile();
+}
+
+
+
+
+const createFakeProfile = () => {
+    const chancesOfError = [100, 20, 10, 5];
+
+    if (randomPercentage >= chancesOfError[0]) {
+        chancesOfError.slice(0, 1);
+        console.log();
+        
+    }
 }
