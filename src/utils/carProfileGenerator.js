@@ -2,8 +2,24 @@
 // NOTE: ----- for testing purposes its only for the car -----
 
 
+import { percent } from 'framer-motion';
+import { carProfiles } from './carProfiles';
+import { faker } from "@faker-js/faker";
+
+
+
+const carBrands = Object.keys(carProfiles)
+function getRandomCarBrand(exclude = null) {
+    const carBrandFilter = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
+    const carBrand = faker.helpers.arrayElement(carBrandFilter)
+    return carBrand
+}
+
+const createFakeProfile = Math.floor(Math.random() * 100) < 80; // 50% chance of creating a fake profile
+
+
 // this is the actual/original/legitimate profile of the car 
-const generateRealCarProfile = () => {
+const generateRealProfile = () => {
     // ########## CAR INFORMATION ##########
     // #####################################
     // car brand
@@ -19,35 +35,43 @@ const generateRealCarProfile = () => {
     // car plate
     const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
 
-    const profile = {
+    return {
         brandName,
         brandModel,
         plateNumber,
         carRegistrationNumber,
         plateNumber
     }
-    return profile;
+}
+const realProfile = generateRealProfile();
+
+
+const manipulateProfile = (profile) => {
+    const chancesOfError = [100, 50, 10, 5];
+
+    const manipulations = []
+
+    do {
+        const percentage = Math.floor(Math.random() * 100);
+        console.log(percentage);
+
+        if (percentage <= chancesOfError[0]) {
+            chancesOfError.shift();
+
+            // TODO: Hier dann Logik für Manipulation einfügen
+
+        } else {
+            break;
+        }
+    } while (chancesOfError.length)
+    
 }
 
 
-
-const randomPercentage = () => {
-    return Math.floor(Math.random() * 100);
+export const identity = () => {
+    return realProfile;
 }
 
-if (randomPercentage > 50) {
-    createFakeProfile();
-}
-
-
-
-
-const createFakeProfile = () => {
-    const chancesOfError = [100, 20, 10, 5];
-
-    if (randomPercentage >= chancesOfError[0]) {
-        chancesOfError.slice(0, 1);
-        console.log();
-        
-    }
+if (createFakeProfile) {
+    manipulateProfile(realProfile);
 }

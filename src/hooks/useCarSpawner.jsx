@@ -36,11 +36,15 @@ export function useCarSpawner () {
                 carProfile: generateCarProfile()
             }
         }
+
+
+        // TODO: Arbeite gerade an dem profile Generator Algorythmus.
+        // TODO: Das Nachfolgende (manipulateProfile) bitte nochmal in Zusammenhang mit diesem Algorythmus überprüfen
         const manipulateProfile = Math.random() < 0.4
         if (manipulateProfile) {
             generateFakeDriverAndCarProfile(newCar.driverProfile, newCar.carProfile)
         } else {
-            console.log("No fake proffile");
+            // console.log("No fake profile");
             
         }
         addCar(newCar);

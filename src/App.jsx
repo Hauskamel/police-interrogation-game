@@ -29,6 +29,13 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
+import { identity } from "./utils/carProfileGenerator.js"
+
+
+
+
+
+
 function App() {
     // ##################################################
     // ##################### STATES #####################
@@ -50,6 +57,9 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
+
+    
+    
     
      
 
