@@ -1,3 +1,15 @@
 jetzt muss ein fake profil erstellt werden
 
 wie das profil manipuliert wird weiß ich noch nicht
+
+
+
+###############################################################
+
+
+ich glaube, ich muss den branch 
+'feature/fake-profile-generator'
+in 
+'feature/discrepancy-mode'
+mergen und nicht in
+'develop'
