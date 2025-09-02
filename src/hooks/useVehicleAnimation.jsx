@@ -59,7 +59,10 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             carRef.current.position.copy(position);
             carRef.current.lookAt(lookAtTarget);
         } else {
-            carRef.current.position.x -= 0.1; // car driving on road
+            // NOTE: The car speed (original value: 0.1) does vary from device to device due to performance differences
+            // NOTE: on windows its 0.05
+            // NOTE: on Mac/Linux its 0.1
+            carRef.current.position.x -= 0.05; // car driving on road
         }
 
         // Handle offscreen car removal
