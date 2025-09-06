@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 
 import { generateDriverProfile } from "../utils/generateDriverProfile.js";
-import { generateCarProfile } from "../utils/generateCarProfile.js";
+
+import { generateCarProfile } from "../utils/carProfileGenerator.js";
 import { generateFakeDriverAndCarProfile } from "../utils/generateFakeDriverAndCarProfile.js";
 
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
+
 
 
 
@@ -23,30 +25,28 @@ export function useCarSpawner () {
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newCar;
+        
         if (spawnCarOfWantedList && wantedList.length) {
+            console.log("Spawning from wantedList");
+            
             // wantedList is a parameter of this function.
             // the passed value is a reference to the wantedList in the storage.js
-            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
+            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)];
+
+            console.log(criminal);
+            
+            
+
             newCar = {...criminal, id :generateUUID()}
         } else {
-            newCar = {
-                id: generateUUID(),
-                stopped: false,
-                driverProfile: generateDriverProfile(false),
-                carProfile: generateCarProfile()
-            }
-        }
-
-
-        // TODO: Arbeite gerade an dem profile Generator Algorythmus.
-        // TODO: Das Nachfolgende (manipulateProfile) bitte nochmal in Zusammenhang mit diesem Algorythmus überprüfen
-        const manipulateProfile = Math.random() < 0.4
-        if (manipulateProfile) {
-            generateFakeDriverAndCarProfile(newCar.driverProfile, newCar.carProfile)
-        } else {
-            // console.log("No fake profile");
+            console.log("Spawning NOT from wantedList");
             
+            const carProfile = generateCarProfile();
+            
+            newCar = {carProfile, id: generateUUID()}
         }
+
+
         addCar(newCar);
     }, respawnTime, wantedList);
     return () => clearInterval(intervalId);

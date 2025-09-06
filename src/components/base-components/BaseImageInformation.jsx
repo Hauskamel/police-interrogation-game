@@ -8,7 +8,6 @@ export const BaseImageInformation = ({persona}) => {
 
     function handleClick () {
         if (gameState !== gameStates.DISCREPANCY) return
-        console.log(persona)
     }
 
 

@@ -35,7 +35,7 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             const prev = previousPositionRef.current;
             if (prev.x !== x || (typeof z === "number" && prev.z !== z)) {
                 carPosition(car.id, x, z);
-                previousPositionRef.current = { x, z}
+                previousPositionRef.current = {x, z}
             }
         }
 
@@ -59,7 +59,7 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             carRef.current.position.copy(position);
             carRef.current.lookAt(lookAtTarget);
         } else {
-            carRef.current.position.x -= 0.1; // car driving on road
+            carRef.current.position.x -= 0.05; // car driving on road
         }
 
         // Handle offscreen car removal

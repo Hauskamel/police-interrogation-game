@@ -28,7 +28,7 @@ export function DocumentManager({selectedCar}) {
             />
         ),
         carDocs: (
-            <CarDocuments 
+            <CarDocuments
                 key={"carDocs"}
                 car={selectedCar?.carProfile}
                 driver={selectedCar?.driverProfile}>

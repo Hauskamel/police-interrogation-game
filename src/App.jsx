@@ -10,7 +10,6 @@ import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
-import { useDiscrepandancyCompareStore } from "./store";
 
 import { useEffect } from "react";
 
@@ -27,9 +26,6 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
-
-
-import { identity } from "./utils/carProfileGenerator.js"
 
 
 
