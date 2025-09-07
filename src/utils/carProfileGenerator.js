@@ -87,10 +87,13 @@ export const generateCarProfile = (isForWantedList) => {
     }
 
     if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
+    
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
+        console.log("This entitiy has a fake ID");
+        
         fakeProfile = applyRandomManipulations(realProfile)
     }
 

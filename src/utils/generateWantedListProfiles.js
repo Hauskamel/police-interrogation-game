@@ -1,10 +1,5 @@
 import { generateDriverProfile } from "../utils/generateDriverProfile";
-// import { generateCarProfile } from "./generateCarProfile";
-
 import { generateCarProfile } from "./carProfileGenerator.js"
-
-
-
 
 
 export function generateWantedListProfiles () {
@@ -19,10 +14,6 @@ export function generateWantedListProfiles () {
         
         criminals.push(profile)
     }
-
-
-    console.log(criminals);
-    
 
     return criminals
 }
