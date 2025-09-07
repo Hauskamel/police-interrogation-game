@@ -64,7 +64,7 @@ export function generateDriverProfile (isWanted) {
     const wanted = isWanted ? true : false
     // NOTE: OFFENER PUNKT - MÖGLICHERWEISE IRRELEVANT, MÖGLICHERWEISE WICHTIG FÜR ZUKÜNFTIGE VORHABEN
     // NOTE: hier noch weitere indizien als nur 'isWanted' hinzufügen
-    const arrestable = isWanted ? true : false 
+    const arrestable = isWanted ? true : false
 
 
     const profile = {
@@ -88,6 +88,4 @@ export function generateDriverProfile (isWanted) {
     }
 
     return profile
-
-
 }

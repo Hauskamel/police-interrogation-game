@@ -4,7 +4,10 @@ import { BaseHeadlineText } from "../base-components/BaseHeadlineText"
 export function CarDocuments ({car, driver}) {
     const [setId, id] = useState(0)
 
-
+    let carProfile = car.realProfile;
+    if (car.fakeProfile) {
+        carProfile = car.fakeProfile
+    }
 
     return (
         <>
@@ -20,12 +23,14 @@ export function CarDocuments ({car, driver}) {
                     <div className="mt-5">
 
                         <BaseHeadlineText useCase="cardocument" id={1} headline="Fahrzeughalter" data={[driver.firstName, driver.lastName]} />                        
-                        <BaseHeadlineText useCase="cardocument" id={2} headline="Kennzeichen" data={car.plateNumber} />
+                        <BaseHeadlineText useCase="cardocument" id={2} headline="Kennzeichen" data={carProfile.plateNumber} />
 
                         <div className="flex">
-                            <BaseHeadlineText useCase="cardocument" id={3} headline="Hersteller" data={car.brandName} />
-                            <BaseHeadlineText useCase="cardocument" id={4} headline="Modell" data={car.brandModel} />
+                            <BaseHeadlineText useCase="cardocument" id={3} headline="Hersteller" data={carProfile.brandName} />
+                            <BaseHeadlineText useCase="cardocument" id={4} headline="Modell" data={carProfile.brandModel} />
                         </div>
+
+                        <BaseHeadlineText useCase="cardocument" id={2} headline="Registriernummer" data={carProfile.carRegistrationNumber} />
 
                     </div>
                 </div>

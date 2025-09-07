@@ -6,6 +6,8 @@ import { carProfiles } from './carProfiles';
 import { faker } from "@faker-js/faker";
 
 
+
+
 // ---> Handling car brands
 const carBrands = Object.keys(carProfiles)
 function getRandomCarBrand(exclude = null) {
@@ -20,6 +22,7 @@ const randomChance = (percent) => {
 }
 
 
+
 const manipulations = [
     profile => ({
         ...profile,
@@ -27,7 +30,7 @@ const manipulations = [
     }),
     profile => ({
         ...profile,
-        brandModel: carProfile.models[Math.floor(Math.random() * carProfile.models.length)]
+        brandModel: carProfiles[getRandomCarBrand()].models[Math.floor(Math.random() * carProfiles[getRandomCarBrand()].models.length)]
     }),
     profile => ({
         ...profile,
@@ -43,7 +46,8 @@ const manipulations = [
 
 // ---> applies manipulation(s) to the passed profile
 const applyRandomManipulations = (profile) => {
-    const chancesOfManipulation = [100, 50, 10, 5]; // 1 manipulation min. and 4 manipulations max.
+    // TODO: auch wenn 3 auf '100%' stehen wird trotzdem nur 1 manipuliert
+    const chancesOfManipulation = [100, 100, 100, 100]; // 1 manipulation min. and 4 manipulations max.
 
     let toManipulate;
     do {
@@ -54,6 +58,7 @@ const applyRandomManipulations = (profile) => {
         
         const randomIndex = Math.floor(Math.random() * manipulations.length);
         const manipulation = manipulations[randomIndex];
+        
         return manipulation(profile)
 
     } while (toManipulate)
@@ -86,20 +91,22 @@ export const generateCarProfile = (isForWantedList) => {
         carRegistrationNumber
     }
 
-    if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
+    console.log("real profile: ", realProfile);
     
+
+    if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
         console.log("This entitiy has a fake ID");
-        
         fakeProfile = applyRandomManipulations(realProfile)
+        console.log("fake profil: ", fakeProfile);
+        
+
     }
 
     return fakeProfile ?
         { realProfile, fakeProfile } :
         { realProfile }
-
-    // return realProfile
 }
