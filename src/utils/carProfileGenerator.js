@@ -22,7 +22,7 @@ const randomChance = (percent) => {
 }
 
 
-
+// ---> array with functions to manipulate the original profile
 const manipulations = [
     profile => ({
         ...profile,
@@ -50,17 +50,25 @@ const applyRandomManipulations = (profile) => {
     const chancesOfManipulation = [100, 100, 100, 100]; // 1 manipulation min. and 4 manipulations max.
 
     let toManipulate;
+    let possibleIndexes = manipulations.map((_,i) => i+1)
+    console.log("possible indexes length:", possibleIndexes.length);
+    
+    
     do {
-        toManipulate = randomChance(chancesOfManipulation[0]) // takes current max chance of manipulation --> returns true or false    
+        toManipulate = randomChance(chancesOfManipulation[0]) // takes current max chance of manipulation --> returns true or false
+        
         if (!toManipulate) return;
 
         chancesOfManipulation.shift() // removes current max toManipulate
         
-        const randomIndex = Math.floor(Math.random() * manipulations.length);
-        const manipulation = manipulations[randomIndex];
+        const randomIndex = possibleIndexes[Math.floor(Math.random() * possibleIndexes.length)];
+        console.log(randomIndex);
         
-        return manipulation(profile)
-
+        possibleIndexes.slice(randomIndex, randomIndex+1)
+        // TODO: hier irgendwie slicen, damit das selbe Feld nicht 2. manipuliert wird
+        console.log(possibleIndexes);
+        
+        const manipulation = manipulations[randomIndex];
     } while (toManipulate)
 }
 
@@ -101,9 +109,8 @@ export const generateCarProfile = (isForWantedList) => {
     if (randomChance(50)) {
         console.log("This entitiy has a fake ID");
         fakeProfile = applyRandomManipulations(realProfile)
-        console.log("fake profil: ", fakeProfile);
+        console.log(fakeProfile);
         
-
     }
 
     return fakeProfile ?
