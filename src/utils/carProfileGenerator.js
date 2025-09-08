@@ -47,33 +47,27 @@ const manipulations = [
 // ---> applies manipulation(s) to the passed profile
 const applyRandomManipulations = (profile) => {
     // TODO: auch wenn 3 auf '100%' stehen wird trotzdem nur 1 manipuliert
-    const chancesOfManipulation = [100, 100, 100, 10]; // 1 manipulation min. and 4 manipulations max.
+    const chancesOfManipulation = [100, 60, 25, 10]; // 1 manipulation min. and 4 manipulations max.
 
     let toManipulate;
-    let possibleIndexes = manipulations.map((_,i) => i)
+    let manipulationsCopy = manipulations.map((_,i) => i)
     
     let manipulatedProfile = profile
     do {
         toManipulate = randomChance(chancesOfManipulation[0]) // takes current max chance of manipulation --> returns true or false
         
+        // ---> EXIT, if the randomChance is higher than given
         if (!toManipulate) {
             return manipulatedProfile;
         };
-        
 
         chancesOfManipulation.shift() // removes first/current max toManipulate
         
-
-        const randomIndex = possibleIndexes[Math.floor(Math.random() * possibleIndexes.length)];
-        possibleIndexes = possibleIndexes.filter(n => n !== randomIndex);
-        const manipulation = manipulations[randomIndex];
+        const randomIndex = manipulationsCopy[Math.floor(Math.random() * manipulationsCopy.length)]; // random function to execute from the 'manipulations' array
+        manipulationsCopy = manipulationsCopy.filter(n => n !== randomIndex); // remove the executed function to not allow to execute again -> otherwise a field coule be manipulated twice 
+        const manipulation = manipulations[randomIndex]; // store that function into a variable
         
-        manipulatedProfile = manipulation(manipulatedProfile)
-        console.log("manipulated profile:", manipulatedProfile);
-        
-        
-        
-
+        manipulatedProfile = manipulation(manipulatedProfile); // execute function via variable to manipulate the profile
     } while (toManipulate)
 }
 
@@ -113,11 +107,8 @@ export const generateCarProfile = (isForWantedList) => {
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
-        console.log("This entitiy has a fake ID");
         fakeProfile = applyRandomManipulations(realProfile)
-        console.log(fakeProfile);
-        
-        
+        console.log("fakeProfile: ", fakeProfile);
     }
 
     return fakeProfile ?
