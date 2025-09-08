@@ -99,8 +99,6 @@ export const generateCarProfile = (isForWantedList) => {
     }
 
     console.log("realprofile:", realProfile);
-    
-    
 
     if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
