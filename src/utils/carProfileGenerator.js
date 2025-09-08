@@ -47,28 +47,33 @@ const manipulations = [
 // ---> applies manipulation(s) to the passed profile
 const applyRandomManipulations = (profile) => {
     // TODO: auch wenn 3 auf '100%' stehen wird trotzdem nur 1 manipuliert
-    const chancesOfManipulation = [100, 100, 100, 100]; // 1 manipulation min. and 4 manipulations max.
+    const chancesOfManipulation = [100, 100, 100, 10]; // 1 manipulation min. and 4 manipulations max.
 
     let toManipulate;
-    let possibleIndexes = manipulations.map((_,i) => i+1)
-    console.log("possible indexes length:", possibleIndexes.length);
+    let possibleIndexes = manipulations.map((_,i) => i)
     
-    
+    let manipulatedProfile = profile
     do {
         toManipulate = randomChance(chancesOfManipulation[0]) // takes current max chance of manipulation --> returns true or false
         
-        if (!toManipulate) return;
+        if (!toManipulate) {
+            return manipulatedProfile;
+        };
+        
 
-        chancesOfManipulation.shift() // removes current max toManipulate
+        chancesOfManipulation.shift() // removes first/current max toManipulate
         
+
         const randomIndex = possibleIndexes[Math.floor(Math.random() * possibleIndexes.length)];
-        console.log(randomIndex);
-        
-        possibleIndexes.slice(randomIndex, randomIndex+1)
-        // TODO: hier irgendwie slicen, damit das selbe Feld nicht 2. manipuliert wird
-        console.log(possibleIndexes);
-        
+        possibleIndexes = possibleIndexes.filter(n => n !== randomIndex);
         const manipulation = manipulations[randomIndex];
+        
+        manipulatedProfile = manipulation(manipulatedProfile)
+        console.log("manipulated profile:", manipulatedProfile);
+        
+        
+        
+
     } while (toManipulate)
 }
 
@@ -99,7 +104,8 @@ export const generateCarProfile = (isForWantedList) => {
         carRegistrationNumber
     }
 
-    console.log("real profile: ", realProfile);
+    console.log("realprofile:", realProfile);
+    
     
 
     if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
@@ -110,6 +116,7 @@ export const generateCarProfile = (isForWantedList) => {
         console.log("This entitiy has a fake ID");
         fakeProfile = applyRandomManipulations(realProfile)
         console.log(fakeProfile);
+        
         
     }
 

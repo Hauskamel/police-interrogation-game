@@ -34,6 +34,9 @@ export function useCarSpawner () {
 
             newEntitiy = {...criminal, id :generateUUID()}
         } else {
+            console.log("#############################");
+            console.log("#############################");
+            console.log("#############################");
             console.log("reached here #2");
             
             const carProfile = generateCarProfile();
