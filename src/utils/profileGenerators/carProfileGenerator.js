@@ -2,9 +2,10 @@
 // NOTE: ----- for testing purposes its only for the car -----
 
 
-import { carProfiles } from './carProfiles';
+import { carProfiles } from '../carProfiles.js';
 import { faker } from "@faker-js/faker";
 
+import { applyRandomManipulations } from './fakeProfileGenerator.js';
 
 
 
@@ -22,7 +23,7 @@ const randomChance = (percent) => {
 }
 
 
-// ---> array with functions to manipulate the original profile
+// ---> array with functions to manipulate the car profile
 const manipulations = [
     profile => ({
         ...profile,
@@ -42,37 +43,6 @@ const manipulations = [
     })
 ]
 
-
-
-// ---> applies manipulation(s) to the passed profile
-const applyRandomManipulations = (profile) => {
-    // TODO: auch wenn 3 auf '100%' stehen wird trotzdem nur 1 manipuliert
-    const chancesOfManipulation = [100, 60, 25, 10]; // 1 manipulation min. and 4 manipulations max.
-
-    let toManipulate;
-    let manipulationsCopy = manipulations.map((_,i) => i)
-    
-    let manipulatedProfile = profile
-    do {
-        toManipulate = randomChance(chancesOfManipulation[0]) // takes current max chance of manipulation --> returns true or false
-        
-        // ---> EXIT, if the randomChance is higher than given
-        if (!toManipulate) {
-            return manipulatedProfile;
-        };
-
-        chancesOfManipulation.shift() // removes first/current max toManipulate
-        
-        const randomIndex = manipulationsCopy[Math.floor(Math.random() * manipulationsCopy.length)]; // random function to execute from the 'manipulations' array
-        manipulationsCopy = manipulationsCopy.filter(n => n !== randomIndex); // remove the executed function to not allow to execute again -> otherwise a field coule be manipulated twice 
-        const manipulation = manipulations[randomIndex]; // store that function into a variable
-        
-        manipulatedProfile = manipulation(manipulatedProfile); // execute function via variable to manipulate the profile
-    } while (toManipulate)
-}
-
-
-
 // -----> generator for the cars profile.
 //        This function returns the real car profile and if random chances are < 50% also the fake profile
 export const generateCarProfile = (isForWantedList) => {
@@ -83,13 +53,13 @@ export const generateCarProfile = (isForWantedList) => {
     const carProfile = carProfiles[brandName]
     
     // car model
-    const brandModel = carProfile.models[Math.floor(Math.random() * carProfile.models.length)]
+    const brandModel = carProfile.models[Math.floor(Math.random() * carProfile.models.length)];
 
     // car registration
     const carRegistrationNumber = faker.vehicle.vrm();
 
     // car plate
-    const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ')
+    const plateNumber = "AC - " + carRegistrationNumber.slice(2).replace(/^(.{2})/, '$1 ');
 
     const realProfile = {
         brandName,
@@ -98,15 +68,12 @@ export const generateCarProfile = (isForWantedList) => {
         carRegistrationNumber
     }
 
-    console.log("realprofile:", realProfile);
-
     if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
-        fakeProfile = applyRandomManipulations(realProfile)
-        console.log("fakeProfile: ", fakeProfile);
+        fakeProfile = applyRandomManipulations(realProfile, manipulations)
     }
 
     return fakeProfile ?

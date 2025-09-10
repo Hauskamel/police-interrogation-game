@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-import { generateCarProfile } from "../utils/carProfileGenerator.js";
+import { generateCarProfile } from "../utils/profileGenerators/carProfileGenerator.js";
 
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
-import { generateDriverProfile } from "../utils/generateDriverProfile.js";
+import { generateDriverProfile } from "../utils/profileGenerators/driverProfileGenerator.js";
 
 
 

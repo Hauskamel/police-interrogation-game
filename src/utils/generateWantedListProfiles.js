@@ -1,5 +1,5 @@
-import { generateDriverProfile } from "../utils/generateDriverProfile";
-import { generateCarProfile } from "./carProfileGenerator.js"
+import { generateDriverProfile } from "./profileGenerators/driverProfileGenerator.js";
+import { generateCarProfile } from "./profileGenerators/carProfileGenerator.js"
 
 
 export function generateWantedListProfiles () {
