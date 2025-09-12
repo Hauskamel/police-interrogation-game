@@ -25,6 +25,7 @@ export function useCarSpawner () {
         let newEntitiy;
         
         if (spawnCarOfWantedList && wantedList.length) {
+            console.log("#############################");
             console.log("reached here #1");
             
 
@@ -35,12 +36,14 @@ export function useCarSpawner () {
             newEntitiy = {...criminal, id :generateUUID()}
         } else {
             console.log("#############################");
-            console.log("#############################");
-            console.log("#############################");
             console.log("reached here #2");
             
+            console.log("Generating Car Profile...");
             const carProfile = generateCarProfile();
+            console.log("Car Profile has been generated...");
+            console.log("Generating Driver Profile");
             const driverProfile = generateDriverProfile();
+            console.log("Driver Profile has been generated...");
             newEntitiy = {driverProfile, carProfile, id: generateUUID()}
         }
 

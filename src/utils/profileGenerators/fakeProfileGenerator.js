@@ -5,12 +5,9 @@ const randomChance = (percent) => {
 }
 
 // ---> applies manipulation(s) to the passed profile
-export const applyRandomManipulations = (profile, manipulations) => {
+export const applyRandomManipulations = (profile, manipulations) => {    
 
     const chancesOfManipulation = manipulations.map((_, i) => Math.floor(100 / (i+1))); // 1 manipulation min.
-
-    console.log(chancesOfManipulation);
-    
 
     let toManipulate;
     let manipulationsCopy = manipulations.map((_,i) => i)
@@ -21,7 +18,6 @@ export const applyRandomManipulations = (profile, manipulations) => {
         
         // ---> EXIT, if the randomChance is higher than given
         if (!toManipulate) {
-            console.log("manipulated profile:", manipulatedProfile);
             return manipulatedProfile;
         };
 
