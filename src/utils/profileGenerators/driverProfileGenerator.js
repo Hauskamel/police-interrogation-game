@@ -98,12 +98,9 @@ export function generateDriverProfile (isWanted) {
     const imageProfile = driverImageProfiles[driverImage]; // object from 'driverImagesProfiles' array (driverImageProfiles.js)
     // ##########################################################
 
-
-
     // first names
     const firstName = imageProfile.randomFirstName;
     console.log("imageProfile:", imageProfile.randomFirstName);
-    
 
     // driver age
     const age = faker.number.int({
