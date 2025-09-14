@@ -11,8 +11,6 @@ import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
-import { useEffect } from "react";
-
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
@@ -79,12 +77,17 @@ function App() {
                 </>
             )}
 
+            
+            <div className="fixed bottom-5 right-50 flex gap-2">
+                <> 
+                    <Notebook />
+                    <Policeradio />
+                </>
+            </div>
+            
 
             {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
                 <>
-                    <Notebook />
-                    <Policeradio />
-
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
                     <CarAndDriverProfileTextbox
                         selectedCar={selectedCar}
