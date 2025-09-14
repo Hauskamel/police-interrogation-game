@@ -34,10 +34,6 @@ export function useCarSpawner () {
             const criminal = wantedList[Math.floor(Math.random() * wantedList.length)];            
 
             newEntitiy = {...criminal, id :generateUUID()}
-
-            console.log(newEntitiy);
-            
-
         } else {
             console.log("#############################");
             console.log("reached here #2");
@@ -46,8 +42,6 @@ export function useCarSpawner () {
             const driverProfile = generateDriverProfile();
             
             newEntitiy = {driverProfile, carProfile, id: generateUUID()}
-
-            console.log(newEntitiy);
         }
 
 

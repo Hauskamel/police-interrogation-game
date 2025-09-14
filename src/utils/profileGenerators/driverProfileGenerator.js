@@ -17,9 +17,6 @@ const firstNames = [
     'Blake', 'Daniel', 'Scott', 'Shawn', 'Connor'
 ]
 
-
-
-
 // ---> generates a random chance in percent (%)
 const randomChance = (percent) => {
     return Math.random() < percent / 100
@@ -36,8 +33,6 @@ function getRandomImage(exclude = null) {
 
 
 function getRandomFirstName() {
-    console.log(driverImageProfiles);
-    
     const randomIndex = Math.floor(Math.random() * firstNames.length)
     return firstNames[randomIndex]
 }
@@ -150,8 +145,8 @@ export function generateDriverProfile (isWanted) {
 
     // ######## DRIVER SOBRIETY ########
     // #####################################
-    const drunk = Math.random() < .2;
-    const high = Math.random() < .2;
+    // const drunk = Math.random() < .2;
+    // const high = Math.random() < .2;
 
     const realProfile  = {
         driverImage,
@@ -167,20 +162,23 @@ export function generateDriverProfile (isWanted) {
         height: Math.floor(Math.random() * (205 - 160 + 1)) + 160,
         issueDate: formattedIssueDate,
         licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
-        drunk,
-        alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
-        high,
-        wanted: !!isWanted, // gilt nur für NPCs, die beim Spielbeginn bereits gesucht sind
-        arrestable: !!isWanted
+        // drunk,
+        // alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
+        // high,
+        // wanted: !!isWanted, // gilt nur für NPCs, die beim Spielbeginn bereits gesucht sind
+        // arrestable: !!isWanted
     }
+
+    console.log("real driver profile:", realProfile);
 
     if (isWanted) return { realProfile }; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
-    if (randomChance(50)) {
+    if (randomChance(50)) {        
         const manipulations = createManipulations(imageProfile)
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
+        console.log("fake driver identity:", fakeProfile);
     }
 
     return fakeProfile ?

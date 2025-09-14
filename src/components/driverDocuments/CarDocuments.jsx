@@ -7,14 +7,8 @@ export function CarDocuments ({car, driver}) {
     let carProfile = car.realProfile;
     if (car.fakeProfile) carProfile = car.fakeProfile;
     
-
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
-
-
-    console.log(driverProfile);
-    
-
 
     return (
         <>

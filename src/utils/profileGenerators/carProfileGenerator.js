@@ -68,6 +68,8 @@ export const generateCarProfile = (isWanted) => {
         carRegistrationNumber
     }
 
+    console.log("real car profile:", realProfile);
+
     if (isWanted) return { realProfile }; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
     // Generate toManipulate of a manipulated (fake) profile being generated
