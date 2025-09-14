@@ -11,6 +11,9 @@ export function generateWantedListProfiles () {
             carProfile: generateCarProfile(true),
             arrested: false
         }
+
+        console.log(profile);
+        
         
         criminals.push(profile)
     }

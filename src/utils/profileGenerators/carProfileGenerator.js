@@ -45,7 +45,7 @@ const manipulations = [
 
 // -----> generator for the cars profile.
 //        This function returns the real car profile and if random chances are < 50% also the fake profile
-export const generateCarProfile = (isForWantedList) => {
+export const generateCarProfile = (isWanted) => {
     // ########## CAR INFORMATION ##########
     // #####################################
     // car brand
@@ -68,17 +68,15 @@ export const generateCarProfile = (isForWantedList) => {
         carRegistrationNumber
     }
 
-    console.log("real car profile:", realProfile);
-    
-
-    if (isForWantedList) return realProfile; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
+    if (isWanted) return { realProfile }; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
-        console.log("Generating car driver profile...");
-        fakeProfile = applyRandomManipulations(realProfile, manipulations)
+        fakeProfile = applyRandomManipulations(realProfile, manipulations);
+
         console.log("fake car profile:", fakeProfile);
+        
     }
 
     return fakeProfile ?

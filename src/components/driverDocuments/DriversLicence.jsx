@@ -2,6 +2,11 @@ import { BaseHeadlineText } from "../base-components/BaseHeadlineText";
 
 export function DriversLicence ({ driver }) {
 
+
+    console.log(driver);
+    
+    
+
     return (
         <>
             <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">

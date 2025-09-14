@@ -5,9 +5,16 @@ export function CarDocuments ({car, driver}) {
     const [setId, id] = useState(0)
 
     let carProfile = car.realProfile;
-    if (car.fakeProfile) {
-        carProfile = car.fakeProfile
-    }
+    if (car.fakeProfile) carProfile = car.fakeProfile;
+    
+
+    let driverProfile = driver.realProfile;
+    if (driver.fakeProfile) driverProfile = driver.fakeProfile;
+
+
+    console.log(driverProfile);
+    
+
 
     return (
         <>
@@ -22,7 +29,7 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineText useCase="cardocument" id={1} headline="Fahrzeughalter" data={[driver?.firstName, driver?.lastName]} />                        
+                        <BaseHeadlineText useCase="cardocument" id={1} headline="Fahrzeughalter" data={[driverProfile?.firstName, driverProfile?.lastName]} />                        
                         <BaseHeadlineText useCase="cardocument" id={2} headline="Kennzeichen" data={carProfile?.plateNumber} />
 
                         <div className="flex">

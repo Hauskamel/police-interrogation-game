@@ -19,7 +19,7 @@ export const CarOccupantsInformationTextbox = ({
                         </>
                         :
                         
-                        <BaseImageInformation persona={stoppedPersona} />
+                        <BaseImageInformation entity={stoppedPersona} />
                             
                         
                         

@@ -12,7 +12,7 @@ export function WantedList () {
 
             {wantedList.map((criminal, index) => {
                 return (
-                    <BaseImageInformation persona={criminal} key={index} />
+                    <BaseImageInformation entity={criminal} key={index} />
                 )
             })}
 
