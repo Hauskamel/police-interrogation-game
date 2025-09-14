@@ -12,11 +12,6 @@ export const useOverlaySetter = () => {
 
 
     useEffect(() => {
-
-        console.log(compareArray);
-        
-
-
         if (compareArray.length === 2) {
             compareMode();
             return

@@ -1,7 +1,10 @@
 import { BaseHeadlineText } from "../base-components/BaseHeadlineText";
 
 export function DriversLicence ({ driver }) {
-
+    
+    let driverProfile = driver.realProfile;
+    if (driver.fakeProfile) driverProfile = driver.fakeProfile;
+    
     return (
         <>
             <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
@@ -13,7 +16,7 @@ export function DriversLicence ({ driver }) {
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
                             <img
-                                src={`/images/driver/${driver.driverImage}`}
+                                src={`/images/driver/${driverProfile.driverImage}`}
                                 alt="Licence Photo"
                                 className="col-span-2 w-28 h-28"
                             />
@@ -31,10 +34,10 @@ export function DriversLicence ({ driver }) {
 
 
 
-                            <BaseHeadlineText useCase="driversLicence" id={1} headline="Name" data={[driver.firstName, driver.lastName]}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={2} headline="Geburtsdatum" data={driver.birthDate}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={3} headline="Lizenznummer" data={driver.licenseNumber}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={4} headline="Ausgabedatum" data={driver.issueDate}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={1} headline="Name" data={[driverProfile.firstName, driverProfile.lastName]}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={2} headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={3} headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={4} headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineText>
 
 
 
@@ -44,15 +47,15 @@ export function DriversLicence ({ driver }) {
                         <div className="mt-4 flex justify-between w-4/5">
                             <span>
                                 <strong>AugF</strong><br/>
-                                {driver.eyeColor}
+                                {driverProfile.eyeColor}
                             </span>
                             <span>
                                 <strong>G</strong><br/>
-                                {driver.gender}
+                                {driverProfile.gender}
                             </span>
                             <span>
                                 <strong>H in cm</strong><br/>
-                                {driver.height}
+                                {driverProfile.height}
                             </span>
                         </div>
                     </div>

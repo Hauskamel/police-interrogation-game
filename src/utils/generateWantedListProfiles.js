@@ -1,8 +1,5 @@
-import { generateDriverProfile } from "../utils/generateDriverProfile";
-import { generateCarProfile } from "./generateCarProfile";
-
-
-
+import { generateDriverProfile } from "./profileGenerators/driverProfileGenerator.js";
+import { generateCarProfile } from "./profileGenerators/carProfileGenerator.js"
 
 
 export function generateWantedListProfiles () {
@@ -11,9 +8,10 @@ export function generateWantedListProfiles () {
     while (criminals.length < 3) {
         const profile = {
             driverProfile: generateDriverProfile(true),
-            carProfile: generateCarProfile(),
+            carProfile: generateCarProfile(true),
             arrested: false
         }
+        
         criminals.push(profile)
     }
 

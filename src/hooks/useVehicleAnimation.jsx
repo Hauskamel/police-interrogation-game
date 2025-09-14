@@ -35,7 +35,7 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             const prev = previousPositionRef.current;
             if (prev.x !== x || (typeof z === "number" && prev.z !== z)) {
                 carPosition(car.id, x, z);
-                previousPositionRef.current = { x, z}
+                previousPositionRef.current = {x, z}
             }
         }
 

@@ -3,10 +3,10 @@ import { gameStates ,useDiscrepandancyCompareStore,useGameStore } from "../../st
 export function DiscrepancyButton () {
     const gameState = useGameStore(state => state.gameState);
     const discrepancyMode = useGameStore((state) => state.discrepancyMode);
-    const gameMode = useGameStore(state => state.gameMode)
+    const gameMode = useGameStore(state => state.gameMode);
 
-    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
-    const clearCompareArray = useDiscrepandancyCompareStore(state => state.clearCompareArray)
+    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
+    const clearCompareArray = useDiscrepandancyCompareStore(state => state.clearCompareArray);
 
     return (
         <>
@@ -23,5 +23,5 @@ export function DiscrepancyButton () {
                     {gameState === gameStates.GAME ? "Diskrepanz entdeckt" : "Zurück zur Befragung"}
             </div>
         </>
-    )
+    );
 }

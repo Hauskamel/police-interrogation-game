@@ -10,9 +10,6 @@ import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
-import { useDiscrepandancyCompareStore } from "./store";
-
-import { useEffect } from "react";
 
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
@@ -29,6 +26,10 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
+
+
+
+
 function App() {
     // ##################################################
     // ##################### STATES #####################
@@ -37,6 +38,8 @@ function App() {
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
+
+    const gameState = useGameStore(state => state.gameState)
 
     const [hoveringCar, setHoveringCar] = useState(false);
 
@@ -50,6 +53,9 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
+
+    
+    
     
      
 
@@ -73,12 +79,20 @@ function App() {
                 </>
             )}
 
+            
+            
+            <div className="fixed bottom-5 right-50 flex gap-2">
+                <> 
+                    <Notebook />
+                    <Policeradio />
+                </>
+            </div>
+            
+            
+            
 
             {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
                 <>
-                    <Notebook />
-                    <Policeradio />
-
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
                     <CarAndDriverProfileTextbox
                         selectedCar={selectedCar}

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-import { generateDriverProfile } from "../utils/generateDriverProfile.js";
-import { generateCarProfile } from "../utils/generateCarProfile.js";
-import { generateFakeDriverAndCarProfile } from "../utils/generateFakeDriverAndCarProfile.js";
+import { generateCarProfile } from "../utils/profileGenerators/carProfileGenerator.js";
 
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
+import { generateDriverProfile } from "../utils/profileGenerators/driverProfileGenerator.js";
+
 
 
 
@@ -22,28 +22,32 @@ export function useCarSpawner () {
         let respawnTime = randInt(2000, 5000);
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
-        let newCar;
+        let newEntitiy;
+        
         if (spawnCarOfWantedList && wantedList.length) {
+            console.log("#############################");
+            console.log("WANTED LIST NPC");
+            console.log("#############################");
+            
+
             // wantedList is a parameter of this function.
             // the passed value is a reference to the wantedList in the storage.js
-            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)]
-            newCar = {...criminal, id :generateUUID()}
+            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)];            
+
+            newEntitiy = {...criminal, id :generateUUID()}
         } else {
-            newCar = {
-                id: generateUUID(),
-                stopped: false,
-                driverProfile: generateDriverProfile(false),
-                carProfile: generateCarProfile()
-            }
-        }
-        const manipulateProfile = Math.random() < 0.4
-        if (manipulateProfile) {
-            generateFakeDriverAndCarProfile(newCar.driverProfile, newCar.carProfile)
-        } else {
-            console.log("No fake proffile");
+            console.log("#############################");
+            console.log("NPC WITH POTENCIAL FAKED PROFILE");
+            console.log("#############################");
             
+            const carProfile = generateCarProfile();
+            const driverProfile = generateDriverProfile();
+            
+            newEntitiy = {driverProfile, carProfile, id: generateUUID()}
         }
-        addCar(newCar);
+
+
+        addCar(newEntitiy);
     }, respawnTime, wantedList);
     return () => clearInterval(intervalId);
     }, [addCar, wantedList]);
