@@ -1,5 +1,7 @@
 import { gameStates, useGameStore } from "../../store"
 
+import { DiscpreancyTextbox } from "./DiscrepancyTextbox";
+
 export const DiscrepancyOverlay =  () => {
     const gameState = useGameStore(state => state.gameState);
 
@@ -21,11 +23,10 @@ export const DiscrepancyOverlay =  () => {
         return (
             <>
                 <div
-                    className="w-screen -z-0 top-0 h-screen bg-blue-800/30 fixed">
+                    className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-2 bg-blue-800/30">
+                        {<DiscpreancyTextbox />}
                 </div>
             </>
         )
-    }
-
-   
+    }   
 }
