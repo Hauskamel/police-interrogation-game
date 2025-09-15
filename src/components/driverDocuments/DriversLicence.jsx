@@ -31,8 +31,9 @@ export function DriversLicence ({ driver }) {
                         <div className="mt-1">
 
 
-
-
+                            {/* // TODO: jede BaseHEadline muss mit einer globalen headline ausgestattet werden, damit die Informationen dokumentübergreifend verglichen werden können */}
+                            {/* Problematisch wird hierbei die Verwendung von Vor- & Nachnamen */}
+        
 
                             <BaseHeadlineText useCase="driversLicence" id={1} headline="Name" data={[driverProfile.firstName, driverProfile.lastName]}></BaseHeadlineText>
                             <BaseHeadlineText useCase="driversLicence" id={2} headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineText>

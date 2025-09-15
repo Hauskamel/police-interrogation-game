@@ -4,8 +4,7 @@ export function DiscrepancyButton () {
     const gameState = useGameStore(state => state.gameState);
     const discrepancyMode = useGameStore((state) => state.discrepancyMode);
     const gameMode = useGameStore(state => state.gameMode);
-
-    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
+    
     const clearCompareArray = useDiscrepandancyCompareStore(state => state.clearCompareArray);
 
     return (

@@ -23,15 +23,15 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineText useCase="cardocument" id={1} headline="Fahrzeughalter" data={[driverProfile?.firstName, driverProfile?.lastName]} />                        
-                        <BaseHeadlineText useCase="cardocument" id={2} headline="Kennzeichen" data={carProfile?.plateNumber} />
+                        <BaseHeadlineText headline="Fahrzeughalter" globalHeadline="" data={[driverProfile?.firstName, driverProfile?.lastName]} useCase="cardocument" id={1} />                       
+                        <BaseHeadlineText headline="Kennzeichen" data={carProfile?.plateNumber} useCase="cardocument" id={2} />
 
                         <div className="flex">
-                            <BaseHeadlineText useCase="cardocument" id={3} headline="Hersteller" data={carProfile?.brandName} />
-                            <BaseHeadlineText useCase="cardocument" id={4} headline="Modell" data={carProfile?.brandModel} />
+                            <BaseHeadlineText headline="Hersteller" data={carProfile?.brandName} useCase="cardocument" id={3} />
+                            <BaseHeadlineText headline="Hersteller" data={carProfile?.brandName} useCase="cardocument" id={4}/>
                         </div>
 
-                        <BaseHeadlineText useCase="cardocument" id={2} headline="Registriernummer" data={carProfile?.carRegistrationNumber} />
+                        <BaseHeadlineText headline="Registriernummer" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={2} />
 
                     </div>
                 </div>
