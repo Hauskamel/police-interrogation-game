@@ -13,7 +13,7 @@ export const useOverlaySetter = () => {
 
     useEffect(() => {
         if (compareArray.length === 2) {
-            compareMode();
+            compareMode(); // mode when two key-value pairs from two individual documents have been selected
             return
         }
 

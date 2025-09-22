@@ -11,7 +11,7 @@ export function DiscrepancyButton () {
         <>
 
             <div
-                className="fixed bottom-5 right-200 flex gap-2 bg-sky-600 p-2 rounded-xl shadow-lg"
+                className="fixed bottom-5 z-2 right-200 flex gap-2 bg-sky-600 p-2 rounded-xl shadow-lg"
                 onClick={() => {
                     if (gameState === gameStates.GAME) {
                         discrepancyMode()

@@ -10,7 +10,6 @@ export function DriversLicence ({ driver }) {
             <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
                 <div>
                     <div className="font-bold text-lg text-gray-800">Führerschein</div>
-                    <div className="text-xs italic text-gray-700">Republik Arcadia</div>
                 </div>
                 <div className="grid grid-cols-3 gap-4 mt-4">
                     <div className="col-span-1 flex flex-col items-center justify-center">
@@ -28,36 +27,20 @@ export function DriversLicence ({ driver }) {
                     </div>
 
                     <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
-                        <div className="mt-1">
-
-
-                            {/* // TODO: jede BaseHEadline muss mit einer globalen headline ausgestattet werden, damit die Informationen dokumentübergreifend verglichen werden können */}
+                        <div className="mt-1 w-1/2">
+                            {/* // TODO: jede 'BaseHeadlineText' muss mit einer globalen headline ausgestattet werden, damit die Informationen dokumentübergreifend verglichen werden können */}
                             {/* Problematisch wird hierbei die Verwendung von Vor- & Nachnamen */}
         
-
-                            <BaseHeadlineText useCase="driversLicence" id={1} headline="Name" data={[driverProfile.firstName, driverProfile.lastName]}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={2} headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={3} headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineText>
-                            <BaseHeadlineText useCase="driversLicence" id={4} headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineText>
-
-
-
-
-
+                            {/* TODO: "global-id" muss dokumentiert werden, sonst kennt si koa sau mehr aus */}
+                            <BaseHeadlineText useCase="driversLicence" id={1} global-id="driverName" headline="Name" data={[driverProfile.firstName, driverProfile.lastName]}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={2} global-id="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={3} global-id="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={4} global-id="issueDate" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineText>
                         </div>
-                        <div className="mt-4 flex justify-between w-4/5">
-                            <span>
-                                <strong>AugF</strong><br/>
-                                {driverProfile.eyeColor}
-                            </span>
-                            <span>
-                                <strong>G</strong><br/>
-                                {driverProfile.gender}
-                            </span>
-                            <span>
-                                <strong>H in cm</strong><br/>
-                                {driverProfile.height}
-                            </span>
+                        <div className="mt-4 flex justify-between w-1/2">
+                            <BaseHeadlineText useCase="driversLicence" id={1} global-id="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={1} global-id="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineText>
+                            <BaseHeadlineText useCase="driversLicence" id={1} global-id="height" headline="Höhe in cm" data={driverProfile.height}></BaseHeadlineText>
                         </div>
                     </div>
                 </div>

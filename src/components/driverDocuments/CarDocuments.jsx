@@ -23,15 +23,15 @@ export function CarDocuments ({car, driver}) {
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
 
-                        <BaseHeadlineText headline="Fahrzeughalter" globalHeadline="" data={[driverProfile?.firstName, driverProfile?.lastName]} useCase="cardocument" id={1} />                       
-                        <BaseHeadlineText headline="Kennzeichen" data={carProfile?.plateNumber} useCase="cardocument" id={2} />
+                        <BaseHeadlineText headline="Fahrzeughalter" global-id="driverName" data={[driverProfile?.firstName, driverProfile?.lastName]} useCase="cardocument" id={1} />                       
+                        <BaseHeadlineText headline="Kennzeichen" global-id="licencePlate" data={carProfile?.plateNumber} useCase="cardocument" id={2} />
 
                         <div className="flex">
-                            <BaseHeadlineText headline="Hersteller" data={carProfile?.brandName} useCase="cardocument" id={3} />
-                            <BaseHeadlineText headline="Hersteller" data={carProfile?.brandName} useCase="cardocument" id={4}/>
+                            <BaseHeadlineText headline="Hersteller" global-id="manufacturer" data={carProfile?.brandName} useCase="cardocument" id={3} />
+                            <BaseHeadlineText headline="Model" global-id="carModel" data={carProfile?.brandModel} useCase="cardocument" id={4}/>
                         </div>
 
-                        <BaseHeadlineText headline="Registriernummer" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={2} />
+                        <BaseHeadlineText headline="Registriernummer" global-id="registationNumber" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={2} />
 
                     </div>
                 </div>
