@@ -177,7 +177,7 @@ export function generateDriverProfile (isWanted) {
     let fakeProfile = null;
     if (randomChance(50)) {
         console.log("es wird ein falsches Fahrerprofil erstellt.");
-        const manipulations = createManipulations(imageProfile)
+        const manipulations = createManipulations(imageProfile);
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
         console.log("fake driver identity:", fakeProfile);
     }

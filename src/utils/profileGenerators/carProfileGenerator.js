@@ -2,7 +2,7 @@
 // NOTE: ----- for testing purposes its only for the car -----
 
 
-import { carProfiles } from '../carProfiles.js';
+import { carBrands } from '../../utils/carBrands.js';
 import { faker } from "@faker-js/faker";
 
 import { applyRandomManipulations } from './fakeProfileGenerator.js';
@@ -10,10 +10,10 @@ import { applyRandomManipulations } from './fakeProfileGenerator.js';
 
 
 // ---> Handling car brands
-const carBrands = Object.keys(carProfiles)
+const brands = Object.keys(carBrands)
 function getRandomCarBrand(exclude = null) {
-    const carBrand = exclude ? carBrands.filter(brand => brand !== exclude) : carBrands;
-    return faker.helpers.arrayElement(carBrand)
+    const carBrand = exclude ? brands.filter(brand => brand !== exclude) : brands;
+    return faker.helpers.arrayElement(carBrand);
 }
 
 
@@ -31,7 +31,7 @@ const manipulations = [
     }),
     profile => ({
         ...profile,
-        brandModel: carProfiles[getRandomCarBrand()].models[Math.floor(Math.random() * carProfiles[getRandomCarBrand()].models.length)]
+        brandModel: carBrands[getRandomCarBrand()].models[Math.floor(Math.random() * carBrands[getRandomCarBrand()].models.length)]
     }),
     profile => ({
         ...profile,
@@ -50,7 +50,7 @@ export const generateCarProfile = (isWanted) => {
     // #####################################
     // car brand
     const brandName = getRandomCarBrand();
-    const carProfile = carProfiles[brandName]
+    const carProfile = carBrands[brandName]
     
     // car model
     const brandModel = carProfile.models[Math.floor(Math.random() * carProfile.models.length)];

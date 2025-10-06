@@ -1,4 +1,4 @@
-export const carProfiles = {
+export const carBrands = {
     "Toyama": {
         "models": ["Sora", "Kireii", "Hoshin", "Akata", "Toura S"],
         "yearOfConstructionRange": [2003, 2011]
@@ -9,7 +9,7 @@ export const carProfiles = {
     },
     "WinterraVintex": {
         "models": ["Frostwind", "Aurora", "Eisblick", "Glacier X", "Glacirra"],
-        "yearOfConstructionRange": [2005,2020]
+        "yearOfConstructionRange": [2005,2020],
     },
     "Zubari": {
         "models": ["Katana", "Roku", "Hanzai", "Mirai", "Tenshi"],
@@ -24,5 +24,3 @@ export const carProfiles = {
         "yearOfConstructionRange": [2012,2025]
     }   
 }
-
-

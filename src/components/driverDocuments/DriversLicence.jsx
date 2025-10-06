@@ -7,6 +7,7 @@ export function DriversLicence ({ driver }) {
     
     return (
         <>
+            {/* TODO: dynamisches Hintergrundbild, Farbe für die Republik & ein sich anpassendes Icon je nach Stadt */}
             <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
                 <div>
                     <div className="font-bold text-lg text-gray-800">Führerschein</div>
@@ -33,19 +34,18 @@ export function DriversLicence ({ driver }) {
                             <div className="w-1/1">
                                 <div className="w-1/1 justify-between flex">
                                     {/* TODO: "global-id" muss dokumentiert werden, sonst kennt si koa sau mehr aus */}
-                                    
                                     <BaseHeadlineWithText useCase="driversLicence" id={1} global-id="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
                                     <BaseHeadlineWithText useCase="driversLicence" id={2} global-id="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
-                                    
-
                                 </div>
                             </div>
+
                             <div className="w-1/1 flex">
                                 <BaseHeadlineWithText useCase="driversLicence" id={3} global-id="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
                                 <BaseHeadlineWithText useCase="driversLicence" id={4} global-id="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
                             </div>
-                                <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="issueDate" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
                             
+                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="issueDate" headline="Ausgabedatum" data={driverProfile.address}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="address" headline="Adresse" data={driverProfile.issueDate}></BaseHeadlineWithText>
                         </div>
                         <div className="mt-2 flex justify-between">
                             <BaseHeadlineWithText useCase="driversLicence" id={6} global-id="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>

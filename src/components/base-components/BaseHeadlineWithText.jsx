@@ -5,7 +5,7 @@ import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../s
 
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
-export const BaseHeadlineWithText = ({useCase, headline, hiddenHeadline, data, id}) => {
+export const BaseHeadlineWithText = ({useCase, headline, data, id}) => {
     const [isSelected, setIsSelected] = useState(false)
 
     const gameState = useGameStore(state => state.gameState);
@@ -38,7 +38,6 @@ export const BaseHeadlineWithText = ({useCase, headline, hiddenHeadline, data, i
                 id: id,
                 useCase: useCase,
                 headline: headline,
-                hiddenHeadline: hiddenHeadline,
                 data: data
             })
             return;
