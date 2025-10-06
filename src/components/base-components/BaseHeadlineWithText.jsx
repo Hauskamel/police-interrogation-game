@@ -5,7 +5,7 @@ import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../s
 
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
-export const BaseHeadlineText = ({useCase, headline, data, id}) => {
+export const BaseHeadlineWithText = ({useCase, headline, hiddenHeadline, data, id}) => {
     const [isSelected, setIsSelected] = useState(false)
 
     const gameState = useGameStore(state => state.gameState);
@@ -26,7 +26,7 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
 
     // handling click event when comparing
     const handleClick = () => {
-        // checks wether 'BaseHeadlineText' can be clicked on to compare 
+        // checks wether 'BaseHeadlineWithText' can be clicked on to compare 
         // by checking the current gameState and the 'compareArray' length
         if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return // . !isSelected is important to know wether this box is already in the compareArray or not
         
@@ -38,12 +38,13 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
                 id: id,
                 useCase: useCase,
                 headline: headline,
+                hiddenHeadline: hiddenHeadline,
                 data: data
             })
             return;
         }
 
-        // finds the clicked object by searchin the useCase f.e. 'driversLicence' and the id
+        // finds the clicked object by searchin the useCase (f.e. 'driversLicence') and the id
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
 
         if (obj) removeInformationFromCompareArray(obj.useCase, obj.id)
@@ -56,7 +57,7 @@ export const BaseHeadlineText = ({useCase, headline, data, id}) => {
 
     return (
         <>
-            <div className={isSelected ? "text-orange-400" : ""} onClick={handleClick}>
+            <div className={` ${isSelected ? "text-orange-400" : ""} w-1/2`} onClick={handleClick}>
                 <strong>{headline}</strong>
                 {
                     Array.isArray(data) ? (

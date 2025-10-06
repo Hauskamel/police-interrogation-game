@@ -1,5 +1,5 @@
 import { useNpcStore } from "../../store"
-import { BaseImageInformation } from "../base-components/BaseImageInformation.jsx"
+import { BaseImageWithInformation } from "../base-components/BaseImageWithInformation.jsx"
 
 
 export function WantedList () {
@@ -12,7 +12,7 @@ export function WantedList () {
 
             {wantedList.map((criminal, index) => {
                 return (
-                    <BaseImageInformation entity={criminal} key={index} />
+                    <BaseImageWithInformation stoppedCar={criminal} key={index} />
                 )
             })}
 

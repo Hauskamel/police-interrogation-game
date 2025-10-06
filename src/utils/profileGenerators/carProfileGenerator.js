@@ -19,7 +19,7 @@ function getRandomCarBrand(exclude = null) {
 
 // ---> toManipulate generator for random choices
 const randomChance = (percent) => {
-    return Math.random() < percent / 100
+    return Math.random() < percent / 100; // returns true or false
 }
 
 
@@ -75,6 +75,7 @@ export const generateCarProfile = (isWanted) => {
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
+        console.log("Es wird ein falsches Autoprofil erstellt.")
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
 
         console.log("fake car profile:", fakeProfile);

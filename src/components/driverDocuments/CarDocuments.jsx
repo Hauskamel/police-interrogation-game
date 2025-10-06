@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { BaseHeadlineText } from "../base-components/BaseHeadlineText"
+import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText"
 
 export function CarDocuments ({car, driver}) {
     const [setId, id] = useState(0)
@@ -17,22 +17,23 @@ export function CarDocuments ({car, driver}) {
                 <div className="text-black text-left">
                     <h4>Fahrzeugschein</h4>
                     <h3>Republik</h3>
-                    <h1>Arcadia</h1>
+                    <h1>St. Patricia</h1>
                 </div>
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left">
                     <div className="mt-5">
-
-                        <BaseHeadlineText headline="Fahrzeughalter" global-id="driverName" data={[driverProfile?.firstName, driverProfile?.lastName]} useCase="cardocument" id={1} />                       
-                        <BaseHeadlineText headline="Kennzeichen" global-id="licencePlate" data={carProfile?.plateNumber} useCase="cardocument" id={2} />
-
                         <div className="flex">
-                            <BaseHeadlineText headline="Hersteller" global-id="manufacturer" data={carProfile?.brandName} useCase="cardocument" id={3} />
-                            <BaseHeadlineText headline="Model" global-id="carModel" data={carProfile?.brandModel} useCase="cardocument" id={4}/>
+                            <BaseHeadlineWithText useCase="cardocument" id={1} global-id="driverFirstName" headline="Vorname" hiddenHeadline="Vorname &" data={driverProfile.firstName}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="cardocument" id={2} global-id="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
                         </div>
-
-                        <BaseHeadlineText headline="Registriernummer" global-id="registationNumber" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={2} />
-
+                        <div className="flex">
+                            <BaseHeadlineWithText headline="Kennzeichen" global-id="licencePlate" data={carProfile?.plateNumber} useCase="cardocument" id={3} />
+                            <BaseHeadlineWithText headline="Hersteller" global-id="manufacturer" data={carProfile?.brandName} useCase="cardocument" id={4} />
+                        </div>
+                        <div className="flex">
+                            <BaseHeadlineWithText headline="Model" global-id="carModel" data={carProfile?.brandModel} useCase="cardocument" id={5}/>
+                            <BaseHeadlineWithText headline="Registriernummer" global-id="registationNumber" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={6} />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -22,7 +22,7 @@ function CarOccupantsInfoTextbox ({stoppedCar, selectedCar}) {
     if (!stoppedCar ||stoppedCar?.position.z !== POLICE_CHECKPOINT) {
         return <CarOccupantsInformationTextbox />
     } 
-    return <CarOccupantsInformationTextbox selectedPersona={selectedCar} stoppedPersona={stoppedCar} />
+    return <CarOccupantsInformationTextbox selectedCar={selectedCar} stoppedCar={stoppedCar} />
 }
 
 

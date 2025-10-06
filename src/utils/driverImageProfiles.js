@@ -42,7 +42,7 @@ export const driverImageProfiles = {
     'driver9.jpg': {
         gender: 'male',
         ageRange: [64, 76],
-        eyeColor: 'gray'
+        eyeColor: 'Grau'
     },
     'driver10.jpg': {
         gender: 'male',

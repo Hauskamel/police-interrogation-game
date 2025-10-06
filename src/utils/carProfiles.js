@@ -20,7 +20,7 @@ export const carProfiles = {
         "yearOfConstructionRange": [2012,2025]
     },
     "Tessa": {
-        "models": ["2M", "3M", "Storm", "Kristall", "Polar 7"],
+        "models": ["2M", "3M", "Storm", "Kristall", "3X"],
         "yearOfConstructionRange": [2012,2025]
     }   
 }
