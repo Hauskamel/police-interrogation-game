@@ -18,6 +18,7 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
     const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
     const lastClickedUseCase = useDiscrepandancyCompareStore(state => state.lastClickedUseCase);
     const setLastClickedUseCase = useDiscrepandancyCompareStore(state => state.setLastClickedUseCase);
+    const clearLastClickedUseCase = useDiscrepandancyCompareStore(state => state.clearLastClickedUseCase);
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
@@ -28,10 +29,15 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
 
     // Handling click event when comparing
     const handleClick = () => {
-        if (lastClickedUseCase === useCase) return; // disables possiblity to check two datasets from the same document
+
+        if (isSelected) clearLastClickedUseCase();
+
+        console.log(lastClickedUseCase);
+        
 
         // checks whether 'BaseHeadlineWithText' can be clicked to compare
-        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return;
+        // disables possiblity to check two datasets from the same document) return;
+        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected || (!isSelected && lastClickedUseCase === useCase)) return;
 
         // check if Headline/Text was already selected (already in compareArray)...
         if (!isSelected) {
