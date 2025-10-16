@@ -9,13 +9,6 @@ import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../s
 
 export const BaseImageWithInformation = ({stoppedCar}) => {
 
-
-
-    console.log(stoppedCar);
-    
-
-
-
     const gameState = useGameStore((state) => state.gameState)
 
     const [isSelected, setIsSelected] = useState(false)

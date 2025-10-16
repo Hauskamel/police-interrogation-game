@@ -3,36 +3,44 @@
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
-
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
-export const BaseHeadlineWithText = ({useCase, headline, data, id}) => {
+export const BaseHeadlineWithText = ({ useCase, headline, data, id }) => {
     const [isSelected, setIsSelected] = useState(false)
 
-    const gameState = useGameStore(state => state.gameState);
+    const gameState = useGameStore(state => state.gameState)
 
-    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
-    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray)
-    const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state. removeInformationFromCompareArray)
-    
+    // ###########
+    // compare array states
+    // for storing the clicked document information (in descrepancy mode) when comparing documents
+    // ###########
+    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
+    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray);
+    const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
+    const lastClickedUseCase = useDiscrepandancyCompareStore(state => state.lastClickedUseCase);
+    const setLastClickedUseCase = useDiscrepandancyCompareStore(state => state.setLastClickedUseCase);
+    const removeLastClickedUseCase = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
 
 
-    // reset select status to sync with empty 'compareArray'
+
+    // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
         if (gameState === gameStates.GAME) {
             setIsSelected(false)
         }
-    }, [compareArray])
+    }, [compareArray, gameState])
 
 
-    // handling click event when comparing
+
+    // Handling click event when comparing
     const handleClick = () => {
-        // checks wether 'BaseHeadlineWithText' can be clicked on to compare 
-        // by checking the current gameState and the 'compareArray' length
-        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return // . !isSelected is important to know wether this box is already in the compareArray or not
-        
+        if (lastClickedUseCase === useCase) return; // disables possiblity to check two datasets from the same document
+
+        // checks whether 'BaseHeadlineWithText' can be clicked to compare
+        if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return;
+
         // check if Headline/Text was already selected (already in compareArray)...
         if (!isSelected) {
-            // ... if not safe set it to 'isSelected' the information to the 'compareArray'
+            // ... if not save set it to 'isSelected', add the information to the 'compareArray'
             setIsSelected(prev => !prev)
             setInformationToCompareArray({
                 id: id,
@@ -40,19 +48,17 @@ export const BaseHeadlineWithText = ({useCase, headline, data, id}) => {
                 headline: headline,
                 data: data
             })
-            return;
+            setLastClickedUseCase(useCase)
+            return
         }
 
-        // finds the clicked object by searchin the useCase (f.e. 'driversLicence') and the id
-        const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
+        // finds the clicked object by searching the useCase (e.g. 'driversLicence') and the id
+        const obj = compareArray.find(item => item.useCase === useCase && item.id === id);
+        if (obj) removeInformationFromCompareArray(obj.useCase, obj.id);
 
-        if (obj) removeInformationFromCompareArray(obj.useCase, obj.id)
         setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
     }
-
-    
-
 
     return (
         <>
@@ -74,5 +80,4 @@ export const BaseHeadlineWithText = ({useCase, headline, data, id}) => {
             </div>
         </>
     )
-
 }

@@ -25,9 +25,9 @@ export function useCarSpawner () {
         let newEntitiy;
         
         if (spawnCarOfWantedList && wantedList.length) {
-            console.log("#############################");
-            console.log("WANTED LIST NPC");
-            console.log("#############################");
+            // console.log("#############################");
+            // console.log("WANTED LIST NPC");
+            // console.log("#############################");
             
 
             // wantedList is a parameter of this function.
@@ -36,9 +36,9 @@ export function useCarSpawner () {
 
             newEntitiy = {...criminal, id :generateUUID()}
         } else {
-            console.log("#############################");
-            console.log("NPC WITH POTENCIAL FAKED PROFILE");
-            console.log("#############################");
+            // console.log("#############################");
+            // console.log("NPC WITH A POTENTIAL FAKED PROFILE");
+            // console.log("#############################");
             
             const carProfile = generateCarProfile();
             const driverProfile = generateDriverProfile();

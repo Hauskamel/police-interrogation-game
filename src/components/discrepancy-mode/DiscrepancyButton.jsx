@@ -6,6 +6,7 @@ export function DiscrepancyButton () {
     const gameMode = useGameStore(state => state.gameMode);
     
     const clearCompareArray = useDiscrepandancyCompareStore(state => state.clearCompareArray);
+    const clearLastClickedUseCase = useDiscrepandancyCompareStore(state => state.clearLastClickedUseCase);
 
     return (
         <>
@@ -17,6 +18,7 @@ export function DiscrepancyButton () {
                         discrepancyMode()
                     } else {
                         gameMode()
+                        clearLastClickedUseCase();
                         clearCompareArray();
                     }
                 }}>

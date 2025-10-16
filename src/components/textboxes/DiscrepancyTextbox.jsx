@@ -5,8 +5,6 @@ import { BaseTextbox } from "../textboxes/BaseTextbox";
 export function DiscrepancyTextbox () {
 
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
-    
-    console.log(compareArray);
 
 
     // const text =  hier dann überprüfen, ob

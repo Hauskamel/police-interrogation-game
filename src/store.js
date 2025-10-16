@@ -97,19 +97,21 @@ export const useTextboxStore = create(set => ({
 
 
 export const useDiscrepandancyCompareStore = create(set => ({
+    lastClickedUseCase: "",
+    setLastClickedUseCase: (useCase) => set({
+        lastClickedUseCase: useCase
+    }),
+    clearLastClickedUseCase: () => set({
+        lastClickedUseCase: ""
+    }),
     compareArray: [],
-    setInformationToCompareArray: (information) => 
-        set((state) => ({
-            compareArray: [...state.compareArray, information]
+    setInformationToCompareArray: (information) => set((state) => ({
+        compareArray: [...state.compareArray, information]
     })),
-    removeInformationFromCompareArray: (useCase, id) =>
-        set((state) => ({
-            compareArray: state.compareArray.filter((information) => !(information.useCase === useCase && information.id === id))
-        })
-    ),
-    clearCompareArray: () =>
-        set((state) => ({
-            compareArray: state.compareArray.splice(0, state.compareArray.lenght)
-        })
-    )
+    removeInformationFromCompareArray: (useCase, id) => set((state) => ({
+        compareArray: state.compareArray.filter((information) => !(information.useCase === useCase && information.id === id))
+    })),
+    clearCompareArray: () => set((state) => ({
+        compareArray: state.compareArray.splice(0, state.compareArray.lenght)
+    }))
 }))
