@@ -1,5 +1,5 @@
 import {BaseTextbox} from "./BaseTextbox.jsx";
-import { BaseImageWithInformation } from "../base-components/BaseImageWithInformation.jsx";
+import { BaseImageWithText } from "../base-components/BaseImageWithText.jsx";
 
 export const CarOccupantsInformationTextbox = ({
     selectedCar,
@@ -19,7 +19,7 @@ export const CarOccupantsInformationTextbox = ({
                         </>
                         :
                         // The car has reached the police man so now there is information about the driver visible
-                        <BaseImageWithInformation stoppedCar={stoppedCar} />
+                        <BaseImageWithText stoppedCar={stoppedCar} />
                     }
                 </div>
             </BaseTextbox>

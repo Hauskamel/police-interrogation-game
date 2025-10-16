@@ -7,15 +7,15 @@ import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
 
-export const BaseImageWithInformation = ({stoppedCar}) => {
+export const BaseImageWithText = ({stoppedCar}) => {
 
     const gameState = useGameStore((state) => state.gameState)
 
     const [isSelected, setIsSelected] = useState(false)
 
-    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray)
-    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray)
-    const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state. removeInformationFromCompareArray)
+    const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
+    const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray);
+    const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state. removeInformationFromCompareArray);
 
     let carProfile = stoppedCar.carProfile.realProfile;
     if (stoppedCar.carProfile.fakeProfile) carProfile = stoppedCar.carProfile.fakeProfile;
@@ -25,11 +25,11 @@ export const BaseImageWithInformation = ({stoppedCar}) => {
 
 
     // reset select status to sync with empty 'compareArray'
-        useEffect(() => {
-            if (gameState === gameStates.GAME) {
-                setIsSelected(false)
-            }
-    }, [compareArray])
+    useEffect(() => {
+        if (gameState === gameStates.GAME) {
+            setIsSelected(false);
+        }
+    }, [compareArray]);
 
 
 

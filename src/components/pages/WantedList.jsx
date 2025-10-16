@@ -1,5 +1,5 @@
 import { useNpcStore } from "../../store"
-import { BaseImageWithInformation } from "../base-components/BaseImageWithInformation.jsx"
+import { BaseImageWithText } from "../base-components/BaseImageWithText.jsx"
 
 
 export function WantedList () {
@@ -7,16 +7,13 @@ export function WantedList () {
 
     return (
         <>
-
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">Wanted List</h2>
 
             {wantedList.map((criminal, index) => {
                 return (
-                    <BaseImageWithInformation stoppedCar={criminal} key={index} />
+                    <BaseImageWithText stoppedCar={criminal} key={index} />
                 )
             })}
-
-
         </>
     )
 }
