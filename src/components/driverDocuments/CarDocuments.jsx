@@ -22,16 +22,16 @@ export function CarDocuments ({car, driver}) {
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left mb-5">
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText useCase="cardocument" id={1} global-id="driverFirstName" headline="Vorname" hiddenHeadline="Vorname &" data={driverProfile.firstName}></BaseHeadlineWithText>
-                        <BaseHeadlineWithText useCase="cardocument" id={2} global-id="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
+                        <BaseHeadlineWithText useCase="cardocument" id={1} documentDataField="driverFirstName" headline="Vorname" hiddenHeadline="Vorname &" data={driverProfile.firstName}></BaseHeadlineWithText>
+                        <BaseHeadlineWithText useCase="cardocument" id={2} documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" global-id="licencePlate" data={carProfile?.plateNumber} useCase="cardocument" id={3} />
-                        <BaseHeadlineWithText headline="Hersteller" global-id="manufacturer" data={carProfile?.brandName} useCase="cardocument" id={4} />
+                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licencePlate" data={carProfile?.plateNumber} useCase="cardocument" id={3} />
+                        <BaseHeadlineWithText headline="Hersteller" documentDataField="manufacturer" data={carProfile?.brandName} useCase="cardocument" id={4} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Model" global-id="carModel" data={carProfile?.brandModel} useCase="cardocument" id={5}/>
-                        <BaseHeadlineWithText headline="Registriernummer" global-id="registationNumber" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={6} />
+                        <BaseHeadlineWithText headline="Model" documentDataField="carModel" data={carProfile?.brandModel} useCase="cardocument" id={5}/>
+                        <BaseHeadlineWithText headline="Registriernummer" documentDataField="registationNumber" data={carProfile?.carRegistrationNumber} useCase="cardocument" id={6} />
                     </div>
                 </div>
             </div>

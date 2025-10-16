@@ -33,23 +33,22 @@ export function DriversLicence ({ driver }) {
                             {/* Problematisch wird hierbei die Verwendung von Vor- & Nachnamen */}
                             <div className="w-1/1">
                                 <div className="w-1/1 justify-between flex">
-                                    {/* TODO: "global-id" muss dokumentiert werden, sonst kennt si koa sau mehr aus */}
-                                    <BaseHeadlineWithText useCase="driversLicence" id={1} global-id="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
-                                    <BaseHeadlineWithText useCase="driversLicence" id={2} global-id="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText useCase="driversLicence" id={1} documentDataField="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText useCase="driversLicence" id={2} documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
                                 </div>
                             </div>
 
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText useCase="driversLicence" id={3} global-id="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicence" id={4} global-id="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicence" id={3} documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicence" id={4} documentDataField="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
                             </div>
-                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={5} documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={5} documentDataField="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
                         </div>
                         <div className="mt-2 flex justify-between">
-                            <BaseHeadlineWithText useCase="driversLicence" id={6} global-id="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={7} global-id="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={8} global-id="height" headline="Höhe (cm)" data={driverProfile.height}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={6} documentDataField="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={7} documentDataField="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={8} documentDataField="height" headline="Höhe (cm)" data={driverProfile.height}></BaseHeadlineWithText>
                         </div>
                     </div>
                 </div>

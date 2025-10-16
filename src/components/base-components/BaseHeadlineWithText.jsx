@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
-export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWidth }) => {
+export const BaseHeadlineWithText = ({ useCase, headline, data, id, documentDataField, individualWidth }) => {
     const [isSelected, setIsSelected] = useState(false)
 
     const gameState = useGameStore(state => state.gameState)
@@ -30,8 +30,6 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
     // Handling click event when comparing
     const handleClick = () => {
         if (isSelected) clearLastClickedUseCase();
-        console.log(lastClickedUseCase);
-        
 
         // checks whether 'BaseHeadlineWithText' can be clicked to compare
         // disables possiblity to check two datasets from the same document) return;
@@ -43,6 +41,7 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
             setIsSelected(prev => !prev);
             setInformationToCompareArray({
                 id: id,
+                documentDataField: documentDataField,
                 useCase: useCase,
                 headline: headline,
                 data: data
