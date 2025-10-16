@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
-export const BaseHeadlineWithText = ({ useCase, headline, data, id }) => {
+export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWidth }) => {
     const [isSelected, setIsSelected] = useState(false)
 
     const gameState = useGameStore(state => state.gameState)
@@ -18,9 +18,6 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id }) => {
     const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
     const lastClickedUseCase = useDiscrepandancyCompareStore(state => state.lastClickedUseCase);
     const setLastClickedUseCase = useDiscrepandancyCompareStore(state => state.setLastClickedUseCase);
-    const removeLastClickedUseCase = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
-
-
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
@@ -28,8 +25,6 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id }) => {
             setIsSelected(false)
         }
     }, [compareArray, gameState])
-
-
 
     // Handling click event when comparing
     const handleClick = () => {
@@ -62,17 +57,17 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id }) => {
 
     return (
         <>
-            <div className={` ${isSelected ? "text-orange-400" : ""} w-1/2`} onClick={handleClick}>
+            <div className={` ${isSelected ? "text-orange-400" : ""} ${individualWidth === "" ? "w-1/2" : "w-1/1"} `} onClick={handleClick}>
                 <strong>{headline}</strong>
                 {
                     Array.isArray(data) ? (
-                        <>
+                        
                             <div className="flex">
                                 {data.map((p, idx) => (
                                     <p className={idx > 0 ? "ml-3" : ""} key={idx}>{p}</p>
                                 ))}
                             </div>
-                        </>
+                        
                     ) : (
                         <p>{data}</p>
                     )

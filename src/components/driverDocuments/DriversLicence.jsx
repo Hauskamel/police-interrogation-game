@@ -43,8 +43,7 @@ export function DriversLicence ({ driver }) {
                                 <BaseHeadlineWithText useCase="driversLicence" id={3} global-id="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
                                 <BaseHeadlineWithText useCase="driversLicence" id={4} global-id="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
                             </div>
-                            
-                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="issueDate" headline="Adresse" data={driverProfile.address}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
                             <BaseHeadlineWithText useCase="driversLicence" id={5} global-id="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
                         </div>
                         <div className="mt-2 flex justify-between">
