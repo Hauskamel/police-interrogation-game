@@ -30,6 +30,8 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
     // Handling click event when comparing
     const handleClick = () => {
         if (isSelected) clearLastClickedUseCase();
+        console.log(lastClickedUseCase);
+        
 
         // checks whether 'BaseHeadlineWithText' can be clicked to compare
         // disables possiblity to check two datasets from the same document) return;
@@ -50,11 +52,10 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, id, individualWi
         }
 
         // finds the clicked object by searching the useCase (e.g. 'driversLicence') and the id
-        // const obj = compareArray.find(item => item.useCase === useCase && item.id === id);
-        // if (obj) removeInformationFromCompareArray(obj.useCase, obj.id);
-
-
+        const obj = compareArray.find(item => item.useCase === useCase && item.id === id);
+        if (obj) removeInformationFromCompareArray(obj.useCase, obj.id);
         if (isSelected) removeInformationFromCompareArray(obj.useCase, obj.id);
+        
         setIsSelected(prev => !prev); // switches between true and false
         return // return so not set again to compareArray
     }
