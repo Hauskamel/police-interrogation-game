@@ -10,7 +10,6 @@ export function DiscrepancyButton () {
 
     return (
         <>
-
             <div
                 className="fixed bottom-5 z-2 right-200 flex gap-2 bg-sky-600 p-2 rounded-xl shadow-lg"
                 onClick={() => {

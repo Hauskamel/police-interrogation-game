@@ -15,7 +15,6 @@ export const CarOccupantsInformationTextbox = ({
                         <>
                             {/* If the car has not reached the police man yet the user sees a question mark */}
                             <img src={`/images/driver/driver-unknown.jpg`} className="w-16 h-16 rounded-full"/>
-                            <p className="text-gray-500 text-xs">unknown</p>
                         </>
                         :
                         // The car has reached the police man so now there is information about the driver visible

@@ -1,14 +1,11 @@
 // Used in the wanted list component
 
-
-
 import { useEffect, useState } from "react"
 
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
 
 export const BaseImageWithText = ({stoppedCar}) => {
-
     const gameState = useGameStore((state) => state.gameState)
 
     const [isSelected, setIsSelected] = useState(false)
@@ -32,7 +29,6 @@ export const BaseImageWithText = ({stoppedCar}) => {
     }, [compareArray]);
 
 
-
     function handleClick () {
         // for furter information read in 'BaseHeadlineWithText.jsx'
         if (((gameState !== gameStates.DISCREPANCY) || compareArray.length > 1) && !isSelected) return // . !isSelected is important to know wether this box is already in the compareArray or not
@@ -47,26 +43,21 @@ export const BaseImageWithText = ({stoppedCar}) => {
             return;
         }
 
-
         // finds the clicked object by searchin the useCase (f.e. 'driversLicence') and the id
         const obj = compareArray.find(item => item.useCase === useCase && item.id === id)
 
         if (obj) removeInformationFromCompareArray(obj.useCase, obj.id)
         setIsSelected(prev => !prev) // switches between true and false
         return // return so not set again to compareArray
-
     }
 
     return (
-        <div
-            className="mb-5 flex"
-            
-            onClick={handleClick}>
+        <div className="mb-5 flex" onClick={handleClick}>
             <img src={`/images/driver/${driverProfile.driverImage}`} className="w-20 h-20"/>
             <div>
-                    <p className={`${isSelected ? "text-orange-400" : "text-gray-500"} text-xs`}>{driverProfile.firstName} {driverProfile.lastName}</p>
-                    <p className={`${isSelected ? "text-orange-400" : "text-gray-500"} text-xs`}>Größe: {driverProfile.height} cm</p>
-                </div>
+                <p className={`${isSelected ? "text-orange-400" : "text-gray-500"} text-xs`}>{driverProfile.firstName} {driverProfile.lastName}</p>
+                <p className={`${isSelected ? "text-orange-400" : "text-gray-500"} text-xs`}>Größe: {driverProfile.height} cm</p>
+            </div>
         </div>
     )
     

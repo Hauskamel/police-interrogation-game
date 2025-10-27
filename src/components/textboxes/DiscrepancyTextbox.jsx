@@ -25,12 +25,13 @@ export function DiscrepancyTextbox () {
         }
     }
 
+    // TODO: hier weiter an den dynamischen Textboxen bauen
     return (
         <>
             <BaseTextbox title={"Check vorbei"} margin="bottom-60" isCloseable={false}>
             {!dataFieldsAreEqual ? 
                 <p className="text-black text-xs">Dieser Vergleich macht keinen Sinn.</p> 
-                : <p className="text-black text-xs">Ich vergleiche {compareArray[0].headline}</p>    
+                : <p className="text-black text-xs">Ich vergleiche {compareArray[0].headline}</p>
             }
             {renderTextDependingOnDataField()}
             </BaseTextbox>
