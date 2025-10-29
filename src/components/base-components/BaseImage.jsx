@@ -57,7 +57,7 @@ export function BaseImage ({ useCase, data, stoppedCar }) {
                                 className="w-full h-full"
                                 style={{
                                     position: 'relative',
-                                    left: "32px",
+                                    left: "0px",
                                     top: "32px",
                                     cursor: 'move'
                                 }}
@@ -68,7 +68,6 @@ export function BaseImage ({ useCase, data, stoppedCar }) {
                             </motion.div>
                         {/* ) : null
                     )}; */}
-                
             </AnimatePresence>
 
 
