@@ -1,7 +1,6 @@
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
 
 export function DriversLicence ({ driver }) {
-    
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
     
@@ -33,22 +32,22 @@ export function DriversLicence ({ driver }) {
                             {/* Problematisch wird hierbei die Verwendung von Vor- & Nachnamen */}
                             <div className="w-1/1">
                                 <div className="w-1/1 justify-between flex">
-                                    <BaseHeadlineWithText useCase="driversLicence" id={1} documentDataField="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
-                                    <BaseHeadlineWithText useCase="driversLicence" id={2} documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText useCase="driversLicence" documentDataField="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText useCase="driversLicence" documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
                                 </div>
                             </div>
 
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText useCase="driversLicence" id={3} documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicence" id={4} documentDataField="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicence" documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicence" documentDataField="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
                             </div>
-                            <BaseHeadlineWithText useCase="driversLicence" id={5} documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={5} documentDataField="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" documentDataField="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
                         </div>
                         <div className="mt-2 flex justify-between">
-                            <BaseHeadlineWithText useCase="driversLicence" id={6} documentDataField="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={7} documentDataField="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicence" id={8} documentDataField="height" headline="Höhe (cm)" data={driverProfile.height}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" documentDataField="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" documentDataField="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicence" documentDataField="height" headline="Höhe (cm)" data={driverProfile.height}></BaseHeadlineWithText>
                         </div>
                     </div>
                 </div>

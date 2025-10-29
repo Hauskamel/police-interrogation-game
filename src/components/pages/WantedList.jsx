@@ -1,5 +1,6 @@
 import { useNpcStore } from "../../store"
-import { BaseImageWithText } from "../base-components/BaseImageWithText.jsx"
+import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText.jsx"
+import { BaseImage } from "../base-components/BaseImage.jsx"
 
 
 export function WantedList () {
@@ -9,9 +10,14 @@ export function WantedList () {
         <>
             <h2 className="text-lg font-bold text-gray-900 tracking-tight">Wanted List</h2>
 
-            {wantedList.map((criminal, index) => {
+            {wantedList.map((car, index) => {
                 return (
-                    <BaseImageWithText stoppedCar={criminal} key={index} />
+                    <>
+                        <div key={index}>
+                            <BaseImage useCase="wantedList" data={car.driverProfile.realProfile.driverImage} stoppedCar={car} />
+                            <BaseHeadlineWithText useCase="carDocument" documentDataField="driverFirstName" headline="" data={car.driverProfile.realProfile.firstName} />
+                        </div>
+                    </>
                 )
             })}
         </>

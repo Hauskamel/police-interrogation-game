@@ -3,7 +3,7 @@ import BaseDocument from "../base-components/BaseDocument.jsx";
 import {DocumentBar} from "./../DocumentBar";
 
 import {DriversLicence} from "./../driverDocuments/DriversLicence";
-import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx"
+import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx";
 import { ProofOfInsurance } from "../driverDocuments/ProofOfInsurcance.jsx";
 
 export function DocumentManager({selectedCar}) {

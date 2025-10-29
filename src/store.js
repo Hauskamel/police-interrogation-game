@@ -80,8 +80,6 @@ export const useCarStore = create((set) => ({
 }));
 
 
-
-
 export const useTextboxStore = create(set => ({
     textboxesVisible: false,
     setTextboxVisibilityState: (state => {
@@ -90,10 +88,6 @@ export const useTextboxStore = create(set => ({
         })
     })
 }))
-
-
-
-
 
 
 export const useDiscrepandancyCompareStore = create(set => ({
@@ -108,10 +102,10 @@ export const useDiscrepandancyCompareStore = create(set => ({
     setInformationToCompareArray: (information) => set((state) => ({
         compareArray: [...state.compareArray, information]
     })),
-    removeInformationFromCompareArray: (useCase, id) => set((state) => ({
-        compareArray: state.compareArray.filter((information) => !(information.useCase === useCase && information.id === id))
+    removeInformationFromCompareArray: (useCase, documentDataField) => set((state) => ({
+        compareArray: state.compareArray.filter((information) => !(information.useCase === useCase && information.documentDataField === documentDataField))
     })),
     clearCompareArray: () => set((state) => ({
         compareArray: state.compareArray.splice(0, state.compareArray.lenght)
     }))
-}))
+}));

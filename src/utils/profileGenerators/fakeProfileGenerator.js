@@ -7,7 +7,7 @@ const randomChance = (percent) => {
 // ---> applies manipulation(s) to the passed profile
 export const applyRandomManipulations = (profile, manipulations) => {    
 
-    const chancesOfManipulation = manipulations.map((_, i) => Math.floor(100 / (i+1))); // (i+1) to ensure 1 manipulation min.
+    const chancesOfManipulation = manipulations.map((_, i) => Math.floor(100 / (i+1))); // (i+1) to ensure at least one manipulation
 
     let toManipulate;
     let manipulationsCopy = manipulations.map((_,i) => i)

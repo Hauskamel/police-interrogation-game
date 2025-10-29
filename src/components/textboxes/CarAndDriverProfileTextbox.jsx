@@ -6,7 +6,6 @@ export const CarAndDriverProfileTextbox = ({ selectedCar, stoppedCar }) => {
     // check if no car has been stopped OR user clicked on a car that is not the stopped car
     if (!stoppedCar || stoppedCar.id !== selectedCar?.id) return;
     
-
     return (
         <>
             <BaseTextbox title={"Fahrer- & Fahrzeugprofil"} margin="bottom-60" isCloseable={false}>

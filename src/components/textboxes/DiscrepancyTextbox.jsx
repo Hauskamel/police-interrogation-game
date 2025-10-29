@@ -3,17 +3,10 @@ import { useDiscrepandancyCompareStore } from "../../store";
 import { BaseTextbox } from "../textboxes/BaseTextbox";
 
 export function DiscrepancyTextbox () {
-    // documentDataField
-    // useCase
-    // headline
-    // data
-    // id
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
-    
     const comparedDocumentDataField = compareArray.map(field => field.documentDataField);
     const dataFieldsAreEqual = comparedDocumentDataField.every(dataField => dataField === comparedDocumentDataField[0]);
 
-    // NEU: Vergleiche die "data"-Werte im compareArray
     const comparedData = compareArray.map(field => field.data);
     const dataValuesAreEqual = comparedData.every(data => data === comparedData[0]);
 
@@ -21,7 +14,7 @@ export function DiscrepancyTextbox () {
         if (dataValuesAreEqual) {
             return <p className="text-black text-xs">Die beiden Werte passen</p>;
         } else {
-            return <p className="text-black text-xs">Hier stimmt was nicht</p>;
+            return <p className="text-black text-xs">--- Diese Textbox nach Einbauen einer Animation bitte entfernen ----</p>;
         }
     }
 
@@ -29,11 +22,7 @@ export function DiscrepancyTextbox () {
     return (
         <>
             <BaseTextbox title={"Check vorbei"} margin="bottom-60" isCloseable={false}>
-            {!dataFieldsAreEqual ? 
-                <p className="text-black text-xs">Dieser Vergleich macht keinen Sinn.</p> 
-                : <p className="text-black text-xs">Ich vergleiche {compareArray[0].headline}</p>
-            }
-            {renderTextDependingOnDataField()}
+                {renderTextDependingOnDataField()}
             </BaseTextbox>
         </>
     )
