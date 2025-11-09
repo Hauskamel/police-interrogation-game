@@ -1,4 +1,4 @@
-// This component is used in the drivers licence and car documents
+// This component is used in the drivers license and car documents
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 

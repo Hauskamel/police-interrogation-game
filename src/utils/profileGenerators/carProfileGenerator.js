@@ -2,7 +2,7 @@
 // NOTE: ----- for testing purposes its only for the car -----
 
 
-import { carBrands } from '../../utils/carBrands.js';
+import { carBrands } from '../../utils/meta/carBrands.js';
 import { faker } from "@faker-js/faker";
 
 import { applyRandomManipulations } from './fakeProfileGenerator.js';
@@ -73,6 +73,7 @@ export const generateCarProfile = (isWanted) => {
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
+        console.log("generate fake profile...");        
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
     }
 

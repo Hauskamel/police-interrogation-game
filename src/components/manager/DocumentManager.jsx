@@ -2,7 +2,7 @@ import {useState} from "react";
 import BaseDocument from "../base-components/BaseDocument.jsx";
 import {DocumentBar} from "./../DocumentBar";
 
-import {DriversLicence} from "./../driverDocuments/DriversLicence";
+import {DriversLicense} from "./../driverDocuments/DriversLicense";
 import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx";
 import { ProofOfInsurance } from "../driverDocuments/ProofOfInsurcance.jsx";
 
@@ -23,7 +23,7 @@ export function DocumentManager({selectedCar}) {
 
     const docComponents = {
         driversLicense: (
-            <DriversLicence 
+            <DriversLicense 
                 key="driversLicense"
                 driver={selectedCar?.driverProfile}
             />

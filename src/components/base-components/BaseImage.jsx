@@ -44,13 +44,15 @@ export function BaseImage ({ useCase, data, stoppedCar }) {
         });
     }
 
+    // TODO: HIER "BLINK" ANIMATION FUNKTIONIERT NOCH NICHT.
+
     return (
         <>
             <AnimatePresence>   
                 {/* {React.Children.map(children, (child) =>
                         child ? ( */}
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                                // initial={{ opacity: 0, scale: 0.8, y: 50 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.8, y: 50 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -69,27 +71,6 @@ export function BaseImage ({ useCase, data, stoppedCar }) {
                         {/* ) : null
                     )}; */}
             </AnimatePresence>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </>
     )
 

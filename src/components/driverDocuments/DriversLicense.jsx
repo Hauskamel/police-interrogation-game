@@ -1,6 +1,6 @@
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
 
-export function driversLicense ({ driver }) {
+export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
     
@@ -16,11 +16,11 @@ export function driversLicense ({ driver }) {
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
                             <img
                                 src={`/images/driver/${driverProfile.driverImage}`}
-                                alt="License Photo"
+                                alt="Licence Photo"
                                 className="col-span-2 w-28 h-28"
                             />
                         </div>
-                        {/* Todo: create randomized license classes with one matching the vehicle */}
+                        {/* Todo: create randomized licence classes with one matching the vehicle */}
                         <div className="mt-1">
                             <div className="font-semibold text-sm text-gray-800">D / M</div>
                         </div>

@@ -34,7 +34,7 @@ export function useDocumentClickHandler ({
             return
         }
 
-        // finds the clicked object by searching the useCase (e.g. 'driversLicence') and the documentDataField (e.g. 'birthday')
+        // finds the clicked object by searching the useCase (e.g. 'driversLicense') and the documentDataField (e.g. 'birthday')
         const obj = compareArray.find(item => item.useCase === useCase && item.documentDataField === documentDataField);
         if (obj) removeInformationFromCompareArray(obj.useCase, obj.documentDataField);
         

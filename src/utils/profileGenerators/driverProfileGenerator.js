@@ -1,21 +1,10 @@
 import {driverImageProfiles} from "../../utils/driverImageProfiles.js"
 
+import { firstNames } from "../meta/firstNames.js";
+
 import {applyRandomManipulations} from "./fakeProfileGenerator.js"
 
 import { faker } from "@faker-js/faker";
-
-
-
-// this function may be exported someday
-const firstNames = [
-    'Peter', 'Michael', 'Alexander', 'John', 'Robert', 'Lukas', 'Christoph', 
-    'Maximilian', 'Simon', 'Justin', 'Louis', 'Gabriel', 'Armin', 'Sebastian', 
-    'Ethan', 'Martin', 'Bernhard', 'Leo', 'Leonhard', 'Charles', 'James', 
-    'Andrew', 'Steven', 'Brian', 'Kevin', 'Jason', 'Eric', 'Tyler', 'Dylan',
-    'Mark', 'Anthony', 'Todd', 'Gregory', 'Kyle', 'Brandon', 'Zachary', 'Cody',
-    'George', 'Frank', 'Ronald', 'Larry', 'Wayne', 'Logan', 'Hunter', 'Austin',
-    'Blake', 'Daniel', 'Scott', 'Shawn', 'Connor'
-]
 
 // ---> generates a random chance in percent (%)
 const randomChance = (percent) => {

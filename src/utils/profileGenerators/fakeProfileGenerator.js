@@ -1,4 +1,3 @@
-
 // ---> toManipulate generator for random choices
 const randomChance = (percent) => {
     return Math.random() < percent / 100
@@ -10,6 +9,7 @@ export const applyRandomManipulations = (profile, manipulations) => {
     const chancesOfManipulation = manipulations.map((_, i) => Math.floor(100 / (i+1))); // (i+1) to ensure at least one manipulation
 
     let toManipulate;
+
     let manipulationsCopy = manipulations.map((_,i) => i)
     
     let manipulatedProfile = profile

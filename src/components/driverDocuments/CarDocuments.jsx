@@ -26,7 +26,7 @@ export function CarDocuments ({car, driver}) {
                         <BaseHeadlineWithText useCase="carDocument" documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licencePlate" data={carProfile?.plateNumber} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licensePlate" data={carProfile?.plateNumber} useCase="carDocument" />
                         <BaseHeadlineWithText headline="Hersteller" documentDataField="manufacturer" data={carProfile?.brandName} useCase="carDocument" />
                     </div>
                     <div className="flex mb-3">
