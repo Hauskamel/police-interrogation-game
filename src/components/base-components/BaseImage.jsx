@@ -7,7 +7,7 @@ import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler";
 
 import { useGameStore, useDiscrepandancyCompareStore, gameStates } from "../../store";
 
-export function BaseImage ({ useCase, data, stoppedCar }) {
+export function BaseImage ({ useCase, data }) {
     const [isSelected, setIsSelected] = useState(false);
     const gameState = useGameStore(state => state.gameState);
 

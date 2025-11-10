@@ -1,4 +1,5 @@
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
+import { BaseImage } from "../base-components/BaseImage";
 
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;
@@ -14,11 +15,7 @@ export function DriversLicense ({ driver }) {
                 <div className="grid grid-cols-3 gap-4 mt-4">
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
-                            <img
-                                src={`/images/driver/${driverProfile.driverImage}`}
-                                alt="License Photo"
-                                className="col-span-2 w-28 h-28"
-                            />
+                            <BaseImage useCase="driversLicense" data={driver.realProfile.driverImage} />
                         </div>
                         {/* Todo: create randomized license classes with one matching the vehicle */}
                         <div className="mt-1">
