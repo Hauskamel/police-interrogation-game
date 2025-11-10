@@ -165,6 +165,7 @@ export function generateDriverProfile (isWanted) {
     if (randomChance(50)) {
         const manipulations = createManipulations(imageProfile);
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
+        
     }
 
     return fakeProfile ?
