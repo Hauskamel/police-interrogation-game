@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
 
+import "../../../assets/css/blink.css";
+
 import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler.jsx"
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
@@ -16,9 +18,24 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataFiel
     const compareArray = useDiscrepandancyCompareStore(state => state.compareArray);
     const setInformationToCompareArray = useDiscrepandancyCompareStore(state => state.setInformationToCompareArray);
     const removeInformationFromCompareArray = useDiscrepandancyCompareStore(state => state.removeInformationFromCompareArray);
+
     const lastClickedUseCase = useDiscrepandancyCompareStore(state => state.lastClickedUseCase);
     const setLastClickedUseCase = useDiscrepandancyCompareStore(state => state.setLastClickedUseCase);
     const clearLastClickedUseCase = useDiscrepandancyCompareStore(state => state.clearLastClickedUseCase);
+
+
+    const comparedData = compareArray.map(field => field.data);
+    console.log(compareArray);
+    
+
+    // console.log(comparedData);
+    
+
+    const dataValuesAreEqual = comparedData.every((data) => {
+        // console.log(data);
+        data === comparedData[0]
+    });
+
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
@@ -46,21 +63,13 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataFiel
         });
     }
 
+     // ${dataValuesAreEqual ? "" : "blink-text"} 
+
     return (
         <>
-            <div className={` ${isSelected ? "text-blue-700" : ""} ${individualWidth === "" ? "w-1/2" : "w-1/1"} `} onClick={handleClick}>
+            <div className={` ${!dataValuesAreEqual && isSelected ? "blink-text" : ""}  ${isSelected ? "text-blue-700" : ""} ${individualWidth === "" ? "w-1/2" : "w-1/1"} `} onClick={handleClick}>
                 <strong>{headline ? headline : ""}</strong>
-                {
-                    Array.isArray(data) ? (
-                        <div className="flex">
-                            {data.map((p, idx) => (
-                                <p className={idx > 0 ? "ml-3" : ""} key={idx}> {p} </p>
-                            ))}
-                        </div>
-                    ) : (
-                        <p>{data}</p>
-                    )
-                }
+                <p>{data}</p>
             </div>
         </>
     )

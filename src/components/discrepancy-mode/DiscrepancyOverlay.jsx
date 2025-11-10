@@ -18,17 +18,4 @@ export const DiscrepancyOverlay =  () => {
             </>
         )
     }
-
-    if (gameState === gameStates.COMPARE) {
-        return (
-            <>
-                <div
-                    className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-2 bg-blue-800/30">
-                        {
-                            <DiscrepancyTextbox />
-                        }
-                </div>
-            </>
-        )
-    }   
 }

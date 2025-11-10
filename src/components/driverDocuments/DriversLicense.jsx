@@ -16,11 +16,11 @@ export function DriversLicense ({ driver }) {
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
                             <img
                                 src={`/images/driver/${driverProfile.driverImage}`}
-                                alt="Licence Photo"
+                                alt="License Photo"
                                 className="col-span-2 w-28 h-28"
                             />
                         </div>
-                        {/* Todo: create randomized licence classes with one matching the vehicle */}
+                        {/* Todo: create randomized license classes with one matching the vehicle */}
                         <div className="mt-1">
                             <div className="font-semibold text-sm text-gray-800">D / M</div>
                         </div>
@@ -39,7 +39,7 @@ export function DriversLicense ({ driver }) {
 
                             <div className="w-1/1 flex">
                                 <BaseHeadlineWithText useCase="driversLicense" documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenceNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
                             </div>
                             <BaseHeadlineWithText useCase="driversLicense" documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
                             <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
