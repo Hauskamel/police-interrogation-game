@@ -1,12 +1,7 @@
-// NOTE: THIS ALGORYTHM MIGHT BE ALTERED TO WORK FOR BOTH - DRIVER AND CAR
-// NOTE: ----- for testing purposes its only for the car -----
-
-
 import { carBrands } from '../../utils/meta/carBrands.js';
 import { faker } from "@faker-js/faker";
 
 import { applyRandomManipulations } from './fakeProfileGenerator.js';
-
 
 
 // ---> Handling car brands
@@ -73,7 +68,7 @@ export const generateCarProfile = (isWanted) => {
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
-        console.log("generate fake profile...");        
+        console.log("generate fake car profile...");
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
     }
 

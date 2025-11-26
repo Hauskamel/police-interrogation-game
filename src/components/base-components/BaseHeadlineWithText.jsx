@@ -1,10 +1,9 @@
 // This component is used in the drivers license and car documents
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
+import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler.jsx"
 
 import "../../../assets/css/blink.css";
-
-import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler.jsx"
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
 export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataField, individualWidth }) => {
@@ -23,16 +22,9 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataFiel
     const setLastClickedUseCase = useDiscrepandancyCompareStore(state => state.setLastClickedUseCase);
     const clearLastClickedUseCase = useDiscrepandancyCompareStore(state => state.clearLastClickedUseCase);
 
-
     const comparedData = compareArray.map(field => field.data);
-    console.log(compareArray);
     
-
-    // console.log(comparedData);
-    
-
     const dataValuesAreEqual = comparedData.every((data) => {
-        // console.log(data);
         data === comparedData[0]
     });
 

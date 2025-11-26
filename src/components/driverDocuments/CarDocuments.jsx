@@ -2,14 +2,12 @@ import { useState } from "react"
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText"
 
 export function CarDocuments ({car, driver}) {
-    const [setId, id] = useState(0)
-
     let carProfile = car.realProfile;
     if (car.fakeProfile) carProfile = car.fakeProfile;
     
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
-
+    
     return (
         <>
             <div

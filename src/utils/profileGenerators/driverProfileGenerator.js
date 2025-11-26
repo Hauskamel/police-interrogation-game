@@ -1,9 +1,6 @@
 import {driverImageProfiles} from "../../utils/driverImageProfiles.js"
-
 import { firstNames } from "../meta/firstNames.js";
-
 import {applyRandomManipulations} from "./fakeProfileGenerator.js"
-
 import { faker } from "@faker-js/faker";
 
 // ---> generates a random chance in percent (%)
@@ -30,10 +27,10 @@ function getRandomFirstName() {
 
 // ---> array with functions to manipulate the driver realProfile
 const createManipulations = (imageProfile) => [
-    profile => ({
-        ...profile,
-        prefix: faker.person.prefix(imageProfile.gender)
-    }),
+    // profile => ({
+    //     ...profile,
+    //     prefix: faker.person.prefix(imageProfile.gender)
+    // }),
     profile => ({
         ...profile,
          firstName: getRandomFirstName()
@@ -41,6 +38,24 @@ const createManipulations = (imageProfile) => [
     profile => ({
         ...profile,
         lastName: faker.person.lastName()
+    }),
+    profile => {
+        const birthYear = profile.birthYear || (new Date().getFullYear() - (profile?.age));
+        const birthDate = faker.date
+            .between({
+                from: `${birthYear}-01-01`,
+                to: `${birthYear}-12-31`
+            })
+            .toISOString()
+            .split('T')[0];
+        return {
+            ...profile,
+            birthDate
+        };
+    },
+    profile => ({
+        ...profile,
+        licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
     }),
     profile => ({
         ...profile,
@@ -64,28 +79,10 @@ const createManipulations = (imageProfile) => [
         ...profile,
         birthYear: new Date().getFullYear() - (Math.floor(Math.random() * 50) + 10)
     }),
-    profile => {
-        const birthYear = profile.birthYear || (new Date().getFullYear() - (profile?.age));
-        const birthDate = faker.date
-            .between({
-                from: `${birthYear}-01-01`,
-                to: `${birthYear}-12-31`
-            })
-            .toISOString()
-            .split('T')[0];
-        return {
-            ...profile,
-            birthDate
-        };
-    },
     profile => ({
         ...profile,
         height: Math.floor(Math.random() * (205 - 160 + 1)) + 160,
-    }),
-    profile => ({
-        ...profile,
-        licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
-    }),
+    })
 ]
 
 
@@ -165,7 +162,7 @@ export function generateDriverProfile (isWanted) {
     if (randomChance(50)) {
         const manipulations = createManipulations(imageProfile);
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
-        
+        console.log("Creating a fake driver profile...");   
     }
 
     return fakeProfile ?
