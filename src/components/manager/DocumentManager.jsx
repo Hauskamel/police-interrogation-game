@@ -5,9 +5,11 @@ import {DocumentBar} from "./../DocumentBar";
 import {DriversLicense} from "./../driverDocuments/DriversLicense";
 import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx";
 import { ProofOfInsurance } from "../driverDocuments/ProofOfInsurcance.jsx";
+import { useCarStore } from "../../store.js";
 
-export function DocumentManager({selectedCar}) {
+export function DocumentManager() {
     const activeDocs = ["driversLicense", "carDocs", "proofOfInsurance"];
+    const selectedCar = useCarStore(state => state.selectedCar)
 
     const [openDocs, setOpenDocs] = useState(() =>
         Object.fromEntries(activeDocs.map(doc => [doc, false])) // returns an object: { driversLicense: false, carDocs: false } 

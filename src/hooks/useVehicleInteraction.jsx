@@ -25,18 +25,8 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
         }, [onHoverChange]);
     
         const handleClick = useCallback((e) => {
-
-            console.log("vehicle id:", vehicle.id);
-            console.log("police car id:", playersPoliceCar.id);
-
-            console.log(vehicle.id === playersPoliceCar.id);
-            
-            
-            
-
-            e.stopPropagation();
-            if (vehicle.position?.x > STREETBAY_ENTRY_1[0] || vehicle.id === stoppedCar.id || vehicle.id === playersPoliceCar.id) {
-                console.log("a new vehicle was selected");
+            e.stopPropagation();    
+            if (vehicle.position?.x > STREETBAY_ENTRY_1[0] || vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
                 setSelectedCar(vehicle)
             };
         }, [vehicle, setSelectedCar]);

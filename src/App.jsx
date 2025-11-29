@@ -11,6 +11,7 @@ import { Notebook } from "./components/manager/Notebook.jsx";
 import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
+import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControlTextbox.jsx"
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
@@ -30,9 +31,10 @@ function App() {
     // ##################### STATES #####################
     // cars
     const cars = useCarStore((state) => state.cars);
-    const policeCar = useCarStore(state => state.playerPolicecar)
+    const policeCar = useCarStore(state => state.playersPolicecar)
 
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
+    const playersPoliceCar = useCarStore(state => state.playersPoliceCar)
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
 
@@ -58,19 +60,23 @@ function App() {
     // ############# RENDERED HTML COMPONENT ############
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
-            <Gamecanvas playerPoliceCar={policeCar} cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
+            <Gamecanvas playersPoliceCar={policeCar} cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
             
             <DiscrepancyOverlay />
             <Startmenu />
 
-            {selectedCar && (
-                <>
-                    <CarControlTextbox
-                        selectedCar={selectedCar}
-                        onClose={() => setSelectedCar(null)}
-                    />
-                </>
-            )}
+
+        {selectedCar && (
+            playersPoliceCar?.id === selectedCar?.id ? (
+                <PolicecarControlTextbox
+                    onClose={() => setSelectedCar(null)}
+                />
+            ) : (
+                <CarControlTextbox
+                    onClose={() => setSelectedCar(null)}
+                />
+            )
+        )}
 
             
             
@@ -88,10 +94,9 @@ function App() {
                 <>
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
                     <CarAndDriverProfileTextbox
-                        selectedCar={selectedCar}
                         stoppedCar={cars.find(car => car.stopped)}
                     />
-                    <DocumentManager selectedCar={selectedCar} />
+                    <DocumentManager />
 
                     <DiscrepancyButton />
                 </>

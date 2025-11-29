@@ -10,7 +10,7 @@ import { PoliceCar } from "../components/PoliceCar";
 
 import { POLICEMAN_POSITION, POLICECAR_POSITION } from "../config/positions";
 
-export function Gamecanvas({playerPoliceCar, cars, carRefs, setHoveringCar}) {
+export function Gamecanvas({playersPoliceCar, cars, carRefs, setHoveringCar}) {
     return (
         <div className="w-screen h-screen -z-1">
             <Canvas camera={{position: [7, 14, -16], fov: 70}}>
@@ -28,7 +28,7 @@ export function Gamecanvas({playerPoliceCar, cars, carRefs, setHoveringCar}) {
             />
             <PoliceCar
                 position={POLICECAR_POSITION}
-                onHoverChange={(hovering) => setHoveringCar(hovering ? playerPoliceCar.id  : null)}
+                onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id  : null)}
                 isPlayersCar={true}
                 
             />

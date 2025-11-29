@@ -1,7 +1,9 @@
+import { useCarStore } from "../../store.js";
 import {BaseTextbox} from "./BaseTextbox.jsx";
 
 // component is only visible on stopped car since no information about driver or vehicle is known or relevant
-export const CarAndDriverProfileTextbox = ({ selectedCar, stoppedCar }) => {
+export const CarAndDriverProfileTextbox = ({ stoppedCar }) => {
+    const selectedCar = useCarStore(state => state.selectedCar);
 
     // check if no car has been stopped OR user clicked on a car that is not the stopped car
     if (!stoppedCar || stoppedCar.id !== selectedCar?.id) return;

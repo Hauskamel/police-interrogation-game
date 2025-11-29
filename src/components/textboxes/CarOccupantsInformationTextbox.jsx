@@ -1,12 +1,10 @@
 import { BaseTextbox } from "./BaseTextbox.jsx";
 import { BaseImage } from "../base-components/BaseImage.jsx";
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText.jsx";
+import { useCarStore } from "../../store.js";
 
-export const CarOccupantsInformationTextbox = ({
-    selectedCar,
-    stoppedCar
-}) => {
-    if (stoppedCar?.id !== selectedCar?.id) return;
+export const CarOccupantsInformationTextbox = ({stoppedCar}) => {
+    const selectedCar = useCarStore(state => state.selectedCar);
 
     return (
         <>

@@ -18,11 +18,13 @@ function useClonedScene (gltf) {
     return useMemo(() => gltf.scene.clone(), [gltf.scene]);
 }
 
-function CarOccupantsInfoTextbox ({stoppedCar, selectedCar}) {
-    if (!stoppedCar ||stoppedCar?.position.z !== POLICE_CHECKPOINT) {
+function CarOccupantsInfoTextbox ({stoppedCar}) {
+    const selectedCar = useCarStore(state => state.selectedCar);
+
+    if (!stoppedCar || stoppedCar?.position.z !== POLICE_CHECKPOINT) {
         return <CarOccupantsInformationTextbox />
     } 
-    return <CarOccupantsInformationTextbox selectedCar={selectedCar} stoppedCar={stoppedCar} />
+    return <CarOccupantsInformationTextbox stoppedCar={stoppedCar} />
 }
 
 
@@ -57,7 +59,7 @@ function Car ({ car, onHoverChange }) {
         <>
             {selectedCar && car.id === selectedCar.id && (
                 <Html position={carOccupantsTextboxPosition}>
-                    <CarOccupantsInfoTextbox stoppedCar={stoppedCar} selectedCar={selectedCar} />
+                    <CarOccupantsInfoTextbox stoppedCar={stoppedCar} />
                 </Html>
             )}
             

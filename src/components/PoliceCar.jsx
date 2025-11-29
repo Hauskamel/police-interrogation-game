@@ -13,14 +13,13 @@ export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
 
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar)
     const setPlayersPoliceCar = useCarStore(state => state.setPlayersPoliceCar)
+    
 
 
     useEffect(() => {
-        if (!playersPoliceCar) {
-            const car = setupPlayersPoliceCar()
-            console.log(car);
-            
-            setPlayersPoliceCar(car)
+        if (playersPoliceCar === undefined) {
+            const car = setupPlayersPoliceCar();
+            setPlayersPoliceCar(car);
         }
 
         function setupPlayersPoliceCar () {
@@ -30,10 +29,6 @@ export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
             
             return car
         }
-
-        console.log("players police car: ", playersPoliceCar);
-        
-
     }, [setPlayersPoliceCar, playersPoliceCar])
     
 
@@ -41,7 +36,7 @@ export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
     const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(playersPoliceCar, onHoverChange)
 
 
-    const positionX = position[0]
+    const positionX = position[0];
     const positionY = position[1];
     const positionZ = position[2];
     

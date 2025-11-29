@@ -6,11 +6,11 @@ import { closeTextbox } from "../../utils/closeTextbox";
 
 
 export const CarControlTextbox = ({
-    selectedCar, 
     onClose
 }) => {
     const stopCar = useCarStore((state) => state.stopCar);
     const continueCar = useCarStore((state) => state.continueCar);
+    const selectedCar = useCarStore(state => state.selectedCar);
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     // textboxes
