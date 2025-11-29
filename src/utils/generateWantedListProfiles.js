@@ -10,6 +10,7 @@ export function generateWantedListProfiles () {
             driverProfile: generateDriverProfile(true),
             carProfile: generateCarProfile(true),
             arrested: false
+            // TODO: hier den Grund, warum der NPC gesucht ist & davon abhängig eine Beschreibung der Straftat
         }
         
         criminals.push(profile)
