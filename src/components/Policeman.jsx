@@ -10,7 +10,11 @@ function Policeman ({ position }) {
     const positionZ = position[2];
     
     return (
-        <primitive object={ scene } ref={policemanRef} position={ [ positionX, positionY, positionZ] } />
+        <primitive 
+            object={ scene } 
+            ref={policemanRef} 
+            position={ [ positionX, positionY, positionZ] } 
+        />
     )
 }
 

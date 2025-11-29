@@ -5,9 +5,12 @@ import { Road } from "../components/Road";
 import { Car } from "../components/Car";
 import { Policeman } from "../components/Policeman";
 import { Streetbay } from "../components/Streetbay";
-import { POLICEMAN_POSITION } from "../config/positions";
 
-export function Gamecanvas({cars, carRefs, setHoveringCar}) {
+import { PoliceCar } from "../components/PoliceCar";
+
+import { POLICEMAN_POSITION, POLICECAR_POSITION } from "../config/positions";
+
+export function Gamecanvas({playerPoliceCar, cars, carRefs, setHoveringCar}) {
     return (
         <div className="w-screen h-screen -z-1">
             <Canvas camera={{position: [7, 14, -16], fov: 70}}>
@@ -20,7 +23,15 @@ export function Gamecanvas({cars, carRefs, setHoveringCar}) {
             {/* GAME COMPONENTS */}
             <Road />
             <Streetbay />
-            <Policeman position={POLICEMAN_POSITION} />
+            <Policeman 
+                position={POLICEMAN_POSITION} 
+            />
+            <PoliceCar
+                position={POLICECAR_POSITION}
+                onHoverChange={(hovering) => setHoveringCar(hovering ? playerPoliceCar.id  : null)}
+                isPlayersCar={true}
+                
+            />
             {cars.map((car) => {
                 return (
                     <Car

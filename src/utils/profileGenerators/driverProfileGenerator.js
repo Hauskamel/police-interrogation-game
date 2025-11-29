@@ -85,8 +85,8 @@ const createManipulations = (imageProfile) => [
     })
 ]
 
-
-export function generateDriverProfile (isWanted) {
+// parameter canHaveFakeProfile probably only false for story characters that are NOT crimial
+export function generateDriverProfile (canHaveFakeProfile) {
     // ######## DRIVER INFORMATION ########
     // #####################################
 
@@ -155,11 +155,11 @@ export function generateDriverProfile (isWanted) {
         // arrestable: !!isWanted
     }
 
-    if (isWanted) return { realProfile }; // wanted list profiles need to match the original identity --> only true if profile is generated for wanted List
+    // if (isWanted) return { realProfile }; // returns if fake profile is not allowed for this npc type (f.e. wanted list)
 
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
-    if (randomChance(50)) {
+    if (canHaveFakeProfile && randomChance(50)) {
         const manipulations = createManipulations(imageProfile);
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
         console.log("Creating a fake driver profile...");   

@@ -1,4 +1,5 @@
 import { testValueType } from "framer-motion";
+import { generateUUID } from "three/src/math/MathUtils.js";
 import { create } from "zustand";
 
 export const gameStates = {
@@ -45,6 +46,12 @@ export const useNpcStore = create ((set) => ({
 
 
 export const useCarStore = create((set) => ({
+    playersPoliceCar: undefined,
+    setPlayersPoliceCar: (car) =>
+        set({
+            playersPoliceCar: car
+        })
+    ,
     cars: [],
     selectedCar: undefined,
     addCar: (newCar) =>

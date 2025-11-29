@@ -25,16 +25,13 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
-
-
-
-
-
 function App() {
     // ##################################################
     // ##################### STATES #####################
     // cars
     const cars = useCarStore((state) => state.cars);
+    const policeCar = useCarStore(state => state.playerPolicecar)
+
     const setSelectedCar = useCarStore(state => state.setSelectedCar)
     const selectedCar = useCarStore(state => state.selectedCar)
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
@@ -56,16 +53,12 @@ function App() {
 
     
     
-    
-     
-
-    
 
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
-            <Gamecanvas cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
+            <Gamecanvas playerPoliceCar={policeCar} cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
             
             <DiscrepancyOverlay />
             <Startmenu />
