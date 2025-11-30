@@ -32,6 +32,7 @@ export function Gamecanvas({playersPoliceCar, cars, carRefs, setHoveringCar}) {
                 isPlayersCar={true}
                 
             />
+            
             {cars.map((car) => {
                 return (
                     <Car

@@ -1,7 +1,6 @@
 
 import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore, useTextboxStore} from "../../store.js";
-import { closeTextbox } from "../../utils/closeTextbox";
 
 
 export const PolicecarControlTextbox = ({
@@ -9,6 +8,14 @@ export const PolicecarControlTextbox = ({
 }) => {
     const selectedCar = useCarStore(state => state.selectedCar);
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
+
+
+
+    function openDatabase () {
+        
+    }
+
+
 
     if (selectedCar?.id !== playersPoliceCar?.id) return;
 
@@ -21,7 +28,7 @@ export const PolicecarControlTextbox = ({
             >
                 <button
                     onClick={() => {
-                        stopCar(selectedCar.id);
+                        openDatabase()
                     }}
                     className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                 >

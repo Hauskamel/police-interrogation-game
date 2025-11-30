@@ -25,7 +25,7 @@ return (
         role="listbox"
     >
         { radioDisplayContent.map((option,i) => (
-			<div
+            <div
                 key={option.label}
                 className="mb-1 outline-none">
                 <Radiooption title={option.label} index={i} activeOptionIndex={activeOptionIndex} />

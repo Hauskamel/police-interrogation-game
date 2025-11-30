@@ -1,21 +1,21 @@
 import { useGLTF } from "@react-three/drei";
 import { useEffect, useRef } from "react";
-
 import { generateUUID } from "three/src/math/MathUtils.js";
-
 import { useVehicleInteraction } from "../hooks/useVehicleInteraction.jsx";
-
 import {useCarStore} from "../store.js";
 
-export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
+export const PoliceCar = ({ position, onHoverChange }) => {
     const { scene } = useGLTF("/models/police-car.glb");
     const policecarRef = useRef();
 
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar)
     const setPlayersPoliceCar = useCarStore(state => state.setPlayersPoliceCar)
+    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(playersPoliceCar, onHoverChange);
+
+    const positionX = position[0];
+    const positionY = position[1];
+    const positionZ = position[2];
     
-
-
     useEffect(() => {
         if (playersPoliceCar === undefined) {
             const car = setupPlayersPoliceCar();
@@ -31,15 +31,6 @@ export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
         }
     }, [setPlayersPoliceCar, playersPoliceCar])
     
-
-    
-    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(playersPoliceCar, onHoverChange)
-
-
-    const positionX = position[0];
-    const positionY = position[1];
-    const positionZ = position[2];
-    
     return (
         <primitive 
             object={ scene } 
@@ -50,5 +41,4 @@ export const PoliceCar = ({ position, onHoverChange, isPlayersCar }) => {
             onClick={ handleClick }
         />
     )
-
 }

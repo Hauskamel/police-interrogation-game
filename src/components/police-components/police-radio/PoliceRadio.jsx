@@ -1,7 +1,5 @@
 import { useState } from "react"
-
 import { Display } from "./Display";
-
 import { IoIosRadio } from "react-icons/io";
 
 export function Policeradio () {

@@ -7,8 +7,8 @@ import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOve
 import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButton.jsx";
 
 import { DocumentManager } from "./components/manager/DocumentManager";
-import { Notebook } from "./components/manager/Notebook.jsx";
-import { Policeradio } from "./components/manager/Policeradio/Policeradio.jsx";
+import { Notebook } from "./components/Notebook.jsx";
+import { Policeradio } from "./components/police-components/police-radio/PoliceRadio.jsx";
 import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
 
 import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControlTextbox.jsx"
@@ -67,12 +67,12 @@ function App() {
 
 
         {selectedCar && (
-            playersPoliceCar?.id === selectedCar?.id ? (
+            playersPoliceCar?.id === selectedCar?.id ? ( // check wether to show police car options
                 <PolicecarControlTextbox
                     onClose={() => setSelectedCar(null)}
                 />
             ) : (
-                <CarControlTextbox
+                <CarControlTextbox // or default npc car options
                     onClose={() => setSelectedCar(null)}
                 />
             )

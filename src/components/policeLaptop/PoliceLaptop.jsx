@@ -6,7 +6,9 @@ export default function PoliceLaptop () {
 
     return (
         <>
-            
+            <div>
+                
+            </div>
         </>
     )
 

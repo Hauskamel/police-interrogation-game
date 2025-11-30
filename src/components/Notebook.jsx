@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { WantedList } from "../pages/WantedList";
+import { WantedList } from "./pages/WantedList";
 
 import { LuNotebook } from "react-icons/lu";
 
@@ -33,8 +33,6 @@ export function Notebook () {
                     </div>
                 </div>
             }
-            
-            
         </>
     )
     
