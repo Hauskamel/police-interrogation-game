@@ -12,9 +12,7 @@ export function generateWantedListProfiles () {
             arrested: false
             // TODO: hier den Grund, warum der NPC gesucht ist & davon abhängig eine Beschreibung der Straftat
         }
-        
-        criminals.push(profile)
+        criminals.push(profile);
     }
-
     return criminals
 }
