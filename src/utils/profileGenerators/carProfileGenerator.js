@@ -68,7 +68,6 @@ export const generateCarProfile = (isWanted, noFakeProfile) => {
     // Generate toManipulate of a manipulated (fake) profile being generated
     let fakeProfile = null;
     if (randomChance(50)) {
-        console.log("generate fake car profile...");
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
     }
 

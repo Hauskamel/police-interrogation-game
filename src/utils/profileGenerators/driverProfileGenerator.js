@@ -86,7 +86,7 @@ const createManipulations = (imageProfile) => [
 ]
 
 // parameter canHaveFakeProfile probably only false for story characters that are NOT crimial
-export function generateDriverProfile (canHaveFakeProfile) {
+export function generateDriverProfile (canHaveFakeProfile = false) {
     // ######## DRIVER INFORMATION ########
     // #####################################
 
@@ -162,7 +162,6 @@ export function generateDriverProfile (canHaveFakeProfile) {
     if (canHaveFakeProfile && randomChance(50)) {
         const manipulations = createManipulations(imageProfile);
         fakeProfile = applyRandomManipulations(realProfile, manipulations);
-        console.log("Creating a fake driver profile...");   
     }
 
     return fakeProfile ?

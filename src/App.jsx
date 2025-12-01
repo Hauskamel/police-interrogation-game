@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import {useCarStore, useGameStore, gameStates} from "./store";
 
@@ -25,20 +25,24 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
+import { criminalDatabaseGenerator } from "./utils/generators/police-related-generator/criminalDatabaseGenerator.js";
+
+
+
 
 function App() {
     // ##################################################
     // ##################### STATES #####################
     // cars
     const cars = useCarStore((state) => state.cars);
-    const policeCar = useCarStore(state => state.playersPolicecar)
+    const policeCar = useCarStore(state => state.playersPolicecar);
 
-    const setSelectedCar = useCarStore(state => state.setSelectedCar)
-    const playersPoliceCar = useCarStore(state => state.playersPoliceCar)
-    const selectedCar = useCarStore(state => state.selectedCar)
-    const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped))
+    const setSelectedCar = useCarStore(state => state.setSelectedCar);
+    const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
+    const selectedCar = useCarStore(state => state.selectedCar);
+    const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
 
-    const gameState = useGameStore(state => state.gameState)
+    const gameState = useGameStore(state => state.gameState);
 
     const [hoveringCar, setHoveringCar] = useState(false);
 
@@ -53,6 +57,9 @@ function App() {
     // sets overlay dependant of the current game mode
     useOverlaySetter();
 
+    useEffect(() => {
+        criminalDatabaseGenerator();
+    }, [gameState])
     
     
 
