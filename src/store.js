@@ -6,12 +6,12 @@ export const gameStates = {
     MENU: "MENU",
     GAME: "GAME",
     DISCREPANCY: "DISCREPANCY",
-    COMPARE: "COMPARE"
+    COMPARE: "COMPARE",
+    LAPTOP: "LAPTOP"
 }
 
 export const useGameStore = create((set) => ({
     gameState: gameStates.MENU,
-
     gameMode: () => {
         set({
             gameState: gameStates.GAME
@@ -26,6 +26,11 @@ export const useGameStore = create((set) => ({
         set({
             gameState: gameStates.COMPARE
         })
+    },
+    compareMode: () => {
+        set({
+            gameState: gameStates.LAPTOP
+        })
     }
 }));
 
@@ -37,11 +42,17 @@ export const useGameStore = create((set) => ({
 export const useNpcStore = create ((set) => ({
     wantedList: [],
     arrestedNpcs: [],
+    criminalDatabase: [],
     setWantedList: (array) =>
         set({
             wantedList: array
         }
     ),
+    setCriminalDatabase: ((array) => {
+        set({
+            criminalDatabase: array
+        })
+    })
 }))
 
 

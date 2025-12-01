@@ -26,6 +26,7 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 import { criminalDatabaseGenerator } from "./utils/generators/police-related-generator/criminalDatabaseGenerator.js";
+import { PoliceLaptop } from "./components/police-components/police-laptop/PoliceLaptop.jsx";
 
 
 
@@ -88,7 +89,8 @@ function App() {
             
             
             <div className="fixed bottom-5 right-50 flex gap-2">
-                <> 
+                <>
+                    <PoliceLaptop />
                     <Notebook />
                     <Policeradio />
                 </>

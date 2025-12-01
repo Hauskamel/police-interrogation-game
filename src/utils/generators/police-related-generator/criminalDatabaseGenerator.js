@@ -2,8 +2,10 @@ import { generateDriverProfile } from "../../profileGenerators/driverProfileGene
 import { generateCarProfile } from "../../profileGenerators/carProfileGenerator"
 
 import { crimes } from '../../../data/crimes.js';
+import { useNpcStore } from "../../../store.js";
 
 export const criminalDatabaseGenerator = () => {
+    const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
 
     const criminals = []
 
@@ -25,7 +27,7 @@ export const criminalDatabaseGenerator = () => {
         generateDriverProfile();
     } while (criminals.length < 30)
 
-    console.log(criminals);
+    setCriminalDatabase(criminals);
         
 
 }
