@@ -27,7 +27,7 @@ export const useGameStore = create((set) => ({
             gameState: gameStates.COMPARE
         })
     },
-    compareMode: () => {
+    laptopMode: () => {
         set({
             gameState: gameStates.LAPTOP
         })

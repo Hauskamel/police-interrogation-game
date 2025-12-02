@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {useCarStore, useGameStore, gameStates} from "./store";
+import {useCarStore, useGameStore, gameStates, useNpcStore} from "./store";
 
 import { Startmenu } from "./components/Startmenu";
 import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
@@ -25,7 +25,7 @@ import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 
 
-import { criminalDatabaseGenerator } from "./utils/generators/police-related-generator/criminalDatabaseGenerator.js";
+import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
 import { PoliceLaptop } from "./components/police-components/police-laptop/PoliceLaptop.jsx";
 
 
@@ -42,6 +42,7 @@ function App() {
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
     const selectedCar = useCarStore(state => state.selectedCar);
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
+    const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
 
     const gameState = useGameStore(state => state.gameState);
 
@@ -56,10 +57,11 @@ function App() {
     useCarSpawner();
 
     // sets overlay dependant of the current game mode
-    useOverlaySetter();
+    useOverlaySetter(); 
+
 
     useEffect(() => {
-        criminalDatabaseGenerator();
+        setCriminalDatabase(criminalDatabaseGenerator());
     }, [gameState])
     
     
@@ -86,19 +88,15 @@ function App() {
             )
         )}
 
-            
-            
+        <PoliceLaptop />
+
             <div className="fixed bottom-5 right-50 flex gap-2">
                 <>
-                    <PoliceLaptop />
                     <Notebook />
                     <Policeradio />
                 </>
             </div>
             
-            
-            
-
             {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
                 <>
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
