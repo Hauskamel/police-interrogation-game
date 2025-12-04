@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import { closeTextbox } from "../../utils/closeTextbox";
 
-import { useTextboxStore } from "../../store";
+import { useGuiVisibilityStatesStore } from "../../store";
 
 /**
  * 2D Textbox on white background
@@ -21,8 +21,8 @@ export const BaseTextbox = ({
         isCloseable = true
 }) => {
     // textboxes
-    const setTextboxVisibililty = useTextboxStore(state => state.setTextboxVisibilityState)
-    const isVisible = useTextboxStore(state => state.textboxesVisible)
+    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState)
+    const textboxesAreVisible = useGuiVisibilityStatesStore(state => state.textboxesVisible)
 
     const handleClose = () => {
         closeTextbox(setTextboxVisibililty,onClose);
@@ -35,7 +35,7 @@ export const BaseTextbox = ({
 
     return (
         <div
-            className={`${margin} absolute left-8 z-1 sm:w-80 bg-white rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            className={`${margin} absolute left-8 z-1 sm:w-80 bg-white rounded-3xl shadow-lg p-5 space-y-4 ${textboxesAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
             style={{
                 width: `${width}px`,
                 height: `${height}px`

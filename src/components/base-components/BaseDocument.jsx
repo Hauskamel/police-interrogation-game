@@ -1,14 +1,24 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion";
 import { useDraggable } from "../../hooks/useDraggable";
 
+import { useGuiVisibilityStatesStore } from "../../store";
 
 
 export default function BaseDocument({ children }) {
     const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32});
 
+    const setDocumentsAreVisible = useGuiVisibilityStatesStore(state => state.setDocumentVisibilityState)
+    const documentsAreVisible = useGuiVisibilityStatesStore(state => state.documentsVisible);
+
+    useEffect(()=>{
+        setDocumentsAreVisible(true)
+        console.log("document state updated");
+        
+    }, [setDocumentsAreVisible]);
+
     return (
-        <div className="fixed top-0 left-0">
+        <div className={`fixed top-0 left-0 ${documentsAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
             <AnimatePresence>   
                 {React.Children.map(children, (child) =>
                         child ? (

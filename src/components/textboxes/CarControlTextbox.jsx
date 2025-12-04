@@ -1,5 +1,5 @@
 import {BaseTextbox} from './BaseTextbox.jsx';
-import {useCarStore, useTextboxStore} from "../../store.js";
+import {useCarStore, useGuiVisibilityStatesStore} from "../../store.js";
 
 
 import { closeTextbox } from "../../utils/closeTextbox";
@@ -14,7 +14,7 @@ export const CarControlTextbox = ({
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
 
     // textboxes
-    const setTextboxVisibililty = useTextboxStore(state => state.setTextboxVisibilityState)
+    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState)
 
     
     return (

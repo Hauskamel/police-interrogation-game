@@ -1,6 +1,6 @@
 
 import {BaseTextbox} from './BaseTextbox.jsx';
-import {useCarStore, useGameStore, useTextboxStore} from "../../store.js";
+import {useCarStore, useGameStore, useGuiVisibilityStatesStore} from "../../store.js";
 
 
 export const PolicecarControlTextbox = ({

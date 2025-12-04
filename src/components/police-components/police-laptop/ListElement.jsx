@@ -1,28 +1,27 @@
 import { useCallback } from "react";
 
-export function ListElement ({hovering, profile}) {
+export function ListElement ({setHoveredElement, hoveredElem, profile}) {
     const image = profile.driverImage;
     const firstName = profile.firstName;
     const lastName = profile.lastName;
 
-    const [hovering, setHovering] = useState(false);
-
+    // handling mouse event
+    // using a callback function with the 
     const handleMouseEnter = useCallback((e) => {
         e.stopPropagation();
-        setHovering(true);
-    })
+        setHoveredElement(e);
+    }, [setHoveredElement])
 
-    const handleMouseLeave = useCallback ((e) => {
+    const handleMouseLeave = useCallback((e) => {
         e.stopPropagation();
-        setHovering(false);
-    })
+        setHoveredElement(null);
+    }, [setHoveredElement])
 
 
     return (
         <>
             <div 
-                className={`flex items-center ${hovering ? "bg-blue-500" : "bg-blue-300"} w-full p-2`}
-                key={i}
+                className={`flex items-center ${hoveredElem ? "bg-blue-400" : "bg-blue-500"} w-full p-2`}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >

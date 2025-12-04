@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 
 
-export function Searchbar () {
+export function Searchbar (input) {
     const [value, setValue] = useState("");
 
     useEffect((e) => {
         setValue(e)
     }, [value])
+
+    
 
     return (
         <>

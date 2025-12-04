@@ -26,7 +26,7 @@ export function DocumentManager() {
     const docComponents = {
         driversLicense: (
             <DriversLicense 
-                key="driversLicense"
+                key={"driversLicense"}
                 driver={selectedCar?.driverProfile}
             />
         ),
@@ -44,8 +44,6 @@ export function DocumentManager() {
                 driver={selectedCar?.driverProfile}>
             </ProofOfInsurance>
         )
-
-
     }
 
     return (

@@ -98,11 +98,17 @@ export const useCarStore = create((set) => ({
 }));
 
 
-export const useTextboxStore = create(set => ({
+export const useGuiVisibilityStatesStore = create(set => ({
     textboxesVisible: false,
+    documentsVisible: false,
     setTextboxVisibilityState: (state => {
         set({
             textboxesVisible: state
+        })
+    }),
+    setDocumentVisibilityState: (state => {
+        set({
+            documentsVisible: state
         })
     })
 }))
