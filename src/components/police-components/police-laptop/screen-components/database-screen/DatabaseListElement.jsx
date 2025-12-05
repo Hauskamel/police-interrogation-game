@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-export function ListElement ({setHoveredElement, hoveredElem, profile}) {
+export function DatabaseListElement ({setHoveredElement, hoveredElem, profile}) {
     const image = profile.driverImage;
     const firstName = profile.firstName;
     const lastName = profile.lastName;
@@ -21,7 +21,7 @@ export function ListElement ({setHoveredElement, hoveredElem, profile}) {
     return (
         <>
             <div 
-                className={`flex items-center ${hoveredElem ? "bg-blue-400" : "bg-blue-500"} w-full p-2`}
+                className={`flex items-center ${hoveredElem ? "bg-blue-400" : "bg-laptop-list-element"} w-full p-2`}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >

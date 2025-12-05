@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @theme {
+    --color-laptop: #324C65;
+    --color-laptop-menu-list-element: #333858;
+    --color-laptop-database-list-element: #4F5997;
+
     --animate-fade-in: fade-in 150ms ease-in-out;
     --animate-fade-out: fade-out 150ms ease-in-out;
 

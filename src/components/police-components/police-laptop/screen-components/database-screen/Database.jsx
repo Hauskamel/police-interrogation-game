@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { useNpcStore } from "../../../store"
+import { useNpcStore } from "../../../../../store"
 
-import { ListElement } from "./ListElement";
+import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
 export function Database ({}) {
@@ -16,7 +16,7 @@ export function Database ({}) {
                     const driverProfile = row.driverProfile.realProfile;
 
                     return (
-                        <ListElement
+                        <DatabaseListElement
                             hoveredElem={hoveredIdx === i}
                             setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
                             profile={driverProfile}

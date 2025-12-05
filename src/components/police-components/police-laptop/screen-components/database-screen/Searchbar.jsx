@@ -7,9 +7,7 @@ export function Searchbar (input) {
     useEffect((e) => {
         setValue(e)
     }, [value])
-
     
-
     return (
         <>
             <div className="mb-20">
@@ -21,5 +19,4 @@ export function Searchbar (input) {
             </div>
         </>
     )
-    
 }

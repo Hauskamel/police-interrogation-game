@@ -23,10 +23,8 @@ import { useCarRefs } from "./hooks/useCarRefs.jsx";
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 import { POLICE_CHECKPOINT } from "./config/positions.js";
 
-
-
 import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
-import { PoliceLaptop } from "./components/police-components/police-laptop/PoliceLaptop.jsx";
+import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
 
 
 
@@ -45,6 +43,7 @@ function App() {
     const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
 
     const gameState = useGameStore(state => state.gameState);
+    const gameMode = useGameStore(state => state.gameMode);
 
     const [hoveringCar, setHoveringCar] = useState(false);
 
@@ -57,12 +56,12 @@ function App() {
     useCarSpawner();
 
     // sets overlay dependant of the current game mode
-    useOverlaySetter(); 
+    useOverlaySetter();
 
 
     useEffect(() => {
         setCriminalDatabase(criminalDatabaseGenerator());
-    }, [gameState])
+    }, [])
     
     
 
@@ -79,7 +78,10 @@ function App() {
         {selectedCar && (
             playersPoliceCar?.id === selectedCar?.id ? ( // check wether to show police car options
                 <PolicecarControlTextbox
-                    onClose={() => setSelectedCar(null)}
+                    onClose={() => {
+                        setSelectedCar(null)
+                        gameMode()
+                    }}
                 />
             ) : (
                 <CarControlTextbox // or default npc car options
@@ -88,7 +90,10 @@ function App() {
             )
         )}
 
-        <PoliceLaptop />
+        {gameState == "LAPTOP" && (
+            <LaptopScreen />
+        )}
+        
 
             <div className="fixed bottom-5 right-50 flex gap-2">
                 <>
