@@ -1,7 +1,6 @@
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
 
 export function ProofOfInsurance ({car, driver}) {
-    console.log(driver);
     
     let carProfile = car.realProfile;
     if (car.fakeProfile) carProfile = car.fakeProfile;

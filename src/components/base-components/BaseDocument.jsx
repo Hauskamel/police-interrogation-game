@@ -12,9 +12,7 @@ export default function BaseDocument({ children }) {
     const documentsAreVisible = useGuiVisibilityStatesStore(state => state.documentsVisible);
 
     useEffect(()=>{
-        setDocumentsAreVisible(true)
-        console.log("document state updated");
-        
+        setDocumentsAreVisible(true)        
     }, [setDocumentsAreVisible]);
 
     return (

@@ -2,7 +2,8 @@
 
 @theme {
     --color-laptop: #324C65;
-    --color-laptop-menu-list-element: #333858;
+    --color-laptop-menu-list-element-selected: #333858;
+    --color-laptop-menu-list-element-unselected: #6C749F;
     --color-laptop-database-list-element: #4F5997;
 
     --animate-fade-in: fade-in 150ms ease-in-out;
