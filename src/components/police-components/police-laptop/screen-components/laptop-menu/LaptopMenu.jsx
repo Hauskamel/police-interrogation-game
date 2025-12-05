@@ -1,15 +1,40 @@
 import { useEffect, useState } from "react";
-import { MenuListElement } from "../police-components/police-laptop/screen-components/laptop-menu/MenuListElement.jsx"
+import { MenuListElement } from "./MenuListElement.jsx"
+
+import { DatabaseScreen } from "../database-screen/DatabaseScreen.jsx";
 
 
-export function LaptopMenuManager () {
+export function LaptopMenu () {
     const menuComponents = ["Database", "History", "PLACEHOLDER"];
 
+    const [openElement, setOpenElement] = useState(() => 
+        Object.fromEntries(menuComponents.map(elem => [elem, false]))
+    )
+
     const [clickedIdx, setClickedIdx] = useState(null);
+
+    const toggleMenuElement = (elem) => {
+        setOpenElement(prev => ({
+            ...prev,
+            [elem]: !prev[elem]
+        }))
+    }
+
 
     useEffect(() => {
         console.log(clickedIdx);
     }, [setClickedIdx, clickedIdx])
+
+    const components = {
+        database: 
+            <DatabaseScreen />,
+        
+        history:
+            <History />,
+
+        placeholder:
+            <History />
+    }
 
 
     return (
