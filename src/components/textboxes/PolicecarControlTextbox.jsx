@@ -13,16 +13,6 @@ export const PolicecarControlTextbox = ({
     const gameState =  useGameStore(state => state.gameState);
     const gameMode = useGameStore(state => state.gameMode);
     const laptopMode = useGameStore(state => state.laptopMode);
-    
-    useEffect(() => {
-        console.log(gameState);
-        console.log(gameState === gameState.LAPTOP);
-        
-    }, [gameState])
-    
-
-
-
 
     if (selectedCar?.id !== playersPoliceCar?.id) return;
 

@@ -18,8 +18,6 @@ export function LaptopMenu ({setActiveMenuIdx}) {
             <div className="mt-10">
             {
                 menuComponents.map((_, i) => {
-
-                    
                     return (
                         <>
                             <MenuListElement 

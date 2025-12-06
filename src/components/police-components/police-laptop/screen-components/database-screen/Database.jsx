@@ -4,10 +4,16 @@ import { useNpcStore } from "../../../../../store"
 import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
-export function Database ({}) {
+export function Database ({ setSearch }) {
     const criminalDatabase = useNpcStore(state => state.criminalDatabase);
-      
     const [hoveredIdx, setHoveredIdx] = useState(null);
+
+
+
+    console.log(setSearch);
+    
+
+
 
     return (
         <>
