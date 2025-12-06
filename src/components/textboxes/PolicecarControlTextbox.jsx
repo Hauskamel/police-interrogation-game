@@ -1,6 +1,7 @@
 
 import {BaseTextbox} from './BaseTextbox.jsx';
-import {useCarStore, useGameStore, useGuiVisibilityStatesStore} from "../../store.js";
+import {useCarStore, useGameStore} from "../../store.js";
+import { useEffect } from 'react';
 
 
 export const PolicecarControlTextbox = ({
@@ -10,7 +11,17 @@ export const PolicecarControlTextbox = ({
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
 
     const gameState =  useGameStore(state => state.gameState);
-    const laptopMode = useGameStore(state => state.laptopMode)
+    const gameMode = useGameStore(state => state.gameMode);
+    const laptopMode = useGameStore(state => state.laptopMode);
+    
+    useEffect(() => {
+        console.log(gameState);
+        console.log(gameState === gameState.LAPTOP);
+        
+    }, [gameState])
+    
+
+
 
 
     if (selectedCar?.id !== playersPoliceCar?.id) return;
@@ -22,14 +33,29 @@ export const PolicecarControlTextbox = ({
                 margin="bottom-6" 
                 onClose={onClose} 
             >
-                <button
-                    onClick={() => {
-                        laptopMode()
+                {gameState === "LAPTOP" ?
+                    <button
+                        onClick={() => {
+                            console.log("klickt auf schließen");
+                            gameMode()
                     }}
-                    className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
-                >
-                    Datenbank durchsuchen
-                </button>
+                        className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
+                    >
+                        Laptop schließen
+                    </button>
+                :
+                    <button
+                        onClick={() => {
+
+                            console.log("klickt auf öffnen");
+                            laptopMode()
+                    }}
+                        className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
+                    >
+                        Laptop öffnen
+                    </button>
+                }
+                
             </BaseTextbox>
         </>
     )

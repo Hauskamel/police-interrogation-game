@@ -1,4 +1,4 @@
-import { carBrands } from '../../utils/meta/carBrands.js';
+import { carBrands } from "../../data/carBrands.js";
 import { faker } from "@faker-js/faker";
 
 import { applyRandomManipulations } from './fakeProfileGenerator.js';

@@ -1,5 +1,5 @@
 import {driverImageProfiles} from "../../utils/driverImageProfiles.js"
-import { firstNames } from "../meta/firstNames.js";
+import { firstNames } from "../../data/firstNames.js";
 import {applyRandomManipulations} from "./fakeProfileGenerator.js"
 import { faker } from "@faker-js/faker";
 

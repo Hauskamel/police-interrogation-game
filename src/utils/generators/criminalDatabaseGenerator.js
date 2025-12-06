@@ -20,7 +20,7 @@ export const criminalDatabaseGenerator = () => {
         }
         criminals.push(profile);
         generateDriverProfile();
-    } while (criminals.length < 2);
+    } while (criminals.length < 5);
 
     return criminals
 }

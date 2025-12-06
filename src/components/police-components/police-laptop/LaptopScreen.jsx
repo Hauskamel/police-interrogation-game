@@ -1,17 +1,21 @@
 import { LaptopMenu } from "./screen-components/laptop-menu/LaptopMenu.jsx";
-import { Home } from "../police-laptop/screen-components/Home.jsx";
 import { DatabaseScreen } from "../police-laptop/screen-components/database-screen/DatabaseScreen.jsx";
 import { HomeScreen } from "../police-laptop/screen-components/home-screen/HomeScreen.jsx";
+import { useEffect, useState } from "react";
 
 
 
 export function LaptopScreen () {
+    const [activeMenuIdx,setActiveMenuIdx] = useState(0);
 
-
-
-    
-
-    // <HomeScreen />
+    // TODO: 'components' auslagern und neues key/value pair "menuTitle" o.ä dazuschreiben, dass diese auch aus dem "LaptopMenu" component entfernt werden können
+    // und in Zukunft die Menüpunkter leichter ergänzt, abgeändert werden können
+    const components = [
+        {screenComponent: <HomeScreen />},
+        {screenComponent: <DatabaseScreen />},
+        {screenComponent: null},
+        {screenComponent: null}                      
+    ]
 
 
     return (
@@ -20,13 +24,11 @@ export function LaptopScreen () {
                 className="bg-laptop absolute top-0 h-screen w-screen grid grid-cols-3 gap-3"
             >
                 <div className='col-span-1'>
-                    <Home />
-                    <LaptopMenu />
+                    <LaptopMenu setActiveMenuIdx={setActiveMenuIdx} />
                 </div>
 
                 <div className='col-span-2'>
-                    
-                    
+                    {components[activeMenuIdx]?.screenComponent ? components[activeMenuIdx].screenComponent : "Coming soon..."}
                 </div>
             </div>
         </>
