@@ -9,7 +9,7 @@ import { generateDriverProfile } from "../utils/profileGenerators/driverProfileG
 
 export function useCarSpawner () {
     const addCar = useCarStore((state) => state.addCar);
-    const wantedList = useNpcStore((state) => state.wantedList);
+    const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
 
     // spawns new car
     useEffect(() => {
@@ -18,10 +18,10 @@ export function useCarSpawner () {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newEntitiy;
         
-        if (spawnCarOfWantedList && wantedList.length) {
-            // wantedList is a parameter of this function.
-            // the passed value is a reference to the wantedList in the storage.js
-            const criminal = wantedList[Math.floor(Math.random() * wantedList.length)];            
+        if (spawnCarOfWantedList && criminalDatabase.length) {
+            // criminalDatabase is a parameter of this function.
+            // the passed value is a reference to the criminalDatabase in the storage.js
+            const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
 
             newEntitiy = {...criminal, id :generateUUID()}
         } else {
@@ -32,7 +32,7 @@ export function useCarSpawner () {
         }
 
         addCar(newEntitiy);
-    }, respawnTime, wantedList);
+    }, respawnTime, criminalDatabase);
     return () => clearInterval(intervalId);
-    }, [addCar, wantedList]);
+    }, [addCar, criminalDatabase]);
 }
