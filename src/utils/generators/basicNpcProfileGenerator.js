@@ -4,11 +4,9 @@ import { generateCarProfile } from "../profileGenerators/carProfileGenerator"
 
 
 export const basicNpcProfile = () => {
-
     const profile = {
-        
+        driverProfile: generateDriverProfile(),
+        carProfile: generateCarProfile()
     }
-
-
-
+    return profile
 }

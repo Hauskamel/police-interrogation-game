@@ -1,16 +1,52 @@
-import { useCallback, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useNpcStore } from "../../../../../store"
 
 import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
-export function Database ({ setSearch }) {
+export function Database ({ userInput }) {
     const criminalDatabase = useNpcStore(state => state.criminalDatabase);
     const [hoveredIdx, setHoveredIdx] = useState(null);
+    const allSearchKeyWords = criminalDatabase.map((profile, i) => {
+        const array = [profile.searchKeyWords.join(""), i]
+        return array
+    })
+    
+    
+    console.log(allSearchKeyWords);
+    
 
 
 
-    console.log(setSearch);
+    // console.log(allSearchKeyWords);
+    
+
+    
+    useEffect(() => {
+        crawlDatabase()
+    }, [userInput])
+
+    const updateScreen = () => {
+
+    }
+
+
+    
+    const crawlDatabase = () => {
+        const dbCopy = criminalDatabase;
+
+        dbCopy.filter(row => {
+
+        })
+    }
+    
+    
+
+
+
+
+    // console.log("database: ", criminalDatabase);
+    
     
 
 

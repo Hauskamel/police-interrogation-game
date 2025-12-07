@@ -13,7 +13,7 @@ export function DatabaseScreen () {
     return (
         <>
             <Searchbar setInput={handleSearchInput} />
-            <Database setSearch={searchInput} />
+            <Database userInput={searchInput} />
         </>
     )
 }
