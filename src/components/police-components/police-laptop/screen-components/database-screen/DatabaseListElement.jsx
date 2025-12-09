@@ -17,7 +17,6 @@ export function DatabaseListElement ({setHoveredElement, hoveredElem, profile}) 
         setHoveredElement(null);
     }, [setHoveredElement])
 
-
     return (
         <>
             <div 

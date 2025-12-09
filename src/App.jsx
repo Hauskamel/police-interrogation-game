@@ -35,16 +35,14 @@ function App() {
     // cars
     const cars = useCarStore((state) => state.cars);
     const policeCar = useCarStore(state => state.playersPolicecar);
-
+    
     const setSelectedCar = useCarStore(state => state.setSelectedCar);
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
     const selectedCar = useCarStore(state => state.selectedCar);
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
     const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
-
     const gameState = useGameStore(state => state.gameState);
     const gameMode = useGameStore(state => state.gameMode);
-
     const [hoveringCar, setHoveringCar] = useState(false);
 
 
@@ -57,7 +55,6 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
-
 
     useEffect(() => {
         setCriminalDatabase(criminalDatabaseGenerator());

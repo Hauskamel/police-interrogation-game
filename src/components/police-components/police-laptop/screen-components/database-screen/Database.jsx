@@ -5,54 +5,34 @@ import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
 export function Database ({ userInput }) {
-    const criminalDatabase = useNpcStore(state => state.criminalDatabase);
+    const criminalDatabase = useNpcStore(state => state.criminalDatabase);    
     const [hoveredIdx, setHoveredIdx] = useState(null);
-    const allSearchKeyWords = criminalDatabase.map((profile, i) => {
-        const array = [profile.searchKeyWords.join(""), i]
-        return array
-    })
-    
-    
-    console.log(allSearchKeyWords);
-    
+    const [filteredDatabase, setFilteredDatabase] = useState(null);
 
-
-
-    // console.log(allSearchKeyWords);
-    
-
-    
     useEffect(() => {
-        crawlDatabase()
-    }, [userInput])
-
-    const updateScreen = () => {
-
-    }
-
-
-    
-    const crawlDatabase = () => {
         const dbCopy = criminalDatabase;
-
-        dbCopy.filter(row => {
-
-        })
-    }
-    
-    
-
-
-
-
-    // console.log("database: ", criminalDatabase);
-    
-    
-
-
+        const dbFiltered = dbCopy.filter((row) => row.searchKeyWords.includes(userInput) ? row : null);
+        setFilteredDatabase(dbFiltered);
+    }, [userInput])
 
     return (
         <>
+        {filteredDatabase?.length > 0 ? 
+         <div>
+                {filteredDatabase.map((row, i) => {
+                    const driverProfile = row.driverProfile.realProfile;
+
+                    return (
+                        <DatabaseListElement
+                            hoveredElem={hoveredIdx === i}
+                            setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
+                            profile={driverProfile}
+                            key={i}
+                        />
+                    )
+                })}
+            </div>
+        :
             <div>
                 {criminalDatabase.map((row, i) => {
                     const driverProfile = row.driverProfile.realProfile;
@@ -67,6 +47,7 @@ export function Database ({ userInput }) {
                     )
                 })}
             </div>
+        }
         </>
     )
 }
