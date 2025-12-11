@@ -2,7 +2,7 @@
 
 
 
-export function DatabaseDetailPage ({}) {
+export function DatabaseListElementDetailPage ({}) {
 
 
     return (

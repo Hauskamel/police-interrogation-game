@@ -1,25 +1,32 @@
-import { use, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNpcStore } from "../../../../../store"
-
+import { DatabaseListElementDetailPage } from "./DatabaseDetailPage";
 import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
 export function Database ({ userInput }) {
     const criminalDatabase = useNpcStore(state => state.criminalDatabase);    
     const [hoveredIdx, setHoveredIdx] = useState(null);
-    const [filteredDatabase, setFilteredDatabase] = useState(null);
 
-    useEffect(() => {
-        const dbCopy = criminalDatabase;
-        const dbFiltered = dbCopy.filter((row) => row.searchKeyWords.includes(userInput) ? row : null);
-        setFilteredDatabase(dbFiltered);
-    }, [userInput])
+    const filteredDatabase = useMemo(() => {
+        if (!userInput) return;
+        const term = String(userInput).toLowerCase();
+
+        return criminalDatabase.filter(row => {
+            const keywords = row?.searchKeyWords ?? "";
+            return String(keywords).toLowerCase().includes(term); // returns true or false for each "row" --> 'filteredDatabase' only returns the elements that are "true"
+        })
+    }, [userInput, criminalDatabase])
+
+    const loopedArray = filteredDatabase?.length > 0
+        ? filteredDatabase
+        : criminalDatabase
+
 
     return (
         <>
-        {filteredDatabase?.length > 0 ? 
-         <div>
-                {filteredDatabase.map((row, i) => {
+            {
+                loopedArray.map((row, i) => {
                     const driverProfile = row.driverProfile.realProfile;
 
                     return (
@@ -30,24 +37,8 @@ export function Database ({ userInput }) {
                             key={i}
                         />
                     )
-                })}
-            </div>
-        :
-            <div>
-                {criminalDatabase.map((row, i) => {
-                    const driverProfile = row.driverProfile.realProfile;
-
-                    return (
-                        <DatabaseListElement
-                            hoveredElem={hoveredIdx === i}
-                            setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
-                            profile={driverProfile}
-                            key={i}
-                        />
-                    )
-                })}
-            </div>
-        }
+                })
+            }
         </>
     )
 }
