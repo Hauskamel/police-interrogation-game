@@ -2,12 +2,14 @@
 
 
 
-export function DatabaseListElementDetailPage ({}) {
+export function DatabaseListElementDetailPage () {
+
+    
 
 
     return (
         <>
-            
+            <p>Test</p>
         </>
     )
 }

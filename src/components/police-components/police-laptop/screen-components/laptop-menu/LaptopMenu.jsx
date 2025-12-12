@@ -26,7 +26,7 @@ export function LaptopMenu ({setActiveMenuIdx}) {
                                     (isClicked) => {setClickedIdx(isClicked ? i : null)}
                                 } // TODO: Hier mal die Logik nachschlagen
                                 title={menuComponents[i]}
-                                key={i}
+                                key={menuComponents[i]}
                             />
                         </>
                     )

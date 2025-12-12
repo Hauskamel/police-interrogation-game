@@ -26,7 +26,6 @@ export const PolicecarControlTextbox = ({
                 {gameState === "LAPTOP" ?
                     <button
                         onClick={() => {
-                            console.log("klickt auf schließen");
                             gameMode()
                     }}
                         className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
@@ -36,8 +35,6 @@ export const PolicecarControlTextbox = ({
                 :
                     <button
                         onClick={() => {
-
-                            console.log("klickt auf öffnen");
                             laptopMode()
                     }}
                         className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"

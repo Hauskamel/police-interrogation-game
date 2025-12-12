@@ -1,12 +1,15 @@
 import { useCallback } from "react";
 
-export function DatabaseListElement ({setHoveredElement, hoveredElem, profile}) {
+export function DatabaseListElement ({setHoveredElement, setClickedElement, hoveredElem, profile}) {
     const image = profile.driverImage;
     const firstName = profile.firstName;
     const lastName = profile.lastName;
 
-    // handling mouse event
-    // using a callback function with the 
+    const handleClick = useCallback((e) => {
+        e.stopPropagation();
+        setClickedElement(e)
+    });
+
     const handleMouseEnter = useCallback((e) => {
         e.stopPropagation();
         setHoveredElement(e);
@@ -23,6 +26,7 @@ export function DatabaseListElement ({setHoveredElement, hoveredElem, profile}) 
                 className={`flex items-center ${hoveredElem ? "bg-blue-400" : "bg-laptop-list-element"} w-full p-2`}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={handleClick}
             >
                 {/* This block (image + names) takes 50% of the row */}
                 <div className="w-1/2 flex items-center">
@@ -41,7 +45,7 @@ export function DatabaseListElement ({setHoveredElement, hoveredElem, profile}) 
 
                 {/* The remaining 50% can hold other content or be left empty */}
                 <div className="w-1/2" />
-            </div>
+            </div>    
         </>
     )
 }
