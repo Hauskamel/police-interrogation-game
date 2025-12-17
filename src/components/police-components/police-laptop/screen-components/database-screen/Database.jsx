@@ -23,31 +23,11 @@ export function Database ({ userInput }) {
         : criminalDatabase
 
 
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-
     return (
         <>
         {
             loopedArray.map((row, i) => {
                 const driverProfile = row.driverProfile.realProfile;
-
-
-                
-
-                
-                
 
                 return ( !clickedIdx ?
                     <DatabaseListElement
