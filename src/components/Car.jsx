@@ -29,7 +29,7 @@ function CarOccupantsInfoTextbox ({stoppedCar}) {
 
 
 function Car ({ car, onHoverChange }) {
-    const gltf = useGLTF("/models/car.glb");
+    const gltf = useGLTF("/models/low-poly-car.glb");
     const scene = useClonedScene(gltf);
 
     // ##################################################
@@ -48,12 +48,10 @@ function Car ({ car, onHoverChange }) {
     const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange)
     // hook for vehicle animation (driving, stopping, following curve path, ...)
     useVehicleAnimation(car, carRef, removeCar);
-
     
     const carOccupantsTextboxPosition = car.position ? 
         [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] 
         : [0,0,0]
-
 
     return (
         <>

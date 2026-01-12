@@ -7,6 +7,7 @@ import { Policeman } from "../components/Policeman";
 import { Streetbay } from "../components/Streetbay";
 
 import { PoliceCar } from "../components/PoliceCar";
+import { BorderStation } from "./BorderStation";
 
 import { POLICEMAN_POSITION, POLICECAR_POSITION } from "../config/positions";
 
@@ -21,11 +22,7 @@ export function Gamecanvas({playersPoliceCar, cars, carRefs, setHoveringCar}) {
             <ambientLight/>
             <directionalLight position={[5, 5, 5]}/>
             {/* GAME COMPONENTS */}
-            <Road />
-            <Streetbay />
-            <Policeman 
-                position={POLICEMAN_POSITION} 
-            />
+            <BorderStation />
             <PoliceCar
                 position={POLICECAR_POSITION}
                 onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id  : null)}

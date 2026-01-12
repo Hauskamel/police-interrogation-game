@@ -13,7 +13,7 @@ export function useCarSpawner () {
 
     // spawns new car
     useEffect(() => {
-        let respawnTime = randInt(2000, 5000);
+        let respawnTime = randInt(1000, 7000);
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newEntitiy;
