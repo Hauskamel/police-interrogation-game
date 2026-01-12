@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
-import { useNpcStore } from "../../../../../store"
-import { DatabaseListElementDetailPage } from "./DatabaseDetailPage";
+import { useNpcStore } from "../../../../../store";
 import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 
 export function Database ({ userInput }) {
-    const criminalDatabase = useNpcStore(state => state.criminalDatabase);    
+    const criminalDatabase = useNpcStore(state => state.criminalDatabase);
+
     const [hoveredIdx, setHoveredIdx] = useState(null);
+    const [clickedIdx, setClickedIdx] = useState(null);
 
     const filteredDatabase = useMemo(() => {
         if (!userInput) return;
@@ -18,27 +19,30 @@ export function Database ({ userInput }) {
         })
     }, [userInput, criminalDatabase])
 
-    const loopedArray = filteredDatabase?.length > 0
+    const profileArray = filteredDatabase?.length > 0
         ? filteredDatabase
         : criminalDatabase
 
 
     return (
         <>
-            {
-                loopedArray.map((row, i) => {
-                    const driverProfile = row.driverProfile.realProfile;
+        {
+            profileArray.map((profile, i) => {
+                return (
+                    <DatabaseListElement
+                        hoveredElem={hoveredIdx === i}
+                        setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
+                        setClickedElement={isClicked => {setClickedIdx(isClicked ? i : null)}}
+                        clickedElement={clickedIdx === i}
+                        profile={profile}
+                        key={profile.id}
+                    />
+                )
+            })
 
-                    return (
-                        <DatabaseListElement
-                            hoveredElem={hoveredIdx === i}
-                            setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
-                            profile={driverProfile}
-                            key={i}
-                        />
-                    )
-                })
-            }
+           
+        }
+            
         </>
     )
 }

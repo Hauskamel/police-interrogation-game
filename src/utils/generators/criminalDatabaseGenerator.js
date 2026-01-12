@@ -4,7 +4,6 @@ import { crimes } from '../../data/crimes.js';
 import { basicNpcProfile } from "./basicNpcProfileGenerator.js";
 
 export const criminalDatabaseGenerator = () => {
-    // const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
     const criminals = []
 
     do {
@@ -12,14 +11,15 @@ export const criminalDatabaseGenerator = () => {
         const levelOfCrime = crime.level
         const crimeCase = crime.cases[Math.floor(Math.random() * crime.cases.length)]
         
-        const basicProfile = basicNpcProfile();
+        const basicProfile = Object(basicNpcProfile());
+
         const firstName = basicProfile.driverProfile.realProfile.firstName
         const lastName = basicProfile.driverProfile.realProfile.lastName
 
         const profile = {
             driverProfile: basicProfile.driverProfile,
             carProfile: basicProfile.carProfile,
-            carProfile: generateCarProfile(), // TODO: bitte hier die Funktion anpassen (Parameter wie in 'generateDriverProfile')
+            id: basicProfile.id,
             arrested: false,
             levelOfCrime : levelOfCrime,
             crimeCase: crimeCase,
