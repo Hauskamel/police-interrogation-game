@@ -7,5 +7,5 @@ export const POLICE_CHECKPOINT = -3;
 
 export const STREETBAY_ENTRY_1 = [15, 0, -.6];
 
-export const DEFAULT_POSITION = new THREE.Vector3(0, 0, -70);
-export const DEFAULT_ROTATION = new THREE.Euler(0, 0, 0);
+export const DEFAULT_POSITION = new THREE.Vector3(.5, 0, -70);
+export const DEFAULT_ROTATION = new THREE.Euler(0, Math.PI, 0);

@@ -21,13 +21,21 @@ export function Gamecanvas({playersPoliceCar, cars, carRefs, setHoveringCar}) {
             {/* LIHGTS */}
             <ambientLight/>
             <directionalLight position={[5, 5, 5]}/>
+
+
+            <Policeman position={[0, 0, 0]} />
+
+            <boxGeometry position={[0, 10, 0]} args={[10, 10, 10] } />
+
+
+
+
             {/* GAME COMPONENTS */}
             <BorderStation />
             <PoliceCar
                 position={POLICECAR_POSITION}
                 onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id  : null)}
-                isPlayersCar={true}
-                
+                isPlayersCar={true} 
             />
             
             {cars.map((car) => {

@@ -67,6 +67,8 @@ function App() {
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
             <Gamecanvas playersPoliceCar={policeCar} cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
+
+            
             
             <DiscrepancyOverlay />
             <Startmenu />
