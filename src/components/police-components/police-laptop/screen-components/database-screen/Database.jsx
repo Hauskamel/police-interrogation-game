@@ -5,6 +5,7 @@ import { DatabaseListElement } from "./DatabaseListElement.jsx"
 
 export function Database ({ userInput }) {
     const criminalDatabase = useNpcStore(state => state.criminalDatabase);
+
     const [hoveredIdx, setHoveredIdx] = useState(null);
     const [clickedIdx, setClickedIdx] = useState(null);
 
@@ -18,7 +19,7 @@ export function Database ({ userInput }) {
         })
     }, [userInput, criminalDatabase])
 
-    const loopedArray = filteredDatabase?.length > 0
+    const profileArray = filteredDatabase?.length > 0
         ? filteredDatabase
         : criminalDatabase
 
@@ -26,24 +27,16 @@ export function Database ({ userInput }) {
     return (
         <>
         {
-            loopedArray.map((row, i) => {
-                const driverProfile = row.driverProfile.realProfile;
-
-                return ( !clickedIdx ?
+            profileArray.map((profile, i) => {
+                return (
                     <DatabaseListElement
                         hoveredElem={hoveredIdx === i}
                         setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
                         setClickedElement={isClicked => {setClickedIdx(isClicked ? i : null)}}
                         clickedElement={clickedIdx === i}
-                        profile={driverProfile}
-                        key={row.id}
+                        profile={profile}
+                        key={profile.id}
                     />
-
-                    :
-
-                    <p>Test</p>
-                    
-                    
                 )
             })
 
