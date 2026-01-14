@@ -7,5 +7,13 @@ export const POLICE_CHECKPOINT = -3;
 
 export const STREETBAY_ENTRY_1 = [15, 0, -.6];
 
-export const DEFAULT_POSITION = new THREE.Vector3(.5, 0, -70);
+
+
+
+// ############### SPAWN CAR CONFIG ###############
+// ###############################################
+// SPAWN LEFT
 export const DEFAULT_ROTATION = new THREE.Euler(0, Math.PI, 0);
+
+export const DEFAULT_POSITION_L_LANE1 = new THREE.Vector3(.5, 0, -70);
+export const DEFAULT_POSITION_L_LANE2 = new THREE.Vector3(25, 0, -70);

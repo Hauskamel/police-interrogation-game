@@ -11,14 +11,9 @@ function useClonedScene (gltf) {
 
 export const BorderStation = () => {
     const gltf = useGLTF("/models/border-station.glb");
-    console.log(gltf);
-    
     const scene = useClonedScene(gltf);
-
 
     return (
         <primitive object={scene} position={[0,0,0]} />
     )
-
-
 }

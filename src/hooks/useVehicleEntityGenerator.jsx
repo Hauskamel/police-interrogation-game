@@ -7,7 +7,7 @@ import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 import { useCarStore, useNpcStore } from "../store.js";
 import { generateDriverProfile } from "../utils/profileGenerators/driverProfileGenerator.js";
 
-export function useCarSpawner () {
+export function useVehicleEntityGenerator (direction, lane) {
     const addCar = useCarStore((state) => state.addCar);
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
 
@@ -16,22 +16,24 @@ export function useCarSpawner () {
         let respawnTime = randInt(1000, 7000);
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
-        let newEntitiy;
+        let newEntity;
         
         if (spawnCarOfWantedList && criminalDatabase.length) {
             // criminalDatabase is a parameter of this function.
             // the passed value is a reference to the criminalDatabase in the storage.js
             const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
-
-            newEntitiy = {...criminal, id :generateUUID()}
+            newEntity = {...criminal, id: generateUUID()}
         } else {
             const carProfile = generateCarProfile();
             const driverProfile = generateDriverProfile(true);
             
-            newEntitiy = {driverProfile, carProfile, id: generateUUID()}
+            newEntity = {driverProfile, carProfile, id: generateUUID()}
         }
+        newEntity = {...newEntity, spawn: {direction, lane}}
+        console.log(newEntity);
+        
 
-        addCar(newEntitiy);
+        addCar(newEntity);
     }, respawnTime, criminalDatabase);
     return () => clearInterval(intervalId);
     }, [addCar, criminalDatabase]);

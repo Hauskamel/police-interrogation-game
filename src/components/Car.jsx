@@ -2,7 +2,7 @@ import {useGLTF, Html} from "@react-three/drei";
 import {useMemo, useRef} from "react";
 import PropTypes from "prop-types";
 
-import { DEFAULT_POSITION, DEFAULT_ROTATION, POLICE_CHECKPOINT } from "../config/positions.js";
+import { DEFAULT_POSITION_L_LANE1, DEFAULT_ROTATION, POLICE_CHECKPOINT } from "../config/positions.js";
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -28,7 +28,7 @@ function CarOccupantsInfoTextbox ({stoppedCar}) {
 }
 
 
-function Car ({ car, onHoverChange }) {
+function Car ({ car, onHoverChange, position }) {
     const gltf = useGLTF("/models/low-poly-car.glb");
     const scene = useClonedScene(gltf);
 
@@ -40,6 +40,11 @@ function Car ({ car, onHoverChange }) {
     const removeCar = useCarStore((state) => state.removeCar);
 
     const carRef = useRef(null);
+
+
+
+    // log position here and check what it says
+    // maybe pass position to useVehicleAnimation to determine vehicle movement
 
     
 
@@ -66,7 +71,7 @@ function Car ({ car, onHoverChange }) {
                 object={ scene }
                 ref={ carRef }
                 rotation={ DEFAULT_ROTATION }
-                position={ DEFAULT_POSITION }
+                position={ position }
                 onPointerOver={handlePointerOver}
                 onPointerOut={handlePointerOut}
                 onClick={ handleClick }
@@ -92,7 +97,7 @@ Car.propTypes = {
 
 Car.defaultProps = {
     onHoverChange: null,
-    position: DEFAULT_POSITION,
+    position: DEFAULT_POSITION_L_LANE1,
     rotation: DEFAULT_ROTATION
 }
 
