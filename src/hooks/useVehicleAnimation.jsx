@@ -12,9 +12,11 @@ import { useCarStore } from "../store";
  * @param {function} removeCar - Callback to remove car from scene
  */
 
-export function useVehicleAnimation(car, carRef, removeCar) {
+export function useVehicleAnimation(car, carRef) {
+    const removeCar = useCarStore((state) => state.removeCar);
+
     // get store action to update car position
-    const carPosition = useCarStore((state) => state.carPosition);
+    const carPosition = useCarStore((state) => state.carPosition)
 
     // track the last position sent to store (to update only when position actually changed)
     const previousPositionRef = useRef({x: null, z: null});
@@ -62,7 +64,14 @@ export function useVehicleAnimation(car, carRef, removeCar) {
             // NOTE: The car velocity in -x direction (original value: 0.1) does vary from device to device due to performance differences
             // NOTE: on windows its 0.05
             // NOTE: on Mac/Linux its 0.1
-            carRef.current.position.z += 0.05; // car driving on road straight in -x direction
+
+            if (car.spawn.direction === "left") {
+                carRef.current.position.z += 0.05; // car driving on road straight in -x direction
+            } else {
+                carRef.current.position.z -= 0.05; // car driving on road straight in -x direction
+            }
+
+
         }
 
         // Handle offscreen car removal

@@ -1,21 +1,20 @@
+import * as THREE from "three";
+
 import {Canvas} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei"
-
 import { useCarRefs } from "../hooks/useCarRefs";
 
 import { useCarStore } from "../store";
-
 import { Car } from "../components/Car";
-
 import { PoliceCar } from "../components/PoliceCar";
 import { BorderStation } from "./BorderStation";
-
-import { DEFAULT_POSITION_L_LANE1, POLICECAR_POSITION } from "../config/positions";
+import { POLICECAR_POSITION } from "../config/positions";
 
 function setPosition (car) {
-    let position;
+    let position, rotation;
 
     if (car.spawn.direction === "left") {
+        rotation = new THREE.Euler(0, Math.PI, 0);
         const yz = [0, -70]; // y and z position
         
         switch (car.spawn.lane) {
@@ -31,6 +30,7 @@ function setPosition (car) {
         }
 
     } else if (car.spawn.direction === "right") {
+        rotation = new THREE.Euler(0, 0, 0);
         const yz = [0, 70]; // y and z position
         
         switch (car.spawn.lane) {
@@ -49,7 +49,7 @@ function setPosition (car) {
         return;
     }
 
-    return position
+    return { position, rotation }
 }
 
 
@@ -71,23 +71,21 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
             <BorderStation />
             <PoliceCar
                 position={POLICECAR_POSITION}
-                onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id  : null)}
-                isPlayersCar={true} 
+                onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
+                isPlayersCar={true}
             />
             
             {cars.map((car) => {
-                const spawnPosition = setPosition(car);
-
-                console.log(spawnPosition);
+                const {position, rotation } = setPosition(car);
                 
-
                 return (
                     <Car
                         key={car.id}
                         ref={carRefs}
                         car={car}
                         onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
-                        position={ spawnPosition }
+                        position={ position }
+                        rotation={ rotation }
                     />
                 );
             })}

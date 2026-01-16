@@ -28,7 +28,7 @@ function CarOccupantsInfoTextbox ({stoppedCar}) {
 }
 
 
-function Car ({ car, onHoverChange, position }) {
+function Car ({ car, onHoverChange, position, rotation }) {
     const gltf = useGLTF("/models/low-poly-car.glb");
     const scene = useClonedScene(gltf);
 
@@ -36,26 +36,16 @@ function Car ({ car, onHoverChange, position }) {
     // ##################### STATES #####################
     // cars
     const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
-    const selectedCar = useCarStore((state) => state.selectedCar)
-    const removeCar = useCarStore((state) => state.removeCar);
-
+    const selectedCar = useCarStore((state) => state.selectedCar);
     const carRef = useRef(null);
 
-
-
-    // log position here and check what it says
-    // maybe pass position to useVehicleAnimation to determine vehicle movement
-
-    
-
-
     // handles pointerOver, pointerOut and click on the vehicle
-    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange)
+    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange);
     // hook for vehicle animation (driving, stopping, following curve path, ...)
-    useVehicleAnimation(car, carRef, removeCar);
+    useVehicleAnimation(car, carRef);
     
     const carOccupantsTextboxPosition = car.position ? 
-        [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0] 
+        [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0]
         : [0,0,0]
 
     return (
@@ -70,7 +60,7 @@ function Car ({ car, onHoverChange, position }) {
             <primitive
                 object={ scene }
                 ref={ carRef }
-                rotation={ DEFAULT_ROTATION }
+                rotation={ rotation }
                 position={ position }
                 onPointerOver={handlePointerOver}
                 onPointerOut={handlePointerOut}

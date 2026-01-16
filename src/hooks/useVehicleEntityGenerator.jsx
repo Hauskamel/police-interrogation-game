@@ -13,7 +13,7 @@ export function useVehicleEntityGenerator (direction, lane) {
 
     // spawns new car
     useEffect(() => {
-        let respawnTime = randInt(1000, 7000);
+        let respawnTime = randInt(5000, 10000);
         const intervalId = setInterval(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newEntity;
@@ -29,9 +29,7 @@ export function useVehicleEntityGenerator (direction, lane) {
             
             newEntity = {driverProfile, carProfile, id: generateUUID()}
         }
-        newEntity = {...newEntity, spawn: {direction, lane}}
-        console.log(newEntity);
-        
+        newEntity = {...newEntity, spawn: {direction, lane}};
 
         addCar(newEntity);
     }, respawnTime, criminalDatabase);
