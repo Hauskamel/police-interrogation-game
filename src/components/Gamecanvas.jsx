@@ -61,7 +61,7 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
         <div className="w-screen h-screen -z-1">
             <Canvas camera={{position: [7, 14, -16], fov: 70}}>
             {/* UTIL COMPONENTS */}
-            <axesHelper/>
+            <axesHelper args={[10]} />
             <OrbitControls/>
             {/* LIHGTS */}
             <ambientLight/>

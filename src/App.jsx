@@ -19,7 +19,6 @@ import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
 import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
 
 import './../assets/css/App.css'
-import { useCarRefs } from "./hooks/useCarRefs.jsx";
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 import { POLICE_CHECKPOINT } from "./config/positions.js";
 

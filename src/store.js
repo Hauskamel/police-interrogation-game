@@ -1,5 +1,3 @@
-import { testValueType } from "framer-motion";
-import { generateUUID } from "three/src/math/MathUtils.js";
 import { create } from "zustand";
 
 export const gameStates = {
@@ -90,9 +88,9 @@ export const useCarStore = create((set) => ({
             selectedCar: car
         }
     ),
-    carPosition: (id, x, z) =>
+    carPosition: (id, y, z) =>
         set((state) => ({
-            cars: state.cars.map((car) => car.id === id ? { ...car, position: {x: x, z: z} } : car)
+            cars: state.cars.map((car) => car.id === id ? { ...car, position: {y: y, z: z} } : car)
         })
     )
 }));
