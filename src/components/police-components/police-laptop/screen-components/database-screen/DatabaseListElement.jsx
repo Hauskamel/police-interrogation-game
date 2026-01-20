@@ -9,10 +9,6 @@ export function DatabaseListElement ({setHoveredElement, setClickedElement, clic
     const crimeDescription = profile.crimeCase.description;
 
     const handleClick = useCallback((e) => {
-
-        console.log(crimeDescription);
-        
-
         e.stopPropagation();
         setClickedElement(e)
     });

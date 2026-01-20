@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 
-import {useCarStore, useGameStore, gameStates, useNpcStore} from "./store";
+import {useCarStore, useGameStore, useNpcStore} from "./store";
 
 import { Startmenu } from "./components/Startmenu";
 import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
@@ -9,7 +9,7 @@ import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButt
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/Notebook.jsx";
 import { Policeradio } from "./components/police-components/police-radio/PoliceRadio.jsx";
-import { useCarSpawner } from "./hooks/useCarSpawner.jsx"
+import { useVehicleEntityGenerator } from "./hooks/useVehicleEntityGenerator.jsx"
 
 import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControlTextbox.jsx"
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
@@ -19,14 +19,11 @@ import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
 import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
 
 import './../assets/css/App.css'
-import { useCarRefs } from "./hooks/useCarRefs.jsx";
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
 import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
-
-
 
 
 function App() {
@@ -49,9 +46,20 @@ function App() {
     
     // #################################################
     // ##################### HOOKS #####################
-    const carRefs = useCarRefs(cars);
     useSetWantedList();
-    useCarSpawner();
+
+
+
+    // TODO: HIER MIT SPAWN POSITION ARBEITEN
+    // spawndirection, spawnlane from bottom -> top
+    useVehicleEntityGenerator("left", 1); 
+    useVehicleEntityGenerator("left", 2);
+    useVehicleEntityGenerator("left", 3);
+
+    useVehicleEntityGenerator("right", 1); 
+    useVehicleEntityGenerator("right", 2);
+    useVehicleEntityGenerator("right", 3);
+    
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
@@ -66,11 +74,9 @@ function App() {
     // ############# RENDERED HTML COMPONENT ############
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
-            <Gamecanvas playersPoliceCar={policeCar} cars={cars} carRefs={carRefs} setHoveringCar={setHoveringCar} />
-            
+            <Gamecanvas playersPoliceCar={policeCar} setHoveringCar={setHoveringCar} />
             <DiscrepancyOverlay />
             <Startmenu />
-
 
         {selectedCar && (
             playersPoliceCar?.id === selectedCar?.id ? ( // check wether to show police car options
@@ -90,7 +96,6 @@ function App() {
         {gameState == "LAPTOP" && (
             <LaptopScreen />
         )}
-        
 
             <div className="fixed bottom-5 right-50 flex gap-2">
                 <>
