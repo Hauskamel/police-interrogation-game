@@ -32,7 +32,6 @@ export function useVehicleAnimation(car, carRef) {
 
         // only update when position actually changed
         function updateCarPosition (y, z) {
-            console.log("y :", y);
             const prev = previousPositionRef.current;
             if (prev.y !== y || (typeof z === "number" && prev.z !== z)) {
                 
@@ -66,7 +65,6 @@ export function useVehicleAnimation(car, carRef) {
             // NOTE: on Mac/Linux its 0.1
             if (car.spawn.direction === "left") {
                 carRef.current.position.z += 0.05; // car driving on road straight in -y direction
-                console.log(curY);
                 
                 // Handle offscreen car removal
                 if (curZ > 70) {

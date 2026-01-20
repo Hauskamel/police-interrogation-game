@@ -77,6 +77,7 @@ function App() {
             <Gamecanvas playersPoliceCar={policeCar} setHoveringCar={setHoveringCar} />
             <DiscrepancyOverlay />
             <Startmenu />
+
         {selectedCar && (
             playersPoliceCar?.id === selectedCar?.id ? ( // check wether to show police car options
                 <PolicecarControlTextbox
@@ -95,7 +96,6 @@ function App() {
         {gameState == "LAPTOP" && (
             <LaptopScreen />
         )}
-        
 
             <div className="fixed bottom-5 right-50 flex gap-2">
                 <>
