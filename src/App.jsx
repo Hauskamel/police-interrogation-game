@@ -17,6 +17,7 @@ import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverP
 
 import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
 import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
+import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
@@ -63,6 +64,9 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
+
+    useLilGuiSetup();
+
 
     useEffect(() => {
         setCriminalDatabase(criminalDatabaseGenerator());
