@@ -21,6 +21,7 @@ function setPosition (car) {
             // spawning at police lane
             case 0:
                 position = [-10, ...yz];
+                break;
             case 1:            
                 position = [.5, ...yz];
             break;
