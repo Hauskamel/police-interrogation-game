@@ -11,7 +11,7 @@ export function useVehicleEntityGenerator (direction, lane) {
     const addCar = useCarStore((state) => state.addCar);
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
 
-    // spawns new car
+    // creates new entity
     useEffect(() => {
         let respawnTime = randInt(5000, 10000);
         const intervalId = setInterval(() => {
@@ -32,7 +32,7 @@ export function useVehicleEntityGenerator (direction, lane) {
         newEntity = {...newEntity, spawn: {direction, lane}};
 
         addCar(newEntity);
-    }, respawnTime, criminalDatabase);
-    return () => clearInterval(intervalId);
+        }, respawnTime, criminalDatabase);
+        return () => clearInterval(intervalId);
     }, [addCar, criminalDatabase]);
 }

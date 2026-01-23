@@ -14,7 +14,7 @@ import { useCarStore } from "../store";
 
 export function useVehicleAnimation(car, carRef) {
     const removeCar = useCarStore((state) => state.removeCar);
-    const carPosition = useCarStore((state) => state.carPosition)
+    const setCarPosition = useCarStore((state) => state.setCarPosition)
 
     // track the last position sent to store (to update only when position actually changed)
     const previousPositionRef = useRef({y: null, z: null});
@@ -35,8 +35,8 @@ export function useVehicleAnimation(car, carRef) {
             const prev = previousPositionRef.current;
             if (prev.y !== y || (typeof z === "number" && prev.z !== z)) {
                 
-                carPosition(car.id, y, z);
-                previousPositionRef.current = {y, z}
+                setCarPosition(car.id, y, z);
+                previousPositionRef.current = {y, z};
             }
         }
 

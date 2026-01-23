@@ -1,19 +1,22 @@
 import { useEffect, useMemo } from 'react';
+import { useVehicleEntityGenerator } from './useVehicleEntityGenerator';
 
 import GUI from 'lil-gui'
 
 export const useLilGuiSetup = () => {
-    const gui = useMemo(() => new GUI());
+    const gui = useMemo(() => new GUI(), []);
+
+    const createdVehicleEntity =  useVehicleEntityGenerator("left", 0);
 
     useEffect(() => {
         const guiContent = {
-        carStopped: false,
-        myString: 'lil-gui',
-        myNumber: 1,
-        isCriminal: false
-    }
-    gui.add(guiContent, 'carStopped');
-    gui.add(guiContent, 'myString');
-    gui.add(guiContent, 'myNumber');
-    }, [gui]);
+            carStopped: () => { console.log(createdVehicleEntity) } ,
+            myString: 'lil-gui',
+            isCriminal: false
+        }
+
+        gui.add(guiContent, 'carStopped');
+        gui.add(guiContent, 'myString');
+        gui.add(guiContent, 'isCriminal');
+    }, []);
 }

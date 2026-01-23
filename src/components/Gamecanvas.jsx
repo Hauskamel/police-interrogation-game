@@ -18,6 +18,9 @@ function setPosition (car) {
         const yz = [0, -70]; // y and z position
         
         switch (car.spawn.lane) {
+            // spawning at police lane
+            case 0:
+                position = [-10, ...yz];
             case 1:            
                 position = [.5, ...yz];
             break;

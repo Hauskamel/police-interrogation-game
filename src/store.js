@@ -88,7 +88,7 @@ export const useCarStore = create((set) => ({
             selectedCar: car
         }
     ),
-    carPosition: (id, y, z) =>
+    setCarPosition: (id, y, z) =>
         set((state) => ({
             cars: state.cars.map((car) => car.id === id ? { ...car, position: {y: y, z: z} } : car)
         })
