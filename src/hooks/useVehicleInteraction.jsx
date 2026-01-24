@@ -19,9 +19,8 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
         onHoverChange?.(false);
     }, [onHoverChange]);
 
-    const handleClick = useCallback((e) => {
-        e.stopPropagation();    
-        if (vehicle.position?.x > STREETBAY_ENTRY_1[0] || vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
+    const handleClick = useCallback((e) => {e.stopPropagation();    
+        if (vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
             setSelectedCar(vehicle)
         };
     }, [vehicle, setSelectedCar]);

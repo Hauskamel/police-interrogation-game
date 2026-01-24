@@ -20,7 +20,7 @@ function setPosition (car) {
         switch (car.spawn.lane) {
             // spawning at police lane
             case 0:
-                position = [-10, ...yz];
+                position = [-10, 0, 40];
                 break;
             case 1:            
                 position = [.5, ...yz];

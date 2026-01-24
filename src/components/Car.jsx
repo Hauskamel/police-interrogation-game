@@ -19,9 +19,11 @@ function useClonedScene (gltf) {
 }
 
 function CarOccupantsInfoTextbox ({stoppedCar}) {
-    const selectedCar = useCarStore(state => state.selectedCar);
 
-    if (!stoppedCar || stoppedCar?.position.z !== POLICE_CHECKPOINT) {
+    console.log("we reach here");
+    
+
+    if (!stoppedCar) {
         return <CarOccupantsInformationTextbox />
     } 
     return <CarOccupantsInformationTextbox stoppedCar={stoppedCar} />
@@ -45,7 +47,7 @@ function Car ({ car, onHoverChange, position, rotation }) {
     useVehicleAnimation(car, carRef);
     
     const carOccupantsTextboxPosition = car.position ? 
-        [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0]
+        [car.position.x, car.position.y, car.position.z]
         : [0,0,0]
 
     return (

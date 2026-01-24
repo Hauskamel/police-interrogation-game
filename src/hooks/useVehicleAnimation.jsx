@@ -64,12 +64,22 @@ export function useVehicleAnimation(car, carRef) {
             // NOTE: on windows its 0.05
             // NOTE: on Mac/Linux its 0.1
             if (car.spawn.direction === "left") {
-                carRef.current.position.z += 0.5; // car driving on road straight in -y direction
+
+                // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
+                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT 
+                    carRef.current.position.z = 0; // car does not drive 
+                } else {
+                    carRef.current.position.z += 0.5; // car driving on road straight in -y direction
+                }
+                
                 
                 // Handle offscreen car removal
                 if (curZ > 70) {
                     removeCar(car.id);
                 }
+
+
+
             } else {
                 carRef.current.position.z -= 0.5; // car driving on road straight in -y direction
                 // Handle offscreen car removal
