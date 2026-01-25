@@ -1,5 +1,3 @@
-import { STREETBAY_ENTRY_1 } from "../config/positions.js";
-
 import { useCarStore } from "../store.js";
 
 import { useCallback } from "react";
@@ -20,13 +18,7 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
     }, [onHoverChange]);
 
     const handleClick = useCallback((e) => {e.stopPropagation();
-        console.log("trying to set clicked vehicle...");
-
-        console.log("vehicle id: ", vehicle);
-        
-
         if (vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
-            console.log("setting clicked vehicle...");
             setSelectedCar(vehicle)
         };
     }, [vehicle, setSelectedCar]);

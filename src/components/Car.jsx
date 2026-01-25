@@ -19,10 +19,6 @@ function useClonedScene (gltf) {
 }
 
 function CarOccupantsInfoTextbox ({stoppedCar}) {
-
-    console.log("we reach here");
-    
-
     if (!stoppedCar) {
         return <CarOccupantsInformationTextbox />
     } 
@@ -58,8 +54,6 @@ function Car ({ car, onHoverChange, position, rotation }) {
 
     return (
         <>
-            
-            
             {/* car */}
             <primitive
                 object={ scene }

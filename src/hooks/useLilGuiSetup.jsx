@@ -5,24 +5,21 @@ import { generateDriverProfile } from '../utils/profileGenerators/driverProfileG
 import { generateCarProfile } from "../utils/profileGenerators/carProfileGenerator.js";
 import { generateUUID } from "three/src/math/MathUtils.js";
 
-
-
-
 import GUI from 'lil-gui'
 import { useCarStore, useNpcStore } from '../store';
 
 export const useLilGuiSetup = () => {
-    const stopCar = useCarStore(state => state.stopCar)
+    const stopCar = useCarStore(state => state.stopCar);
     const guiRef = useRef(null);
     if (!guiRef.current) {
         guiRef.current = new GUI();
     }
     const gui = guiRef.current;
 
-    const addCar = useCarStore(state => state.addCar)
+    const addCar = useCarStore(state => state.addCar);
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
-
     const [entity, setEntity] = useState(null);
+
 
     const createEntity = useCallback(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
@@ -46,15 +43,30 @@ export const useLilGuiSetup = () => {
         addCar(newEntity);
     })
 
+
+    // TODO: HIER WEITERBAUEN
+    // const makeNpcCriminal = useCallback(() => {
+        // criminalDatabase is a parameter of this function.
+        // the passed value is a reference to the criminalDatabase in the storage.js
+        // const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
+        // let newEntity = {...criminal, id: generateUUID()}
+    // })
+
+
+
     useEffect(() => {
         const guiContent = {
             spawnCarAtPolice: () => createEntity(),
-            myString: 'lil-gui',
             isCriminal: false
         }
 
         gui.add(guiContent, 'spawnCarAtPolice').name("spawn car at policeman");
-        gui.add(guiContent, 'myString');
         gui.add(guiContent, 'isCriminal');
+
+
+        if (guiContent.isCriminal) {
+            console.log("Is Criminal");   
+        }
+
     }, []);
 }

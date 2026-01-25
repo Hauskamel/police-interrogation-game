@@ -27,6 +27,7 @@ export function useVehicleAnimation(car, carRef) {
         if (!carRef.current) return;
         
         // tracks current car position (y, z)
+        const curX = Math.floor(carRef.current.position.x * 100) / 100;        
         const curY = Math.floor(carRef.current.position.y * 100) / 100;        
         const curZ = Math.floor(carRef.current.position.z * 100) / 100;
 
@@ -67,23 +68,23 @@ export function useVehicleAnimation(car, carRef) {
 
                 // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
                 if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT 
-                    carRef.current.position.z = 7; // car does not drive 
+                    carRef.current.position.x = 7; // car does not drive 
                 } else {
-                    carRef.current.position.z += 0.5; // car driving on road straight in -y direction
+                    carRef.current.position.x += 0.5; // car driving on road straight in -y direction
                 }
                 
                 
                 // Handle offscreen car removal
-                if (curZ > 70) {
+                if (curX > 70) {
                     removeCar(car.id);
                 }
 
 
 
             } else {
-                carRef.current.position.z -= 0.5; // car driving on road straight in -y direction
+                carRef.current.position.x -= 0.5; // car driving on road straight in -y direction
                 // Handle offscreen car removal
-                if (curZ < -70) {
+                if (curX < -70) {
                     removeCar(car.id);
                 }
             }

@@ -36,9 +36,6 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
             
             {cars.map((car) => {
                 const { position, rotation } = setVehicleSpawnPosition(car);
-
-                console.log("abc :", position);
-                
                 
                 return (
                     <Car

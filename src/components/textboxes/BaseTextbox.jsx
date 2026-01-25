@@ -21,8 +21,8 @@ export const BaseTextbox = ({
         isCloseable = true
 }) => {
     // textboxes
-    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState)
-    const textboxesAreVisible = useGuiVisibilityStatesStore(state => state.textboxesVisible)
+    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState);
+    const textboxesAreVisible = useGuiVisibilityStatesStore(state => state.textboxesVisible);
 
     const handleClose = () => {
         closeTextbox(setTextboxVisibililty,onClose);
@@ -31,7 +31,6 @@ export const BaseTextbox = ({
     useEffect(() => {
         setTextboxVisibililty(true);
     }, [setTextboxVisibililty]);
-
 
     return (
         <div
