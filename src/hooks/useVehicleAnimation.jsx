@@ -67,7 +67,7 @@ export function useVehicleAnimation(car, carRef) {
 
                 // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
                 if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT 
-                    carRef.current.position.z = 0; // car does not drive 
+                    carRef.current.position.z = 7; // car does not drive 
                 } else {
                     carRef.current.position.z += 0.5; // car driving on road straight in -y direction
                 }

@@ -19,8 +19,14 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
         onHoverChange?.(false);
     }, [onHoverChange]);
 
-    const handleClick = useCallback((e) => {e.stopPropagation();    
+    const handleClick = useCallback((e) => {e.stopPropagation();
+        console.log("trying to set clicked vehicle...");
+
+        console.log("vehicle id: ", vehicle);
+        
+
         if (vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
+            console.log("setting clicked vehicle...");
             setSelectedCar(vehicle)
         };
     }, [vehicle, setSelectedCar]);

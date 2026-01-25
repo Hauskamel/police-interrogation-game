@@ -1,8 +1,8 @@
 import {useGLTF, Html} from "@react-three/drei";
-import {useMemo, useRef} from "react";
+import {useEffect, useMemo, useRef} from "react";
 import PropTypes from "prop-types";
 
-import { DEFAULT_POSITION_L_LANE1, DEFAULT_ROTATION, POLICE_CHECKPOINT } from "../config/positions.js";
+import { DEFAULT_POSITION_L_LANE1, DEFAULT_ROTATION } from "../config/positions.js";
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -50,13 +50,15 @@ function Car ({ car, onHoverChange, position, rotation }) {
         [car.position.x, car.position.y, car.position.z]
         : [0,0,0]
 
+
+    useEffect(() => {
+        if (position[0] == -9)console.log("auto bei polizei: ", position);
+    }, [position]);
+
+
     return (
         <>
-            {selectedCar && car.id === selectedCar.id && (
-                <Html position={carOccupantsTextboxPosition}>
-                    <CarOccupantsInfoTextbox stoppedCar={stoppedCar} />
-                </Html>
-            )}
+            
             
             {/* car */}
             <primitive

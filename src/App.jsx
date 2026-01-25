@@ -108,7 +108,7 @@ function App() {
                 </>
             </div>
             
-            {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
+            {stoppedCar && stoppedCar.id === selectedCar?.id && (
                 <>
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
                     <CarAndDriverProfileTextbox

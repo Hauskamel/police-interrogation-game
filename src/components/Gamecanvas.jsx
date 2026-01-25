@@ -1,60 +1,15 @@
-import * as THREE from "three";
-
-import {Canvas} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei"
-import { useCarRefs } from "../hooks/useCarRefs";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei"
 
 import { useCarStore } from "../store";
-import { Car } from "../components/Car";
-import { PoliceCar } from "../components/PoliceCar";
-import { BorderStation } from "./BorderStation";
+import { setVehicleSpawnPosition } from "../utils/setVehicleSpawnPosition";
 import { POLICECAR_POSITION } from "../config/positions";
 
-function setPosition (car) {
-    let position, rotation;
+import { useCarRefs } from "../hooks/useCarRefs";
 
-    if (car.spawn.direction === "left") {
-        rotation = new THREE.Euler(0, Math.PI, 0);
-        const yz = [0, -70]; // y and z position
-        
-        switch (car.spawn.lane) {
-            // spawning at police lane
-            case 0:
-                position = [-10, 0, 40];
-                break;
-            case 1:            
-                position = [.5, ...yz];
-            break;
-            case 2:
-                position = [6, ...yz];
-            break;
-            case 3:
-                position = [11, ...yz];
-            break;
-        }
-
-    } else if (car.spawn.direction === "right") {
-        rotation = new THREE.Euler(0, 0, 0);
-        const yz = [0, 70]; // y and z position
-        
-        switch (car.spawn.lane) {
-            case 1:            
-                position = [20, ...yz];
-            break;
-            case 2:
-                position = [23, ...yz];
-            break;
-
-            case 3:
-                position = [28, ...yz];
-            break;
-        }
-    } else {
-        return;
-    }
-
-    return { position, rotation }
-}
+import { Car } from "../components/Car";
+import { BorderStation } from "./BorderStation";
+import { PoliceCar } from "../components/PoliceCar";
 
 
 export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
@@ -80,7 +35,10 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
             />
             
             {cars.map((car) => {
-                const {position, rotation } = setPosition(car);
+                const { position, rotation } = setVehicleSpawnPosition(car);
+
+                console.log("abc :", position);
+                
                 
                 return (
                     <Car

@@ -24,11 +24,6 @@ export const useLilGuiSetup = () => {
 
     const [entity, setEntity] = useState(null);
 
-
-
-
-
-
     const createEntity = useCallback(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newEntity;
@@ -46,15 +41,10 @@ export const useLilGuiSetup = () => {
         }
         newEntity = {...newEntity, spawn: {direction: "left", lane: 0, spawnForDevPurposes: true}};
 
-
-        console.log("new Entity: ", newEntity);
         setEntity(newEntity);
         stopCar(newEntity.id);
         addCar(newEntity);
-
-        console.log("new Entity after manipulation: ", newEntity);
     })
-    
 
     useEffect(() => {
         const guiContent = {
@@ -63,7 +53,7 @@ export const useLilGuiSetup = () => {
             isCriminal: false
         }
 
-        gui.add(guiContent, 'spawnCarAtPolice');
+        gui.add(guiContent, 'spawnCarAtPolice').name("spawn car at policeman");
         gui.add(guiContent, 'myString');
         gui.add(guiContent, 'isCriminal');
     }, []);
