@@ -2,8 +2,6 @@ import {useGLTF, Html} from "@react-three/drei";
 import {useEffect, useMemo, useRef} from "react";
 import PropTypes from "prop-types";
 
-import { DEFAULT_POSITION_L_LANE1, DEFAULT_ROTATION } from "../config/positions.js";
-
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
 
@@ -26,7 +24,7 @@ function CarOccupantsInfoTextbox ({stoppedCar}) {
 }
 
 
-function Car ({ car, onHoverChange, position, rotation }) {
+export function Car ({ car, onHoverChange, position, rotation }) {
     const gltf = useGLTF("/models/low-poly-car.glb");
     const scene = useClonedScene(gltf);
 
@@ -68,25 +66,3 @@ function Car ({ car, onHoverChange, position, rotation }) {
     )
 }
 
-
-
-// Define PropTypes for Car component
-Car.propTypes = {
-    car: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        stopped: PropTypes.bool.isRequired,
-        position: PropTypes.shape({
-            x: PropTypes.number.isRequired
-        })
-    }).isRequired,
-    onHoverChange: PropTypes.func,
-    
-}
-
-Car.defaultProps = {
-    onHoverChange: null,
-    position: DEFAULT_POSITION_L_LANE1,
-    rotation: DEFAULT_ROTATION
-}
-
-export { Car }

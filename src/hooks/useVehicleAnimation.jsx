@@ -67,10 +67,11 @@ export function useVehicleAnimation(car, carRef) {
             if (car.spawn.direction === "left") {
 
                 // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
-                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT 
-                    carRef.current.position.x = 7; // car does not drive 
+                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT AFTER FINISHING WORKING WITH GUI
+                    // This is the car that spawns at the police officer (or at least it should because again it is not working)
+                    carRef.current.position.z = 0; // car does not drive 
                 } else {
-                    carRef.current.position.x += 0.5; // car driving on road straight in -y direction
+                    carRef.current.position.x -= 0.2; // car driving on road straight
                 }
                 
                 
@@ -78,13 +79,10 @@ export function useVehicleAnimation(car, carRef) {
                 if (curX > 70) {
                     removeCar(car.id);
                 }
-
-
-
             } else {
-                carRef.current.position.x -= 0.5; // car driving on road straight in -y direction
+                carRef.current.position.x += 0.2; // car driving on road straight in -y direction
                 // Handle offscreen car removal
-                if (curX < -70) {
+                if (curX <  -70) {
                     removeCar(car.id);
                 }
             }
