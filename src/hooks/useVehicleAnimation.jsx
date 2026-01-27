@@ -71,7 +71,7 @@ export function useVehicleAnimation(car, carRef) {
                     // This is the car that spawns at the police officer (or at least it should because again it is not working)
                     carRef.current.position.z = 0; // car does not drive 
                 } else {
-                    carRef.current.position.x -= 0.2; // car driving on road straight
+                    carRef.current.position.x -= 0.02; // car driving on road straight
                 }
                 
                 
@@ -80,7 +80,7 @@ export function useVehicleAnimation(car, carRef) {
                     removeCar(car.id);
                 }
             } else {
-                carRef.current.position.x += 0.2; // car driving on road straight in -y direction
+                carRef.current.position.x += 0.02; // car driving on road straight in -y direction
                 // Handle offscreen car removal
                 if (curX <  -70) {
                     removeCar(car.id);

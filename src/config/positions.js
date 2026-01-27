@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export const POLICEMAN_POSITION = [8,.5,-4];
-export const POLICECAR_POSITION = [0,.5,30]
+export const POLICECAR_POSITION = [25,.5,-7]
 export const POLICE_CHECKPOINT = -3;
 
 export const STREETBAY_ENTRY_1 = [15, 0, -.6];
