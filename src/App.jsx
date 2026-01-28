@@ -21,7 +21,6 @@ import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
-import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
 import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
@@ -49,11 +48,9 @@ function App() {
     // ##################### HOOKS #####################
     useSetWantedList();
 
-
-
     // TODO: HIER MIT SPAWN POSITION ARBEITEN
     // spawndirection, spawnlane from bottom -> top
-    useVehicleEntityGenerator("left", 1); 
+    useVehicleEntityGenerator("left", 1);
     useVehicleEntityGenerator("left", 2);
     useVehicleEntityGenerator("left", 3);
 

@@ -2,8 +2,9 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
 import { streetbayEntry } from "../utils/streetbayEntry";
-import { STREETBAY_ENTRY_1 } from "../config/positions";
+import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "../config/positions";
 import { useCarStore } from "../store";
+
 
 /**
  * Animates vehicle, either driving straight or following a curve into a parking bay
@@ -71,18 +72,18 @@ export function useVehicleAnimation(car, carRef) {
                     // This is the car that spawns at the police officer (or at least it should because again it is not working)
                     carRef.current.position.z = 0; // car does not drive 
                 } else {
-                    carRef.current.position.x -= 0.02; // car driving on road straight
+                    carRef.current.position.x -= VEHICLE_VELOCITY; // car driving on road straight
                 }
                 
                 
                 // Handle offscreen car removal
-                if (curX > 70) {
+                if (curX > DESPAWN_POSITION_X) {
                     removeCar(car.id);
                 }
             } else {
-                carRef.current.position.x += 0.02; // car driving on road straight in -y direction
+                carRef.current.position.x += VEHICLE_VELOCITY; // car driving on road straight in -y direction
                 // Handle offscreen car removal
-                if (curX <  -70) {
+                if (curX <  -DESPAWN_POSITION_X) {
                     removeCar(car.id);
                 }
             }

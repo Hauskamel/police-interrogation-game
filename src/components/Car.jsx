@@ -1,6 +1,6 @@
 import {useGLTF, Html} from "@react-three/drei";
 import {useEffect, useMemo, useRef} from "react";
-import PropTypes from "prop-types";
+
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -43,12 +43,6 @@ export function Car ({ car, onHoverChange, position, rotation }) {
     const carOccupantsTextboxPosition = car.position ? 
         [car.position.x, car.position.y, car.position.z]
         : [0,0,0]
-
-
-    useEffect(() => {
-        if (position[0] == -9)console.log("auto bei polizei: ", position);
-    }, [position]);
-
 
     return (
         <>

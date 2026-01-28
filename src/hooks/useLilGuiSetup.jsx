@@ -21,6 +21,7 @@ export const useLilGuiSetup = () => {
     const [entity, setEntity] = useState(null);
 
 
+    // a slim version of the spawn mechanism only for lil-gui
     const createEntity = useCallback(() => {
         const spawnCarOfWantedList = Math.random() < 0.5;
         let newEntity;
@@ -57,12 +58,13 @@ export const useLilGuiSetup = () => {
     useEffect(() => {
         const guiContent = {
             spawnCarAtPolice: () => createEntity(),
-            isCriminal: false
+            isCriminal: false,
+            riggedCar: false
         }
 
         gui.add(guiContent, 'spawnCarAtPolice').name("spawn car at policeman");
-        gui.add(guiContent, 'isCriminal');
-
+        gui.add(guiContent, 'isCriminal').name("is criminal (not working)");
+        gui.add(guiContent, 'riggedCar').name("rigged car (not working)");
 
         if (guiContent.isCriminal) {
             console.log("Is Criminal");   
