@@ -133,6 +133,7 @@ export function generateDriverProfile (canHaveFakeProfile = false) {
     // #####################################
     // const drunk = Math.random() < .2;
     // const high = Math.random() < .2;
+    const arrested = false
 
     const realProfile  = {
         driverImage,
@@ -152,7 +153,7 @@ export function generateDriverProfile (canHaveFakeProfile = false) {
         // alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
         // high,
         // wanted: !!isWanted, // gilt nur für NPCs, die beim Spielbeginn bereits gesucht sind
-        // arrestable: !!isWanted
+        arrested
     }
 
     // if (isWanted) return { realProfile }; // returns if fake profile is not allowed for this npc type (f.e. wanted list)

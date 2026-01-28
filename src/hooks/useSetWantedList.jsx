@@ -10,8 +10,8 @@ export function useSetWantedList () {
     // creates wanted list profiles
     useEffect(() => {
         if (gameState === gameStates.MENU) {
-            setWantedList(generateWantedListProfiles())
-        }   
+            setWantedList(generateWantedListProfiles());
+        }
     }, [gameState, setWantedList])
     
 }

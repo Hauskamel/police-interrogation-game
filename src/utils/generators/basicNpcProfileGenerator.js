@@ -3,7 +3,7 @@ import { generateDriverProfile } from "../profileGenerators/driverProfileGenerat
 import { generateCarProfile } from "../profileGenerators/carProfileGenerator"
 
 
-
+// rename to: basicEntityProfileGenerator
 export const basicNpcProfile = () => {
     const profile = {
         driverProfile: generateDriverProfile(),

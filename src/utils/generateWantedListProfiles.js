@@ -5,7 +5,7 @@ import { generateCarProfile } from "./profileGenerators/carProfileGenerator.js"
 export function generateWantedListProfiles () {
     const criminals = [];
 
-    while (criminals.length < 3) {
+    while (criminals.length < 5) {
         const profile = {
             driverProfile: generateDriverProfile(true),
             carProfile: generateCarProfile(true),

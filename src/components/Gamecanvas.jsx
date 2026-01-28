@@ -19,35 +19,35 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
     return (
         <div className="w-screen h-screen -z-1">
             <Canvas camera={{position: [-30, 20, 10], fov: 70}}>
-            {/* UTIL COMPONENTS */}
-            <axesHelper args={[10]} />
-            <OrbitControls/>
-            {/* LIHGTS */}
-            <ambientLight/>
-            <directionalLight position={[5, 5, 5]} />
+                {/* UTIL COMPONENTS */}
+                <axesHelper args={[10]} />
+                <OrbitControls/>
+                {/* LIHGTS */}
+                <ambientLight/>
+                <directionalLight position={[5, 5, 5]} />
 
-            {/* GAME COMPONENTS */}
-            <BorderStation />
-            <PoliceCar
-                position={POLICECAR_POSITION}
-                onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
-                isPlayersCar={true}
-            />
-            
-            {cars.map((car) => {
-                const { position, rotation } = setVehicleSpawnPosition(car);
+                {/* GAME COMPONENTS */}
+                <BorderStation />
+                <PoliceCar
+                    position={POLICECAR_POSITION}
+                    onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
+                    isPlayersCar={true}
+                />
                 
-                return (
-                    <Car
-                        key={car.id}
-                        ref={carRefs}
-                        car={car}
-                        onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
-                        position={ position }
-                        rotation={ rotation }
-                    />
-                );
-            })}
+                {cars.map((car) => {
+                    const { position, rotation } = setVehicleSpawnPosition(car);
+                    
+                    return (
+                        <Car
+                            key={car.id}
+                            ref={carRefs}
+                            car={car}
+                            onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
+                            position={ position }
+                            rotation={ rotation }
+                        />
+                    );
+                })}
             </Canvas>
         </div>
         

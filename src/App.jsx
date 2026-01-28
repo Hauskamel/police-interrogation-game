@@ -43,13 +43,23 @@ function App() {
     const [hoveringCar, setHoveringCar] = useState(false);
 
 
-    
     // #################################################
     // ##################### HOOKS #####################
-    useSetWantedList();
 
-    // TODO: HIER MIT SPAWN POSITION ARBEITEN
-    // spawndirection, spawnlane from bottom -> top
+    // sets overlay dependant of the current game mode
+    useOverlaySetter();
+    useSetWantedList();
+    useLilGuiSetup();
+
+    useEffect(() => {
+        console.log("setting criminal database...");
+        
+        setCriminalDatabase(criminalDatabaseGenerator());
+    }, [])
+
+    
+
+    // spawndirection, spawnlane
     useVehicleEntityGenerator("left", 1);
     useVehicleEntityGenerator("left", 2);
     useVehicleEntityGenerator("left", 3);
@@ -57,17 +67,6 @@ function App() {
     useVehicleEntityGenerator("right", 1); 
     useVehicleEntityGenerator("right", 2);
     useVehicleEntityGenerator("right", 3);
-    
-
-    // sets overlay dependant of the current game mode
-    useOverlaySetter();
-
-    useLilGuiSetup();
-
-
-    useEffect(() => {
-        setCriminalDatabase(criminalDatabaseGenerator());
-    }, [])
     
     
 

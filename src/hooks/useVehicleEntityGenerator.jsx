@@ -6,6 +6,7 @@ import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
 import { generateDriverProfile } from "../utils/profileGenerators/driverProfileGenerator.js";
+import { basicNpcProfile } from "../utils/generators/basicNpcProfileGenerator.js";
 
 export function useVehicleEntityGenerator (direction, lane) {
     const addCar = useCarStore((state) => state.addCar);
@@ -24,10 +25,7 @@ export function useVehicleEntityGenerator (direction, lane) {
                 const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
                 newEntity = {...criminal, id: generateUUID()}
             } else {
-                const carProfile = generateCarProfile();
-                const driverProfile = generateDriverProfile(true);
-                
-                newEntity = {driverProfile, carProfile, id: generateUUID()}
+                newEntity = basicNpcProfile();
             }
             newEntity = {...newEntity, spawn: {direction, lane}};
 

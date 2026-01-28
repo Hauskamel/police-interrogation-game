@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 
-import { generateDriverProfile } from '../utils/profileGenerators/driverProfileGenerator';
-import { generateCarProfile } from "../utils/profileGenerators/carProfileGenerator.js";
+import { basicNpcProfile } from '../utils/generators/basicNpcProfileGenerator.js';
 import { generateUUID } from "three/src/math/MathUtils.js";
 
 import GUI from 'lil-gui'
@@ -32,10 +31,7 @@ export const useLilGuiSetup = () => {
             const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
             newEntity = {...criminal, id: generateUUID()}
         } else {
-            const carProfile = generateCarProfile();
-            const driverProfile = generateDriverProfile(true);
-            
-            newEntity = {driverProfile, carProfile, id: generateUUID()}
+            newEntity = basicNpcProfile();
         }
         newEntity = {...newEntity, spawn: {direction: "left", lane: 0, spawnForDevPurposes: true}};
 
@@ -65,10 +61,6 @@ export const useLilGuiSetup = () => {
         gui.add(guiContent, 'spawnCarAtPolice').name("spawn car at policeman");
         gui.add(guiContent, 'isCriminal').name("is criminal (not working)");
         gui.add(guiContent, 'riggedCar').name("rigged car (not working)");
-
-        if (guiContent.isCriminal) {
-            console.log("Is Criminal");   
-        }
 
     }, []);
 }
