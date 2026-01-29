@@ -1,7 +1,7 @@
-import { carBrands } from "../../data/carBrands.js";
+import { carBrands } from "../../../data/carBrands.js";
 import { faker } from "@faker-js/faker";
 
-import { applyRandomManipulations } from './fakeProfileGenerator.js';
+import { applyRandomManipulations } from './fakeNpcProfileGenerator.js';
 
 
 // ---> Handling car brands

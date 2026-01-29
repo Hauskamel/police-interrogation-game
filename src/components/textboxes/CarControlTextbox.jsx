@@ -2,7 +2,7 @@ import {BaseTextbox} from './BaseTextbox.jsx';
 import {useCarStore, useGuiVisibilityStatesStore} from "../../store.js";
 
 
-import { closeTextbox } from "../../utils/closeTextbox";
+import { useCloseTextbox } from "../../hooks/useCloseTextbox.jsx";
 
 
 export const CarControlTextbox = ({
@@ -39,7 +39,7 @@ export const CarControlTextbox = ({
                     {!stoppedCar || selectedCar.id === stoppedCar.id && (
                         <button
                             onClick={() => {
-                                closeTextbox(setTextboxVisibililty, onClose)
+                                useCloseTextbox(setTextboxVisibililty, onClose)
                                 continueCar(selectedCar.id);
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"

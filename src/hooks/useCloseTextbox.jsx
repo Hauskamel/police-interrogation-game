@@ -1,4 +1,4 @@
-export const closeTextbox = (setTextboxVisibililty, onClose) => {
+export const useCloseTextbox = (setTextboxVisibililty, onClose) => {
     setTimeout(() => {
         onClose();
     }, 150);

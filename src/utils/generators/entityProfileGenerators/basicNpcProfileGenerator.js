@@ -1,6 +1,6 @@
 import { generateUUID } from "three/src/math/MathUtils.js"
-import { generateDriverProfile } from "../profileGenerators/driverProfileGenerator.js"
-import { generateCarProfile } from "../profileGenerators/carProfileGenerator"
+import { generateDriverProfile } from "./driverProfileGenerator.js"
+import { generateCarProfile } from "./carProfileGenerator"
 
 
 // rename to: basicEntityProfileGenerator

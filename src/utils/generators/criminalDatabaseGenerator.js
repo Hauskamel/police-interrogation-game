@@ -1,6 +1,6 @@
-import { generateDriverProfile } from "../profileGenerators/driverProfileGenerator.js"
+import { generateDriverProfile } from "./entityProfileGenerators/driverProfileGenerator.js"
 import { crimes } from '../../data/crimes.js';
-import { basicNpcProfile } from "./basicNpcProfileGenerator.js";
+import { basicNpcProfile } from "./entityProfileGenerators/basicNpcProfileGenerator.js";
 
 export const criminalDatabaseGenerator = () => {
     const criminals = []

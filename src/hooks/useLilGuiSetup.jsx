@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 
-import { basicNpcProfile } from '../utils/generators/basicNpcProfileGenerator.js';
+import { basicNpcProfile } from '../utils/generators/entityProfileGenerators/basicNpcProfileGenerator.js';
 import { generateUUID } from "three/src/math/MathUtils.js";
 
 import GUI from 'lil-gui'

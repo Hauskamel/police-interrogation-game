@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function setVehicleSpawnPosition (car) {
+export function getVehicleSpawnPosition (car) {
     let position, rotation;
 
     if (car.spawn.direction === "left") {

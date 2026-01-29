@@ -2,7 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
 
 import { useCarStore } from "../store";
-import { setVehicleSpawnPosition } from "../utils/setVehicleSpawnPosition";
+import { getVehicleSpawnPosition } from "../utils/getVehicleSpawnPosition";
 import { POLICECAR_POSITION } from "../config/positions";
 
 import { useCarRefs } from "../hooks/useCarRefs";
@@ -35,7 +35,7 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
                 />
                 
                 {cars.map((car) => {
-                    const { position, rotation } = setVehicleSpawnPosition(car);
+                    const { position, rotation } = getVehicleSpawnPosition(car);
                     
                     return (
                         <Car

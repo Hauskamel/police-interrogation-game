@@ -1,6 +1,6 @@
-import {driverImageProfiles} from "../../utils/driverImageProfiles.js"
-import { firstNames } from "../../data/firstNames.js";
-import {applyRandomManipulations} from "./fakeProfileGenerator.js"
+import {driverImageProfiles} from "../../../data/driverImageProfiles.js"
+import { firstNames } from "../../../data/firstNames.js";
+import {applyRandomManipulations} from "./fakeNpcProfileGenerator.js"
 import { faker } from "@faker-js/faker";
 
 // ---> generates a random chance in percent (%)
