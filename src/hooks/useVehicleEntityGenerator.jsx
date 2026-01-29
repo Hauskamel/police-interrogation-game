@@ -12,20 +12,35 @@ export function useVehicleEntityGenerator (direction, lane) {
     useEffect(() => {
         let respawnTime = randInt(5000, 10000);
         const intervalId = setInterval(() => {
+
+
             const spawnCarOfWantedList = Math.random() < 0.5;
             let newEntity;
+
             
             if (spawnCarOfWantedList && criminalDatabase.length) {
                 // criminalDatabase is a parameter of this function.
                 // the passed value is a reference to the criminalDatabase in the storage.js
                 const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
                 newEntity = {...criminal, id: generateUUID()}
+
+                
             } else {
                 newEntity = basicEntityProfile();
             }
+
+
+
             newEntity = {...newEntity, spawn: {direction, lane}};
 
             addCar(newEntity);
+
+
+
+
+
+
+
         }, respawnTime, criminalDatabase);
         return () => clearInterval(intervalId);
     }, [addCar, criminalDatabase]);
