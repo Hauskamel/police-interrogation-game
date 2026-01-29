@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { generateUUID, randInt } from "three/src/math/MathUtils.js";
 
 import { useCarStore, useNpcStore } from "../store.js";
-import { basicNpcProfile } from "../utils/generators/entityProfileGenerators/basicNpcProfileGenerator.js";
+import { basicEntityProfile } from "../utils/generators/entityProfileGenerators/basicEntityProfileGenerator.js";
 
 export function useVehicleEntityGenerator (direction, lane) {
     const addCar = useCarStore((state) => state.addCar);
@@ -21,7 +21,7 @@ export function useVehicleEntityGenerator (direction, lane) {
                 const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
                 newEntity = {...criminal, id: generateUUID()}
             } else {
-                newEntity = basicNpcProfile();
+                newEntity = basicEntityProfile();
             }
             newEntity = {...newEntity, spawn: {direction, lane}};
 

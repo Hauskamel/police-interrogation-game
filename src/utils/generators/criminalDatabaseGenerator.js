@@ -1,6 +1,6 @@
 import { generateDriverProfile } from "./entityProfileGenerators/driverProfileGenerator.js"
 import { crimes } from '../../data/crimes.js';
-import { basicNpcProfile } from "./entityProfileGenerators/basicNpcProfileGenerator.js";
+import { basicEntityProfile } from "./entityProfileGenerators/basicEntityProfileGenerator.js";
 
 export const criminalDatabaseGenerator = () => {
     const criminals = []
@@ -10,7 +10,7 @@ export const criminalDatabaseGenerator = () => {
         const levelOfCrime = crime.level
         const crimeCase = crime.cases[Math.floor(Math.random() * crime.cases.length)]
         
-        const basicProfile = Object(basicNpcProfile());
+        const basicProfile = Object(basicEntityProfile());
 
         const firstName = basicProfile.driverProfile.realProfile.firstName
         const lastName = basicProfile.driverProfile.realProfile.lastName

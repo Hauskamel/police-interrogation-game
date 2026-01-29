@@ -4,7 +4,7 @@ import { generateCarProfile } from "./carProfileGenerator"
 
 
 // rename to: basicEntityProfileGenerator
-export const basicNpcProfile = () => {
+export const basicEntityProfile = () => {
     const profile = {
         driverProfile: generateDriverProfile(),
         carProfile: generateCarProfile(),

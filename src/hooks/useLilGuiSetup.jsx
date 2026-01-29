@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 
-import { basicNpcProfile } from '../utils/generators/entityProfileGenerators/basicNpcProfileGenerator.js';
+import { basicEntityProfile } from '../utils/generators/entityProfileGenerators/basicEntityProfileGenerator.js';
 import { generateUUID } from "three/src/math/MathUtils.js";
 
 import GUI from 'lil-gui'
@@ -31,7 +31,7 @@ export const useLilGuiSetup = () => {
             const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
             newEntity = {...criminal, id: generateUUID()}
         } else {
-            newEntity = basicNpcProfile();
+            newEntity = basicEntityProfile();
         }
         newEntity = {...newEntity, spawn: {direction: "left", lane: 0, spawnForDevPurposes: true}};
 
