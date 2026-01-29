@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
-import { streetbayEntry } from "../utils/streetbayEntry";
+import { streetbayEntryCoordinates } from "../data/streetbayEntryCoordinates";
 import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "../config/positions";
 import { useCarStore } from "../store";
 
@@ -55,8 +55,8 @@ export function useVehicleAnimation(car, carRef) {
             setT(prevT => Math.min(prevT + 0.009, 1))
     
             // Animation along curve
-            const position = streetbayEntry.getPoint(t); // Get the position at t
-            const tangent = streetbayEntry.getTangent(t);
+            const position = streetbayEntryCoordinates.getPoint(t); // Get the position at t
+            const tangent = streetbayEntryCoordinates.getTangent(t);
             const lookAtTarget = position.clone().add(tangent);
     
             carRef.current.position.copy(position);
