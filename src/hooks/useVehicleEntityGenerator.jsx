@@ -6,6 +6,8 @@ import { crimeTypes } from "../data/crimeTypes.js";
 import { useCarStore, useNpcStore } from "../store.js";
 import { basicEntityProfile } from "../utils/generators/entityProfileGenerators/basicEntityProfileGenerator.js";
 
+
+// this function has an interval that puts random generated "entities" into the 'addCar' state for the useCarStore
 export function useVehicleEntityGenerator (direction, lane) {
     const addCar = useCarStore((state) => state.addCar);
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
@@ -93,6 +95,7 @@ export function useVehicleEntityGenerator (direction, lane) {
             addCar(newEntity);
 
         }, respawnTime, criminalDatabase);
+        
         return () => clearInterval(intervalId);
     }, [addCar, criminalDatabase]);
 }

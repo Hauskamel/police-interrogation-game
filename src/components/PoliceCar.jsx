@@ -5,7 +5,7 @@ import { useVehicleInteraction } from "../hooks/useVehicleInteraction.jsx";
 import {useCarStore} from "../store.js";
 
 export const PoliceCar = ({ position, onHoverChange }) => {
-    const { scene } = useGLTF("/models/police-car.glb");
+    const { scene } = useGLTF("/models/murphy_97_cruiser.glb");
     const policecarRef = useRef();
 
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar)

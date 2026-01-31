@@ -12,23 +12,24 @@ import { BorderStation } from "./BorderStation";
 import { PoliceCar } from "../components/PoliceCar";
 
 
-export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
+export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
     const cars = useCarStore((state) => state.cars);
     const carRefs = useCarRefs(cars);
 
     return (
         <div className="w-screen h-screen -z-1">
-            <Canvas camera={{position: [-30, 20, 10], fov: 70}}>
+            <Canvas shadows camera={{position: [-30, 20, 10], fov: 70}}>
                 {/* UTIL COMPONENTS */}
                 <axesHelper args={[10]} />
                 <OrbitControls/>
                 {/* LIHGTS */}
-                <ambientLight/>
-                <directionalLight position={[5, 5, 5]} />
+                <ambientLight castShadow />
+                <directionalLight castShadow position={[5, 5, 5]} />
 
                 {/* GAME COMPONENTS */}
-                <BorderStation />
+                <BorderStation receiveShadow />
                 <PoliceCar
+                    castShadow
                     position={POLICECAR_POSITION}
                     onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
                     isPlayersCar={true}
@@ -39,6 +40,7 @@ export function Gamecanvas({playersPoliceCar, setHoveringCar}) {
                     
                     return (
                         <Car
+                            castShadow
                             key={car.id}
                             ref={carRefs}
                             car={car}
