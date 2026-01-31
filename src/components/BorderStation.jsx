@@ -10,7 +10,7 @@ function useClonedScene (gltf) {
 
 
 export const BorderStation = () => {
-    const gltf = useGLTF("/models/border-station.glb");
+    const gltf = useGLTF("/models/border-station-pos0.glb");
     const scene = useClonedScene(gltf);
 
     return (

@@ -1,9 +1,10 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
-import { streetbayEntry } from "../utils/streetbayEntry";
-import { STREETBAY_ENTRY_1 } from "../config/positions";
+import { streetbayEntryCoordinates } from "../data/streetbayEntryCoordinates";
+import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "../config/positions";
 import { useCarStore } from "../store";
+
 
 /**
  * Animates vehicle, either driving straight or following a curve into a parking bay
@@ -14,7 +15,7 @@ import { useCarStore } from "../store";
 
 export function useVehicleAnimation(car, carRef) {
     const removeCar = useCarStore((state) => state.removeCar);
-    const carPosition = useCarStore((state) => state.carPosition)
+    const setCarPosition = useCarStore((state) => state.setCarPosition)
 
     // track the last position sent to store (to update only when position actually changed)
     const previousPositionRef = useRef({y: null, z: null});
@@ -27,6 +28,7 @@ export function useVehicleAnimation(car, carRef) {
         if (!carRef.current) return;
         
         // tracks current car position (y, z)
+        const curX = Math.floor(carRef.current.position.x * 100) / 100;        
         const curY = Math.floor(carRef.current.position.y * 100) / 100;        
         const curZ = Math.floor(carRef.current.position.z * 100) / 100;
 
@@ -35,8 +37,8 @@ export function useVehicleAnimation(car, carRef) {
             const prev = previousPositionRef.current;
             if (prev.y !== y || (typeof z === "number" && prev.z !== z)) {
                 
-                carPosition(car.id, y, z);
-                previousPositionRef.current = {y, z}
+                setCarPosition(car.id, y, z);
+                previousPositionRef.current = {y, z};
             }
         }
 
@@ -53,8 +55,8 @@ export function useVehicleAnimation(car, carRef) {
             setT(prevT => Math.min(prevT + 0.009, 1))
     
             // Animation along curve
-            const position = streetbayEntry.getPoint(t); // Get the position at t
-            const tangent = streetbayEntry.getTangent(t);
+            const position = streetbayEntryCoordinates.getPoint(t); // Get the position at t
+            const tangent = streetbayEntryCoordinates.getTangent(t);
             const lookAtTarget = position.clone().add(tangent);
     
             carRef.current.position.copy(position);
@@ -64,16 +66,24 @@ export function useVehicleAnimation(car, carRef) {
             // NOTE: on windows its 0.05
             // NOTE: on Mac/Linux its 0.1
             if (car.spawn.direction === "left") {
-                carRef.current.position.z += 0.5; // car driving on road straight in -y direction
+
+                // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
+                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT AFTER FINISHING WORKING WITH GUI
+                    // This is the car that spawns at the police officer (or at least it should because again it is not working)
+                    carRef.current.position.z = 0; // car does not drive 
+                } else {
+                    carRef.current.position.x -= VEHICLE_VELOCITY; // car driving on road straight
+                }
+                
                 
                 // Handle offscreen car removal
-                if (curZ > 70) {
+                if (curX > DESPAWN_POSITION_X) {
                     removeCar(car.id);
                 }
             } else {
-                carRef.current.position.z -= 0.5; // car driving on road straight in -y direction
+                carRef.current.position.x += VEHICLE_VELOCITY; // car driving on road straight in -y direction
                 // Handle offscreen car removal
-                if (curZ < -70) {
+                if (curX <  -DESPAWN_POSITION_X) {
                     removeCar(car.id);
                 }
             }

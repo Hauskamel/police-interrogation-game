@@ -27,15 +27,15 @@ export function Database ({ userInput }) {
     return (
         <>
         {
-            profileArray.map((profile, i) => {
+            profileArray.map((entityProfile, i) => {
                 return (
                     <DatabaseListElement
                         hoveredElem={hoveredIdx === i}
                         setHoveredElement={isHovering => {setHoveredIdx(isHovering ? i : null)}}
                         setClickedElement={isClicked => {setClickedIdx(isClicked ? i : null)}}
                         clickedElement={clickedIdx === i}
-                        profile={profile}
-                        key={profile.id}
+                        entityProfile={entityProfile}
+                        key={entityProfile.id}
                     />
                 )
             })

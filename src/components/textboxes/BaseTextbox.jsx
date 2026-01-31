@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import { closeTextbox } from "../../utils/closeTextbox";
+import { useCloseTextbox } from "../../hooks/useCloseTextbox.jsx";
 
 import { useGuiVisibilityStatesStore } from "../../store";
 
@@ -21,17 +21,16 @@ export const BaseTextbox = ({
         isCloseable = true
 }) => {
     // textboxes
-    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState)
-    const textboxesAreVisible = useGuiVisibilityStatesStore(state => state.textboxesVisible)
+    const setTextboxVisibililty = useGuiVisibilityStatesStore(state => state.setTextboxVisibilityState);
+    const textboxesAreVisible = useGuiVisibilityStatesStore(state => state.textboxesVisible);
 
     const handleClose = () => {
-        closeTextbox(setTextboxVisibililty,onClose);
+        useCloseTextbox(setTextboxVisibililty,onClose);
     };
 
     useEffect(() => {
         setTextboxVisibililty(true);
     }, [setTextboxVisibililty]);
-
 
     return (
         <div

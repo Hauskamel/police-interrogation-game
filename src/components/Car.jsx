@@ -1,8 +1,6 @@
 import {useGLTF, Html} from "@react-three/drei";
-import {useMemo, useRef} from "react";
-import PropTypes from "prop-types";
+import {useEffect, useMemo, useRef} from "react";
 
-import { DEFAULT_POSITION_L_LANE1, DEFAULT_ROTATION, POLICE_CHECKPOINT } from "../config/positions.js";
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -19,16 +17,14 @@ function useClonedScene (gltf) {
 }
 
 function CarOccupantsInfoTextbox ({stoppedCar}) {
-    const selectedCar = useCarStore(state => state.selectedCar);
-
-    if (!stoppedCar || stoppedCar?.position.z !== POLICE_CHECKPOINT) {
+    if (!stoppedCar) {
         return <CarOccupantsInformationTextbox />
     } 
     return <CarOccupantsInformationTextbox stoppedCar={stoppedCar} />
 }
 
 
-function Car ({ car, onHoverChange, position, rotation }) {
+export function Car ({ car, onHoverChange, position, rotation }) {
     const gltf = useGLTF("/models/low-poly-car.glb");
     const scene = useClonedScene(gltf);
 
@@ -45,17 +41,11 @@ function Car ({ car, onHoverChange, position, rotation }) {
     useVehicleAnimation(car, carRef);
     
     const carOccupantsTextboxPosition = car.position ? 
-        [car.position.x, car.position.y ?? 7.5, car.position.z ?? 0]
+        [car.position.x, car.position.y, car.position.z]
         : [0,0,0]
 
     return (
         <>
-            {selectedCar && car.id === selectedCar.id && (
-                <Html position={carOccupantsTextboxPosition}>
-                    <CarOccupantsInfoTextbox stoppedCar={stoppedCar} />
-                </Html>
-            )}
-            
             {/* car */}
             <primitive
                 object={ scene }
@@ -70,25 +60,3 @@ function Car ({ car, onHoverChange, position, rotation }) {
     )
 }
 
-
-
-// Define PropTypes for Car component
-Car.propTypes = {
-    car: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        stopped: PropTypes.bool.isRequired,
-        position: PropTypes.shape({
-            x: PropTypes.number.isRequired
-        })
-    }).isRequired,
-    onHoverChange: PropTypes.func,
-    
-}
-
-Car.defaultProps = {
-    onHoverChange: null,
-    position: DEFAULT_POSITION_L_LANE1,
-    rotation: DEFAULT_ROTATION
-}
-
-export { Car }

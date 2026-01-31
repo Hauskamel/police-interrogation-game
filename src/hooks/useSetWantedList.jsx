@@ -1,6 +1,6 @@
 import {gameStates, useGameStore, useNpcStore} from "../store.js";
 import { useEffect } from "react";
-import { generateWantedListProfiles } from "../utils/generateWantedListProfiles.js";
+import { generateWantedListProfiles } from "../utils/generators/wantedListProfilesGenerator.js";
 
 export function useSetWantedList () {
     const gameState = useGameStore((state) => state.gameState)
@@ -10,8 +10,8 @@ export function useSetWantedList () {
     // creates wanted list profiles
     useEffect(() => {
         if (gameState === gameStates.MENU) {
-            setWantedList(generateWantedListProfiles())
-        }   
+            setWantedList(generateWantedListProfiles());
+        }
     }, [gameState, setWantedList])
     
 }

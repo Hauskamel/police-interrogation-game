@@ -17,10 +17,10 @@ import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverP
 
 import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
 import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
+import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
-import { POLICE_CHECKPOINT } from "./config/positions.js";
 
 import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
 import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
@@ -43,30 +43,30 @@ function App() {
     const [hoveringCar, setHoveringCar] = useState(false);
 
 
-    
     // #################################################
     // ##################### HOOKS #####################
+
+    // sets overlay dependant of the current game mode
+    useOverlaySetter();
     useSetWantedList();
+    useLilGuiSetup();
 
+    useEffect(() => {
+        console.log("setting criminal database...");
+        
+        setCriminalDatabase(criminalDatabaseGenerator());
+    }, [])
 
+    
 
-    // TODO: HIER MIT SPAWN POSITION ARBEITEN
-    // spawndirection, spawnlane from bottom -> top
-    useVehicleEntityGenerator("left", 1); 
+    // spawndirection, spawnlane
+    useVehicleEntityGenerator("left", 1);
     useVehicleEntityGenerator("left", 2);
     useVehicleEntityGenerator("left", 3);
 
     useVehicleEntityGenerator("right", 1); 
     useVehicleEntityGenerator("right", 2);
     useVehicleEntityGenerator("right", 3);
-    
-
-    // sets overlay dependant of the current game mode
-    useOverlaySetter();
-
-    useEffect(() => {
-        setCriminalDatabase(criminalDatabaseGenerator());
-    }, [])
     
     
 
@@ -104,7 +104,7 @@ function App() {
                 </>
             </div>
             
-            {stoppedCar && stoppedCar.id === selectedCar?.id && stoppedCar?.position.z === POLICE_CHECKPOINT && (
+            {stoppedCar && stoppedCar.id === selectedCar?.id && (
                 <>
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
                     <CarAndDriverProfileTextbox
