@@ -48,6 +48,9 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
+
+    
+
     useSetWantedList();
     useLilGuiSetup();
 
@@ -61,12 +64,8 @@ function App() {
 
     // spawndirection, spawnlane
     useVehicleEntityGenerator("left", 1);
-    useVehicleEntityGenerator("left", 2);
-    useVehicleEntityGenerator("left", 3);
 
-    useVehicleEntityGenerator("right", 1); 
-    useVehicleEntityGenerator("right", 2);
-    useVehicleEntityGenerator("right", 3);
+    useVehicleEntityGenerator("right", 1);
     
     
 
