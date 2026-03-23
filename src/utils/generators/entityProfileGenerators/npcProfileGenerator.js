@@ -18,10 +18,6 @@ export function generateNpcProfile () {
     // driver Image
     const driverImage = getRandomNpcImage();
 
-    console.log(driverImage);
-    
-
-
     const npcImage = driverImage.randomImage;
     const ageGroup = driverImage.ageGroup;    
     
