@@ -30,47 +30,7 @@ export function useVehicleEntityGenerator (direction, lane) {
             } else {
                 // spawn a criminal
                 const spawnSmuggler = Math.random() < 0.5; // decide wether criminal is a smuggler;
-                
-
-                
-                
-
-                // code for criminal;
-
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // ######################################
-            // ######################################
-            // OLD VERSION:
-            // ######################################
-            // ######################################
-            // const spawnCarOfWantedList = Math.random() < 0.5;
-            // let newEntity;
-
-            
-            // if (spawnCarOfWantedList && criminalDatabase.length) {
-            //     // criminalDatabase is a parameter of this function.
-            //     // the passed value is a reference to the criminalDatabase in the storage.js
-            //     const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
-            //     newEntity = {...criminal, id: generateUUID()}
-
-
-            // } else {
-            //     newEntity = basicEntityProfile();
-            // }
 
 
 

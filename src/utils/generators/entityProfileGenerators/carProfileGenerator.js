@@ -1,8 +1,6 @@
 import { carBrands } from "../../../data/carBrands.js";
 import { faker } from "@faker-js/faker";
 
-import { applyRandomManipulations } from './fakeNpcProfileGenerator.js';
-
 
 // ---> Handling car brands
 const brands = Object.keys(carBrands)
@@ -62,16 +60,6 @@ export const generateCarProfile = (isWanted, noFakeProfile) => {
         plateNumber,
         carRegistrationNumber
     }
-
-    if (isWanted || noFakeProfile) return { realProfile }; // returns if fake profile is not allowed for this npc type (f.e. wanted list)
-
-    // Generate toManipulate of a manipulated (fake) profile being generated
-    let fakeProfile = null;
-    if (randomChance(50)) {
-        fakeProfile = applyRandomManipulations(realProfile, manipulations);
-    }
-
-    return fakeProfile ?
-        { realProfile, fakeProfile } :
-        { realProfile }
+    
+    return { realProfile }
 }

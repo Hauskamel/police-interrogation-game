@@ -1,41 +1,25 @@
-import { firstNames } from "../../../data/firstNames.js";
-import { npcImageProfiles } from "../../../data/npcImageProfiles.js";
-import { getRandomNpcImage } from "../../getRandomNpcImage.js";
+import { getRandomNpcImageProfile } from "../../getRandomNpcImageProfile.js";
 import { faker } from "@faker-js/faker";
-
-
-
-function getRandomFirstName() {
-    const randomIndex = Math.floor(Math.random() * firstNames.length)
-    return firstNames[randomIndex]
-}
+import {getRandomFirstName} from "../../getRandomFirstName.js"
 
 
 export function generateNpcProfile () {
     // ######## DRIVER INFORMATION ########
     // #####################################
 
+    // get driver image profile
+    const driverImageProfile = getRandomNpcImageProfile();
+
     // driver Image
-    const driverImage = getRandomNpcImage();
+    const driverImage = driverImageProfile.driverImage;
 
-    const npcImage = driverImage.randomImage;
-    const ageGroup = driverImage.ageGroup;    
-    
-    const imageProfile = npcImageProfiles[ageGroup]; // object from 'driverImagesProfiles' array (driverImageProfiles.js);
-
-    
-
-
-
-    
-
-    // first names
+    // first name
     const firstName = getRandomFirstName();
 
     // driver age
     const age = faker.number.int({
-        min: imageProfile.ageRange[0],
-        max: imageProfile.ageRange[1],
+        min: driverImageProfile.ageRange[0],
+        max: driverImageProfile.ageRange[1],
     });
 
     // driver brith data
@@ -56,32 +40,20 @@ export function generateNpcProfile () {
     const issueDate = faker.date.between({ from: issueFrom, to: issueTo });
     const formattedIssueDate = issueDate.toISOString().split('T')[0];
 
-    // ######## DRIVER SOBRIETY ########
-    // #####################################
-    // const drunk = Math.random() < .2;
-    // const high = Math.random() < .2;
-    const arrested = false
-
     const realProfile  = {
         driverImage,
-        biometricalData,
-        prefix: faker.person.prefix(imageProfile.gender),
+        prefix: faker.person.prefix(driverImageProfile.gender),
         firstName,
         lastName: faker.person.lastName(),
         address: faker.location.streetAddress(),
-        gender: imageProfile.gender,
+        gender: driverImageProfile.gender,
         birthDate,
         birthYear,
         age,
-        eyeColor: imageProfile.eyeColor,
+        eyeColor: driverImageProfile.eyeColor,
         height: Math.floor(Math.random() * (205 - 160 + 1)) + 160,
         issueDate: formattedIssueDate,
         licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
-        // drunk,
-        // alcoholLevel: drunk ? (Math.random() * 0.15 + 0.05).toFixed(2) : null,
-        // high,
-        // wanted: !!isWanted, // gilt nur für NPCs, die beim Spielbeginn bereits gesucht sind
-        arrested
     }
 
     return { realProfile }

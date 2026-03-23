@@ -21,12 +21,6 @@ function getRandomFirstName() {
 
 export function generateDriverProfile () {
     // ######## DRIVER INFORMATION ########
-    // #####################################
-    // ##########################################################
-    // NOTE/TODO:
-    // BITTE 'driverImage' UND 'imageProfile' STAND JETZT NICHT MANPIULIEREN LASSEN
-    // DA zB 'ageRange' ABHÄNGIG VOM BILD IST UND BEIM MANIPULIEREN DES BILDES WÜRDE
-    // SICH NICHT NUR DAS BILD ÄNDERN SONDERN AUCH DIE 'ageRange' UND DIE 'eyeColor'
 
     // driver Image
     const driverImage = getRandomImage();
