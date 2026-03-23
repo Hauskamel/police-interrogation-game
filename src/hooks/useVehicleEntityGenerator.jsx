@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { randInt } from "three/src/math/MathUtils.js";
 
-import { crimeTypes } from "../data/crimeTypes.js";
-
 import { useCarStore, useNpcStore } from "../store.js";
 import { basicEntityProfile } from "../utils/generators/entityProfileGenerators/basicEntityProfileGenerator.js";
 
@@ -33,22 +31,8 @@ export function useVehicleEntityGenerator (direction, lane) {
                 // spawn a criminal
                 const spawnSmuggler = Math.random() < 0.5; // decide wether criminal is a smuggler;
                 
-                const keys = Object.keys(crimeTypes);
-                const crimeType = keys[Math.floor(Math.random() * keys.length)]
-                console.log(crimeType);
 
-                // TODO: hier funktion einbauen
-                switch (crimeType) {
-                    case "smuggler":
-                        console.log("spawn a smuggler.");
-                        break;
-                    case "murderer":
-                        console.log("spawn a murderer.");
-                        break;
-                    case "cybercriminal":
-                        console.log("spawn a murderer.");
-                        break;
-                }
+                
                 
 
                 // code for criminal;

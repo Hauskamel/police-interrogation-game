@@ -51,14 +51,13 @@ function App() {
 
     
 
-    useSetWantedList();
+    // useSetWantedList();
     useLilGuiSetup();
 
-    useEffect(() => {
-        console.log("setting criminal database...");
-        
-        setCriminalDatabase(criminalDatabaseGenerator());
-    }, [])
+    // useEffect(() => {
+    //     console.log("setting criminal database...");
+    //     setCriminalDatabase(criminalDatabaseGenerator());
+    // }, [])
 
     
 

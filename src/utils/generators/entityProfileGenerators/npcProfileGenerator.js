@@ -1,15 +1,7 @@
-// import {driverImageProfiles} from "../../../data/driverImageProfiles.js"
 import { firstNames } from "../../../data/firstNames.js";
+import { npcImageProfiles } from "../../../data/npcImageProfiles.js";
+import { getRandomNpcImage } from "../../getRandomNpcImage.js";
 import { faker } from "@faker-js/faker";
-
-
-// const driverImages = Object.keys(driverImageProfiles); // returns all key (in form of this string: 'driver1.jpg') from the 'driverImagesProfiles' array (driverImageProfiles.js) 
-function getRandomImage(exclude = null) {
-    // driverImagesFilter takes all images except the passed via parameter - if no paramter is passed (= null) the entire array is passed
-    const driverImagesFilter = exclude ? driverImages.filter(img => img !== exclude) : driverImages;
-    // returns one element of 'driverImages' array
-    return faker.helpers.arrayElement(driverImagesFilter);
-}
 
 
 
@@ -19,19 +11,27 @@ function getRandomFirstName() {
 }
 
 
-export function generateDriverProfile () {
+export function generateNpcProfile () {
     // ######## DRIVER INFORMATION ########
     // #####################################
-    // ##########################################################
-    // NOTE/TODO:
-    // BITTE 'driverImage' UND 'imageProfile' STAND JETZT NICHT MANPIULIEREN LASSEN
-    // DA zB 'ageRange' ABHÄNGIG VOM BILD IST UND BEIM MANIPULIEREN DES BILDES WÜRDE
-    // SICH NICHT NUR DAS BILD ÄNDERN SONDERN AUCH DIE 'ageRange' UND DIE 'eyeColor'
 
     // driver Image
-    const driverImage = getRandomImage();
-    const imageProfile = driverImageProfiles[driverImage]; // object from 'driverImagesProfiles' array (driverImageProfiles.js)
-    // ##########################################################
+    const driverImage = getRandomNpcImage();
+
+    console.log(driverImage);
+    
+
+
+    const npcImage = driverImage.randomImage;
+    const ageGroup = driverImage.ageGroup;    
+    
+    const imageProfile = npcImageProfiles[ageGroup]; // object from 'driverImagesProfiles' array (driverImageProfiles.js);
+
+    
+
+
+
+    
 
     // first names
     const firstName = getRandomFirstName();
@@ -68,6 +68,7 @@ export function generateDriverProfile () {
 
     const realProfile  = {
         driverImage,
+        biometricalData,
         prefix: faker.person.prefix(imageProfile.gender),
         firstName,
         lastName: faker.person.lastName(),
