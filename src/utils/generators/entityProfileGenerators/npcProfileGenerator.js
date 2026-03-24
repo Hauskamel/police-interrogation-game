@@ -1,6 +1,7 @@
 import { getRandomNpcImageProfile } from "../../getRandomNpcImageProfile.js";
 import { faker } from "@faker-js/faker";
-import {getRandomFirstName} from "../../getRandomFirstName.js"
+import { getRandomFirstName } from "../../getRandomFirstName.js"
+import { getDriversLicenseData } from "../../getDriversLicenseData.js";
 
 
 export function generateNpcProfile () {
@@ -32,13 +33,11 @@ export function generateNpcProfile () {
         .toISOString()
         .split('T')[0];
 
-    // driverslicense date data 
-    const minIssueYear = birthYear + 18;
-    const maxIssueYear = Math.min(minIssueYear + 7, new Date().getFullYear());
-    const issueFrom = new Date(`${minIssueYear}-01-01`);
-    const issueTo = new Date(`${maxIssueYear}-12-31`);
-    const issueDate = faker.date.between({ from: issueFrom, to: issueTo });
-    const formattedIssueDate = issueDate.toISOString().split('T')[0];
+
+    const getDriverLicenseData = getDriversLicenseData(birthYear);
+
+
+
 
     const realProfile  = {
         driverImage,
@@ -52,7 +51,7 @@ export function generateNpcProfile () {
         age,
         eyeColor: driverImageProfile.eyeColor,
         height: Math.floor(Math.random() * (205 - 160 + 1)) + 160,
-        issueDate: formattedIssueDate,
+        issueDate: getDriverLicenseData.formattedIssueDate,
         licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
     }
 
