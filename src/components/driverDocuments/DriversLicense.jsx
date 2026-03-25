@@ -8,18 +8,14 @@ export function DriversLicense ({ driver }) {
     return (
         <>
             {/* TODO: dynamisches Hintergrundbild, Farbe für die Republik & ein sich anpassendes Icon je nach Stadt */}
-            <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-4">
+            <div className="w-[450px] h-[250px] bg-[url(/images/drivers-licence-bg.jpg)] bg-contain border-2 border-white rounded-2xl shadow-md p-1">
                 <div>
                     <div className="font-bold text-lg text-gray-800">Führerschein</div>
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-4">
+                <div className="grid grid-cols-3 gap-4 mt-2">
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
                             <BaseImage useCase="driversLicense" data={driver.realProfile.driverImage} />
-                        </div>
-                        {/* Todo: create randomized license classes with one matching the vehicle */}
-                        <div className="mt-1">
-                            <div className="font-semibold text-sm text-gray-800">D / M</div>
                         </div>
                     </div>
                     

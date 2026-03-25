@@ -9,20 +9,17 @@ import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButt
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/Notebook.jsx";
 import { Policeradio } from "./components/police-components/police-radio/PoliceRadio.jsx";
-import { useVehicleEntityGenerator } from "./hooks/useVehicleEntityGenerator.jsx"
 
 import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControlTextbox.jsx"
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
-import { useSetWantedList } from "./hooks/useSetWantedList.jsx";
 import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
 import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
 import { Gamecanvas } from "./components/Gamecanvas.jsx";
 
-import { criminalDatabaseGenerator } from "./utils/generators/criminalDatabaseGenerator.js";
 import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
 
 
@@ -37,7 +34,9 @@ function App() {
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
     const selectedCar = useCarStore(state => state.selectedCar);
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
+
     const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
+
     const gameState = useGameStore(state => state.gameState);
     const gameMode = useGameStore(state => state.gameMode);
     const [hoveringCar, setHoveringCar] = useState(false);
@@ -50,8 +49,6 @@ function App() {
     useOverlaySetter();
 
     
-
-    // useSetWantedList();
     useLilGuiSetup();
 
     // useEffect(() => {
@@ -62,9 +59,9 @@ function App() {
     
 
     // spawndirection, spawnlane
-    useVehicleEntityGenerator("left", 1);
+    // useVehicleEntityGenerator("left", 1);
 
-    useVehicleEntityGenerator("right", 1);
+    // useVehicleEntityGenerator("right", 1);
     
     
 

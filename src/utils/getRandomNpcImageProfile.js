@@ -1,5 +1,7 @@
 import { npcImageProfiles } from "../data/npcImageProfiles";
 
+import { npcImages } from "../data/npcImages";
+
 
 export function getRandomNpcImageProfile () {
     const arrayOfNpcAgeGroups = Object.keys(npcImageProfiles);

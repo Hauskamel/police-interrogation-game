@@ -1,4 +1,0 @@
-[[Road]]
-[[Policeman]]
-[[Car]]
-[[Streetbay]]
