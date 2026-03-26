@@ -1,6 +1,6 @@
 export const npcImages = {
     male: {
-        "[16,19]": { // age range
+        '[16,19]': { // age range
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -26,7 +26,7 @@ export const npcImages = {
                 ]
             },
         },
-        "[20,29]": {
+        '[20,29]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -52,7 +52,7 @@ export const npcImages = {
                 ]
             },
         },
-        "[30,39]": {
+        '[30,39]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -78,7 +78,7 @@ export const npcImages = {
                 ]
             },
         },
-        "[40,49]": {
+        '[40,49]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -104,7 +104,7 @@ export const npcImages = {
                 ]
             },
         },
-        "[50,59]": {
+        '[50,59]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -130,7 +130,7 @@ export const npcImages = {
                 ]
             },
         },
-        "[60,75]": {
+        '[60,75]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [

@@ -40,7 +40,6 @@ export function generateMasterData () {
     // place of birth
     // const place of birth = 
 
-
     const npcMasterData = {
         npcUuid,
         sex,

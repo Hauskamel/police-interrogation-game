@@ -1,5 +1,5 @@
-export const eyeColors = [
-    "Grün",
-    "Blau",
-    "Braun",
-]
+export const eyeColors = {
+    green: "Grün",
+    blue: "Blau",
+    brown: "Brown"
+}
