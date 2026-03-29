@@ -25,6 +25,30 @@ export const npcImages = {
                     "driver9.jpg"
                 ]
             },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
         },
         '[20,29]': {
             blond: { // haircolor
@@ -46,6 +70,30 @@ export const npcImages = {
                 ],
                 green: [
                     "driver9.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
                 ],
                 brown: [
                     "driver9.jpg"
@@ -77,6 +125,30 @@ export const npcImages = {
                     "driver9.jpg"
                 ]
             },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
         },
         '[40,49]': {
             blond: { // haircolor
@@ -98,6 +170,30 @@ export const npcImages = {
                 ],
                 green: [
                     "driver9.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
                 ],
                 brown: [
                     "driver9.jpg"
@@ -129,6 +225,30 @@ export const npcImages = {
                     "driver9.jpg"
                 ]
             },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
         },
         '[60,75]': {
             blond: { // haircolor
@@ -150,6 +270,30 @@ export const npcImages = {
                 ],
                 green: [
                     "driver9.jpg"
+                ],
+                brown: [
+                    "driver9.jpg"
+                ]
+            },
+            brown: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver1.jpg"
+                ],
+                green: [
+                    "driver2.jpg"
+                ],
+                brown: [
+                    "driver3.jpg"
+                ]
+            },
+            black: { // haircolor
+                // eyecolor
+                blue: [
+                    "driver4.jpg"
+                ],
+                green: [
+                    "driver8.jpg"
                 ],
                 brown: [
                     "driver9.jpg"

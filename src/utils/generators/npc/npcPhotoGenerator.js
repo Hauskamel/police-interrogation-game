@@ -1,34 +1,29 @@
 import { npcImages } from "../../../data/npcImages";
 
 export function npcPhotoGenerator (sex, age, hairColor, eyeColor) {
-
-    console.log("sex: ", sex);
-
-    console.log("alter: ", age);
-
-    console.log(npcImages[sex]);
-
-
-    const ageRanges = Object.keys(npcImages[sex]);
+    const ageRanges = Object.keys(npcImages[sex]);    
+    let ageRange;
 
     for (let i = 0; i < ageRanges.length; i++) {
-        const range = JSON.parse(ageRanges[i]);
-        console.log(range);
-        
+        const key = ageRanges[i];
+        const [minAge, maxAge] = JSON.parse(key);
 
-        for (let j = 0; j < range.length; j++) {
-            console.log(range[j]);
+        if (age >= minAge && age <= maxAge) {
+            ageRange = key;
+            break;
         }
     }
+
+    return npcImages[sex][ageRange][hairColor][eyeColor][0]; 
+                                // logs an object like so:
+                                // const obj = {
+                                //     [50,59]: {
+                                //         {
+                                //             blond: {
+                                //                 blue : ['driver7.jpg'],
+                                //                 brown: ['driver9.jpg'], 
+                                //                 green : ['driver9.jpg']
+                                //             }
+                                //         }
     
-
-
-
-
-
-
-    console.log("hair color :", hairColor);
-    console.log("eye color :", eyeColor);
-    
-
 }

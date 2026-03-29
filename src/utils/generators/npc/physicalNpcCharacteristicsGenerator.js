@@ -2,8 +2,8 @@ import { eyeColors } from "../../../data/eyeColors";
 import { hairColors } from "../../../data/hairColors";
 
 export function generatePhysicalNpcCharacteristicsGenerator () {
-    const eyeColorsArray = Object.values(eyeColors);
-    const hairCOlorsArray = Object.values(hairColors);
+    const eyeColorsArray = Object.keys(eyeColors);
+    const hairCOlorsArray = Object.keys(hairColors);
 
     // height 
     const height = Math.floor(Math.random() * (205 - 160 + 1)) + 160;

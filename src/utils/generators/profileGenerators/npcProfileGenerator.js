@@ -3,6 +3,7 @@ import { generatePhysicalNpcCharacteristicsGenerator } from "../npc/physicalNpcC
 import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
 export function generateNpcProfile () {
+    let npcImage;
     // ######## DRIVER INFORMATION ########
     // #####################################
 
@@ -13,7 +14,9 @@ export function generateNpcProfile () {
     const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator();
 
     // NPC Lichtbild
-    const npcPhoto = npcPhotoGenerator(npcMasterData.sex, npcMasterData.age, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+    if (npcMasterData) {
+        npcImage = npcPhotoGenerator(npcMasterData.sex, npcMasterData.age, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+    }
 
     const realProfile  = {
         npcUuid: npcMasterData.npcUuid,
@@ -27,7 +30,9 @@ export function generateNpcProfile () {
 
         height: physicalNpcCharacteristics.height,
         eyeColor: physicalNpcCharacteristics.eyeColor,
-        hairColor: physicalNpcCharacteristics.hairColor
+        hairColor: physicalNpcCharacteristics.hairColor,
+
+        npcImage,
 
         // driverImage,
         // issueDate: getDriverLicenseData.formattedIssueDate,
