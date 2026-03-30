@@ -2,10 +2,11 @@ import { generateMasterData } from "../npc/masterDataGenerator.js";
 import { generatePhysicalNpcCharacteristicsGenerator } from "../npc/physicalNpcCharacteristicsGenerator.js";
 import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
+import { driversLicenseData } from "../documents/driversLicenseData.js";
+
 export function generateNpcProfile () {
     let npcImage;
-    // ######## DRIVER INFORMATION ########
-    // #####################################
+    let dlData;
 
     // NPC Stammdaten
     const npcMasterData = generateMasterData();
@@ -13,9 +14,12 @@ export function generateNpcProfile () {
     // NPC physische Merkmale
     const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator();
 
-    // NPC Lichtbild
     if (npcMasterData) {
+        // NPC Lichtbild
         npcImage = npcPhotoGenerator(npcMasterData.sex, npcMasterData.age, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+
+        // drivers license data
+        dlData = driversLicenseData(npcMasterData.birthYear);
     }
 
     const realProfile  = {
@@ -29,16 +33,17 @@ export function generateNpcProfile () {
         birthDate: npcMasterData.birthDate,
 
         height: physicalNpcCharacteristics.height,
-        eyeColor: physicalNpcCharacteristics.eyeColor,
         hairColor: physicalNpcCharacteristics.hairColor,
+        eyeColor: physicalNpcCharacteristics.eyeColor,
 
-        npcImage,
+        npcImage: npcImage,
 
-        // driverImage,
-        // issueDate: getDriverLicenseData.formattedIssueDate,
-        // licenseNumber: `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`,
+        driverLicenseData: {
+            licenseNumber: dlData.licenseNumber,
+            issueDate: dlData.formattedIssueDate,
+            expiryDate: dlData.formattedExpiryDate
+        }
     }
 
     return { realProfile }
-        
 }

@@ -4,6 +4,8 @@ import { BaseImage } from "../base-components/BaseImage";
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
+
+    console.log(driverProfile)
     
     return (
         <>
@@ -15,7 +17,7 @@ export function DriversLicense ({ driver }) {
                 <div className="grid grid-cols-3 gap-4 mt-2">
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
-                            <BaseImage useCase="driversLicense" data={driver.realProfile.driverImage} />
+                            <BaseImage useCase="driversLicense" data={driverProfile.npcImage} />
                         </div>
                     </div>
                     
@@ -32,15 +34,18 @@ export function DriversLicense ({ driver }) {
 
                             <div className="w-1/1 flex">
                                 <BaseHeadlineWithText useCase="driversLicense" documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.driverLicenseData.licenseNumber}></BaseHeadlineWithText>
                             </div>
                             <BaseHeadlineWithText useCase="driversLicense" documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.issueDate}></BaseHeadlineWithText>
+                            <div className="w-1/1 flex">
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.driverLicenseData.issueDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ablaufdatum" data={driverProfile.driverLicenseData.expiryDate}></BaseHeadlineWithText>
+                            </div>
                         </div>
                         <div className="mt-2 flex justify-between">
                             <BaseHeadlineWithText useCase="driversLicense" documentDataField="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="gender" headline="Geschlecht" data={driverProfile.gender}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="height" headline="Höhe (cm)" data={driverProfile.height}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="gender" headline="Geschlecht" data={driverProfile.sex}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="height" headline="Größe (m)" data={driverProfile.height / 100}></BaseHeadlineWithText>
                         </div>
                     </div>
                 </div>

@@ -15,30 +15,9 @@ const randomChance = (percent) => {
     return Math.random() < percent / 100; // returns true or false
 }
 
-
-// ---> array with functions to manipulate the car profile
-const manipulations = [
-    profile => ({
-        ...profile,
-        brandName: getRandomCarBrand(profile.brandName)
-    }),
-    profile => ({
-        ...profile,
-        brandModel: carBrands[getRandomCarBrand()].models[Math.floor(Math.random() * carBrands[getRandomCarBrand()].models.length)]
-    }),
-    profile => ({
-        ...profile,
-        carRegistrationNumber: faker.vehicle.vrm()
-    }),
-    profile => ({
-        ...profile,
-        plateNumber: "AC - " + faker.vehicle.vrm().slice(2).replace(/^(.{2})/, '$1 ')
-    })
-]
-
 // -----> generator for the cars profile.
 //        This function returns the real car profile and if random chances are < 50% also the fake profile
-export const generateCarProfile = (isWanted, noFakeProfile) => {
+export const generateCarProfile = () => {
     // ########## CAR INFORMATION ##########
     // #####################################
     // car brand
