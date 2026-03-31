@@ -17,8 +17,6 @@ export function driversLicenseData (birthYear) {
     const expiryDate = faker.date.between({ from: issueDate, to: new Date(`${maxIssueYear}-12-31`)});
     const formattedExpiryDate = expiryDate.toISOString().split('T')[0];
 
-
-
     // TODO: IN Zukunft noch einfügbar:
     // - Ausstellungsstaat
     // - Ausstellungsbehörde

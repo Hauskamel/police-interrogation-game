@@ -4,8 +4,6 @@ import { BaseImage } from "../base-components/BaseImage";
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;
     if (driver.fakeProfile) driverProfile = driver.fakeProfile;
-
-    console.log(driverProfile)
     
     return (
         <>

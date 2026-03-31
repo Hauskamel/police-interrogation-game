@@ -1,6 +1,6 @@
 // Diese Funktion kümmert sich um alle Stammdaten eines NPCs
 import { generateUUID } from "three/src/math/MathUtils.js";
-import { getRandomFirstName } from "../../getRandomFirstName.js"
+import { getRandomFirstName } from "../../getter/getRandomFirstName.js";
 import { faker } from "@faker-js/faker";
 
 

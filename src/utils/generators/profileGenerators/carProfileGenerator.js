@@ -1,19 +1,7 @@
 import { carBrands } from "../../../data/carBrands.js";
 import { faker } from "@faker-js/faker";
+import getRandomCarBrand from "../../getter/getRandomCarBrand.js";
 
-
-// ---> Handling car brands
-const brands = Object.keys(carBrands)
-function getRandomCarBrand(exclude = null) {
-    const carBrand = exclude ? brands.filter(brand => brand !== exclude) : brands;
-    return faker.helpers.arrayElement(carBrand);
-}
-
-
-// ---> toManipulate generator for random choices
-const randomChance = (percent) => {
-    return Math.random() < percent / 100; // returns true or false
-}
 
 // -----> generator for the cars profile.
 //        This function returns the real car profile and if random chances are < 50% also the fake profile
@@ -22,7 +10,20 @@ export const generateCarProfile = () => {
     // #####################################
     // car brand
     const brandName = getRandomCarBrand();
-    const carProfile = carBrands[brandName]
+    const carProfile = carBrands[brandName];
+
+    
+    // issue date
+    const minIssueYear = 1950;
+    const maxIssueYear = Math.min(minIssueYear + 21, new Date().getFullYear());
+    const issueFrom = new Date(`${minIssueYear}-01-01`);
+    const issueTo = new Date(`${maxIssueYear}-12-31`);
+    const issueDate = faker.date.between({ from: issueFrom, to: issueTo });
+    const formattedIssueDate = issueDate.toISOString().split('T')[0];
+
+    console.log(formattedIssueDate);
+    
+
     
     // car model
     const brandModel = carProfile.models[Math.floor(Math.random() * carProfile.models.length)];
@@ -37,7 +38,8 @@ export const generateCarProfile = () => {
         brandName,
         brandModel,
         plateNumber,
-        carRegistrationNumber
+        carRegistrationNumber,
+        formattedIssueDate
     }
     
     return { realProfile }

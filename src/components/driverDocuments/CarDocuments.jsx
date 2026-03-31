@@ -1,12 +1,9 @@
 import { useState } from "react"
 import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText"
 
-export function CarDocuments ({car, driver}) {
-    let carProfile = car.realProfile;
-    if (car.fakeProfile) carProfile = car.fakeProfile;
-    
+export function CarDocuments ({ car, driver }) {
     let driverProfile = driver.realProfile;
-    if (driver.fakeProfile) driverProfile = driver.fakeProfile;
+    let carProfile = car.realProfile;
     
     return (
         <>
@@ -30,6 +27,9 @@ export function CarDocuments ({car, driver}) {
                     <div className="flex mb-3">
                         <BaseHeadlineWithText headline="Model" documentDataField="carModel" data={carProfile?.brandModel} useCase="carDocument" />
                         <BaseHeadlineWithText headline="Registriernummer" documentDataField="registationNumber" data={carProfile?.carRegistrationNumber} useCase="carDocument" />
+                    </div>
+                    <div className="flex mb-3">
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" documentDataField="carModel" data={carProfile?.formattedIssueDate} useCase="carDocument" />
                     </div>
                 </div>
             </div>
