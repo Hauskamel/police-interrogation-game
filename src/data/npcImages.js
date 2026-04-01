@@ -288,7 +288,7 @@ export const npcImages = {
                 ]
             },
             black: { // haircolor
-                // eyecolor
+                // eyecolor 
                 blue: [
                     "driver4.jpg"
                 ],

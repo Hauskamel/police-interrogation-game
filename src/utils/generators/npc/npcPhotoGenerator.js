@@ -24,5 +24,4 @@ export function npcPhotoGenerator (sex, age, hairColor, eyeColor) {
                                                                 //                 green : ['driver9.jpg']
                                                                 //             }
                                                                 //         }
-    
 }

@@ -21,15 +21,15 @@ export function CarDocuments ({ car, driver }) {
                         <BaseHeadlineWithText useCase="carDocument" documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licensePlate" data={carProfile?.plateNumber} useCase="carDocument" />
-                        <BaseHeadlineWithText headline="Hersteller" documentDataField="manufacturer" data={carProfile?.brandName} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licensePlate" data={carProfile?.carDocumentsData.plateNumber} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Hersteller" documentDataField="manufacturer" data={carProfile?.brand} useCase="carDocument" />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Model" documentDataField="carModel" data={carProfile?.brandModel} useCase="carDocument" />
-                        <BaseHeadlineWithText headline="Registriernummer" documentDataField="registationNumber" data={carProfile?.carRegistrationNumber} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Model" documentDataField="carModel" data={carProfile?.model} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Registriernummer" documentDataField="registationNumber" data={carProfile?.carDocumentsData.carRegistrationNumber} useCase="carDocument" />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Ausstellungsdatum" documentDataField="carModel" data={carProfile?.formattedIssueDate} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" documentDataField="carModel" data={carProfile?.carDocumentsData.formattedIssueDate} useCase="carDocument" />
                     </div>
                 </div>
             </div>

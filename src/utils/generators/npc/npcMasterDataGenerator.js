@@ -4,12 +4,12 @@ import { getRandomFirstName } from "../../getter/getRandomFirstName.js";
 import { faker } from "@faker-js/faker";
 
 
-export function generateMasterData () {
+export function generateNpcMasterData () {
     // uuid
     const npcUuid = generateUUID();
 
     // sex
-    const sex = faker.person.sexType('male')
+    const sex = faker.person.sexType('male'); // TODO: funktioniert nicht
 
     // firstname
     const firstName = getRandomFirstName();

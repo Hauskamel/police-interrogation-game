@@ -1,4 +1,4 @@
-import { generateMasterData } from "../npc/masterDataGenerator.js";
+import { generateNpcMasterData } from "../npc/npcMasterDataGenerator.js";
 import { generatePhysicalNpcCharacteristicsGenerator } from "../npc/physicalNpcCharacteristicsGenerator.js";
 import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
@@ -9,7 +9,7 @@ export function generateNpcProfile () {
     let dlData;
 
     // NPC Stammdaten
-    const npcMasterData = generateMasterData();
+    const npcMasterData = generateNpcMasterData();
 
     // NPC physische Merkmale
     const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator();

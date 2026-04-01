@@ -1,6 +1,8 @@
 import {useGLTF, Html} from "@react-three/drei";
 import {useEffect, useMemo, useRef} from "react";
 
+import { getRandomVehicleModel } from "../utils/getter/getRandomVehicleModel.js";
+
 
 import {useCarStore} from "../store.js";
 import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
@@ -25,7 +27,7 @@ function CarOccupantsInfoTextbox ({stoppedCar}) {
 
 
 export function Car ({ car, onHoverChange, position, rotation }) {
-    const gltf = useGLTF("/models/low-poly-car.glb");
+    const gltf = useGLTF("/models/npc-vehicles/cars/car4.glb");
     const scene = useClonedScene(gltf);
 
     // ##################################################

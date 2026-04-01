@@ -1,12 +1,12 @@
 import { generateUUID } from "three/src/math/MathUtils.js"
-import { generateNpcProfile } from "./profileGenerators/npcProfileGenerator"
+import { generateNpcProfile } from "./npc/npcProfileGenerator"
 
-import { generateCarProfile } from "./profileGenerators/carProfileGenerator"
+import { generateVehicleProfile } from "./vehicle/vehicleProfileGenerator"
 
 export const npcWithVehicleGenerator = () => {
     const profile = {
         driverProfile: generateNpcProfile(),
-        carProfile: generateCarProfile(),
+        carProfile: generateVehicleProfile(),
         id: generateUUID()
     }
     return profile
