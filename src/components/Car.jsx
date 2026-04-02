@@ -1,68 +1,25 @@
-import {useGLTF, Html} from "@react-three/drei";
-import {useEffect, useMemo, useRef} from "react";
+import { useGLTF } from "@react-three/drei";
+import { useRef, useState } from "react";
 
-import { getRandomVehicleModel } from "../utils/getter/getRandomVehicleModel.js";
-import { getRandomVehicleGlb } from "../utils/getter/getRandomVehicleGlb.js";
-
-
-import {useCarStore} from "../store.js";
-import { CarOccupantsInformationTextbox } from "./textboxes/CarOccupantsInformationTextbox.jsx";
-
-// ######## HOOKS ########
-// #######################
 import { useVehicleAnimation } from "../hooks/useVehicleAnimation.jsx";
 import { useVehicleInteraction } from "../hooks/useVehicleInteraction.jsx"
+import { getVehicleGlb } from "../utils/getter/getVehicleGlb.js";
 
-
-function useClonedScene (gltf) {
-    // using memo to prevent unnecessary recoloring of the scene (car model)
-    return useMemo(() => gltf.scene.clone(), [gltf.scene]);
-}
-
-function CarOccupantsInfoTextbox ({stoppedCar}) {
-    if (!stoppedCar) {
-        return <CarOccupantsInformationTextbox />
-    } 
-    return <CarOccupantsInformationTextbox stoppedCar={stoppedCar} />
-}
+import { useClonedScene } from "../hooks/useClonedScene.jsx";
 
 
 export function Car ({ car, onHoverChange, position, rotation }) {
-    const gltf = useGLTF("/models/npc-vehicles/cars/car3.glb");
-
-
-    const vehicleGlb = getRandomVehicleGlb();
-
+    const [vehicleGlb] = useState(() => getVehicleGlb(car));
     console.log(vehicleGlb);
     
-
-
-
+    const gltf = useGLTF("/models/npc-vehicles/cars/" + vehicleGlb + ".glb");
+    console.log("/models/npc-vehicles/cars/" + vehicleGlb + ".glb");
     
-
-
-
-
-
-
-
-
-
-
-
     const scene = useClonedScene(gltf);
-
-    // ##################################################
-    // ##################### STATES #####################
-    // cars
-    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
-    const selectedCar = useCarStore((state) => state.selectedCar);
     const carRef = useRef(null);
 
-    // handles pointerOver, pointerOut and click on the vehicle
-    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange);
-    // hook for vehicle animation (driving, stopping, following curve path, ...)
-    useVehicleAnimation(car, carRef);
+    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(car, onHoverChange); // handles pointerOver, pointerOut and click on the vehicle
+    useVehicleAnimation(car, carRef); // hook for vehicle animation (driving, stopping, following curve path, ...)
     
     const carOccupantsTextboxPosition = car.position ? 
         [car.position.x, car.position.y, car.position.z]

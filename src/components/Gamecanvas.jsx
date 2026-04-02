@@ -52,7 +52,5 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                 })}
             </Canvas>
         </div>
-        
-
     )
 }

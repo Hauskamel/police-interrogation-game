@@ -26,12 +26,16 @@ export default function getRandomCarProfile () {
     // Baujahr
     const yearOfConstruction = carProfile.yearOfConstructionRange[Math.floor(Math.random())];
 
+    // GLB Model Filename
+    const glb = carProfile.glb;
+
     const realProfile = {
         brand,
         model,
         ps,
         weight,
-        yearOfConstruction
+        yearOfConstruction,
+        glb
     }
 
     return  realProfile

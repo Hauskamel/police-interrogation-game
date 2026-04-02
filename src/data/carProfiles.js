@@ -1,8 +1,8 @@
-
 // "ps": ,
 // "weight": ,
 // "yearOfConstructionRange": [],
-// 
+// "glb": ,
+// "": ,
 
 
 export const carProfiles = {
@@ -37,5 +37,4 @@ export const carProfiles = {
             "glb": "car4"
         }
     }
-
 }

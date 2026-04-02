@@ -24,6 +24,7 @@ export const generateVehicleProfile = () => {
         ps: carProfile.ps,
         weight: carProfile.weight,
         yearOfConstruction: carProfile.yearOfConstruction,
+        glb: carProfile.glb,
 
         carDocumentsData: {
             formattedIssueDate: cdData.formattedIssueDate,
