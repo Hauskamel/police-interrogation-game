@@ -4,9 +4,12 @@ import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
 import { driversLicenseData } from "../documents/driversLicenseData.js";
 
+import { crimeRecordGenerator } from "./crimes/crimeRecordGenerator.js";
+
 export function generateNpcProfile () {
     let npcImage;
-    let dlData;
+    let driversLicense;
+    let crimeRecord;
 
     // NPC Stammdaten
     const npcMasterData = generateNpcMasterData();
@@ -19,7 +22,10 @@ export function generateNpcProfile () {
         npcImage = npcPhotoGenerator(npcMasterData.sex, npcMasterData.age, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
 
         // drivers license data
-        dlData = driversLicenseData(npcMasterData.birthYear);
+        driversLicense = driversLicenseData(npcMasterData.birthYear);
+
+        // crime records data
+        crimeRecord = crimeRecordGenerator();
     }
 
     const realProfile  = {
@@ -38,12 +44,22 @@ export function generateNpcProfile () {
 
         npcImage: npcImage,
 
-        driverLicenseData: {
-            licenseNumber: dlData.licenseNumber,
-            issueDate: dlData.formattedIssueDate,
-            expiryDate: dlData.formattedExpiryDate
-        }
+        driversLicense: {
+            licenseNumber: driversLicense.licenseNumber,
+            issueDate: driversLicense.formattedIssueDate,
+            expiryDate: driversLicense.formattedExpiryDate
+        },
+
+        crimeRecord
     }
+
+
+
+    console.log(realProfile);
+    
+
+
+
 
     return { realProfile }
 }

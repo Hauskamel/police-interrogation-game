@@ -54,7 +54,7 @@ function App() {
     // useEffect(() => {
     //     console.log("setting criminal database...");
     //     setCriminalDatabase(criminalDatabaseGenerator());
-    // }, [])
+    // }, []);
 
     
 

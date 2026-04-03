@@ -10,10 +10,7 @@ import { useClonedScene } from "../hooks/useClonedScene.jsx";
 
 export function Car ({ car, onHoverChange, position, rotation }) {
     const [vehicleGlb] = useState(() => getVehicleGlb(car));
-    console.log(vehicleGlb);
-    
     const gltf = useGLTF("/models/npc-vehicles/cars/" + vehicleGlb + ".glb");
-    console.log("/models/npc-vehicles/cars/" + vehicleGlb + ".glb");
     
     const scene = useClonedScene(gltf);
     const carRef = useRef(null);
