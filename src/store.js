@@ -10,7 +10,7 @@ export const gameStates = {
 
 export const useGameStore = create((set) => ({
     gameState: gameStates.MENU,
-    gameMode: () => {
+    ingameMode: () => {
         set({
             gameState: gameStates.GAME
         });

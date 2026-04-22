@@ -6,7 +6,7 @@ import { faker } from "@faker-js/faker";
 
 export function generateNpcMasterData () {
     // uuid
-    const npcUuid = generateUUID();
+    const npcUuid = "npc--" + generateUUID();
 
     // sex
     const sex = faker.person.sexType('male'); // TODO: funktioniert nicht

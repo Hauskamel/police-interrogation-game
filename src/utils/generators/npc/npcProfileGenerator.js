@@ -4,12 +4,9 @@ import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
 import { driversLicenseData } from "../documents/driversLicenseData.js";
 
-import { crimeRecordGenerator } from "./crimes/crimeRecordGenerator.js";
-
 export function generateNpcProfile () {
     let npcImage;
     let driversLicense;
-    let crimeRecord;
 
     // NPC Stammdaten
     const npcMasterData = generateNpcMasterData();
@@ -23,9 +20,6 @@ export function generateNpcProfile () {
 
         // drivers license data
         driversLicense = driversLicenseData(npcMasterData.birthYear);
-
-        // crime records data
-        crimeRecord = crimeRecordGenerator();
     }
 
     const realProfile  = {
@@ -48,18 +42,8 @@ export function generateNpcProfile () {
             licenseNumber: driversLicense.licenseNumber,
             issueDate: driversLicense.formattedIssueDate,
             expiryDate: driversLicense.formattedExpiryDate
-        },
-
-        crimeRecord
+        }
     }
-
-
-
-    console.log(realProfile);
-    
-
-
-
 
     return { realProfile }
 }

@@ -2,7 +2,7 @@
 // import { randInt } from "three/src/math/MathUtils.js";
 
 // import { useCarStore, useNpcStore } from "../store.js";
-// import { npcWithVehicleGenerator } from "../utils/generators/profileGenerators/npcWithVehicleGeneratorGenerator.js";
+// import { randomNpcWithVehicleGenerator } from "../utils/generators/profileGenerators/randomNpcWithVehicleGeneratorGenerator.js";
 
 
 // // this function has an interval that puts random generated "entities" into the 'addCar' state for the useCarStore
@@ -26,7 +26,7 @@
 //             let newEntity;
 
 //             if (!spawnCriminal) {
-//                 newEntity = npcWithVehicleGenerator();
+//                 newEntity = randomNpcWithVehicleGenerator();
 //             } else {
 //                 // spawn a criminal
 //                 const spawnSmuggler = Math.random() < 0.5; // decide wether criminal is a smuggler;

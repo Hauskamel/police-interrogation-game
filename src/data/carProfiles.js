@@ -1,3 +1,5 @@
+// BLUEPRINT
+
 // "ps": ,
 // "weight": ,
 // "yearOfConstructionRange": [],
@@ -25,7 +27,7 @@ export const carProfiles = {
     "Zubari": { // Automarke
         // Automodelle
         "Katana": {
-            "ps": 155,
+            "ps": 243,
             "weight": 1355,
             "yearOfConstructionRange": [1986, 2004],
             "glb": "car2"

@@ -38,7 +38,7 @@ function App() {
     const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
 
     const gameState = useGameStore(state => state.gameState);
-    const gameMode = useGameStore(state => state.gameMode);
+    const ingameMode = useGameStore(state => state.ingameMode);
     const [hoveringCar, setHoveringCar] = useState(false);
 
 
@@ -47,16 +47,8 @@ function App() {
 
     // sets overlay dependant of the current game mode
     useOverlaySetter();
-
-    
     useLilGuiSetup();
 
-    // useEffect(() => {
-    //     console.log("setting criminal database...");
-    //     setCriminalDatabase(criminalDatabaseGenerator());
-    // }, []);
-
-    
 
     // spawndirection, spawnlane
     // useVehicleEntityGenerator("left", 1);
@@ -78,7 +70,7 @@ function App() {
                 <PolicecarControlTextbox
                     onClose={() => {
                         setSelectedCar(null)
-                        gameMode()
+                        ingameMode()
                     }}
                 />
             ) : (

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { generateUUID } from "three/src/math/MathUtils.js";
 
-import { npcWithVehicleGenerator } from '../utils/generators/npcWithVehicleGenerator';
+import { randomNpcWithVehicleGenerator } from '../utils/generators/randomNpcWithVehicleGenerator';
 
 import GUI from 'lil-gui'
 import { useCarStore, useNpcStore } from '../store';
@@ -15,38 +15,28 @@ export const useLilGuiSetup = () => {
     const gui = guiRef.current;
 
     const addCar = useCarStore(state => state.addCar);
-    const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
     const [entity, setEntity] = useState(null);
 
-
     // a slim version of the spawn mechanism only for lil-gui
-    const createEntity = useCallback(() => {
-        const spawnCarOfWantedList = Math.random() < 0.5;
-        let newEntity;
-        
-        if (spawnCarOfWantedList && criminalDatabase.length) {
-            // criminalDatabase is a parameter of this function.
-            // the passed value is a reference to the criminalDatabase in the storage.js
-            const criminal = criminalDatabase[Math.floor(Math.random() * criminalDatabase.length)];
-            newEntity = {...criminal, id: generateUUID()}
-        } else {
-            newEntity = npcWithVehicleGenerator();
-        }
+    const spawnRandomNpcWithVehicle = useCallback(() => {    
+        let newEntity = randomNpcWithVehicleGenerator();
         newEntity = {...newEntity, spawn: {direction: "left", lane: 0, spawnForDevPurposes: true}};
 
         setEntity(newEntity);
         stopCar(newEntity.id);
         addCar(newEntity);
-    })
 
+        console.log("logging from useLilGuiSetup.jsx");
+        console.log(newEntity);
+    })
 
 
     useEffect(() => {
         const guiContent = {
-            spawnCarAtPolice: () => createEntity()
+            spawnCarAtPoliceman: () => spawnRandomNpcWithVehicle()
         }
 
-        gui.add(guiContent, 'spawnCarAtPolice').name("spawn car at policeman");
+        gui.add(guiContent, 'spawnCarAtPoliceman').name("spawn car at policeman");
 
     }, []);
 }

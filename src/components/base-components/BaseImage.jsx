@@ -50,8 +50,6 @@ export function BaseImage ({ useCase, data }) {
         });
     }
 
-    //  'blink-border' <-- this css class creates a blink effect on a clicked image 
-
     return (
         <>
             <div className={`inline-block ${dataValuesAreEqual ? "" : "blink-border"} ${isSelected ? "border-4 border-blue-700" : ""}`} onClick={handleClick}>

@@ -32,12 +32,12 @@ export function DriversLicense ({ driver }) {
 
                             <div className="w-1/1 flex">
                                 <BaseHeadlineWithText useCase="driversLicense" documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.driverLicenseData.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.driversLicense.licenseNumber}></BaseHeadlineWithText>
                             </div>
                             <BaseHeadlineWithText useCase="driversLicense" documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.driverLicenseData.issueDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ablaufdatum" data={driverProfile.driverLicenseData.expiryDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.driversLicense.issueDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ablaufdatum" data={driverProfile.driversLicense.expiryDate}></BaseHeadlineWithText>
                             </div>
                         </div>
                         <div className="mt-2 flex justify-between">

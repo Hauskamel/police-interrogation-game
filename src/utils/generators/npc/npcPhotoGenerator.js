@@ -1,6 +1,7 @@
 import { npcImages } from "../../../data/npcImages";
 
 export function npcPhotoGenerator (sex, age, hairColor, eyeColor) {
+
     const ageRanges = Object.keys(npcImages[sex]);    
     let ageRange;
 
@@ -13,6 +14,14 @@ export function npcPhotoGenerator (sex, age, hairColor, eyeColor) {
             break;
         }
     }
+
+
+    console.log(npcImages);
+    console.log(npcImages[sex]);
+    console.log(npcImages[sex][ageRange]);
+    console.log(npcImages[sex][ageRange][hairColor]); // hier wirft er nen Fehler TODO: kein Plan was zu tun ist - God help me please
+    
+
 
     return npcImages[sex][ageRange][hairColor][eyeColor][0];    // logs an object like so:
                                                                 // const obj = {

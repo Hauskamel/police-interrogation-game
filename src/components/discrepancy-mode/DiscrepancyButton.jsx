@@ -3,7 +3,7 @@ import { gameStates ,useDiscrepandancyCompareStore,useGameStore } from "../../st
 export function DiscrepancyButton () {
     const gameState = useGameStore(state => state.gameState);
     const discrepancyMode = useGameStore((state) => state.discrepancyMode);
-    const gameMode = useGameStore(state => state.gameMode);
+    const ingameMode = useGameStore(state => state.ingameMode);
     
     const clearCompareArray = useDiscrepandancyCompareStore(state => state.clearCompareArray);
     const clearLastClickedUseCase = useDiscrepandancyCompareStore(state => state.clearLastClickedUseCase);
@@ -16,7 +16,7 @@ export function DiscrepancyButton () {
                     if (gameState === gameStates.GAME) {
                         discrepancyMode()
                     } else {
-                        gameMode()
+                        ingameMode()
                         clearLastClickedUseCase();
                         clearCompareArray();
                     }
