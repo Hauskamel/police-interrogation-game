@@ -1,8 +1,0 @@
-import { npcVehicles } from "../../data/npcVehicles";
-
-export function getRandomVehicleModel () {
-
-    console.log(npcVehicles);
-    
-
-}

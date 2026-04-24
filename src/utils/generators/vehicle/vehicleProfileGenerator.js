@@ -1,4 +1,4 @@
-import { carDocumentData } from "../documents/carDocumentsData.js";
+import { generateCarDocumentData } from "../documents/generateCarDocumentData.js";
 
 import getRandomCarProfile from "../../getter/getRandomCarProfile.js";
 
@@ -16,7 +16,7 @@ export const generateVehicleProfile = () => {
     const carMasterData = vehicleMasterData()
 
     // car documents data
-    const cdData = carDocumentData();
+    const carDocumentData = generateCarDocumentData();
 
     const realProfile = {
         brand: carProfile.brand,
@@ -27,14 +27,11 @@ export const generateVehicleProfile = () => {
         glb: carProfile.glb,
 
         carDocumentsData: {
-            formattedIssueDate: cdData.formattedIssueDate,
+            formattedIssueDate: carDocumentData.formattedIssueDate,
             carRegistrationNumber: carMasterData.carRegistrationNumber,
             plateNumber: carMasterData.plateNumber,
         }
     }
-
-
-    console.log(realProfile);
     
     return { realProfile }
 }

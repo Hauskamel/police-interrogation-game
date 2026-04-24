@@ -25,9 +25,6 @@ export const useLilGuiSetup = () => {
         setEntity(newEntity);
         stopCar(newEntity.id);
         addCar(newEntity);
-
-        console.log("logging from useLilGuiSetup.jsx");
-        console.log(newEntity);
     })
 
 

@@ -15,6 +15,8 @@ export const Startmenu = () => {
 
                     console.log("creating criminal database...");
                     criminalDatabaseGenerator();
+                    console.log("database has been generated.");
+                    
                 }}>Spielen</button>
                 <button>Optionen</button>
             </div>

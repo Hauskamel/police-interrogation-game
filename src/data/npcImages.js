@@ -250,7 +250,7 @@ export const npcImages = {
                 ]
             },
         },
-        '[60,75]': {
+        '[60,85]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [
@@ -552,7 +552,7 @@ export const npcImages = {
                 ]
             },
         },
-        '[60,75]': {
+        '[60,85]': {
             blond: { // haircolor
                 // eyecolor
                 blue: [

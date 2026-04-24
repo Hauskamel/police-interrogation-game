@@ -2,24 +2,36 @@ import { generateNpcMasterData } from "../npc/npcMasterDataGenerator.js";
 import { generatePhysicalNpcCharacteristicsGenerator } from "../npc/physicalNpcCharacteristicsGenerator.js";
 import { npcPhotoGenerator } from "../npc/npcPhotoGenerator.js";
 
-import { driversLicenseData } from "../documents/driversLicenseData.js";
+import { generateDriversLicenseData } from "../documents/generateDriversLicenseData.js";
+
+import { getNpcAgeRange } from "../../getter/getNpcAgeRange.js"
 
 export function generateNpcProfile () {
     let npcImage;
-    let driversLicense;
+    let driversLicenseData;
+    let ageRange;
 
     // NPC Stammdaten
     const npcMasterData = generateNpcMasterData();
+    
+
+    // npcs age range
+    ageRange = getNpcAgeRange(npcMasterData.sex, npcMasterData.age);
+    
+
 
     // NPC physische Merkmale
-    const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator();
+    const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator(npcMasterData.sex, ageRange);
 
     if (npcMasterData) {
         // NPC Lichtbild
-        npcImage = npcPhotoGenerator(npcMasterData.sex, npcMasterData.age, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+        npcImage = npcPhotoGenerator(npcMasterData.sex, ageRange, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+
+
+        if (npcMasterData.age < 18) return // npc darf noch keinen Führerschein machen
 
         // drivers license data
-        driversLicense = driversLicenseData(npcMasterData.birthYear);
+        driversLicenseData = generateDriversLicenseData(npcMasterData.birthDate, npcMasterData.birthYear);
     }
 
     const realProfile  = {
@@ -39,9 +51,9 @@ export function generateNpcProfile () {
         npcImage: npcImage,
 
         driversLicense: {
-            licenseNumber: driversLicense.licenseNumber,
-            issueDate: driversLicense.formattedIssueDate,
-            expiryDate: driversLicense.formattedExpiryDate
+            licenseNumber: driversLicenseData?.licenseNumber,
+            issueDate: driversLicenseData?.issueDate,
+            expiryDate: driversLicenseData?.expiryDate
         }
     }
 

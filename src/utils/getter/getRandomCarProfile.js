@@ -14,8 +14,7 @@ export default function getRandomCarProfile () {
     const models = Object.keys(carProfiles[brand]);
     const model = models[Math.floor(Math.random() * models.length)];
 
-
-    const carProfile = carProfiles[brand][model]
+    const carProfile = carProfiles[brand][model];
 
     // PS (horse power)
     const ps = carProfile.ps;

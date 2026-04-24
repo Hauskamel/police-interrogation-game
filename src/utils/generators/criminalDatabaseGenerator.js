@@ -16,7 +16,7 @@ export function criminalDatabaseGenerator () {
 
 
 
-    console.log(criminalDatabase);
+    console.log(databaseContent);
     
 
 

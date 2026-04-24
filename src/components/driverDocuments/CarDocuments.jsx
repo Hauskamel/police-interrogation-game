@@ -5,11 +5,6 @@ export function CarDocuments ({ car, driver }) {
     let driverProfile = driver.realProfile;
     let carProfile = car.realProfile;
 
-
-    console.log(carProfile)
-
-
-    
     return (
         <>
             <div
