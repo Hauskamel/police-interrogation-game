@@ -8,16 +8,11 @@ export function criminalDatabaseGenerator () {
     const databaseContent = [];
     let i = 0;
 
-    while (i < 150) {
+    while (i < 100) {
         i++;
         const criminalNpc = generateNpcProfile();
         databaseContent.push(criminalNpc);
     }
 
-
-
     console.log(databaseContent);
-    
-
-
 }

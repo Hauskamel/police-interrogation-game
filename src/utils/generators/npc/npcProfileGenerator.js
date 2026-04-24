@@ -14,11 +14,8 @@ export function generateNpcProfile () {
     // NPC Stammdaten
     const npcMasterData = generateNpcMasterData();
     
-
     // npcs age range
     ageRange = getNpcAgeRange(npcMasterData.sex, npcMasterData.age);
-    
-
 
     // NPC physische Merkmale
     const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator(npcMasterData.sex, ageRange);
@@ -26,7 +23,6 @@ export function generateNpcProfile () {
     if (npcMasterData) {
         // NPC Lichtbild
         npcImage = npcPhotoGenerator(npcMasterData.sex, ageRange, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
-
 
         if (npcMasterData.age < 18) return // npc darf noch keinen Führerschein machen
 

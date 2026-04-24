@@ -1,12 +1,6 @@
 import { npcImages } from "../../data/npcImages";
 
 export function getNpcAgeRange (sex, age) {
-
-
-    console.log(age);
-    
-
-
     const ageRanges = Object.keys(npcImages[sex]);
     let ageRange;
 

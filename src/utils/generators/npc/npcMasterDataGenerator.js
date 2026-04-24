@@ -3,6 +3,9 @@ import { generateUUID } from "three/src/math/MathUtils.js";
 import { getRandomFirstName } from "../../getter/getRandomFirstName.js";
 import { faker } from "@faker-js/faker";
 
+import { generateBirthday } from "./generateBirthday.js";
+import { getNpcAge } from "../../getter/getNpcAge.js";
+
 
 export function generateNpcMasterData () {
     // uuid
@@ -20,41 +23,12 @@ export function generateNpcMasterData () {
     // address
     const address = faker.location.streetAddress();
 
+    // birthdate
+    const birthDate = generateBirthday();
+
     // age
-    const today = new Date();
-
-    // TODO: 2010 als maximales Geburtsjahr ist sehr statisch. (Man müsste quasi jedes Jahr das 'to' Datum um 1 erhöhen (2026 = 2010, 2027 = 2011,...). Das macht wenig Sinn.) 
-    // Geburtstag muss dynamischer gestaltet werden --> vorübergehend ok, nachträglich aber zu verbessern!
-    let birthDate = faker.date.between({
-            from: '1945-01-01',
-            to: '2010-12-31'
-        })
-
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const birthYear = new Date().getFullYear() - age;
-
-    const hasHadBirthdayThisYear = today.getMonth() > birthDate.getMonth() || 
-                                  (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
-
-    if (hasHadBirthdayThisYear) age = age - 1;
-
-    birthDate.toISOString().split('T')[0];
-
-    // const age = faker.number.int({
-    //     min: 16,
-    //     max: 75,
-    // });
-
-    // // brith data
-    // const birthYear = new Date().getFullYear() - age;
-    // const birthDate = faker.date
-    //     .between({
-    //         from: `${birthYear}-01-01`,
-    //         to: `${birthYear}-12-31`
-    //     })
-    //     .toISOString()
-    //     .split('T')[0];
-
+    const age = getNpcAge(birthDate);
+    
     // TODO: Geburtsort einfügen
 
     const npcMasterData = {
@@ -64,7 +38,7 @@ export function generateNpcMasterData () {
         firstName,
         lastName,
         address,
-        birthYear,
+        // birthYear,
         birthDate
     }
     return npcMasterData;

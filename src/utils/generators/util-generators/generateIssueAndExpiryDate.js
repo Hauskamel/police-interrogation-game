@@ -8,17 +8,8 @@ export function generateIssueAndExpiryDate (birthdate) {
     const today = new Date().toJSON().slice(0, 10);
     const maxIssueDate = today;
 
-
-    console.log("birthday: " + birthdate)
-    console.log("from: " + minIssueDate);
-
-    console.log("to: " + maxIssueDate);
-
-
-
     const issueDate = faker.date.between({ from: minIssueDate, to: maxIssueDate });
     
-
     const formattedIssueDate = issueDate.toISOString().split('T')[0];
 
     const vDate = new Date(formattedIssueDate); // validation date -- copy of original birthdate
