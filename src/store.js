@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const gameStates = {
     MENU: "MENU",
-    GAME: "GAME",
+    INGAME: "INGAME",
     DISCREPANCY: "DISCREPANCY",
     COMPARE: "COMPARE",
     LAPTOP: "LAPTOP"
@@ -12,7 +12,7 @@ export const useGameStore = create((set) => ({
     gameState: gameStates.MENU,
     ingameMode: () => {
         set({
-            gameState: gameStates.GAME
+            gameState: gameStates.INGAME
         });
     },
     discrepancyMode: () => {

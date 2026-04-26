@@ -93,7 +93,7 @@ function App() {
             
             {stoppedCar && stoppedCar.id === selectedCar?.id && (
                 <>
-                    {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE GAME */}
+                    {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE INGAME */}
                     <CarAndDriverProfileTextbox
                         stoppedCar={cars.find(car => car.stopped)}
                     />

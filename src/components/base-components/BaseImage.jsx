@@ -28,7 +28,7 @@ export function BaseImage ({ useCase, data }) {
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
-        if (gameState === gameStates.GAME) {
+        if (gameState === gameStates.INGAME) {
             setIsSelected(false);
         }
     }, [compareArray, gameState]);

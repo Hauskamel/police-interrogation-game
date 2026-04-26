@@ -13,7 +13,7 @@ export function DiscrepancyButton () {
             <div
                 className="fixed bottom-5 z-2 right-200 flex gap-2 bg-sky-600 p-2 rounded-xl shadow-lg"
                 onClick={() => {
-                    if (gameState === gameStates.GAME) {
+                    if (gameState === gameStates.INGAME) {
                         discrepancyMode()
                     } else {
                         ingameMode()
@@ -21,7 +21,7 @@ export function DiscrepancyButton () {
                         clearCompareArray();
                     }
                 }}>
-                    {gameState === gameStates.GAME ? "Diskrepanz entdeckt" : "Zurück zur Befragung"}
+                    {gameState === gameStates.INGAME ? "Diskrepanz entdeckt" : "Zurück zur Befragung"}
             </div>
         </>
     );

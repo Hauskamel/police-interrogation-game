@@ -3,7 +3,7 @@ import { generateUUID } from "three/src/math/MathUtils.js";
 import { getRandomFirstName } from "../../getter/getRandomFirstName.js";
 import { faker } from "@faker-js/faker";
 
-import { generateBirthday } from "./generateBirthday.js";
+import { generateBirthDate } from "./generateBirthDate.js";
 import { getNpcAge } from "../../getter/getNpcAge.js";
 
 
@@ -24,8 +24,11 @@ export function generateNpcMasterData () {
     const address = faker.location.streetAddress();
 
     // birthdate
-    const birthDate = generateBirthday();
+    const birthDate = generateBirthDate();
 
+    // birthyear
+    const birthYear = birthDate.split("-")[0];
+    
     // age
     const age = getNpcAge(birthDate);
     
@@ -38,7 +41,7 @@ export function generateNpcMasterData () {
         firstName,
         lastName,
         address,
-        // birthYear,
+        birthYear,
         birthDate
     }
     return npcMasterData;

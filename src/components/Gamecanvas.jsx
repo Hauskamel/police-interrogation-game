@@ -26,7 +26,7 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                 <ambientLight />
                 <directionalLight castShadow position={[5, 5, 5]} />
 
-                {/* GAME COMPONENTS */}
+                {/* INGAME COMPONENTS */}
                 <BorderStation receiveShadow />
                 <PoliceCar
                     castShadow
