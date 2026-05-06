@@ -32,26 +32,32 @@ export const useGameStore = create((set) => ({
     }
 }));
 
+
 //  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
 // Betrifft alle NPCs, mit denen interagiert wird
 //      - wantedList
 //      - vllt sowas wie 'steht ein verhafteter NPC zur Abholung bereit?'
 //      - verhafteter NPC Profile
 export const useNpcStore = create ((set) => ({
-    wantedList: [],
+    criminalNpcIds: [], // speichert IDs der vor dem Spiel generierten NPCs, die in der Datenbank stehen
+    wantedList: [], // TODO: muss noch definiert werden -> wahrscheinlich werden hier 3-5 NPC IDs aus 'criminalDatabaseNpcs' genommen
     arrestedNpcs: [],
-    criminalDatabase: [],
+    setCriminalNpcIds: (array) =>
+        set({
+            criminalNpcIds: array
+        }
+    ),
     setWantedList: (array) =>
         set({
             wantedList: array
         }
-    ),
-    setCriminalDatabase: ((array) => {
-        set({
-            criminalDatabase: array
-        })
-    })
+    )
 }))
+
+
+
+
+
 
 
 export const useCarStore = create((set) => ({

@@ -1,19 +1,11 @@
-import { useNpcStore } from "../store";
-
-import { generateNpcProfile } from "../utils/generators/npc/npcProfileGenerator";
+import { useCriminalNpcGenerator } from "./useCriminalNpcGenerator";
+import { useCrimeGenerator } from "./useCrimeGenerator";
 
 export function useCriminalDatabaseGenerator () {
-    const criminalDatabase = useNpcStore(state => state.criminalDatabase);
-    
-    const databaseContent = [];
-    let i = 0;
+    console.log("Datenbank wird gerade generiert...");
 
-    while (i < 1000) {
-        i++;
-        const criminalNpc = generateNpcProfile();
-        databaseContent.push(criminalNpc);
-    }
+    useCriminalNpcGenerator();
+    useCrimeGenerator();
 
-    console.log(databaseContent);
-
+    console.log("Datenbank wurde erfolgreich generiert!");
 }

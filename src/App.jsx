@@ -35,8 +35,6 @@ function App() {
     const selectedCar = useCarStore(state => state.selectedCar);
     const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
 
-    const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
-
     const gameState = useGameStore(state => state.gameState);
     const ingameMode = useGameStore(state => state.ingameMode);
     const [hoveringCar, setHoveringCar] = useState(false);

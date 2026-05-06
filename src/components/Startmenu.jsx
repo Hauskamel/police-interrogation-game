@@ -1,17 +1,13 @@
 import { gameStates, useGameStore } from '../store';
 
-// import { criminalDatabaseGenerator } from '../utils/generators/criminalDatabaseGenerator';
 import { useCriminalDatabaseGenerator } from '../hooks/useCriminalDatabaseGenerator';
-import { useEffect } from 'react';
 
 export const Startmenu = () => {
     const ingameMode = useGameStore((state) => state.ingameMode);
     const gameState = useGameStore((state) => state.gameState);
 
 
-    const criminalDatabseGenerator = useEffect(() => {
-        useCriminalDatabaseGenerator();
-    }, [])
+    const generateCriminalDatabse = useCriminalDatabaseGenerator();
     
 
     return (
@@ -21,9 +17,9 @@ export const Startmenu = () => {
                 <button onClick={() => {
                     ingameMode();
 
-                    console.log("creating criminal database...");
-                    {criminalDatabaseGenerator} // TODO: HIER WEITERMACHEN (HAB KEINE AHNUNG MEHR VON REACT, SOS!!!!!!!!)
-                    console.log("database has been generated.");
+                    console.log("Datenbank wird in Kürze erstellt!");
+                    generateCriminalDatabse();
+                    console.log("Datenbank wurde erfolgreich erstellt.");
                 }}>Spielen</button>
                 <button>Optionen</button>
             </div>
