@@ -1,6 +1,6 @@
-import { generateNpcProfile } from "../utils/generators/npc/npcProfileGenerator";
+import { generateNpcProfile } from "./npcProfileGenerator";
 
-export function useCriminalNpcGenerator () {
+export function criminalNpcGenerator () {
     let ids = [];
     let i = 0;
 

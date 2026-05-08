@@ -30,6 +30,10 @@ export function generateNpcProfile () {
         driversLicenseData = generateDriversLicenseData(npcMasterData.birthDate, npcMasterData.birthYear);
     }
 
+
+    console.log("bis hier hin wird der NPC generiert");
+    
+
     const realProfile  = {
         npcUuid: npcMasterData.npcUuid,
         sex: npcMasterData.sex,
