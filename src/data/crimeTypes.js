@@ -1,11 +1,31 @@
-export const crimeTypes = {
-    smuggler: {
-        inventory: ["AK-47", "Glock 18", "Mariuhana", "MDMA"]
-    },
-    murderer: {
-        inventory: ["Human body of a woman", "Human body of a man", "Weapon with blood on it"]
-    },
-    cybercriminal: {
-        inventory: ["Laptop but it is locked", "Laptop and it seems unlocked"]
-    }
-}
+export const crimeTypes = [
+  "murder",
+  "manslaughter",
+  "assault",
+  "robbery",
+  "armed_robbery",
+  "burglary",
+  "theft",
+  "pickpocketing",
+  "fraud",
+  "identity_theft",
+  "embezzlement",
+  "extortion",
+  "blackmail",
+  "kidnapping",
+  "human_trafficking",
+  "drug_possession",
+  "drug_dealing",
+  "drug_trafficking",
+  "arson",
+  "vandalism",
+  "cybercrime",
+  "hacking",
+  "money_laundering",
+  "illegal_weapons_possession",
+  "smuggling",
+  "tax_evasion",
+  "stalking",
+  "domestic_violence",
+  "public_disorder"
+];

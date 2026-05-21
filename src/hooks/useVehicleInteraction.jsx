@@ -20,16 +20,12 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
     const handleClick = useCallback((e) => {
         e.stopPropagation();
 
-        console.log("vehicle id: ", vehicle.id);
-
         // TODO: remove or keep old line -- check later
         // old line: i am not sure why i compared stoppedCar.id with vehicle.id because this would disable to click on any car since there is no car stopped at the beginning of the game
         // if (vehicle.id === stoppedCar?.id || vehicle?.id === playersPoliceCar?.id) {
 
         // new line
         if (vehicle.id || vehicle?.id === playersPoliceCar?.id) {
-            console.log("Canada, ah ha");
-            
             setSelectedCar(vehicle)
         };
     }, [vehicle, setSelectedCar]);

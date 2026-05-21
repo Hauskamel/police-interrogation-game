@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import "../../../assets/css/blink.css";
 
-import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler";
-
 import { useGameStore, useDiscrepandancyCompareStore, gameStates } from "../../store";
 
 export function BaseImage ({ useCase, data }) {
@@ -28,33 +26,14 @@ export function BaseImage ({ useCase, data }) {
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
-        if (gameState === gameStates.GAME) {
+        if (gameState === gameStates.INGAME) {
             setIsSelected(false);
         }
     }, [compareArray, gameState]);
 
-    // Handling click event when comparing
-    const handleClick = () => {
-        useDocumentClickHandler({
-            useCase,
-            data,
-            setInformationToCompareArray,
-            removeInformationFromCompareArray,
-            lastClickedUseCase,
-            setLastClickedUseCase,
-            clearLastClickedUseCase,
-            isSelected,
-            setIsSelected,
-            gameState,
-            compareArray
-        });
-    }
-
-    //  'blink-border' <-- this css class creates a blink effect on a clicked image 
-
     return (
         <>
-            <div className={`inline-block ${dataValuesAreEqual ? "" : "blink-border"} ${isSelected ? "border-4 border-blue-700" : ""}`} onClick={handleClick}>
+            <div className={`inline-block ${dataValuesAreEqual ? "" : "blink-border"} ${isSelected ? "border-4 border-blue-700" : ""}`} >
                 <img src={`/images/driver/${data}`} className="w-20" alt="" />
             </div>
         </>

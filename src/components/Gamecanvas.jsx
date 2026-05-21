@@ -2,7 +2,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
 
 import { useCarStore } from "../store";
-import { getVehicleSpawnPosition } from "../utils/getVehicleSpawnPosition";
+import { getVehicleSpawnPosition } from "../utils/getter/getVehicleSpawnPosition";
 import { POLICECAR_POSITION } from "../config/positions";
 
 import { useCarRefs } from "../hooks/useCarRefs";
@@ -28,7 +28,7 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
 
 
 
-                {/* GAME COMPONENTS */}
+                {/* INGAME COMPONENTS */}
                 <BorderStation receiveShadow />
                 <PoliceCar
                     castShadow
@@ -54,7 +54,5 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                 })}
             </Canvas>
         </div>
-        
-
     )
 }

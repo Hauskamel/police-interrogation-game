@@ -1,5 +1,5 @@
 import { LaptopMenu } from "./screen-components/laptop-menu/LaptopMenu.jsx";
-import { DatabaseScreen } from "../police-laptop/screen-components/database-screen/DatabaseScreen.jsx";
+// import { DatabaseScreen } from "../police-laptop/screen-components/database-screen/DatabaseScreen.jsx";
 import { HomeScreen } from "../police-laptop/screen-components/home-screen/HomeScreen.jsx";
 import { useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ export function LaptopScreen () {
     // und in Zukunft die Menüpunkter leichter ergänzt, abgeändert werden können
     const components = [
         {screenComponent: <HomeScreen />},
-        {screenComponent: <DatabaseScreen />},
+        // {screenComponent: <DatabaseScreen />},
         {screenComponent: null},
         {screenComponent: null}                      
     ]

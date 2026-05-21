@@ -10,9 +10,9 @@ import { useCarStore } from "../../store.js";
 export function DocumentManager() {
     const selectedCar = useCarStore(state => state.selectedCar)
 
-    const activeDocs = ["driversLicense", "carDocs", "proofOfInsurance"];
+    const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
     const [openDocs, setOpenDocs] = useState(() =>
-        Object.fromEntries(activeDocs.map(doc => [doc, false])) // returns an object: { driversLicense: false, carDocs: false } 
+        Object.fromEntries(activeDocs.map(doc => [doc, false])) // returns an object: { driversLicense: false, carDocuments: false } 
     );                                                          // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
     
     
@@ -30,9 +30,9 @@ export function DocumentManager() {
                 driver={selectedCar?.driverProfile}
             />
         ),
-        carDocs: (
+        carDocuments: (
             <CarDocuments
-                key={"carDocs"}
+                key={"carDocuments"}
                 car={selectedCar?.carProfile}
                 driver={selectedCar?.driverProfile}
             />

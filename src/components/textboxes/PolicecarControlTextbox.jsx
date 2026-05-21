@@ -11,7 +11,7 @@ export const PolicecarControlTextbox = ({
     const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
 
     const gameState =  useGameStore(state => state.gameState);
-    const gameMode = useGameStore(state => state.gameMode);
+    const ingameMode = useGameStore(state => state.ingameMode);
     const laptopMode = useGameStore(state => state.laptopMode);
 
     if (selectedCar?.id !== playersPoliceCar?.id) return;
@@ -26,7 +26,7 @@ export const PolicecarControlTextbox = ({
                 {gameState === "LAPTOP" ?
                     <button
                         onClick={() => {
-                            gameMode()
+                            ingameMode()
                     }}
                         className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                     >

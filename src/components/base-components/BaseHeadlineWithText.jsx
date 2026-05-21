@@ -1,7 +1,6 @@
 // This component is used in the drivers license and car documents
 import { useEffect, useState } from "react"
 import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../store"
-import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler.jsx"
 
 import "../../../assets/css/blink.css";
 
@@ -31,35 +30,15 @@ export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataFiel
 
     // Reset select status to sync with empty 'compareArray'
     useEffect(() => {
-        if (gameState === gameStates.GAME) {
+        if (gameState === gameStates.INGAME) {
             setIsSelected(false);
         }
     }, [compareArray, gameState]);
 
-    // Handling click event when comparing
-    const handleClick = () => {
-        useDocumentClickHandler({
-            useCase,
-            documentDataField,
-            headline,
-            data,
-            setInformationToCompareArray,
-            removeInformationFromCompareArray,
-            lastClickedUseCase,
-            setLastClickedUseCase,
-            clearLastClickedUseCase,
-            isSelected,
-            setIsSelected,
-            gameState,
-            compareArray
-        });
-    }
-
-     // ${dataValuesAreEqual ? "" : "blink-text"} 
 
     return (
         <>
-            <div className={` ${!dataValuesAreEqual && isSelected ? "blink-text" : ""}  ${isSelected ? "text-blue-700" : ""} ${individualWidth === "" ? "w-1/2" : "w-1/1"} `} onClick={handleClick}>
+            <div className={` ${!dataValuesAreEqual && isSelected ? "blink-text" : ""}  ${isSelected ? "text-blue-700" : ""} ${individualWidth === "" ? "w-1/2" : "w-1/1"} `}>
                 <strong>{headline ? headline : ""}</strong>
                 <p>{data}</p>
             </div>
