@@ -23,8 +23,10 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                 <axesHelper args={[10]} />
                 <OrbitControls/>
                 {/* LIHGTS */}
-                <ambientLight />
-                <directionalLight castShadow position={[5, 5, 5]} />
+                <ambientLight intensity={2.5} />
+                <directionalLight position={[10,10,10]} intensity={2.5} />
+
+
 
                 {/* INGAME COMPONENTS */}
                 <BorderStation receiveShadow />
