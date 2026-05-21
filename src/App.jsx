@@ -3,8 +3,6 @@ import {useEffect, useState} from "react";
 import {useCarStore, useGameStore, useNpcStore} from "./store";
 
 import { Startmenu } from "./components/Startmenu";
-import { DiscrepancyOverlay } from "./components/discrepancy-mode/DiscrepancyOverlay.jsx";
-import { DiscrepancyButton } from "./components/discrepancy-mode/DiscrepancyButton.jsx";
 
 import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/Notebook.jsx";
@@ -14,7 +12,6 @@ import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControl
 import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
 import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
 
-import { useOverlaySetter } from "./hooks/useOverlaySetter.jsx";
 import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
@@ -42,9 +39,6 @@ function App() {
 
     // #################################################
     // ##################### HOOKS #####################
-
-    // sets overlay dependant of the current game mode
-    useOverlaySetter();
     useLilGuiSetup();
 
 
@@ -60,7 +54,7 @@ function App() {
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
             <Gamecanvas playersPoliceCar={policeCar} setHoveringCar={setHoveringCar} />
-            <DiscrepancyOverlay />
+
             <Startmenu />
 
         {selectedCar && (
@@ -96,8 +90,6 @@ function App() {
                         stoppedCar={cars.find(car => car.stopped)}
                     />
                     <DocumentManager />
-
-                    <DiscrepancyButton />
                 </>
             )}
         </div>

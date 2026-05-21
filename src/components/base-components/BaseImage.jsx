@@ -3,8 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import "../../../assets/css/blink.css";
 
-import { useDocumentClickHandler } from "../../hooks/useDocumentClickHandler";
-
 import { useGameStore, useDiscrepandancyCompareStore, gameStates } from "../../store";
 
 export function BaseImage ({ useCase, data }) {
@@ -33,26 +31,9 @@ export function BaseImage ({ useCase, data }) {
         }
     }, [compareArray, gameState]);
 
-    // Handling click event when comparing
-    const handleClick = () => {
-        useDocumentClickHandler({
-            useCase,
-            data,
-            setInformationToCompareArray,
-            removeInformationFromCompareArray,
-            lastClickedUseCase,
-            setLastClickedUseCase,
-            clearLastClickedUseCase,
-            isSelected,
-            setIsSelected,
-            gameState,
-            compareArray
-        });
-    }
-
     return (
         <>
-            <div className={`inline-block ${dataValuesAreEqual ? "" : "blink-border"} ${isSelected ? "border-4 border-blue-700" : ""}`} onClick={handleClick}>
+            <div className={`inline-block ${dataValuesAreEqual ? "" : "blink-border"} ${isSelected ? "border-4 border-blue-700" : ""}`} >
                 <img src={`/images/driver/${data}`} className="w-20" alt="" />
             </div>
         </>
