@@ -1,4 +1,4 @@
-import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
+import { BaseHeadlineWithText } from "../../../components/base-components/BaseHeadlineWithText";
 
 export function ProofOfInsurance ({car, driver}) {
     

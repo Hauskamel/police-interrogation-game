@@ -13,6 +13,10 @@ export const randomNpcWithVehicleGenerator = () => {
         carProfile: generateVehicleProfile(),
         id: generateUUID()
     }
+
+
+    console.log(profile);
+    
     
     return profile
 }

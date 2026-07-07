@@ -1,5 +1,5 @@
-import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText";
-import { BaseImage } from "../base-components/BaseImage";
+import { BaseHeadlineWithText } from "../../../components/base-components/BaseHeadlineWithText";
+import { BaseImage } from "../../../components/base-components/BaseImage";
 
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;

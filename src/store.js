@@ -14,6 +14,11 @@ export const useGameStore = create((set) => ({
             gameState: gameStates.INGAME
         });
     },
+    discrepancyMode: () => {
+        set({
+            gameState: gameStates.DISCREPANCY
+        })
+    },
     compareMode: () => {
         set({
             gameState: gameStates.COMPARE
@@ -27,18 +32,27 @@ export const useGameStore = create((set) => ({
 }));
 
 
-//  useNpcStore verwenden, um Informationen jedes NPCs betreffend aktuell zu halten
-// Betrifft alle NPCs, mit denen interagiert wird
-//      - wantedList
-//      - vllt sowas wie 'steht ein verhafteter NPC zur Abholung bereit?'
-//      - verhafteter NPC Profile
+// ##### NPC Store
+// -----> Hält NPC-Daten, die während einer Session spielrelevant sind.
+// ---> criminalDatabase imitiert eine kleine relationale Datenbank im Frontend:
+// ---> NPCs, Straftaten und Dokumente sind getrennt gespeichert und per ID verknüpft.
 export const useNpcStore = create ((set) => ({
     criminalNpcIds: [], // speichert IDs der vor dem Spiel generierten NPCs, die in der Datenbank stehen
-    wantedList: [], // TODO: muss noch definiert werden -> wahrscheinlich werden hier 3-5 NPC IDs aus 'criminalDatabaseNpcs' genommen
+    wantedList: [],
     arrestedNpcs: [],
-    setCriminalNpcIds: (array) =>
+    criminalDatabase: {
+        npcsById: {},
+        crimeRecordsById: {},
+        documentsById: {},
+        criminalNpcIds: [],
+        wantedList: []
+    },
+    // -----> Schreibt die komplette fake database und hält die alten Listen parallel aktuell.
+    setCriminalDatabase: (database) =>
         set({
-            criminalNpcIds: array
+            criminalDatabase: database,
+            criminalNpcIds: database.criminalNpcIds,
+            wantedList: database.wantedList
         }
     ),
     setWantedList: (array) =>
@@ -47,10 +61,6 @@ export const useNpcStore = create ((set) => ({
         }
     )
 }))
-
-
-
-
 
 
 

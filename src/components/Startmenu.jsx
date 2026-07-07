@@ -1,6 +1,6 @@
 import { gameStates, useGameStore } from '../store';
 
-import { useCriminalDatabaseGenerator } from '../hooks/useCriminalDatabaseGenerator';
+import { generateCriminalDatabase } from '../utils/generators/criminalDatabaseGenerator';
 
 import { useCallback, useEffect } from 'react';
 
@@ -10,16 +10,20 @@ export const Startmenu = () => {
     const ingameMode = useGameStore((state) => state.ingameMode);
     const gameState = useGameStore((state) => state.gameState);
 
-    const setCriminalNpcIds = useNpcStore(state => state.setCriminalNpcIds);
+    const setCriminalDatabase = useNpcStore(state => state.setCriminalDatabase);
     const criminalNpcIds = useNpcStore(state => state.criminalNpcIds);
 
+    // -----> Baut die kriminelle NPC-Datenbank einmalig beim Spielstart auf.
     const generateDatabase = useCallback(() => {
-        useCriminalDatabaseGenerator(setCriminalNpcIds);
-    })
+        setCriminalDatabase(generateCriminalDatabase({
+            criminalNpcCount: 10,
+            wantedNpcCount: 4
+        }));
+    }, [setCriminalDatabase])
 
-    const handleCriminalDatabase = useEffect(() => {
+    useEffect(() => {
         console.log(criminalNpcIds);
-    }, [criminalNpcIds, setCriminalNpcIds]);
+    }, [criminalNpcIds]);
 
     return (
         <>

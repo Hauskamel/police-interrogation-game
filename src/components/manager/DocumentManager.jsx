@@ -2,9 +2,9 @@ import {useState} from "react";
 import BaseDocument from "../base-components/BaseDocument.jsx";
 import {DocumentBar} from "./../DocumentBar";
 
-import {DriversLicense} from "./../driverDocuments/DriversLicense";
-import {CarDocuments} from "./../driverDocuments/CarDocuments.jsx";
-import { ProofOfInsurance } from "../driverDocuments/ProofOfInsurcance.jsx";
+import {DriversLicense} from "../../game/documents/components/DriversLicense";
+import {CarDocuments} from "../../game/documents/components/CarDocuments.jsx";
+import { ProofOfInsurance } from "../../game/documents/components/ProofOfInsurance.jsx";
 import { useCarStore } from "../../store.js";
 
 export function DocumentManager() {

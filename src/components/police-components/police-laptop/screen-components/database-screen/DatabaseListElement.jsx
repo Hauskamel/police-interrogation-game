@@ -5,7 +5,6 @@ export function DatabaseListElement ({setHoveredElement, setClickedElement, clic
     const firstName = entityProfile.driverProfile.realProfile.firstName;
     const lastName = entityProfile.driverProfile.realProfile.lastName;
     
-
     const crimeTitle = entityProfile.driverProfile.crimeData.crimeCase.name;
     const crimeDescription = entityProfile.driverProfile.crimeData.crimeCase.description;
 

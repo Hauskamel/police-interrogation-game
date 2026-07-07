@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { BaseHeadlineWithText } from "../base-components/BaseHeadlineWithText"
+import { BaseHeadlineWithText } from "../../../components/base-components/BaseHeadlineWithText"
 
 export function CarDocuments ({ car, driver }) {
     let driverProfile = driver.realProfile;
