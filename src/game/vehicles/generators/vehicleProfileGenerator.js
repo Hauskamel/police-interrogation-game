@@ -1,4 +1,4 @@
-import { generateCarDocumentData } from "../../documents/generators/generateCarDocumentData.js";
+import { generateCarDocumentData } from "@game/documents/generators/generateCarDocumentData.js";
 
 import { getRandomCarProfile } from "../utils";
 

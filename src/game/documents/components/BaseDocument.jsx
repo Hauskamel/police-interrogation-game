@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion";
 import { useDraggable } from "../hooks";
 
-import { useGuiVisibilityStatesStore } from "../../../stores";
+import { useGuiVisibilityStatesStore } from "@stores";
 
 
 /**

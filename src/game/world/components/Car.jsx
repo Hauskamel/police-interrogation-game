@@ -1,8 +1,8 @@
 import { useGLTF } from "@react-three/drei";
 import { useRef, useState } from "react";
 
-import { useVehicleAnimation, useVehicleInteraction } from "../../vehicles/hooks";
-import { getVehicleGlb } from "../../vehicles/utils";
+import { useVehicleAnimation, useVehicleInteraction } from "@game/vehicles/hooks";
+import { getVehicleGlb } from "@game/vehicles/utils";
 
 import { useClonedScene } from "../hooks";
 

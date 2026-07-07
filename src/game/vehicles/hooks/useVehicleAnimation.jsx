@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
-import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "../../world/config";
-import { streetbayEntryCoordinates } from "../../world/paths";
-import { useCarStore } from "../../../stores";
+import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "@game/world/config";
+import { streetbayEntryCoordinates } from "@game/world/paths";
+import { useCarStore } from "@stores";
 
 
 /**

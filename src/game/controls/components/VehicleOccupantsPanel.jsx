@@ -1,6 +1,6 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { BaseImage } from "../../../components/base";
-import { useCarStore } from "../../../stores";
+import { BaseImage } from "@components/base";
+import { useCarStore } from "@stores";
 
 /**
  * ##### Vehicle Occupants Panel

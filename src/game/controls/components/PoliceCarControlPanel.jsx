@@ -1,5 +1,5 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { useCarStore, useGameStore } from "../../../stores";
+import { useCarStore, useGameStore } from "@stores";
 
 
 /**

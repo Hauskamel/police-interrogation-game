@@ -1093,3 +1093,106 @@ Nächste sinnvolle Etappen:
 
 1. `store.js` in kleinere Store-Slices aufteilen.
 2. Optional Import-Aliase einführen, damit lange relative Pfade kürzer werden.
+
+## 2026-07-07 - Etappe 12: Aliase, App-Shell, Devtools, Styles, Konvention
+
+### Was wurde geändert?
+
+Fünf strukturelle Verbesserungen in einer Etappe:
+
+1. Import-Aliase in Vite und `jsconfig.json`
+2. App-Shell nach `src/app/` (ohne `Notebook`)
+3. Devtools-Bereich für Debug-UI
+4. Styles nach `src/styles/`, `carBrands.json` nach Vehicle-Daten
+5. Domain-Konvention in `docs/domain-convention.md`
+
+Vorher:
+
+```text
+src/App.jsx
+src/components/Startmenu.jsx
+src/hooks/useLilGuiSetup.jsx
+src/game/controls/components/VehicleDebugPanel.jsx
+assets/css/
+assets/json/carBrands.json
+```
+
+Nachher:
+
+```text
+src/app/App.jsx
+src/app/components/Startmenu.jsx
+src/devtools/useLilGuiSetup.jsx
+src/devtools/panels/VehicleDebugPanel.jsx
+src/styles/
+src/game/vehicles/data/carBrands.json
+docs/domain-convention.md
+```
+
+### Import-Aliase
+
+Neue Aliase in `vite.config.js` und `jsconfig.json`:
+
+```text
+@          -> src/
+@app       -> src/app/
+@components -> src/components/
+@devtools   -> src/devtools/
+@game       -> src/game/
+@stores     -> src/stores/
+@styles     -> src/styles/
+```
+
+Cross-Domain-Imports wurden auf Aliase umgestellt. Imports innerhalb derselben Domain bleiben relativ.
+
+### App-Shell
+
+`App.jsx` und `Startmenu.jsx` liegen jetzt unter `src/app/`. `main.jsx` importiert `@app/App.jsx`.
+
+`Notebook.jsx` bleibt bewusst in `src/components/` — die fachliche Zugehörigkeit ist noch offen. Ein Kommentar in der Datei und `docs/domain-convention.md` dokumentieren die Optionen.
+
+### Devtools
+
+Debug-Code ist aus dem Gameplay-Baum getrennt:
+
+```text
+src/devtools/
+├── useLilGuiSetup.jsx
+├── panels/VehicleDebugPanel.jsx
+└── index.js
+```
+
+`VehicleDebugPanel` wurde aus `game/controls/components` entfernt.
+
+### Styles
+
+CSS-Dateien liegen jetzt in `src/styles/`:
+
+```text
+src/styles/App.css
+src/styles/index.css
+src/styles/blink.css
+```
+
+Der alte Ordner `assets/css/` wurde geleert.
+
+### Domain-Konvention
+
+`docs/domain-convention.md` beschreibt die Standard-Domain-Struktur, bestehende Domains, Aliase und Entscheidungshilfen für neue Features.
+
+### Nebenbei bereinigt
+
+- Unbenutzter `useNpcStore`-Import in `App.jsx` entfernt.
+- `carBrands.json` nach `src/game/vehicles/data/` verschoben und über `data/index.js` exportiert.
+
+### Noch nicht geändert
+
+- `Notebook.jsx` — Zielort noch offen.
+- Store-Naming (`useGuiVisibilityStatesStore`, `useDiscrepandancyCompareStore`).
+- Police-Laptop-Ordner flacher strukturieren.
+
+Nächste sinnvolle Etappen:
+
+1. `Notebook` fachlich einordnen, sobald der Wanted-List-/HUD-Flow klar ist.
+2. Store-Naming bereinigen.
+3. Debug-UI per `import.meta.env.DEV` aus Production ausschließen.

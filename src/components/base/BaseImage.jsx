@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import "../../../assets/css/blink.css";
+import "@styles/blink.css";
 
-import { useGameStore, useDiscrepandancyCompareStore, gameStates } from "../../stores";
+import { useGameStore, useDiscrepandancyCompareStore, gameStates } from "@stores";
 
 export function BaseImage ({ useCase, data }) {
     const [isSelected, setIsSelected] = useState(false);

@@ -1,8 +1,8 @@
 // This component is used in the drivers license and car documents
 import { useEffect, useState } from "react"
-import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "../../stores"
+import { gameStates, useGameStore, useDiscrepandancyCompareStore } from "@stores"
 
-import "../../../assets/css/blink.css";
+import "@styles/blink.css";
 
 // NOTE: noch einbauen: oneliner kann auf true gestellt werden, damit key und value in einer Zeile stehen
 export const BaseHeadlineWithText = ({ useCase, headline, data, documentDataField, individualWidth }) => {

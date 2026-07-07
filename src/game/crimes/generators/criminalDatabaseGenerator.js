@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { generateUUID } from "three/src/math/MathUtils.js";
 
 import { crimeTypes } from "../data";
-import { generateNpcDriversLicenseDocument, generateNpcProfile } from "../../npcs/generators";
+import { generateNpcDriversLicenseDocument, generateNpcProfile } from "@game/npcs/generators";
 
 // ##### Crime Metadata
 // -----> Übersetzt technische crimeTypes in grobe Kategorien für Suche, UI und Balancing.

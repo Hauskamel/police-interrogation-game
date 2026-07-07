@@ -1,4 +1,4 @@
-import { BaseHeadlineWithText, BaseImage } from "../../../components/base";
+import { BaseHeadlineWithText, BaseImage } from "@components/base";
 
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;

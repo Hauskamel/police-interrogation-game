@@ -3,8 +3,8 @@
 // ---> Diese Entity ist unabhängig von Story-, Wanted-List- oder Criminal-Database-NPCs.
 import { generateUUID } from "three/src/math/MathUtils.js";
 
-import { generateNpcProfile } from "../../npcs/generators";
-import { generateVehicleProfile } from "../../vehicles/generators";
+import { generateNpcProfile } from "@game/npcs/generators";
+import { generateVehicleProfile } from "@game/vehicles/generators";
 
 export const randomNpcWithVehicleGenerator = () => {
     const profile = {

@@ -2,7 +2,7 @@ import { generateNpcMasterData } from "./npcMasterDataGenerator.js";
 import { generatePhysicalNpcCharacteristicsGenerator } from "./physicalNpcCharacteristicsGenerator.js";
 import { npcPhotoGenerator } from "./npcPhotoGenerator.js";
 
-import { generateDriversLicenseData } from "../../documents/generators/generateDriversLicenseData.js";
+import { generateDriversLicenseData } from "@game/documents/generators/generateDriversLicenseData.js";
 
 import { getNpcAgeRange } from "../utils";
 

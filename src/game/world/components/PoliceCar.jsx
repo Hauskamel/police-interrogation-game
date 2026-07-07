@@ -1,8 +1,8 @@
 import { useGLTF } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 import { generateUUID } from "three/src/math/MathUtils.js";
-import { useVehicleInteraction } from "../../vehicles/hooks";
-import { useCarStore } from "../../../stores";
+import { useVehicleInteraction } from "@game/vehicles/hooks";
+import { useCarStore } from "@stores";
 
 export const PoliceCar = ({ position, onHoverChange }) => {
     const { scene } = useGLTF("/models/murphy_97_cruiser.glb");

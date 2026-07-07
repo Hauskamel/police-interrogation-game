@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useClosePanel } from "../hooks";
 
-import { useGuiVisibilityStatesStore } from "../../../stores";
+import { useGuiVisibilityStatesStore } from "@stores";
 
 /**
  * ##### Base Control Panel

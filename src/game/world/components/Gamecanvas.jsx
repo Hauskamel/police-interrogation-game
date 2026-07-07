@@ -1,8 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
 
-import { useCarStore } from "../../../stores";
-import { getVehicleSpawnPosition } from "../../vehicles/utils";
+import { useCarStore } from "@stores";
+import { getVehicleSpawnPosition } from "@game/vehicles/utils";
 import { POLICECAR_POSITION } from "../config";
 
 import { useCarRefs } from "../hooks";

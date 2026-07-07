@@ -7,7 +7,7 @@ import {
     DriversLicense,
     ProofOfInsurance
 } from "../components";
-import { useCarStore } from "../../../stores";
+import { useCarStore } from "@stores";
 
 /**
  * ##### Document Manager

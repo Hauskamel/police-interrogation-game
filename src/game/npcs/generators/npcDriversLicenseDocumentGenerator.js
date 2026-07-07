@@ -1,4 +1,4 @@
-import { generateDriversLicenseData } from "../../documents/generators/generateDriversLicenseData.js";
+import { generateDriversLicenseData } from "@game/documents/generators/generateDriversLicenseData.js";
 
 // ##### Drivers License Document Generator
 // -----> Erstellt einen separaten Dokument-Record für die fake database.

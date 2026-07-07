@@ -1,5 +1,5 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { useCarStore, useGuiVisibilityStatesStore } from "../../../stores";
+import { useCarStore, useGuiVisibilityStatesStore } from "@stores";
 
 
 import { useClosePanel } from "../hooks";

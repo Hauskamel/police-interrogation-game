@@ -1,4 +1,4 @@
-import { useCarStore } from "../../../stores";
+import { useCarStore } from "@stores";
 
 import { useCallback } from "react";
 
