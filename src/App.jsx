@@ -1,23 +1,22 @@
 import {useEffect, useState} from "react";
 
-import {useCarStore, useGameStore, useNpcStore} from "./store";
+import {useCarStore, useGameStore, useNpcStore} from "./stores";
 
 import { Startmenu } from "./components/Startmenu";
 
-import { DocumentManager } from "./components/manager/DocumentManager";
 import { Notebook } from "./components/Notebook.jsx";
-import { Policeradio } from "./components/police-components/police-radio/PoliceRadio.jsx";
-
-import { PolicecarControlTextbox } from "./components/textboxes/PolicecarControlTextbox.jsx"
-import { CarControlTextbox } from "./components/textboxes/CarControlTextbox";
-import { CarAndDriverProfileTextbox } from "./components/textboxes/CarAndDriverProfileTextbox";
+import {
+    PoliceCarControlPanel,
+    VehicleControlPanel,
+    VehicleDebugPanel
+} from "./game/controls/components";
+import { DocumentManager } from "./game/documents/manager";
+import { LaptopScreen, PoliceRadio } from "./game/police/components";
 
 import { useLilGuiSetup } from "./hooks/useLilGuiSetup.jsx";
 
 import './../assets/css/App.css'
-import { Gamecanvas } from "./components/Gamecanvas.jsx";
-
-import { LaptopScreen } from "./components/police-components/police-laptop/LaptopScreen.jsx";
+import { Gamecanvas } from "./game/world/components";
 
 
 function App() {
@@ -42,13 +41,6 @@ function App() {
     useLilGuiSetup();
 
 
-    // spawndirection, spawnlane
-    // useVehicleEntityGenerator("left", 1);
-
-    // useVehicleEntityGenerator("right", 1);
-    
-    
-
     // ##################################################
     // ############# RENDERED HTML COMPONENT ############
     return (
@@ -59,14 +51,14 @@ function App() {
 
         {selectedCar && (
             playersPoliceCar?.id === selectedCar?.id ? ( // check wether to show police car options
-                <PolicecarControlTextbox
+                <PoliceCarControlPanel
                     onClose={() => {
                         setSelectedCar(null)
                         ingameMode()
                     }}
                 />
             ) : (
-                <CarControlTextbox // or default npc car options
+                <VehicleControlPanel // or default npc car options
                     onClose={() => setSelectedCar(null)}
                 />
             )
@@ -79,14 +71,14 @@ function App() {
             <div className="fixed bottom-5 right-50 flex gap-2">
                 <>
                     <Notebook />
-                    <Policeradio />
+                    <PoliceRadio />
                 </>
             </div>
             
             {stoppedCar && stoppedCar.id === selectedCar?.id && (
                 <>
                     {/* NOTE: THIS BOX IS FOR DEVELOPING PURPOSES ONLY ----> SHOULD NOT BE IN THE INGAME */}
-                    <CarAndDriverProfileTextbox
+                    <VehicleDebugPanel
                         stoppedCar={cars.find(car => car.stopped)}
                     />
                     <DocumentManager />

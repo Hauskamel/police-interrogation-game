@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-import { generateIssueAndExpiryDate } from "../../../utils/generators/util-generators/generateIssueAndExpiryDate";
+import { generateIssueAndExpiryDate } from "./generateIssueAndExpiryDate";
 
 export function generateDriversLicenseData (birthdate, birthYear) {
     // license number of npcs drivers license

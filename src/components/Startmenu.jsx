@@ -1,10 +1,10 @@
-import { gameStates, useGameStore } from '../store';
+import { gameStates, useGameStore } from '../stores';
 
-import { generateCriminalDatabase } from '../utils/generators/criminalDatabaseGenerator';
+import { generateCriminalDatabase } from '../game/crimes/generators';
 
 import { useCallback, useEffect } from 'react';
 
-import { useNpcStore } from '../store';
+import { useNpcStore } from '../stores';
 
 export const Startmenu = () => {
     const ingameMode = useGameStore((state) => state.ingameMode);

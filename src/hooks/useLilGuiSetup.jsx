@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { generateUUID } from "three/src/math/MathUtils.js";
 
-import { randomNpcWithVehicleGenerator } from '../utils/generators/randomNpcWithVehicleGenerator';
+import { randomNpcWithVehicleGenerator } from '../game/world/generators';
 
 import GUI from 'lil-gui'
-import { useCarStore, useNpcStore } from '../store';
+import { useCarStore } from '../stores';
 
 export const useLilGuiSetup = () => {
     const stopCar = useCarStore(state => state.stopCar);
