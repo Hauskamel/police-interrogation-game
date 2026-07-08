@@ -26,6 +26,7 @@ Nicht jede Domain braucht alle Ordner. Fehlende Layer werden erst angelegt, wenn
 | `documents` | Führerschein, Fahrzeugpapiere, Versicherung, Document-Manager |
 | `crimes` | Crime-Types, Criminal-Database-Generator |
 | `police` | Laptop, Funkgerät, Polizei-Daten |
+| `spawner` | Laufzeit-Spawner für Traffic, Missionen und gezielte Spielwelt-Entities |
 | `controls` | Gameplay-Panels zur Fahrzeug-/Polizei-Interaktion |
 
 ## Außerhalb von `game/`
@@ -98,5 +99,6 @@ Imports **innerhalb** derselben Domain dürfen weiterhin relative Pfade nutzen (
 | Wanted List im Laptop | `game/police/components/police-laptop/` |
 | Neuer Crime-Type | `game/crimes/data/` |
 | Debug-Panel | `devtools/panels/` |
+| Gameplay-Spawner | `game/spawner/` |
 | HUD-Element (Menü, Overlay) | `app/components/` |
 | Wiederverwendbares UI-Element | `components/base/` |

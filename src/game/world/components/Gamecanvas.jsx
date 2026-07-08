@@ -1,5 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
+import { Suspense } from "react";
 
 import { useCarStore } from "@stores";
 import { getVehicleSpawnPosition } from "@game/vehicles/utils";
@@ -10,6 +11,7 @@ import { useCarRefs } from "../hooks";
 import { Car } from "./Car";
 import { BorderStation } from "./BorderStation";
 import { PoliceCar } from "./PoliceCar";
+import { TrafficRouteVisualizer } from "./TrafficRouteVisualizer";
 
 
 export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
@@ -30,6 +32,7 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
 
                 {/* INGAME COMPONENTS */}
                 <BorderStation receiveShadow />
+                <TrafficRouteVisualizer cars={cars} />
                 <PoliceCar
                     castShadow
                     position={POLICECAR_POSITION}
@@ -41,15 +44,16 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                     const { position, rotation } = getVehicleSpawnPosition(car);
                     
                     return (
-                        <Car
-                            castShadow
-                            key={car.id}
-                            ref={carRefs}
-                            car={car}
-                            onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
-                            position={ position }
-                            rotation={ rotation }
-                        />
+                        <Suspense fallback={null} key={car.id}>
+                            <Car
+                                castShadow
+                                ref={carRefs}
+                                car={car}
+                                onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
+                                position={ position }
+                                rotation={ rotation }
+                            />
+                        </Suspense>
                     );
                 })}
             </Canvas>

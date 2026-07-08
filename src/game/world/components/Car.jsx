@@ -6,6 +6,12 @@ import { getVehicleGlb } from "@game/vehicles/utils";
 
 import { useClonedScene } from "../hooks";
 
+const NPC_VEHICLE_MODELS = ["car1", "car2", "car3", "car4"];
+
+NPC_VEHICLE_MODELS.forEach((model) => {
+    useGLTF.preload(`/models/npc-vehicles/cars/${model}.glb`);
+});
+
 
 export function Car ({ car, onHoverChange, position, rotation }) {
     const [vehicleGlb] = useState(() => getVehicleGlb(car));

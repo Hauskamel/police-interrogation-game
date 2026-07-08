@@ -1,8 +1,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useState } from "react";
-import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "@game/world/config";
-import { streetbayEntryCoordinates } from "@game/world/paths";
+import { VEHICLE_VELOCITY } from "@game/world/config";
+import { createStreetbayPullOverRoute, getTrafficRoute } from "@game/world/paths";
 import { useCarStore } from "@stores";
 
 
@@ -17,78 +16,78 @@ export function useVehicleAnimation(car, carRef) {
     const removeCar = useCarStore((state) => state.removeCar);
     const setCarPosition = useCarStore((state) => state.setCarPosition)
 
-    // track the last position sent to store (to update only when position actually changed)
+    const drivingRouteRef = useRef(getTrafficRoute(car.spawn));
+    const drivingDistanceRef = useRef(0);
+    const pullOverRouteRef = useRef(null);
+    const pullOverDistanceRef = useRef(0);
+    const pullOverCompletedRef = useRef(false);
     const previousPositionRef = useRef({y: null, z: null});
 
-    // Animation progress [0, 1] for curve, only advances while following curve into bay
-    const [t, setT] = useState(0);
-
-    useFrame(() => {
-        // early exit if ref is not attached
+    useFrame((_, delta) => {
         if (!carRef.current) return;
-        
-        // tracks current car position (y, z)
-        const curX = Math.floor(carRef.current.position.x * 100) / 100;        
-        const curY = Math.floor(carRef.current.position.y * 100) / 100;        
-        const curZ = Math.floor(carRef.current.position.z * 100) / 100;
 
-        // only update when position actually changed
-        function updateCarPosition (y, z) {
+        function updateCarPosition () {
+            const x = Math.floor(carRef.current.position.x * 100) / 100;
+            const z = Math.floor(carRef.current.position.z * 100) / 100;
             const prev = previousPositionRef.current;
-            if (prev.y !== y || (typeof z === "number" && prev.z !== z)) {
-                
-                setCarPosition(car.id, y, z);
-                previousPositionRef.current = {y, z};
+
+            if (prev.y !== x || prev.z !== z) {
+                setCarPosition(car.id, x, z);
+                previousPositionRef.current = {y: x, z};
             }
         }
 
-        // decide if entering bay (curve path) or just following straight path
-        if (car.stopped) {
-            updateCarPosition(curY, curZ);
-        } else {
-            updateCarPosition(curY, undefined)
-        }
+        function moveOnRoute(route, distanceRef, speed) {
+            const routeLength = route.getLength();
+            distanceRef.current = Math.min(distanceRef.current + speed * delta, routeLength);
 
-        // check if stopped car passed first entry point of bay
-        if (curY < STREETBAY_ENTRY_1[0] && car.stopped) {
-            // track driven distance of entry
-            setT(prevT => Math.min(prevT + 0.009, 1))
-    
-            // Animation along curve
-            const position = streetbayEntryCoordinates.getPoint(t); // Get the position at t
-            const tangent = streetbayEntryCoordinates.getTangent(t);
+            const progress = routeLength === 0 ? 1 : distanceRef.current / routeLength;
+            const position = route.getPointAt(progress);
+            const tangent = route.getTangent(progress);
             const lookAtTarget = position.clone().add(tangent);
-    
+
             carRef.current.position.copy(position);
             carRef.current.lookAt(lookAtTarget);
-        } else {
-            // NOTE: The car velocity in -y direction does vary from device to device due to performance differences
-            // NOTE: on windows its 0.05
-            // NOTE: on Mac/Linux its 0.1
-            if (car.spawn.direction === "left") {
+            updateCarPosition();
 
-                // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
-                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT AFTER FINISHING WORKING WITH GUI
-                    // This is the car that spawns at the police officer (or at least it should because again it is not working)
-                    carRef.current.position.z = 0; // car does not drive 
-                } else {
-                    carRef.current.position.x -= VEHICLE_VELOCITY; // car driving on road straight
-                }
-                
-                
-                // Handle offscreen car removal
-                if (curX > DESPAWN_POSITION_X) {
-                    removeCar(car.id);
-                }
-            } else {
-                carRef.current.position.x += VEHICLE_VELOCITY; // car driving on road straight in -y direction
-                // Handle offscreen car removal
-                if (curX <  -DESPAWN_POSITION_X) {
-                    removeCar(car.id);
-                }
-            }
-
+            return progress >= 1;
         }
 
+        if (car.stopped) {
+            if (!pullOverRouteRef.current) {
+                pullOverRouteRef.current = createStreetbayPullOverRoute(carRef.current.position);
+                pullOverDistanceRef.current = 0;
+                pullOverCompletedRef.current = false;
+            }
+
+            if (!pullOverCompletedRef.current) {
+                pullOverCompletedRef.current = moveOnRoute(
+                    pullOverRouteRef.current,
+                    pullOverDistanceRef,
+                    VEHICLE_VELOCITY * 0.7,
+                );
+            }
+
+            return;
+        }
+
+        if (pullOverRouteRef.current && !pullOverCompletedRef.current) {
+            pullOverCompletedRef.current = moveOnRoute(
+                pullOverRouteRef.current,
+                pullOverDistanceRef,
+                VEHICLE_VELOCITY * 0.7,
+            );
+            return;
+        }
+
+        if (pullOverCompletedRef.current) {
+            removeCar(car.id);
+            return;
+        }
+
+        const completedRoute = moveOnRoute(drivingRouteRef.current, drivingDistanceRef, VEHICLE_VELOCITY);
+        if (completedRoute) {
+            removeCar(car.id);
+        }
     });
 }

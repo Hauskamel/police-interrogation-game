@@ -9,6 +9,7 @@ import {
 } from "@game/controls/components";
 import { DocumentManager } from "@game/documents/manager";
 import { LaptopScreen, PoliceRadio } from "@game/police/components";
+import { useTrafficSpawner } from "@game/spawner";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";
@@ -30,6 +31,7 @@ function App() {
     const [hoveringCar, setHoveringCar] = useState(false);
 
     useLilGuiSetup();
+    useTrafficSpawner();
 
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
