@@ -1,22 +1,12 @@
-/**
- * NOTIZ: Die zukünftige Heimat dieser Komponente ist noch offen.
- *
- * Mögliche Optionen:
- * - `src/app/components/` — wenn das Notebook Teil der App-Shell/HUD wird
- * - `src/game/police/components/` — wenn es fachlich zum Polizei-Workflow gehört
- * - eigene Domain `src/game/inspection/` — wenn es zum Dokumenten-/Vergleichs-Loop gehört
- *
- * Siehe auch: docs/domain-convention.md
- */
 import { useState } from "react";
 // import { WantedList } from "./pages/WantedList";
 
 import { LuNotebook } from "react-icons/lu";
 
-
-
-
-
+/**
+ * ##### Notebook
+ * -----> Polizeiliches Notizbuch fuer Spielinformationen und spaetere Wanted-List-Daten.
+ */
 export function Notebook () {
     const [isOpen, setIsOpen] = useState(false)
     

@@ -1,4 +1,4 @@
-import { BaseHeadlineWithText } from "@components/base"
+import { BaseHeadlineWithText } from "./base";
 
 export function CarDocuments ({ car, driver }) {
     let driverProfile = driver.realProfile;
@@ -15,25 +15,25 @@ export function CarDocuments ({ car, driver }) {
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left mb-5">
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText useCase="carDocument" documentDataField="driverFirstName" headline="Vorname" data={driverProfile.firstName} />
-                        <BaseHeadlineWithText useCase="carDocument" documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName} />
+                        <BaseHeadlineWithText headline="Vorname" data={driverProfile.firstName} />
+                        <BaseHeadlineWithText headline="Nachname" data={driverProfile.lastName} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" documentDataField="licensePlate" data={carProfile?.carDocumentsData.plateNumber} useCase="carDocument" />
-                        <BaseHeadlineWithText headline="Registriernummer" documentDataField="registationNumber" data={carProfile?.carDocumentsData.carRegistrationNumber} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Kennzeichen" data={carProfile?.carDocumentsData.plateNumber} />
+                        <BaseHeadlineWithText headline="Registriernummer" data={carProfile?.carDocumentsData.carRegistrationNumber} />
                         
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Hersteller" documentDataField="manufacturer" data={carProfile?.brand} useCase="carDocument" />
-                        <BaseHeadlineWithText headline="Model" documentDataField="carModel" data={carProfile?.model} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Hersteller" data={carProfile?.brand} />
+                        <BaseHeadlineWithText headline="Model" data={carProfile?.model} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Ausstellungsdatum" documentDataField="issueDate" data={carProfile?.carDocumentsData.formattedIssueDate} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={carProfile?.carDocumentsData.formattedIssueDate} />
                     </div>
 
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="PS" documentDataField="ps" data={carProfile?.ps} useCase="carDocument" />
-                        <BaseHeadlineWithText headline="Gewicht (kg)" documentDataField="weight" data={carProfile?.weight} useCase="carDocument" />
+                        <BaseHeadlineWithText headline="PS" data={carProfile?.ps} />
+                        <BaseHeadlineWithText headline="Gewicht (kg)" data={carProfile?.weight} />
                     </div>
                 </div>
             </div>

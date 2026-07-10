@@ -1,5 +1,5 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { BaseImage } from "@components/base";
+import { BaseImage } from "@game/documents/components/base";
 import { useCarStore } from "@stores";
 
 /**
@@ -21,7 +21,7 @@ export const VehicleOccupantsPanel = ({stoppedCar}) => {
                         :
                         // The car has reached the police man so now there is information about the driver visible
                         <>
-                            <BaseImage useCase="vehicleOccupantsPanel" data={stoppedCar.driverProfile.realProfile.driverImage} stoppedCar={stoppedCar} />
+                            <BaseImage data={stoppedCar.driverProfile.realProfile.driverImage} />
                         </>                        
                     }
                 </div>

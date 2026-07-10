@@ -1,5 +1,5 @@
 import { useCarStore } from "@stores";
-import { BaseControlPanel } from "@game/controls/components/BaseControlPanel.jsx";
+import { BaseControlPanel } from "@game/panels/components/BaseControlPanel.jsx";
 
 /**
  * Temporäres Entwickler-Panel für Fahrer- und Fahrzeugdaten.

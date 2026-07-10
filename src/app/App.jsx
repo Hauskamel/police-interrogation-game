@@ -2,13 +2,12 @@ import { useState } from "react";
 
 import { useCarStore, useGameStore } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
-import { Notebook } from "@components/Notebook.jsx";
 import {
     PoliceCarControlPanel,
     VehicleControlPanel,
-} from "@game/controls/components";
+} from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
-import { LaptopScreen, PoliceRadio } from "@game/police/components";
+import { LaptopScreen, Notebook, PoliceRadio } from "@game/police/components";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";

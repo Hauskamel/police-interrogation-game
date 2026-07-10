@@ -1,4 +1,4 @@
-import { BaseHeadlineWithText, BaseImage } from "@components/base";
+import { BaseHeadlineWithText, BaseImage } from "./base";
 
 export function DriversLicense ({ driver }) {
     let driverProfile = driver.realProfile;
@@ -14,35 +14,33 @@ export function DriversLicense ({ driver }) {
                 <div className="grid grid-cols-3 gap-4 mt-2">
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
-                            <BaseImage useCase="driversLicense" data={driverProfile.npcImage} />
+                            <BaseImage data={driverProfile.npcImage} />
                         </div>
                     </div>
                     
                     <div className="col-span-2 text-gray-800 text-sm text-left">
                         <div className="mt-1">
-                            {/* // TODO: jede 'BaseHeadlineWithText' muss mit einer globalen headline ausgestattet werden, damit die Informationen dokumentübergreifend verglichen werden können */}
-                            {/* Problematisch wird hierbei die Verwendung von Vor- & Nachnamen */}
                             <div className="w-1/1">
                                 <div className="w-1/1 justify-between flex">
-                                    <BaseHeadlineWithText useCase="driversLicense" documentDataField="driverFirstName" headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
-                                    <BaseHeadlineWithText useCase="driversLicense" documentDataField="driverLastName" headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText headline="Vorname" data={driverProfile.firstName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText headline="Nachname" data={driverProfile.lastName}></BaseHeadlineWithText>
                                 </div>
                             </div>
 
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="birthday" headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="licenseNumber" headline="Lizenznummer" data={driverProfile.driversLicense.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Geburtsdatum" data={driverProfile.birthDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Lizenznummer" data={driverProfile.driversLicense.licenseNumber}></BaseHeadlineWithText>
                             </div>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="issueDate" headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Adresse" data={driverProfile.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ausgabedatum" data={driverProfile.driversLicense.issueDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText useCase="driversLicense" documentDataField="address" headline="Ablaufdatum" data={driverProfile.driversLicense.expiryDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Ausgabedatum" data={driverProfile.driversLicense.issueDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Ablaufdatum" data={driverProfile.driversLicense.expiryDate}></BaseHeadlineWithText>
                             </div>
                         </div>
                         <div className="mt-2 flex justify-between">
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="eyeColor" headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="gender" headline="Geschlecht" data={driverProfile.sex}></BaseHeadlineWithText>
-                            <BaseHeadlineWithText useCase="driversLicense" documentDataField="height" headline="Größe (m)" data={driverProfile.height / 100}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Augenfarbe" data={driverProfile.eyeColor}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Geschlecht" data={driverProfile.sex}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Größe (m)" data={driverProfile.height / 100}></BaseHeadlineWithText>
                         </div>
                     </div>
                 </div>

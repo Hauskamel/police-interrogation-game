@@ -4,7 +4,6 @@
     "paths": {
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
-      "@components/*": ["src/components/*"],
       "@devtools/*": ["src/devtools/*"],
       "@game/*": ["src/game/*"],
       "@stores": ["src/stores/index.js"],

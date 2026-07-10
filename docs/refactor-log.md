@@ -1196,3 +1196,133 @@ Nächste sinnvolle Etappen:
 1. `Notebook` fachlich einordnen, sobald der Wanted-List-/HUD-Flow klar ist.
 2. Store-Naming bereinigen.
 3. Debug-UI per `import.meta.env.DEV` aus Production ausschließen.
+
+## 2026-07-10 - Etappe 11: Panels, Document Base und Notebook
+
+### Was wurde geändert?
+
+Die letzten allgemein einsortierten Komponenten wurden in ihre fachlichen Domains verschoben.
+
+### Panels
+
+Der Ordner `controls` wurde zu `panels` umbenannt.
+
+Vorher:
+
+```text
+src/game/controls
+```
+
+Nachher:
+
+```text
+src/game/panels
+```
+
+### Warum?
+
+Der Ordner enthält aktuell keine allgemeine Control-Infrastruktur, sondern konkrete Panel-Komponenten und den Close-Hook für Panels.
+
+`panels` beschreibt den tatsächlichen Inhalt deshalb präziser.
+
+### Document Base
+
+Die dokumentbezogenen Base-Komponenten liegen jetzt unter der Document-Domain.
+
+Vorher:
+
+```text
+src/components/base/BaseHeadlineWithText.jsx
+src/components/base/BaseImage.jsx
+src/components/base/index.js
+```
+
+Nachher:
+
+```text
+src/game/documents/components/base/BaseHeadlineWithText.jsx
+src/game/documents/components/base/BaseImage.jsx
+src/game/documents/components/base/index.js
+```
+
+### Notebook
+
+Das Notebook wurde in die Police-Domain verschoben.
+
+Vorher:
+
+```text
+src/components/Notebook.jsx
+```
+
+Nachher:
+
+```text
+src/game/police/components/Notebook.jsx
+```
+
+### Nebenbei bereinigt
+
+- `src/components` wurde vollständig entfernt.
+- Der unbenutzte Alias `@components` wurde aus `vite.config.js` und `jsconfig.json` gelöscht.
+- `src/game/index.js` exportiert jetzt `panels` statt `controls`.
+- `docs/domain-convention.md` wurde an die neue Struktur angepasst.
+
+### Aktuelle Zielstruktur
+
+```text
+src/game/documents/components/base
+src/game/panels
+src/game/police/components/Notebook.jsx
+```
+
+### Nächste sinnvolle Etappen
+
+1. Store-Naming bereinigen.
+2. Debug-UI per `import.meta.env.DEV` aus Production ausschließen.
+3. Police-Laptop-Ordner flacher strukturieren.
+
+## 2026-07-10 - Etappe 12: Compare-Store entfernt
+
+### Was wurde geändert?
+
+Der alte Dokument-Vergleichsversuch wurde entfernt.
+
+Gelöscht:
+
+```text
+src/stores/compareStore.js
+src/styles/blink.css
+```
+
+Bereinigt:
+
+```text
+src/stores/index.js
+src/game/documents/components/base/BaseHeadlineWithText.jsx
+src/game/documents/components/base/BaseImage.jsx
+src/game/documents/components/CarDocuments.jsx
+src/game/documents/components/DriversLicense.jsx
+src/game/documents/components/ProofOfInsurance.jsx
+src/game/panels/components/VehicleOccupantsPanel.jsx
+```
+
+### Warum?
+
+Der Compare-Store war ein früher Versuch, Dokumentfelder und Bilder dokumentübergreifend zu vergleichen.
+
+Aktuell wird dieser Flow nicht gebraucht und hat die Base-Komponenten unnötig komplex gemacht.
+
+### Was ist jetzt einfacher?
+
+- `BaseHeadlineWithText` zeigt nur noch Label und Wert an.
+- `BaseImage` zeigt nur noch das Bild an.
+- `useCase` und `documentDataField` werden nicht mehr an die Base-Komponenten übergeben.
+- Die Blink-Animationen für Vergleichsfehler sind entfernt.
+- `stores/index.js` exportiert nur noch aktive Stores.
+
+### Nächste sinnvolle Etappen
+
+1. Store-Naming bereinigen.
+2. Debug-UI per `import.meta.env.DEV` aus Production ausschließen.
+3. Police-Laptop-Ordner flacher strukturieren.

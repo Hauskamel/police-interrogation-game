@@ -25,15 +25,14 @@ Nicht jede Domain braucht alle Ordner. Fehlende Layer werden erst angelegt, wenn
 | `npcs` | NPC-Stammdaten, biometrische Merkmale, Profil-Generatoren |
 | `documents` | Führerschein, Fahrzeugpapiere, Versicherung, Document-Manager |
 | `crimes` | Crime-Types, Criminal-Database-Generator |
-| `police` | Laptop, Funkgerät, Polizei-Daten |
-| `controls` | Gameplay-Panels zur Fahrzeug-/Polizei-Interaktion |
+| `police` | Laptop, Funkgerät, Notebook, Polizei-Daten |
+| `panels` | Gameplay-Panels zur Fahrzeug-/Polizei-Interaktion |
 
 ## Außerhalb von `game/`
 
 ```text
 src/
 ├── app/              # App-Shell: Root-Layout, Startmenü
-├── components/base/  # Wiederverwendbare UI-Bausteine (Compare, Bild, Text)
 ├── devtools/         # Debug-UI und Entwickler-Hooks (nicht für Production)
 ├── stores/           # Zustand-Management (Zustand-Slices)
 └── styles/           # Globale CSS-Dateien
@@ -46,7 +45,7 @@ Enthält die App-Shell — Komponenten, die das Spiel als Ganzes rahmen, aber ke
 - `App.jsx` — Root-Layout, orchestriert Domains
 - `app/components/Startmenu.jsx` — Hauptmenü
 
-Komponenten wie `Notebook` bleiben vorerst in `src/components/`, bis ihre fachliche Zugehörigkeit geklärt ist.
+Das Notebook liegt in `game/police/components`, weil es Teil des Polizei-Workflows ist.
 
 ### `devtools/`
 
@@ -64,7 +63,7 @@ Cross-Domain-Imports nutzen Aliase statt langer relativer Pfade:
 ```js
 import { useCarStore } from '@stores';
 import { Gamecanvas } from '@game/world/components';
-import { BaseImage } from '@components/base';
+import { BaseImage } from '@game/documents/components/base';
 import { Startmenu } from '@app/components/Startmenu';
 import { VehicleDebugPanel } from '@devtools/panels/VehicleDebugPanel';
 import '@styles/App.css';
@@ -74,7 +73,6 @@ import '@styles/App.css';
 |---|---|
 | `@` | `src/` |
 | `@app` | `src/app/` |
-| `@components` | `src/components/` |
 | `@devtools` | `src/devtools/` |
 | `@game` | `src/game/` |
 | `@stores` | `src/stores/` |
@@ -99,4 +97,5 @@ Imports **innerhalb** derselben Domain dürfen weiterhin relative Pfade nutzen (
 | Neuer Crime-Type | `game/crimes/data/` |
 | Debug-Panel | `devtools/panels/` |
 | HUD-Element (Menü, Overlay) | `app/components/` |
-| Wiederverwendbares UI-Element | `components/base/` |
+| Dokument-Base-Komponente | `game/documents/components/base/` |
+| Gameplay-Panel | `game/panels/components/` |
