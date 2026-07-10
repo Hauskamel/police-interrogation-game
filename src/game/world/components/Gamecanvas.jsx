@@ -1,0 +1,58 @@
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei"
+
+import { useCarStore } from "@stores";
+import { getVehicleSpawnPosition } from "@game/vehicles/utils";
+import { POLICECAR_POSITION } from "../config";
+
+import { useCarRefs } from "../hooks";
+
+import { Car } from "./Car";
+import { BorderStation } from "./BorderStation";
+import { PoliceCar } from "./PoliceCar";
+
+
+export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
+    const cars = useCarStore((state) => state.cars);
+    const carRefs = useCarRefs(cars);
+
+    return (
+        <div className="w-screen h-screen -z-1">
+            <Canvas shadows camera={{position: [-30, 20, 10], fov: 70}}>
+                {/* UTIL COMPONENTS */}
+                <axesHelper args={[10]} />
+                <OrbitControls/>
+                {/* LIHGTS */}
+                <ambientLight intensity={2.5} />
+                <directionalLight position={[10,10,10]} intensity={2.5} />
+
+
+
+                {/* INGAME COMPONENTS */}
+                <BorderStation receiveShadow />
+                <PoliceCar
+                    castShadow
+                    position={POLICECAR_POSITION}
+                    onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
+                    isPlayersCar={true}
+                />
+                
+                {cars.map((car) => {
+                    const { position, rotation } = getVehicleSpawnPosition(car);
+                    
+                    return (
+                        <Car
+                            castShadow
+                            key={car.id}
+                            ref={carRefs}
+                            car={car}
+                            onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
+                            position={ position }
+                            rotation={ rotation }
+                        />
+                    );
+                })}
+            </Canvas>
+        </div>
+    )
+}
