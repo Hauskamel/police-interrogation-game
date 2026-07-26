@@ -1,5 +1,5 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { useCarStore, useGameStore } from "@stores";
+import { useGameStore, useTrafficStore } from "@stores";
 
 
 /**
@@ -9,14 +9,14 @@ import { useCarStore, useGameStore } from "@stores";
 export const PoliceCarControlPanel = ({
     onClose
 }) => {
-    const selectedCar = useCarStore(state => state.selectedCar);
-    const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
+    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
     const gameState =  useGameStore(state => state.gameState);
     const ingameMode = useGameStore(state => state.ingameMode);
     const laptopMode = useGameStore(state => state.laptopMode);
 
-    if (selectedCar?.id !== playersPoliceCar?.id) return;
+    if (selectedTrafficEntity?.id !== playerPoliceVehicle?.id) return;
 
     return (
         <>

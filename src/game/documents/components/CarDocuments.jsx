@@ -1,8 +1,8 @@
 import { BaseHeadlineWithText } from "./base";
 
 export function CarDocuments ({ car, driver }) {
-    let driverProfile = driver.realProfile;
-    let carProfile = car.realProfile;
+    const driverProfile = driver?.presented;
+    const vehicleProfile = car?.presented;
 
     return (
         <>
@@ -15,25 +15,25 @@ export function CarDocuments ({ car, driver }) {
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left mb-5">
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Vorname" data={driverProfile.firstName} />
-                        <BaseHeadlineWithText headline="Nachname" data={driverProfile.lastName} />
+                        <BaseHeadlineWithText headline="Vorname" data={driverProfile?.firstName} />
+                        <BaseHeadlineWithText headline="Nachname" data={driverProfile?.lastName} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" data={carProfile?.carDocumentsData.plateNumber} />
-                        <BaseHeadlineWithText headline="Registriernummer" data={carProfile?.carDocumentsData.carRegistrationNumber} />
+                        <BaseHeadlineWithText headline="Kennzeichen" data={vehicleProfile?.carDocumentsData.plateNumber} />
+                        <BaseHeadlineWithText headline="Registriernummer" data={vehicleProfile?.carDocumentsData.carRegistrationNumber} />
                         
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Hersteller" data={carProfile?.brand} />
-                        <BaseHeadlineWithText headline="Model" data={carProfile?.model} />
+                        <BaseHeadlineWithText headline="Hersteller" data={vehicleProfile?.brand} />
+                        <BaseHeadlineWithText headline="Model" data={vehicleProfile?.model} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={carProfile?.carDocumentsData.formattedIssueDate} />
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={vehicleProfile?.carDocumentsData.formattedIssueDate} />
                     </div>
 
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="PS" data={carProfile?.ps} />
-                        <BaseHeadlineWithText headline="Gewicht (kg)" data={carProfile?.weight} />
+                        <BaseHeadlineWithText headline="PS" data={vehicleProfile?.ps} />
+                        <BaseHeadlineWithText headline="Gewicht (kg)" data={vehicleProfile?.weight} />
                     </div>
                 </div>
             </div>

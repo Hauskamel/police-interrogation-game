@@ -2,34 +2,34 @@ import { useGLTF } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 import { generateUUID } from "three/src/math/MathUtils.js";
 import { useVehicleInteraction } from "@game/vehicles/hooks";
-import { useCarStore } from "@stores";
+import { useTrafficStore } from "@stores";
 
 export const PoliceCar = ({ position, onHoverChange }) => {
     const { scene } = useGLTF("/models/murphy_97_cruiser.glb");
     const policecarRef = useRef();
 
-    const playersPoliceCar = useCarStore(state => state.playersPoliceCar)
-    const setPlayersPoliceCar = useCarStore(state => state.setPlayersPoliceCar)
-    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(playersPoliceCar, onHoverChange);
+    const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle)
+    const setPlayerPoliceVehicle = useTrafficStore(state => state.setPlayerPoliceVehicle)
+    const { handlePointerOver, handlePointerOut, handleClick } = useVehicleInteraction(playerPoliceVehicle, onHoverChange);
 
     const positionX = position[0];
     const positionY = position[1];
     const positionZ = position[2];
     
     useEffect(() => {
-        if (playersPoliceCar === undefined) {
-            const car = setupPlayersPoliceCar();
-            setPlayersPoliceCar(car);
+        if (playerPoliceVehicle === undefined) {
+            const vehicle = setupPlayerPoliceVehicle();
+            setPlayerPoliceVehicle(vehicle);
         }
 
-        function setupPlayersPoliceCar () {
-            const car = {
+        function setupPlayerPoliceVehicle () {
+            const vehicle = {
                 id: generateUUID()
             }
             
-            return car
+            return vehicle
         }
-    }, [setPlayersPoliceCar, playersPoliceCar])
+    }, [setPlayerPoliceVehicle, playerPoliceVehicle])
     
     return (
         <primitive 

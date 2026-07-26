@@ -7,14 +7,14 @@ import {
     DriversLicense,
     ProofOfInsurance
 } from "../components";
-import { useCarStore } from "@stores";
+import { useTrafficStore } from "@stores";
 
 /**
  * ##### Document Manager
  * -----> Verwaltet, welche Fahrzeug- und Fahrerdokumente aktuell geöffnet sind.
  */
 export function DocumentManager() {
-    const selectedCar = useCarStore(state => state.selectedCar)
+    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity)
 
     const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
     const [openDocs, setOpenDocs] = useState(() =>
@@ -33,21 +33,21 @@ export function DocumentManager() {
         driversLicense: (
             <DriversLicense 
                 key={"driversLicense"}
-                driver={selectedCar?.driverProfile}
+                driver={selectedTrafficEntity?.driverProfile}
             />
         ),
         carDocuments: (
             <CarDocuments
                 key={"carDocuments"}
-                car={selectedCar?.carProfile}
-                driver={selectedCar?.driverProfile}
+                car={selectedTrafficEntity?.vehicleProfile}
+                driver={selectedTrafficEntity?.driverProfile}
             />
         ),
         proofOfInsurance: (
             <ProofOfInsurance
                 key={"proofOfInsurance"}
-                car={selectedCar?.carProfile}
-                driver={selectedCar?.driverProfile}
+                car={selectedTrafficEntity?.vehicleProfile}
+                driver={selectedTrafficEntity?.driverProfile}
             />
         )
     }

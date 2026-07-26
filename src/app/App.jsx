@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useCarStore, useGameStore } from "@stores";
+import { useGameStore, useTrafficStore } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
 import {
     PoliceCarControlPanel,
@@ -16,13 +16,12 @@ import "@styles/App.css";
 
 
 function App() {
-    const cars = useCarStore((state) => state.cars);
-    const policeCar = useCarStore(state => state.playersPolicecar);
+    const trafficEntities = useTrafficStore((state) => state.trafficEntities);
+    const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
-    const setSelectedCar = useCarStore(state => state.setSelectedCar);
-    const playersPoliceCar = useCarStore(state => state.playersPoliceCar);
-    const selectedCar = useCarStore(state => state.selectedCar);
-    const stoppedCar = useCarStore(state => state.cars.find(car => car.stopped));
+    const setSelectedTrafficEntity = useTrafficStore(state => state.setSelectedTrafficEntity);
+    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const stoppedTrafficEntity = useTrafficStore(state => state.trafficEntities.find(entity => entity.stopped));
 
     const gameState = useGameStore(state => state.gameState);
     const ingameMode = useGameStore(state => state.ingameMode);
@@ -32,21 +31,21 @@ function App() {
 
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
-            <Gamecanvas playersPoliceCar={policeCar} setHoveringCar={setHoveringCar} />
+            <Gamecanvas playersPoliceVehicle={playerPoliceVehicle} setHoveringCar={setHoveringCar} />
 
             <Startmenu />
 
-        {selectedCar && (
-            playersPoliceCar?.id === selectedCar?.id ? (
+        {selectedTrafficEntity && (
+            playerPoliceVehicle?.id === selectedTrafficEntity?.id ? (
                 <PoliceCarControlPanel
                     onClose={() => {
-                        setSelectedCar(null)
+                        setSelectedTrafficEntity(null)
                         ingameMode()
                     }}
                 />
             ) : (
                 <VehicleControlPanel
-                    onClose={() => setSelectedCar(null)}
+                    onClose={() => setSelectedTrafficEntity(null)}
                 />
             )
         )}
@@ -62,10 +61,10 @@ function App() {
                 </>
             </div>
 
-            {stoppedCar && stoppedCar.id === selectedCar?.id && (
+            {stoppedTrafficEntity && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
                 <>
                     <VehicleDebugPanel
-                        stoppedCar={cars.find(car => car.stopped)}
+                        stoppedCar={trafficEntities.find(entity => entity.stopped)}
                     />
                     <DocumentManager />
                 </>

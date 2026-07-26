@@ -1,5 +1,5 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { useCarStore, useGuiVisibilityStatesStore } from "@stores";
+import { useGuiVisibilityStatesStore, useTrafficStore } from "@stores";
 
 
 import { useClosePanel } from "../hooks";
@@ -12,10 +12,10 @@ import { useClosePanel } from "../hooks";
 export const VehicleControlPanel = ({
     onClose
 }) => {
-    const stopCar = useCarStore((state) => state.stopCar);
-    const continueCar = useCarStore((state) => state.continueCar);
-    const selectedCar = useCarStore(state => state.selectedCar);
-    const stoppedCar = useCarStore((state) => state.cars.find(car => car.stopped));
+    const stopTrafficEntity = useTrafficStore((state) => state.stopTrafficEntity);
+    const continueTrafficEntity = useTrafficStore((state) => state.continueTrafficEntity);
+    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const stoppedTrafficEntity = useTrafficStore((state) => state.trafficEntities.find(entity => entity.stopped));
 
     const setPanelVisibility = useGuiVisibilityStatesStore(state => state.setControlPanelVisibilityState)
 
@@ -28,10 +28,10 @@ export const VehicleControlPanel = ({
                 onClose={onClose} 
             >
                 <div className="flex gap-2">
-                    {!stoppedCar && (
+                    {!stoppedTrafficEntity && (
                         <button
                             onClick={() => {
-                                stopCar(selectedCar.id);
+                                stopTrafficEntity(selectedTrafficEntity.id);
                             }}
                             className="w-full !bg-red-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -39,11 +39,11 @@ export const VehicleControlPanel = ({
                         </button>
                     )}
 
-                    {!stoppedCar || selectedCar.id === stoppedCar.id && (
+                    {(!stoppedTrafficEntity || selectedTrafficEntity.id === stoppedTrafficEntity.id) && (
                         <button
                             onClick={() => {
                                 useClosePanel(setPanelVisibility, onClose)
-                                continueCar(selectedCar.id);
+                                continueTrafficEntity(selectedTrafficEntity.id);
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -53,7 +53,7 @@ export const VehicleControlPanel = ({
                     
                 </div>
 
-                {!stoppedCar || selectedCar.id === stoppedCar.id && (
+                {(!stoppedTrafficEntity || selectedTrafficEntity.id === stoppedTrafficEntity.id) && (
                     <div className="flex gap-2">
                         <button 
                             className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer"

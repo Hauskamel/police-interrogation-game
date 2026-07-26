@@ -1,2 +1,2 @@
-export * from "./useCarRefs.jsx";
+export * from "./useTrafficEntityRefs.jsx";
 export * from "./useClonedScene.jsx";
