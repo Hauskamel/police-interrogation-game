@@ -64,7 +64,7 @@ function createNpcProfile(real) {
 // ---> documentIds und crimeRecordIds sind Foreign-Key-Listen auf die separaten Tabellen.
 function createRealProfile (npcMasterData, physicalNpcCharacteristics, npcImage, driversLicenseData = null) {
     return {
-        npcUuid: npcMasterData.npcUuid,
+        npcId: npcMasterData.npcId,
         sex: npcMasterData.sex,
         firstName: npcMasterData.firstName,
         lastName: npcMasterData.lastName,

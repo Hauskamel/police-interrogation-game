@@ -9,7 +9,7 @@ export function generateNpcDriversLicenseDocument(npcProfile) {
 
     return {
         type: "driversLicense",
-        npcId: realIdentity.npcUuid,
+        npcId: realIdentity.npcId,
         profileType: "real",
         firstName: realIdentity.firstName,
         lastName: realIdentity.lastName,

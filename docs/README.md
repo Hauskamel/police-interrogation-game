@@ -14,7 +14,7 @@ Diese Dokumente erklären, **was ein Feature im Spiel bedeutet** und wie es geda
 
 | Dokument | Inhalt |
 |---|---|
-| [NPC-Generierung](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, TrafficEntities, Polizeiwissen und Dokumentdaten zusammenhängen |
+| [NPCs, Polizeiwissen und Verkehrskontrollen](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, Halter, Fahndungsrecords, TrafficEntities und Dokumentdaten zusammenhängen |
 
 ## System Changes
 
@@ -22,7 +22,6 @@ Diese Dokumente erklären, **was technisch geändert wurde**.
 
 | Dokument | Inhalt |
 |---|---|
-| [NPC Generation Branch Changes](./system-changes/npc-generation-branch-changes.md) | Was auf `feature/npc-generation` hinzugefügt, geändert und entfernt wurde |
+| [NPC Manipulated Identity Branch Changes](./system-changes/npc-manipulated-identity-branch-changes.md) | Was auf `feature/npc-manipulated-identity` hinzugefügt, geändert und entfernt wurde |
 | [Domain-Konvention](./system-changes/domain-convention.md) | Projektstruktur und Domain-Regeln |
 | [Refactor Log](./system-changes/refactor-log.md) | Chronologische Refactor-Historie |
-

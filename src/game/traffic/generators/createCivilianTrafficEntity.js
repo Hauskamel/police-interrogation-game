@@ -4,6 +4,7 @@ import { createDocumentState, createPresentedProfiles } from "@game/documents/ge
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
 import { createTrafficEntity } from "./createTrafficEntity.js";
+import { createVehicleOwnership } from "./createVehicleOwnership.js";
 
 // ##### Civilian Inspection Profiles
 // -----> Kleine Varianten für normale Kontrollen ohne bekannten Straftatbezug.
@@ -31,7 +32,10 @@ const civilianInspectionProfiles = [
 // ---> Zivilisten können trotzdem kleine Prüfauffälligkeiten haben, z.B. abgelaufene Dokumente.
 export function createCivilianTrafficEntity(options = {}) {
     const baseDriverProfile = generateNpcProfile();
-    const baseVehicleProfile = generateVehicleProfile();
+    const { vehicleOwnerProfile, ownership } = createVehicleOwnership(baseDriverProfile, options);
+    const baseVehicleProfile = generateVehicleProfile({
+        registeredOwnerNpcId: ownership.registeredOwnerNpcId
+    });
     const inspectionProfile = pickCivilianInspectionProfile();
     const documentState = createDocumentState({
         trafficType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
@@ -47,7 +51,9 @@ export function createCivilianTrafficEntity(options = {}) {
 
     return createTrafficEntity({
         driverProfile,
+        vehicleOwnerProfile,
         vehicleProfile,
+        ownership,
         trafficType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
         truth: {
             role: "civilian",
@@ -62,8 +68,7 @@ export function createCivilianTrafficEntity(options = {}) {
             wantedRecordId: null
         },
         documentState,
-        inspectionProfile,
-        source: "trafficGenerator"
+        inspectionProfile
     });
 }
 

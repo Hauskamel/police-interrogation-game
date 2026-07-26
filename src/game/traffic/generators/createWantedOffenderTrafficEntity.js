@@ -2,32 +2,30 @@ import { generateVehicleProfile } from "@game/vehicles/generators";
 import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
+import { getActiveWantedRecords, pickDatabaseNpcId } from "../utils";
 import { createTrafficEntity } from "./createTrafficEntity.js";
+import { createVehicleOwnership } from "./createVehicleOwnership.js";
 
-// ##### Wanted NPC Picker
-// -----> Zieht einen bekannten gesuchten NPC aus der Criminal Database.
-// ---> Gibt null zurück, wenn die Datenbank noch keine Wanted List enthält.
-function pickWantedNpcId(criminalDatabase) {
-    const wantedList = criminalDatabase?.wantedList ?? [];
-    if (wantedList.length === 0) return null;
-
-    return wantedList[Math.floor(Math.random() * wantedList.length)];
-}
-
-// ##### Known Wanted Traffic Entity
+// ##### Wanted Offender Traffic Entity
 // -----> Spawnt einen NPC, der der Polizei bereits bekannt und aktiv gesucht ist.
-// ---> Die Person kommt aus der Criminal Database, das Fahrzeug wird aktuell noch frisch generiert.
-export function createKnownWantedTrafficEntity(options = {}) {
+// ---> NPC und Fahndungs-ID werden aus getrennten Tabellen der Criminal Database aufgelöst.
+export function createWantedOffenderTrafficEntity(options = {}) {
     const { criminalDatabase } = options;
-    const wantedNpcId = pickWantedNpcId(criminalDatabase);
+    const activeWantedRecords = getActiveWantedRecords(criminalDatabase);
+    const candidateNpcIds = activeWantedRecords.map(({ npcId }) => npcId);
+    const wantedNpcId = pickDatabaseNpcId(candidateNpcIds, options.forcedDatabaseNpcId);
+    const wantedRecord = activeWantedRecords.find(({ npcId }) => npcId === wantedNpcId);
 
-    // Known-Wanted-Spawns verwenden existierende NPC-Daten aus der Criminal Database.
+    // Gesuchte Spawns verwenden eine existierende NPC-Identität und deren aktive Fahndung.
     const baseDriverProfile = criminalDatabase?.npcsById?.[wantedNpcId];
 
-    // Wenn die Wanted List leer ist, übernimmt generateTrafficEntity den Fallback auf einen unbekannten Täter.
-    if (!baseDriverProfile) return null;
+    // Wenn NPC oder Fahndung fehlen, übernimmt generateTrafficEntity den sicheren Fallback.
+    if (!baseDriverProfile || !wantedRecord) return null;
 
-    const baseVehicleProfile = generateVehicleProfile();
+    const { vehicleOwnerProfile, ownership } = createVehicleOwnership(baseDriverProfile, options);
+    const baseVehicleProfile = generateVehicleProfile({
+        registeredOwnerNpcId: ownership.registeredOwnerNpcId
+    });
     const crimeRecordIds = baseDriverProfile.real.crimeRecordIds ?? [];
     const inspectionProfile = {
         complexityLevel: Math.min(4, Math.max(2, crimeRecordIds.length + 1)),
@@ -35,7 +33,7 @@ export function createKnownWantedTrafficEntity(options = {}) {
         focusAreas: ["identity_check", "wanted_database", "document_consistency"]
     };
     const documentState = createDocumentState({
-        trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED,
+        trafficType: TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER,
         driverProfile: baseDriverProfile,
         vehicleProfile: baseVehicleProfile,
         forcedHasForgery: options.forcedHasForgery
@@ -48,8 +46,10 @@ export function createKnownWantedTrafficEntity(options = {}) {
 
     return createTrafficEntity({
         driverProfile,
+        vehicleOwnerProfile,
         vehicleProfile,
-        trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED,
+        ownership,
+        trafficType: TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER,
         truth: {
             role: "criminal",
             crimeRecordIds,
@@ -60,10 +60,9 @@ export function createKnownWantedTrafficEntity(options = {}) {
             knownToPolice: true,
             wantedLevel: Math.min(3, Math.max(1, crimeRecordIds.length)),
             databaseNpcId: wantedNpcId,
-            wantedRecordId: wantedNpcId
+            wantedRecordId: wantedRecord.id
         },
         documentState,
-        inspectionProfile,
-        source: "criminalDatabase"
+        inspectionProfile
     });
 }

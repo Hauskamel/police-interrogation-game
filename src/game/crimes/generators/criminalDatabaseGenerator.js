@@ -1,7 +1,8 @@
 import { faker } from "@faker-js/faker";
-import { generateUUID } from "three/src/math/MathUtils.js";
 
 import { generateNpcDriversLicenseDocument, generateNpcProfile } from "@game/npcs/generators";
+import { createEntityId } from "@game/shared";
+import { WANTED_RECORD_STATUSES } from "../data";
 import { generateCrimeRecordsForNpc } from "./crimeRecordGenerator.js";
 
 // ##### Criminal Database Generator
@@ -13,11 +14,12 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
     const npcsById = {};
     const crimeRecordsById = {};
     const documentsById = {};
+    const wantedRecordsById = {};
     const criminalNpcIds = [];
 
     while (criminalNpcIds.length < criminalNpcCount) {
         const npcProfile = generateNpcProfile({ minimumAge: 18 });
-        const npcId = npcProfile.real.npcUuid;
+        const npcId = npcProfile.real.npcId;
         const document = withId(generateNpcDriversLicenseDocument(npcProfile), "doc");
         const crimeRecords = generateCrimeRecordsForNpc(npcId);
 
@@ -46,17 +48,26 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
         criminalNpcIds.push(npcId);
     }
 
-    const wantedList = pickWantedNpcIds(criminalNpcIds, wantedNpcCount);
+    const wantedNpcIds = pickWantedNpcIds(criminalNpcIds, wantedNpcCount);
+    const knownOffenderNpcIds = criminalNpcIds.filter((npcId) => !wantedNpcIds.includes(npcId));
+    const wantedRecordIds = wantedNpcIds.map((npcId) => {
+        const wantedRecord = createWantedRecord({
+            npcId,
+            crimeRecordIds: npcsById[npcId].real.crimeRecordIds
+        });
 
-    
-
+        wantedRecordsById[wantedRecord.id] = wantedRecord;
+        return wantedRecord.id;
+    });
 
     return {
         npcsById,
         crimeRecordsById,
         documentsById,
+        wantedRecordsById,
         criminalNpcIds,
-        wantedList
+        knownOffenderNpcIds,
+        wantedRecordIds
     };
 }
 
@@ -68,11 +79,29 @@ function pickWantedNpcIds(criminalNpcIds, wantedNpcCount) {
         .slice(0, Math.min(wantedNpcCount, criminalNpcIds.length));
 }
 
+// ##### Wanted Record Factory
+// -----> Erstellt eine eigene Fahndung, die per npcId und Crime-Record-IDs verknüpft ist.
+// ---> Die Fahndungs-ID ist bewusst unabhängig von der NPC-ID und kann ihren eigenen Status ändern.
+function createWantedRecord({ npcId, crimeRecordIds }) {
+    const reasonCrimeRecordIds = crimeRecordIds.length > 0
+        ? [faker.helpers.arrayElement(crimeRecordIds)]
+        : [];
+
+    return {
+        id: createEntityId("wanted"),
+        npcId,
+        status: WANTED_RECORD_STATUSES.ACTIVE,
+        reasonCrimeRecordIds,
+        issuedAt: faker.date.past({ years: 2 }).toISOString().split("T")[0],
+        priorityLevel: faker.number.int({ min: 1, max: 3 })
+    };
+}
+
 // ##### Record ID Helper
 // -----> Gibt jedem Tabellen-Record einen stabilen Primary Key.
 function withId(record, prefix) {
     return {
-        id: `${prefix}--${generateUUID()}`,
+        id: createEntityId(prefix),
         ...record
     };
 }

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { generateUUID } from "three/src/math/MathUtils.js";
 
+import { createEntityId } from "@game/shared";
 import { crimeTypes } from "../data";
 
 // ##### Crime Metadata
@@ -84,15 +84,14 @@ export function generateCrimeRecordsForNpc(npcId, options = {}) {
         usedCrimeTypes.add(crimeType);
 
         return {
-            id: `crime--${generateUUID()}`,
+            id: createEntityId("crime"),
             npcId,
             type: crimeType,
             severity: crimeSeverityByType[crimeType] ?? "unknown",
             title: formatCrimeTitle(crimeType),
             description: generateCrimeDescription(crimeType),
             committedAt: faker.date.past({ years: 8 }).toISOString().split("T")[0],
-            status: faker.helpers.arrayElement(["open", "convicted", "under_investigation"]),
-            source: faker.helpers.arrayElement(["local_police", "border_control", "federal_database"])
+            status: faker.helpers.arrayElement(["open", "convicted", "under_investigation"])
         };
     });
 }

@@ -7,7 +7,8 @@ import { pickNpcDocumentForgeryType, pickVehicleDocumentForgeryType } from "../u
 const forgeryChanceByTrafficType = {
     civilian: 0.06,
     unknownOffender: 0.38,
-    knownWanted: 0.68
+    knownOffender: 0.42,
+    wantedOffender: 0.68
 };
 
 // ##### Document State Generator

@@ -40,7 +40,7 @@ export function DocumentManager() {
             <CarDocuments
                 key={"carDocuments"}
                 car={selectedTrafficEntity?.vehicleProfile}
-                driver={selectedTrafficEntity?.driverProfile}
+                owner={selectedTrafficEntity?.vehicleOwnerProfile}
             />
         ),
         proofOfInsurance: (

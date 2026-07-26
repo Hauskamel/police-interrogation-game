@@ -7,7 +7,7 @@ import { vehicleMasterData } from "./vehicleMasterDataGenerator.js";
 // ##### Vehicle Profile Generator
 // -----> Erstellt die echten Fahrzeugdaten und eine unveränderte presented-Basis.
 // ---> Bewusste Dokumentabweichungen werden später zentral über createPresentedProfiles angewendet.
-export const generateVehicleProfile = () => {
+export const generateVehicleProfile = (options = {}) => {
     // car brand
     const vehicleData = getRandomCarProfile();
 
@@ -24,6 +24,7 @@ export const generateVehicleProfile = () => {
         weight: vehicleData.weight,
         yearOfConstruction: vehicleData.yearOfConstruction,
         glb: vehicleData.glb,
+        registeredOwnerNpcId: options.registeredOwnerNpcId ?? null,
 
         carDocumentsData: {
             formattedIssueDate: carDocumentData.formattedIssueDate,

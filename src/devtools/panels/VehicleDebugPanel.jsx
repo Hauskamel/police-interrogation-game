@@ -1,6 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useTrafficStore } from "@stores";
+
+import { PoliceDatabaseDebugPanelContent } from "./PoliceDatabaseDebugPanelContent.jsx";
+
+// ##### Debug Panel Types
+// -----> Steuert, welches der beiden unabhängigen Debug-Panels geöffnet ist.
+// ---> Es bleibt immer nur ein Panel sichtbar, damit sie sich nicht überlagern.
+const DEBUG_PANELS = {
+    PROFILE: "profile",
+    POLICE_DATABASE: "policeDatabase"
+};
 
 // ##### Debug Tabs
 // -----> Definiert die sichtbaren Reiter des Dev-Panels.
@@ -25,9 +35,13 @@ const debugTabs = [
  * ---> Der Button sitzt rechts neben den Fahrzeugoptionen; das Panel ist bewusst als Devtool gestaltet.
  */
 export const VehicleDebugPanel = ({ stoppedCar }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [activePanel, setActivePanel] = useState(null);
     const [activeTab, setActiveTab] = useState(DEBUG_TABS.OVERVIEW);
     const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const canOpenProfile = Boolean(
+        stoppedCar
+        && stoppedCar.id === selectedTrafficEntity?.id
+    );
 
     const driverDiffs = useMemo(() => {
         return getProfileDifferences(
@@ -43,56 +57,89 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
         );
     }, [selectedTrafficEntity]);
 
-    if (!stoppedCar || stoppedCar.id !== selectedTrafficEntity?.id) return;
+    // Schließt nur das fahrzeugbezogene Panel, wenn kein angehaltener NPC mehr ausgewählt ist.
+    // Die Polizei-Datenbank bleibt unabhängig von der aktuellen Verkehrskontrolle verfügbar.
+    useEffect(() => {
+        if (!canOpenProfile && activePanel === DEBUG_PANELS.PROFILE) {
+            setActivePanel(null);
+        }
+    }, [activePanel, canOpenProfile]);
 
     return (
         <div className="fixed bottom-6 left-[370px] z-20 flex flex-col items-start gap-3">
-            {isOpen && (
-                <div className="mb-2 w-[560px] max-h-[74vh] overflow-hidden rounded-xl border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl">
-                    <DebugHeader selectedTrafficEntity={selectedTrafficEntity} />
+            {activePanel && (
+                <div className="fixed bottom-20 left-6 w-[680px] max-w-[calc(100vw-3rem)] max-h-[78vh] overflow-hidden rounded-lg border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl">
+                    {activePanel === DEBUG_PANELS.PROFILE && canOpenProfile && (
+                        <>
+                            <DebugHeader selectedTrafficEntity={selectedTrafficEntity} />
 
-                    <div className="flex gap-1 border-b border-gray-700 bg-gray-950/50 px-3 py-2">
-                        {debugTabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`${activeTab === tab.id ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-200"} rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-600 cursor-pointer`}
-                            >
-                                {tab.label}
-                            </button>
-                        ))}
-                    </div>
+                            <div className="flex gap-1 border-b border-gray-700 bg-gray-950/50 px-3 py-2">
+                                {debugTabs.map(tab => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`${activeTab === tab.id ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-200"} rounded px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-600 cursor-pointer`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
 
-                    <div className="max-h-[60vh] overflow-auto p-4">
-                        {activeTab === DEBUG_TABS.OVERVIEW && (
-                            <OverviewTab selectedTrafficEntity={selectedTrafficEntity} />
-                        )}
+                            <div className="max-h-[64vh] overflow-auto p-4">
+                                {activeTab === DEBUG_TABS.OVERVIEW && (
+                                    <OverviewTab selectedTrafficEntity={selectedTrafficEntity} />
+                                )}
 
-                        {activeTab === DEBUG_TABS.DOCUMENTS && (
-                            <DocumentsTab
-                                selectedTrafficEntity={selectedTrafficEntity}
-                                driverDiffs={driverDiffs}
-                                vehicleDiffs={vehicleDiffs}
-                            />
-                        )}
+                                {activeTab === DEBUG_TABS.DOCUMENTS && (
+                                    <DocumentsTab
+                                        selectedTrafficEntity={selectedTrafficEntity}
+                                        driverDiffs={driverDiffs}
+                                        vehicleDiffs={vehicleDiffs}
+                                    />
+                                )}
 
-                        {activeTab === DEBUG_TABS.PROFILES && (
-                            <ProfilesTab selectedTrafficEntity={selectedTrafficEntity} />
-                        )}
+                                {activeTab === DEBUG_TABS.PROFILES && (
+                                    <ProfilesTab selectedTrafficEntity={selectedTrafficEntity} />
+                                )}
 
-                        {activeTab === DEBUG_TABS.RAW && (
-                            <RawTab selectedTrafficEntity={selectedTrafficEntity} />
-                        )}
-                    </div>
+                                {activeTab === DEBUG_TABS.RAW && (
+                                    <RawTab selectedTrafficEntity={selectedTrafficEntity} />
+                                )}
+                            </div>
+                        </>
+                    )}
+
+                    {activePanel === DEBUG_PANELS.POLICE_DATABASE && (
+                        <PoliceDatabaseDebugPanelContent />
+                    )}
                 </div>
             )}
 
-            <button
-                onClick={() => setIsOpen(prev => !prev)}
-                className={`${isOpen ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} rounded-xl px-4 py-2 text-sm font-semibold shadow-lg transition hover:bg-gray-600 cursor-pointer`}
-            >
-                Debug Profile
-            </button>
+            <div className="flex gap-2">
+                <button
+                    onClick={() => setActivePanel((currentPanel) =>
+                        currentPanel === DEBUG_PANELS.PROFILE
+                            ? null
+                            : DEBUG_PANELS.PROFILE
+                    )}
+                    disabled={!canOpenProfile}
+                    className={`${activePanel === DEBUG_PANELS.PROFILE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} rounded px-4 py-2 text-sm font-semibold shadow-lg transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer`}
+                    title={canOpenProfile ? "Fahrer- und Fahrzeugdaten öffnen" : "Dafür muss ein angehaltener NPC ausgewählt sein"}
+                >
+                    Debug Profile
+                </button>
+
+                <button
+                    onClick={() => setActivePanel((currentPanel) =>
+                        currentPanel === DEBUG_PANELS.POLICE_DATABASE
+                            ? null
+                            : DEBUG_PANELS.POLICE_DATABASE
+                    )}
+                    className={`${activePanel === DEBUG_PANELS.POLICE_DATABASE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} rounded px-4 py-2 text-sm font-semibold shadow-lg transition hover:bg-gray-600 cursor-pointer`}
+                >
+                    Polizei-Datenbank
+                </button>
+            </div>
         </div>
     );
 };
@@ -121,6 +168,13 @@ function DebugHeader({ selectedTrafficEntity }) {
 // -----> Zeigt kompakte Kontrollinformationen zur aktuellen TrafficEntity.
 // ---> Dieser Reiter beantwortet schnell: Wer ist gespawned und wie wird er polizeilich bewertet?
 function OverviewTab({ selectedTrafficEntity }) {
+    const realDriver = selectedTrafficEntity.driverProfile?.real;
+    const presentedDriver = selectedTrafficEntity.driverProfile?.presented;
+    const realOwner = selectedTrafficEntity.vehicleOwnerProfile?.real;
+    const presentedOwner = selectedTrafficEntity.vehicleOwnerProfile?.presented;
+    const realVehicle = selectedTrafficEntity.vehicleProfile?.real;
+    const presentedVehicle = selectedTrafficEntity.vehicleProfile?.presented;
+
     return (
         <>
             <DebugSection title="TrafficEntity">
@@ -128,8 +182,53 @@ function OverviewTab({ selectedTrafficEntity }) {
                 <DebugRow label="npcId" value={selectedTrafficEntity.npcId} />
                 <DebugRow label="vehicleId" value={selectedTrafficEntity.vehicleId} />
                 <DebugRow label="trafficType" value={selectedTrafficEntity.trafficType} />
-                <DebugRow label="source" value={selectedTrafficEntity.source} />
                 <DebugRow label="stopped" value={selectedTrafficEntity.stopped} />
+            </DebugSection>
+
+            <div className="grid grid-cols-2 gap-3">
+                <DebugSection title="Fahrer - real">
+                    <NpcIdentityRows profile={realDriver} />
+                </DebugSection>
+
+                <DebugSection title="Fahrer - presented">
+                    <NpcIdentityRows profile={presentedDriver} />
+                </DebugSection>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+                <DebugSection title="Führerschein - real">
+                    <DriversLicenseRows profile={realDriver} />
+                </DebugSection>
+
+                <DebugSection title="Führerschein - presented">
+                    <DriversLicenseRows profile={presentedDriver} />
+                </DebugSection>
+            </div>
+
+            <DebugSection title="Fahrzeughalter">
+                <DebugRow label="registeredOwnerNpcId" value={selectedTrafficEntity.ownership?.registeredOwnerNpcId} />
+                <DebugRow label="driverIsRegisteredOwner" value={selectedTrafficEntity.ownership?.driverIsRegisteredOwner} />
+                <DebugRow label="realName" value={formatNpcName(realOwner)} />
+                <DebugRow label="realAddress" value={realOwner?.address} />
+                <DebugRow label="presentedName" value={formatNpcName(presentedOwner)} />
+                <DebugRow label="presentedAddress" value={presentedOwner?.address} />
+            </DebugSection>
+
+            <div className="grid grid-cols-2 gap-3">
+                <DebugSection title="Fahrzeug - real">
+                    <VehicleSummaryRows profile={realVehicle} />
+                </DebugSection>
+
+                <DebugSection title="Fahrzeug - presented">
+                    <VehicleSummaryRows profile={presentedVehicle} />
+                </DebugSection>
+            </div>
+
+            <DebugSection title="Interne Fallwahrheit">
+                <DebugRow label="role" value={selectedTrafficEntity.truth?.role} />
+                <DebugRow label="crimeRecordIds" value={selectedTrafficEntity.truth?.crimeRecordIds} />
+                <DebugRow label="caseIds" value={selectedTrafficEntity.truth?.caseIds} />
+                <DebugRow label="hiddenCrimeCount" value={selectedTrafficEntity.truth?.hiddenCrimeRecords?.length ?? 0} />
             </DebugSection>
 
             <DebugSection title="Polizei">
@@ -137,6 +236,15 @@ function OverviewTab({ selectedTrafficEntity }) {
                 <DebugRow label="knownToPolice" value={selectedTrafficEntity.police?.knownToPolice} />
                 <DebugRow label="wantedLevel" value={selectedTrafficEntity.police?.wantedLevel} />
                 <DebugRow label="databaseNpcId" value={selectedTrafficEntity.police?.databaseNpcId} />
+                <DebugRow label="wantedRecordId" value={selectedTrafficEntity.police?.wantedRecordId} />
+            </DebugSection>
+
+            <DebugSection title="Dokumentstatus">
+                <DebugRow label="hasForgery" value={selectedTrafficEntity.documentState?.hasForgery} />
+                <DebugRow label="driversLicenseIntegrity" value={selectedTrafficEntity.documentState?.npcDocuments?.driversLicense?.integrity} />
+                <DebugRow label="driversLicenseForgery" value={selectedTrafficEntity.documentState?.npcDocuments?.driversLicense?.forgeryType} />
+                <DebugRow label="registrationIntegrity" value={selectedTrafficEntity.documentState?.vehicleDocuments?.registration?.integrity} />
+                <DebugRow label="registrationForgery" value={selectedTrafficEntity.documentState?.vehicleDocuments?.registration?.forgeryType} />
             </DebugSection>
 
             <DebugSection title="Prüfprofil">
@@ -150,6 +258,58 @@ function OverviewTab({ selectedTrafficEntity }) {
                     <DebugJson data={selectedTrafficEntity.debugOverrides} />
                 </DebugSection>
             )}
+        </>
+    );
+}
+
+// ##### NPC Identity Rows
+// -----> Zeigt die spielrelevanten Stammdaten eines real- oder presented-Profils.
+// ---> Derselbe Aufbau auf beiden Seiten macht manipulierte Angaben direkt vergleichbar.
+function NpcIdentityRows({ profile }) {
+    return (
+        <>
+            <DebugRow label="npcId" value={profile?.npcId} />
+            <DebugRow label="firstName" value={profile?.firstName} />
+            <DebugRow label="lastName" value={profile?.lastName} />
+            <DebugRow label="address" value={profile?.address} />
+            <DebugRow label="birthDate" value={profile?.birthDate} />
+            <DebugRow label="age" value={profile?.age} />
+            <DebugRow label="sex" value={profile?.sex} />
+            <DebugRow label="height" value={profile?.height} />
+            <DebugRow label="hairColor" value={profile?.hairColor} />
+            <DebugRow label="eyeColor" value={profile?.eyeColor} />
+        </>
+    );
+}
+
+// ##### Drivers License Rows
+// -----> Zeigt Führerscheindaten separat von den allgemeinen Personenstammdaten.
+function DriversLicenseRows({ profile }) {
+    return (
+        <>
+            <DebugRow label="licenseNumber" value={profile?.driversLicense?.licenseNumber} />
+            <DebugRow label="issueDate" value={profile?.driversLicense?.issueDate} />
+            <DebugRow label="expiryDate" value={profile?.driversLicense?.expiryDate} />
+            <DebugRow label="documentIds" value={profile?.documentIds} />
+        </>
+    );
+}
+
+// ##### Vehicle Summary Rows
+// -----> Zeigt sichtbare Fahrzeug- und Registrierungsdaten für real/presented-Vergleiche.
+function VehicleSummaryRows({ profile }) {
+    return (
+        <>
+            <DebugRow label="vehicleId" value={profile?.vehicleId} />
+            <DebugRow label="registeredOwnerNpcId" value={profile?.registeredOwnerNpcId} />
+            <DebugRow label="brand" value={profile?.brand} />
+            <DebugRow label="model" value={profile?.model} />
+            <DebugRow label="plateNumber" value={profile?.carDocumentsData?.plateNumber} />
+            <DebugRow label="registrationNumber" value={profile?.carDocumentsData?.carRegistrationNumber} />
+            <DebugRow label="registrationIssueDate" value={profile?.carDocumentsData?.formattedIssueDate} />
+            <DebugRow label="yearOfConstruction" value={profile?.yearOfConstruction} />
+            <DebugRow label="ps" value={profile?.ps} />
+            <DebugRow label="weight" value={profile?.weight} />
         </>
     );
 }
@@ -184,6 +344,14 @@ function ProfilesTab({ selectedTrafficEntity }) {
 
             <DebugSection title="Fahrer presented">
                 <DebugJson data={selectedTrafficEntity.driverProfile?.presented} />
+            </DebugSection>
+
+            <DebugSection title="Fahrzeughalter real">
+                <DebugJson data={selectedTrafficEntity.vehicleOwnerProfile?.real} />
+            </DebugSection>
+
+            <DebugSection title="Fahrzeughalter presented">
+                <DebugJson data={selectedTrafficEntity.vehicleOwnerProfile?.presented} />
             </DebugSection>
 
             <DebugSection title="Fahrzeug real">
@@ -314,4 +482,12 @@ function formatDebugValue(value) {
     if (typeof value === "object") return JSON.stringify(value);
 
     return value;
+}
+
+// ##### NPC Name Formatter
+// -----> Erstellt für Fahrer- und Halterinformationen einen kompakten Anzeigenamen.
+function formatNpcName(profile) {
+    return [profile?.firstName, profile?.lastName]
+        .filter(Boolean)
+        .join(" ");
 }

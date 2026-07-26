@@ -1,6 +1,6 @@
 import { useGLTF } from "@react-three/drei";
 import { useEffect, useRef } from "react";
-import { generateUUID } from "three/src/math/MathUtils.js";
+import { createEntityId } from "@game/shared";
 import { useVehicleInteraction } from "@game/vehicles/hooks";
 import { useTrafficStore } from "@stores";
 
@@ -24,7 +24,7 @@ export const PoliceCar = ({ position, onHoverChange }) => {
 
         function setupPlayerPoliceVehicle () {
             const vehicle = {
-                id: generateUUID()
+                id: createEntityId("police-vehicle")
             }
             
             return vehicle
