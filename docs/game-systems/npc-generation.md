@@ -74,6 +74,7 @@ Sie verbindet:
 - Spawn-Daten
 - Polizeiwissen
 - Wahrheit
+- Dokumentzustand
 - Prüfprofil
 
 Darum besitzt sie eigene IDs:
@@ -123,15 +124,9 @@ vehicleProfile.real.plateNumber
 
 Dokumente lesen immer aus `presented`, nicht aus `real`.
 
-Aktuell gilt:
+Im Normalfall ist `presented` eine Kopie von `real`. Wenn der `documentState` aber eine bewusste Dokumentmanipulation beschreibt, werden gezielt einzelne sichtbare Felder in `presented` verändert.
 
-```text
-presented ist identisch mit real
-```
-
-Das ist Absicht. Es gibt noch keine Fake-Dokument-Generierung.
-
-Später kann zum Beispiel entstehen:
+Zum Beispiel:
 
 ```text
 real.address      = "Mühlenweg 12"
@@ -160,7 +155,50 @@ Darum ist `presented` besser. Es beschreibt einfach:
 Das sind die aktuell vorgezeigten Daten.
 ```
 
-Ob diese Daten echt oder falsch sind, entscheidet später ein eigenes Dokument-/Fälschungssystem.
+Ob diese Daten echt oder falsch sind, entscheidet nicht `presented` selbst, sondern der separate `documentState`.
+
+## `documentState`
+
+`documentState` beschreibt den Zustand der vorgezeigten Dokumente einer TrafficEntity.
+
+Er beantwortet Fragen wie:
+
+- Ist ein Dokument unverändert?
+- Ist ein Dokument bewusst manipuliert?
+- Welche Felder wurden verändert?
+- Wie könnte der Spieler die Abweichung entdecken?
+
+Beispiel:
+
+```js
+documentState: {
+  hasForgery: true,
+  npcDocuments: {
+    driversLicense: {
+      integrity: "forged",
+      forgeryType: "wrong_address",
+      affectedFields: ["address"],
+      detectableBy: ["compare_with_database", "ask_address_question"]
+    }
+  },
+  vehicleDocuments: {
+    registration: {
+      integrity: "valid",
+      forgeryType: null,
+      affectedFields: [],
+      detectableBy: []
+    }
+  }
+}
+```
+
+Dadurch bleibt die Verantwortung sauber getrennt:
+
+```text
+real          -> was wirklich stimmt
+presented     -> was der Spieler sieht
+documentState -> warum sichtbare Daten abweichen
+```
 
 ## NPC-Kategorien im aktuellen System
 
@@ -186,6 +224,7 @@ Ein Zivilist ist nicht automatisch langweilig. Er kann trotzdem kleine Prüfauff
 - Routinekontrolle
 
 Diese Auffälligkeiten werden über das `inspectionProfile` vorbereitet.
+Bewusste Dokumentmanipulationen sind bei Zivilisten selten, aber möglich.
 
 ### `knownWanted`
 
@@ -207,6 +246,7 @@ Spielerisch bedeutet das:
 - Datenbankabgleich machen
 - bekannte Straftaten erkennen
 - Dokumente gegen Polizeidaten vergleichen
+- bewusst manipulierte Dokumente erkennen
 
 ### `unknownOffender`
 
@@ -225,6 +265,7 @@ Das Spiel weiß intern, dass der NPC Straftaten begangen hat. Die Polizei weiß 
 Das ist ein wichtiger Typ für Ermittlungen:
 
 - Der Spieler erkennt vielleicht Widersprüche.
+- Dokumente können zur Verschleierung manipuliert sein.
 - Später können Beweise oder Hinweise diesen NPC belasten.
 - Aus einem unbekannten Täter kann ein Verdächtiger werden.
 - Aus einem Verdächtigen kann ein gesuchter Täter werden.
@@ -476,7 +517,7 @@ Das System ist so gebaut, damit später folgende Gameplay-Momente möglich sind:
 - Ein NPC kann unschuldig sein, aber trotzdem kleine Dokumentprobleme haben.
 - Ein Täter kann unbekannt sein und erst durch Hinweise auffallen.
 - Ein gesuchter NPC kann über Datenbankabgleich erkannt werden.
-- Fake-Dokumente können später nur `presented` verändern, ohne das restliche System umzubauen.
+- Dokumentmanipulationen verändern nur `presented`, ohne das restliche System umzubauen.
 
 Kurz gesagt:
 
@@ -488,4 +529,3 @@ police = Polizeiwissen
 inspectionProfile = worauf die Kontrolle spielerisch abzielt
 TrafficEntity = aktive Kontroll-/Verkehrssituation
 ```
-

@@ -1,4 +1,5 @@
 import { generateVehicleProfile } from "@game/vehicles/generators";
+import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
 import { createTrafficEntity } from "./createTrafficEntity.js";
@@ -20,16 +21,32 @@ export function createKnownWantedTrafficEntity({ criminalDatabase } = {}) {
     const wantedNpcId = pickWantedNpcId(criminalDatabase);
 
     // Known-Wanted-Spawns verwenden existierende NPC-Daten aus der Criminal Database.
-    const driverProfile = criminalDatabase?.npcsById?.[wantedNpcId];
+    const baseDriverProfile = criminalDatabase?.npcsById?.[wantedNpcId];
 
     // Wenn die Wanted List leer ist, übernimmt generateTrafficEntity den Fallback auf einen unbekannten Täter.
-    if (!driverProfile) return null;
+    if (!baseDriverProfile) return null;
 
-    const crimeRecordIds = driverProfile.real.crimeRecordIds ?? [];
+    const baseVehicleProfile = generateVehicleProfile();
+    const crimeRecordIds = baseDriverProfile.real.crimeRecordIds ?? [];
+    const inspectionProfile = {
+        complexityLevel: Math.min(4, Math.max(2, crimeRecordIds.length + 1)),
+        deceptionRisk: 0.65,
+        focusAreas: ["identity_check", "wanted_database", "document_consistency"]
+    };
+    const documentState = createDocumentState({
+        trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED,
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile
+    });
+    const { driverProfile, vehicleProfile } = createPresentedProfiles({
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile,
+        documentState
+    });
 
     return createTrafficEntity({
         driverProfile,
-        vehicleProfile: generateVehicleProfile(),
+        vehicleProfile,
         trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED,
         truth: {
             role: "criminal",
@@ -43,11 +60,8 @@ export function createKnownWantedTrafficEntity({ criminalDatabase } = {}) {
             databaseNpcId: wantedNpcId,
             wantedRecordId: wantedNpcId
         },
-        inspectionProfile: {
-            complexityLevel: Math.min(4, Math.max(2, crimeRecordIds.length + 1)),
-            deceptionRisk: 0.65,
-            focusAreas: ["identity_check", "wanted_database", "document_consistency"]
-        },
+        documentState,
+        inspectionProfile,
         source: "criminalDatabase"
     });
 }

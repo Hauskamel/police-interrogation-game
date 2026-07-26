@@ -28,8 +28,8 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
                 documentIds: [document.id],
                 crimeRecordIds: crimeRecords.map((crimeRecord) => crimeRecord.id)
             },
-            // TODO: presented ist aktuell identisch mit real, weil noch keine gefälschten Dokumente generiert werden.
-            // ---> Sobald Fake-Dokumente existieren, bekommt presented hier gezielt abweichende sichtbare Daten.
+            // Criminal-Database-Profile speichern erstmal dieselbe presented-Basis wie real.
+            // ---> Spawns erzeugen daraus später je Kontrolle sichtbare Dokumentabweichungen über documentState.
             presented: {
                 ...npcProfile.presented,
                 documentIds: [document.id],

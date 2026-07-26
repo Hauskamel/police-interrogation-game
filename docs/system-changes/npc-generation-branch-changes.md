@@ -31,7 +31,9 @@ generateTrafficEntity
   -> entscheidet Traffic-Typ
   -> erzeugt/holt NPC
   -> erzeugt Fahrzeug
-  -> ergänzt truth, police und inspectionProfile
+  -> erzeugt documentState
+  -> erzeugt presented aus real + documentState
+  -> ergänzt truth, police, documentState und inspectionProfile
   -> createTrafficEntity
 
 trafficStore
@@ -70,7 +72,33 @@ Verantwortung:
 - aktive NPC-/Fahrzeug-Kombinationen erzeugen
 - Traffic-Typen unterscheiden
 - Polizeiwissen und Wahrheit voneinander trennen
+- Dokumentzustand an die konkrete Kontrolle hängen
 - Spawn-Hook für TrafficEntities bereitstellen
+
+### `src/game/documents`
+
+Neu hinzugefügt:
+
+```text
+src/game/documents/
+├── data/
+│   ├── documentIntegrityTypes.js
+│   └── forgeryTypes.js
+├── generators/
+│   ├── createDocumentState.js
+│   ├── createNpcPresentedProfile.js
+│   ├── createPresentedProfiles.js
+│   └── createVehiclePresentedProfile.js
+└── utils/
+    └── pickForgeryType.js
+```
+
+Verantwortung:
+
+- Dokumentzustand je TrafficEntity erzeugen
+- bewusste Manipulationen an NPC-Dokumenten beschreiben
+- bewusste Manipulationen an Fahrzeugdokumenten beschreiben
+- `presented` zentral aus `real` und `documentState` ableiten
 
 ### `src/stores/trafficStore.js`
 
@@ -150,7 +178,9 @@ Nachher:
 
 `presented` ist das, was Dokumente und UI anzeigen.
 
-Aktuell ist `presented` identisch mit `real`. In `npcProfileGenerator.js` steht ein TODO für die spätere Fake-Dokument-Generierung.
+Im Basisprofil ist `presented` eine unveränderte Kopie von `real`.
+
+Beim Erzeugen einer TrafficEntity kann `createDocumentState` aber bewusste Dokumentmanipulationen auswählen. Danach erzeugt `createPresentedProfiles` die sichtbaren Daten aus `real` und `documentState`.
 
 ### Vehicle-Profil
 
@@ -172,7 +202,49 @@ Nachher:
 }
 ```
 
-Auch hier ist `presented` aktuell identisch mit `real`.
+Auch hier ist `presented` im Basisprofil eine unveränderte Kopie von `real`.
+Auch Fahrzeugdaten können beim Traffic-Spawn über `documentState` gezielt in `presented` abweichen.
+
+### Document State
+
+Neu:
+
+```js
+documentState: {
+  hasForgery: boolean,
+  npcDocuments: {
+    driversLicense: {
+      integrity,
+      forgeryType,
+      affectedFields,
+      detectableBy
+    }
+  },
+  vehicleDocuments: {
+    registration: {
+      integrity,
+      forgeryType,
+      affectedFields,
+      detectableBy
+    }
+  }
+}
+```
+
+Aktuell werden diese bewussten Manipulationen unterstützt:
+
+```text
+NPC-Dokumente:
+- wrong_address
+- wrong_birth_date
+- wrong_license_number
+- wrong_name
+
+Fahrzeugdokumente:
+- plate_mismatch
+- wrong_registration_number
+- wrong_vehicle_model
+```
 
 ## Dokumente
 
@@ -309,4 +381,3 @@ Diese Warnungen blockieren den Build nicht und stammen nicht aus dem neuen NPC-/
 3. Polizeilaptop sauber an Criminal Database und Wanted List anbinden
 4. InspectionProfile-Erzeugung weiter vereinheitlichen
 5. Optional `Car.jsx` als Render-Komponente behalten, aber Props intern in Richtung `trafficEntity` umbenennen
-

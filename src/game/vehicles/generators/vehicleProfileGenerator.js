@@ -5,8 +5,8 @@ import { getRandomCarProfile } from "../utils";
 import { vehicleMasterData } from "./vehicleMasterDataGenerator.js";
 
 // ##### Vehicle Profile Generator
-// -----> Erstellt die echten und aktuell vorgezeigten Fahrzeugdaten.
-// ---> real ist die Spielwahrheit, presented ist das, was Fahrzeugdokumente anzeigen.
+// -----> Erstellt die echten Fahrzeugdaten und eine unveränderte presented-Basis.
+// ---> Bewusste Dokumentabweichungen werden später zentral über createPresentedProfiles angewendet.
 export const generateVehicleProfile = () => {
     // car brand
     const vehicleData = getRandomCarProfile();
@@ -36,9 +36,8 @@ export const generateVehicleProfile = () => {
 }
 
 // ##### Vehicle Profile Factory
-// -----> Bündelt echte Fahrzeugdaten und aktuell vorgezeigte Fahrzeugdaten.
-// TODO: presented ist aktuell immer identisch mit real, weil noch keine gefälschten Fahrzeugdokumente generiert werden.
-// ---> Später werden hier manipulierte Kennzeichen, Halterdaten oder Fahrzeugpapiere eingehängt.
+// -----> Bündelt echte Fahrzeugdaten und die unveränderte presented-Ausgangslage.
+// ---> Die Traffic-Generatoren können presented danach anhand des documentState gezielt verändern.
 function createVehicleProfile(real) {
     return {
         real,

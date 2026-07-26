@@ -1,4 +1,5 @@
 import { generateCrimeRecordsForNpc } from "@game/crimes/generators";
+import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
 import { generateNpcProfile } from "@game/npcs/generators";
 import { generateVehicleProfile } from "@game/vehicles/generators";
 
@@ -9,16 +10,32 @@ import { createTrafficEntity } from "./createTrafficEntity.js";
 // -----> Erstellt einen NPC, der intern Straftaten begangen hat, aber der Polizei noch nicht bekannt ist.
 // ---> Genau dieser Fall ist für Ermittlungen spannend: Wahrheit und Polizeiwissen unterscheiden sich.
 export function createUnknownOffenderTrafficEntity() {
-    const driverProfile = generateNpcProfile({ minimumAge: 18 });
-    const npcId = driverProfile.real.npcUuid;
+    const baseDriverProfile = generateNpcProfile({ minimumAge: 18 });
+    const baseVehicleProfile = generateVehicleProfile();
+    const npcId = baseDriverProfile.real.npcUuid;
 
     // Die Straftaten sind intern bekannt, aber noch nicht Teil des Polizeiwissens.
     const crimeRecords = generateCrimeRecordsForNpc(npcId);
     const crimeRecordIds = crimeRecords.map((crimeRecord) => crimeRecord.id);
+    const inspectionProfile = {
+        complexityLevel: 2,
+        deceptionRisk: 0.35,
+        focusAreas: ["inconsistencies", "vehicle_documents", "behavior"]
+    };
+    const documentState = createDocumentState({
+        trafficType: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER,
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile
+    });
+    const { driverProfile, vehicleProfile } = createPresentedProfiles({
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile,
+        documentState
+    });
 
     return createTrafficEntity({
         driverProfile,
-        vehicleProfile: generateVehicleProfile(),
+        vehicleProfile,
         trafficType: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER,
         truth: {
             role: "criminal",
@@ -33,11 +50,8 @@ export function createUnknownOffenderTrafficEntity() {
             databaseNpcId: null,
             wantedRecordId: null
         },
-        inspectionProfile: {
-            complexityLevel: 2,
-            deceptionRisk: 0.35,
-            focusAreas: ["inconsistencies", "vehicle_documents", "behavior"]
-        },
+        documentState,
+        inspectionProfile,
         source: "trafficGenerator"
     });
 }

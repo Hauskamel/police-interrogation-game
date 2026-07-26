@@ -9,6 +9,7 @@ export function createTrafficEntity({
     trafficType,
     truth,
     police,
+    documentState,
     inspectionProfile,
     source
 }) {
@@ -41,6 +42,7 @@ export function createTrafficEntity({
         vehicleProfile: vehicleProfileWithId,
         truth,
         police,
+        documentState,
         inspectionProfile,
         source,
         stopped: false
