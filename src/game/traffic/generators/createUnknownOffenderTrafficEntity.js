@@ -9,7 +9,7 @@ import { createTrafficEntity } from "./createTrafficEntity.js";
 // ##### Unknown Offender Traffic Entity
 // -----> Erstellt einen NPC, der intern Straftaten begangen hat, aber der Polizei noch nicht bekannt ist.
 // ---> Genau dieser Fall ist für Ermittlungen spannend: Wahrheit und Polizeiwissen unterscheiden sich.
-export function createUnknownOffenderTrafficEntity() {
+export function createUnknownOffenderTrafficEntity(options = {}) {
     const baseDriverProfile = generateNpcProfile({ minimumAge: 18 });
     const baseVehicleProfile = generateVehicleProfile();
     const npcId = baseDriverProfile.real.npcUuid;
@@ -25,7 +25,8 @@ export function createUnknownOffenderTrafficEntity() {
     const documentState = createDocumentState({
         trafficType: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER,
         driverProfile: baseDriverProfile,
-        vehicleProfile: baseVehicleProfile
+        vehicleProfile: baseVehicleProfile,
+        forcedHasForgery: options.forcedHasForgery
     });
     const { driverProfile, vehicleProfile } = createPresentedProfiles({
         driverProfile: baseDriverProfile,

@@ -17,7 +17,8 @@ function pickWantedNpcId(criminalDatabase) {
 // ##### Known Wanted Traffic Entity
 // -----> Spawnt einen NPC, der der Polizei bereits bekannt und aktiv gesucht ist.
 // ---> Die Person kommt aus der Criminal Database, das Fahrzeug wird aktuell noch frisch generiert.
-export function createKnownWantedTrafficEntity({ criminalDatabase } = {}) {
+export function createKnownWantedTrafficEntity(options = {}) {
+    const { criminalDatabase } = options;
     const wantedNpcId = pickWantedNpcId(criminalDatabase);
 
     // Known-Wanted-Spawns verwenden existierende NPC-Daten aus der Criminal Database.
@@ -36,7 +37,8 @@ export function createKnownWantedTrafficEntity({ criminalDatabase } = {}) {
     const documentState = createDocumentState({
         trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED,
         driverProfile: baseDriverProfile,
-        vehicleProfile: baseVehicleProfile
+        vehicleProfile: baseVehicleProfile,
+        forcedHasForgery: options.forcedHasForgery
     });
     const { driverProfile, vehicleProfile } = createPresentedProfiles({
         driverProfile: baseDriverProfile,

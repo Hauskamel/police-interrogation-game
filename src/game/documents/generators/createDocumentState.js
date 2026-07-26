@@ -16,10 +16,20 @@ const forgeryChanceByTrafficType = {
 export function createDocumentState({
     trafficType,
     driverProfile,
-    vehicleProfile
+    vehicleProfile,
+    forcedHasForgery
 } = {}) {
     const baseState = createValidDocumentState();
     const forgeryChance = forgeryChanceByTrafficType[trafficType] ?? 0;
+
+    // Devtools können den Dokumentzustand bewusst erzwingen, ohne die normalen Spawn-Wahrscheinlichkeiten zu ändern.
+    if (forcedHasForgery === false) return baseState;
+    if (forcedHasForgery === true) {
+        return applyForgeryTarget(baseState, {
+            canForgeNpcDocument: Boolean(driverProfile?.real?.driversLicense),
+            canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData)
+        });
+    }
 
     if (Math.random() > forgeryChance) return baseState;
 

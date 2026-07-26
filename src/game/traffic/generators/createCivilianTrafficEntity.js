@@ -29,14 +29,15 @@ const civilianInspectionProfiles = [
 // ##### Civilian Traffic Entity
 // -----> Erstellt einen normalen Verkehrsteilnehmer ohne bekannte Straftat.
 // ---> Zivilisten können trotzdem kleine Prüfauffälligkeiten haben, z.B. abgelaufene Dokumente.
-export function createCivilianTrafficEntity() {
+export function createCivilianTrafficEntity(options = {}) {
     const baseDriverProfile = generateNpcProfile();
     const baseVehicleProfile = generateVehicleProfile();
     const inspectionProfile = pickCivilianInspectionProfile();
     const documentState = createDocumentState({
         trafficType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
         driverProfile: baseDriverProfile,
-        vehicleProfile: baseVehicleProfile
+        vehicleProfile: baseVehicleProfile,
+        forcedHasForgery: options.forcedHasForgery
     });
     const { driverProfile, vehicleProfile } = createPresentedProfiles({
         driverProfile: baseDriverProfile,
