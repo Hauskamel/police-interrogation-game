@@ -4,21 +4,21 @@ import { generateDriversLicenseData } from "@game/documents/generators/generateD
 // -----> Erstellt einen separaten Dokument-Record für die fake database.
 // ---> Dieser Record wird über npcId mit dem NPC verknüpft.
 export function generateNpcDriversLicenseDocument(npcProfile) {
-    const realProfile = npcProfile.realProfile;
-    const driversLicenseData = realProfile.driversLicense ?? generateDriversLicenseData(realProfile.birthDate, realProfile.birthYear);
+    const realIdentity = npcProfile.real;
+    const driversLicenseData = realIdentity.driversLicense ?? generateDriversLicenseData(realIdentity.birthDate, realIdentity.birthYear);
 
     return {
         type: "driversLicense",
-        npcId: realProfile.npcUuid,
-        profileType: "realProfile",
-        firstName: realProfile.firstName,
-        lastName: realProfile.lastName,
-        birthDate: realProfile.birthDate,
-        address: realProfile.address,
-        sex: realProfile.sex,
-        height: realProfile.height,
-        eyeColor: realProfile.eyeColor,
-        npcImage: realProfile.npcImage,
+        npcId: realIdentity.npcUuid,
+        profileType: "real",
+        firstName: realIdentity.firstName,
+        lastName: realIdentity.lastName,
+        birthDate: realIdentity.birthDate,
+        address: realIdentity.address,
+        sex: realIdentity.sex,
+        height: realIdentity.height,
+        eyeColor: realIdentity.eyeColor,
+        npcImage: realIdentity.npcImage,
         licenseNumber: driversLicenseData.licenseNumber,
         issueDate: driversLicenseData.issueDate,
         expiryDate: driversLicenseData.expiryDate

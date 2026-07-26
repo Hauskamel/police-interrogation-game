@@ -1,20 +1,20 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
 
-import { useCarStore } from "@stores";
-import { getVehicleSpawnPosition } from "@game/vehicles/utils";
+import { useTrafficStore } from "@stores";
+import { getTrafficSpawnTransform } from "@game/world/spawn";
 import { POLICECAR_POSITION } from "../config";
 
-import { useCarRefs } from "../hooks";
+import { useTrafficEntityRefs } from "../hooks";
 
 import { Car } from "./Car";
 import { BorderStation } from "./BorderStation";
 import { PoliceCar } from "./PoliceCar";
 
 
-export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
-    const cars = useCarStore((state) => state.cars);
-    const carRefs = useCarRefs(cars);
+export function Gamecanvas({ playersPoliceVehicle, setHoveringCar }) {
+    const trafficEntities = useTrafficStore((state) => state.trafficEntities);
+    const trafficEntityRefs = useTrafficEntityRefs(trafficEntities);
 
     return (
         <div className="w-screen h-screen -z-1">
@@ -33,20 +33,20 @@ export function Gamecanvas({ playersPoliceCar, setHoveringCar }) {
                 <PoliceCar
                     castShadow
                     position={POLICECAR_POSITION}
-                    onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceCar?.id : null)}
+                    onHoverChange={(hovering) => setHoveringCar(hovering ? playersPoliceVehicle?.id : null)}
                     isPlayersCar={true}
                 />
                 
-                {cars.map((car) => {
-                    const { position, rotation } = getVehicleSpawnPosition(car);
+                {trafficEntities.map((trafficEntity) => {
+                    const { position, rotation } = getTrafficSpawnTransform(trafficEntity);
                     
                     return (
                         <Car
                             castShadow
-                            key={car.id}
-                            ref={carRefs}
-                            car={car}
-                            onHoverChange={(hovering) => setHoveringCar(hovering ? car.id : null)}
+                            key={trafficEntity.id}
+                            ref={trafficEntityRefs}
+                            car={trafficEntity}
+                            onHoverChange={(hovering) => setHoveringCar(hovering ? trafficEntity.id : null)}
                             position={ position }
                             rotation={ rotation }
                         />

@@ -1,13 +1,13 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
 import { BaseImage } from "@game/documents/components/base";
-import { useCarStore } from "@stores";
+import { useTrafficStore } from "@stores";
 
 /**
  * ##### Vehicle Occupants Panel
  * -----> Zeigt die sichtbaren Insasseninformationen des angehaltenen Fahrzeugs.
  */
 export const VehicleOccupantsPanel = ({stoppedCar}) => {
-    const selectedCar = useCarStore(state => state.selectedCar);
+    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
 
     return (
         <>
@@ -21,7 +21,7 @@ export const VehicleOccupantsPanel = ({stoppedCar}) => {
                         :
                         // The car has reached the police man so now there is information about the driver visible
                         <>
-                            <BaseImage data={stoppedCar.driverProfile.realProfile.driverImage} />
+                            <BaseImage data={stoppedCar.driverProfile.presented.npcImage} />
                         </>                        
                     }
                 </div>

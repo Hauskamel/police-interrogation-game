@@ -25,6 +25,7 @@ Nicht jede Domain braucht alle Ordner. Fehlende Layer werden erst angelegt, wenn
 | `npcs` | NPC-Stammdaten, biometrische Merkmale, Profil-Generatoren |
 | `documents` | Führerschein, Fahrzeugpapiere, Versicherung, Document-Manager |
 | `crimes` | Crime-Types, Criminal-Database-Generator |
+| `traffic` | Aktive Verkehrsteilnehmer, TrafficEntity-Generatoren, Traffic-Spawner |
 | `police` | Laptop, Funkgerät, Notebook, Polizei-Daten |
 | `panels` | Gameplay-Panels zur Fahrzeug-/Polizei-Interaktion |
 
@@ -61,7 +62,7 @@ Später kann hier ein `import.meta.env.DEV`-Gate eingebaut werden, um Debug-UI a
 Cross-Domain-Imports nutzen Aliase statt langer relativer Pfade:
 
 ```js
-import { useCarStore } from '@stores';
+import { useTrafficStore } from '@stores';
 import { Gamecanvas } from '@game/world/components';
 import { BaseImage } from '@game/documents/components/base';
 import { Startmenu } from '@app/components/Startmenu';
@@ -95,6 +96,7 @@ Imports **innerhalb** derselben Domain dürfen weiterhin relative Pfade nutzen (
 | Neuer Dokument-Typ | `game/documents/components/` + `generators/` |
 | Wanted List im Laptop | `game/police/components/police-laptop/` |
 | Neuer Crime-Type | `game/crimes/data/` |
+| Neue TrafficEntity-Variante | `game/traffic/generators/` |
 | Debug-Panel | `devtools/panels/` |
 | HUD-Element (Menü, Overlay) | `app/components/` |
 | Dokument-Base-Komponente | `game/documents/components/base/` |

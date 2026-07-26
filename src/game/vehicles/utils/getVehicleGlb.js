@@ -1,4 +1,4 @@
 export function getVehicleGlb (obj) {
-    const carGlb = obj.carProfile.realProfile.glb;
+    const carGlb = obj.vehicleProfile.real.glb;
     return carGlb
 }

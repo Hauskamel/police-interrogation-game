@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useState } from "react";
 import { STREETBAY_ENTRY_1, VEHICLE_VELOCITY, DESPAWN_POSITION_X } from "@game/world/config";
 import { streetbayEntryCoordinates } from "@game/world/paths";
-import { useCarStore } from "@stores";
+import { useTrafficStore } from "@stores";
 
 
 /**
@@ -14,8 +14,8 @@ import { useCarStore } from "@stores";
  */
 
 export function useVehicleAnimation(car, carRef) {
-    const removeCar = useCarStore((state) => state.removeCar);
-    const setCarPosition = useCarStore((state) => state.setCarPosition)
+    const removeTrafficEntity = useTrafficStore((state) => state.removeTrafficEntity);
+    const setTrafficEntityPosition = useTrafficStore((state) => state.setTrafficEntityPosition)
 
     // track the last position sent to store (to update only when position actually changed)
     const previousPositionRef = useRef({y: null, z: null});
@@ -37,7 +37,7 @@ export function useVehicleAnimation(car, carRef) {
             const prev = previousPositionRef.current;
             if (prev.y !== y || (typeof z === "number" && prev.z !== z)) {
                 
-                setCarPosition(car.id, y, z);
+                setTrafficEntityPosition(car.id, y, z);
                 previousPositionRef.current = {y, z};
             }
         }
@@ -62,33 +62,43 @@ export function useVehicleAnimation(car, carRef) {
             carRef.current.position.copy(position);
             carRef.current.lookAt(lookAtTarget);
         } else {
-            // NOTE: The car velocity in -y direction does vary from device to device due to performance differences
-            // NOTE: on windows its 0.05
-            // NOTE: on Mac/Linux its 0.1
-            if (car.spawn.direction === "left") {
+            moveTrafficEntityStraight(car, carRef);
 
-                // TODO:  THIS IF CLAUSE IS ONLY RELEVANT FOR USING GUI
-                if (car.spawn.spawnForDevPurposes) { // TODO: REMOVE THIS IF STATEMENT AFTER FINISHING WORKING WITH GUI
-                    // This is the car that spawns at the police officer (or at least it should because again it is not working)
-                    carRef.current.position.z = 0; // car does not drive 
-                } else {
-                    carRef.current.position.x -= VEHICLE_VELOCITY; // car driving on road straight
-                }
-                
-                
-                // Handle offscreen car removal
-                if (curX > DESPAWN_POSITION_X) {
-                    removeCar(car.id);
-                }
-            } else {
-                carRef.current.position.x += VEHICLE_VELOCITY; // car driving on road straight in -y direction
-                // Handle offscreen car removal
-                if (curX <  -DESPAWN_POSITION_X) {
-                    removeCar(car.id);
-                }
+            if (hasTrafficEntityLeftWorld(car, curX)) {
+                removeTrafficEntity(car.id);
             }
 
         }
 
     });
+}
+
+// ##### Straight Traffic Movement
+// -----> Bewegt eine TrafficEntity auf ihrer Spur geradeaus.
+// ---> Dev-Spawns an der Kontrollstelle bleiben stehen, damit sie direkt inspiziert werden können.
+function moveTrafficEntityStraight(trafficEntity, carRef) {
+    if (trafficEntity.spawn.spawnForDevPurposes) {
+        carRef.current.position.z = 0;
+        return;
+    }
+
+    if (trafficEntity.spawn.direction === "left") {
+        carRef.current.position.x -= VEHICLE_VELOCITY;
+        return;
+    }
+
+    carRef.current.position.x += VEHICLE_VELOCITY;
+}
+
+// ##### Traffic Despawn Check
+// -----> Entfernt Fahrzeuge, sobald sie die sichtbare Welt verlassen haben.
+// ---> Die Richtung entscheidet, auf welcher Seite der Weltgrenze despawned wird.
+function hasTrafficEntityLeftWorld(trafficEntity, curX) {
+    if (trafficEntity.spawn.spawnForDevPurposes) return false;
+
+    if (trafficEntity.spawn.direction === "left") {
+        return curX < -DESPAWN_POSITION_X;
+    }
+
+    return curX > DESPAWN_POSITION_X;
 }

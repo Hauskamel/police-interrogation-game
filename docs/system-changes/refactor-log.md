@@ -1104,7 +1104,7 @@ Fünf strukturelle Verbesserungen in einer Etappe:
 2. App-Shell nach `src/app/` (ohne `Notebook`)
 3. Devtools-Bereich für Debug-UI
 4. Styles nach `src/styles/`, `carBrands.json` nach Vehicle-Daten
-5. Domain-Konvention in `docs/domain-convention.md`
+5. Domain-Konvention in `docs/system-changes/domain-convention.md`
 
 Vorher:
 
@@ -1126,7 +1126,7 @@ src/devtools/useLilGuiSetup.jsx
 src/devtools/panels/VehicleDebugPanel.jsx
 src/styles/
 src/game/vehicles/data/carBrands.json
-docs/domain-convention.md
+docs/system-changes/domain-convention.md
 ```
 
 ### Import-Aliase
@@ -1149,7 +1149,7 @@ Cross-Domain-Imports wurden auf Aliase umgestellt. Imports innerhalb derselben D
 
 `App.jsx` und `Startmenu.jsx` liegen jetzt unter `src/app/`. `main.jsx` importiert `@app/App.jsx`.
 
-`Notebook.jsx` bleibt bewusst in `src/components/` — die fachliche Zugehörigkeit ist noch offen. Ein Kommentar in der Datei und `docs/domain-convention.md` dokumentieren die Optionen.
+`Notebook.jsx` bleibt bewusst in `src/components/` — die fachliche Zugehörigkeit ist noch offen. Ein Kommentar in der Datei und `docs/system-changes/domain-convention.md` dokumentieren die Optionen.
 
 ### Devtools
 
@@ -1178,7 +1178,7 @@ Der alte Ordner `assets/css/` wurde geleert.
 
 ### Domain-Konvention
 
-`docs/domain-convention.md` beschreibt die Standard-Domain-Struktur, bestehende Domains, Aliase und Entscheidungshilfen für neue Features.
+`docs/system-changes/domain-convention.md` beschreibt die Standard-Domain-Struktur, bestehende Domains, Aliase und Entscheidungshilfen für neue Features.
 
 ### Nebenbei bereinigt
 
@@ -1266,7 +1266,7 @@ src/game/police/components/Notebook.jsx
 - `src/components` wurde vollständig entfernt.
 - Der unbenutzte Alias `@components` wurde aus `vite.config.js` und `jsconfig.json` gelöscht.
 - `src/game/index.js` exportiert jetzt `panels` statt `controls`.
-- `docs/domain-convention.md` wurde an die neue Struktur angepasst.
+- `docs/system-changes/domain-convention.md` wurde an die neue Struktur angepasst.
 
 ### Aktuelle Zielstruktur
 

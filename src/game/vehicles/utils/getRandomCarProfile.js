@@ -14,21 +14,21 @@ export default function getRandomCarProfile () {
     const models = Object.keys(carProfiles[brand]);
     const model = models[Math.floor(Math.random() * models.length)];
 
-    const carProfile = carProfiles[brand][model];
+    const vehicleBaseProfile = carProfiles[brand][model];
 
     // PS (horse power)
-    const ps = carProfile.ps;
+    const ps = vehicleBaseProfile.ps;
 
     // weight
-    const weight = carProfile.weight;
+    const weight = vehicleBaseProfile.weight;
 
     // Baujahr
-    const yearOfConstruction = carProfile.yearOfConstructionRange[Math.floor(Math.random())];
+    const yearOfConstruction = vehicleBaseProfile.yearOfConstructionRange[Math.floor(Math.random())];
 
     // GLB Model Filename
-    const glb = carProfile.glb;
+    const glb = vehicleBaseProfile.glb;
 
-    const realProfile = {
+    const vehicleData = {
         brand,
         model,
         ps,
@@ -37,5 +37,5 @@ export default function getRandomCarProfile () {
         glb
     }
 
-    return  realProfile
+    return vehicleData
 }

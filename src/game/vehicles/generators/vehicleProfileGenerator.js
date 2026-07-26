@@ -4,13 +4,12 @@ import { getRandomCarProfile } from "../utils";
 
 import { vehicleMasterData } from "./vehicleMasterDataGenerator.js";
 
-
-
-// -----> generator for the cars profile.
-//        This function returns the real car profile and if random chances are < 50% also the fake profile
+// ##### Vehicle Profile Generator
+// -----> Erstellt die echten und aktuell vorgezeigten Fahrzeugdaten.
+// ---> real ist die Spielwahrheit, presented ist das, was Fahrzeugdokumente anzeigen.
 export const generateVehicleProfile = () => {
     // car brand
-    const carProfile = getRandomCarProfile();
+    const vehicleData = getRandomCarProfile();
 
     // car master data
     const carMasterData = vehicleMasterData()
@@ -18,13 +17,13 @@ export const generateVehicleProfile = () => {
     // car documents data
     const carDocumentData = generateCarDocumentData();
 
-    const realProfile = {
-        brand: carProfile.brand,
-        model: carProfile.model,
-        ps: carProfile.ps,
-        weight: carProfile.weight,
-        yearOfConstruction: carProfile.yearOfConstruction,
-        glb: carProfile.glb,
+    const real = {
+        brand: vehicleData.brand,
+        model: vehicleData.model,
+        ps: vehicleData.ps,
+        weight: vehicleData.weight,
+        yearOfConstruction: vehicleData.yearOfConstruction,
+        glb: vehicleData.glb,
 
         carDocumentsData: {
             formattedIssueDate: carDocumentData.formattedIssueDate,
@@ -33,5 +32,19 @@ export const generateVehicleProfile = () => {
         }
     }
     
-    return { realProfile }
+    return createVehicleProfile(real);
+}
+
+// ##### Vehicle Profile Factory
+// -----> Bündelt echte Fahrzeugdaten und aktuell vorgezeigte Fahrzeugdaten.
+// TODO: presented ist aktuell immer identisch mit real, weil noch keine gefälschten Fahrzeugdokumente generiert werden.
+// ---> Später werden hier manipulierte Kennzeichen, Halterdaten oder Fahrzeugpapiere eingehängt.
+function createVehicleProfile(real) {
+    return {
+        real,
+        presented: {
+            ...real,
+            carDocumentsData: { ...real.carDocumentsData }
+        }
+    };
 }

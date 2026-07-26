@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 
 export function DatabaseListElement ({setHoveredElement, setClickedElement, clickedElement, hoveredElem, entityProfile}) {
-    const image = entityProfile.driverProfile.realProfile.driverImage;
-    const firstName = entityProfile.driverProfile.realProfile.firstName;
-    const lastName = entityProfile.driverProfile.realProfile.lastName;
+    const image = entityProfile.driverProfile.real.npcImage;
+    const firstName = entityProfile.driverProfile.real.firstName;
+    const lastName = entityProfile.driverProfile.real.lastName;
     
     const crimeTitle = entityProfile.driverProfile.crimeData.crimeCase.name;
     const crimeDescription = entityProfile.driverProfile.crimeData.crimeCase.description;
