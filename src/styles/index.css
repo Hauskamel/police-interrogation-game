@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+    --color-laptop: #324C65;
+    --color-laptop-menu-list-element-selected: #333858;
+    --color-laptop-menu-list-element-unselected: #6C749F;
+    --color-laptop-database-list-element: #4F5997;
+
+    --animate-fade-in: fade-in 150ms ease-in-out;
+    --animate-fade-out: fade-out 150ms ease-in-out;
+
+    @keyframes fade-in {
+        0% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fade-out {
+        0% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    }
+}
+
+:root {
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #474421;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+
+  /* NOTE: VORÜBERGEHENED */
+  button {
+    color: white
+  }
+}
