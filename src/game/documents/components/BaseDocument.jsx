@@ -4,6 +4,8 @@ import { useDraggable } from "../hooks";
 
 import { useGuiVisibilityStatesStore } from "@stores";
 
+const MotionDiv = motion.div;
+
 
 /**
  * ##### Base Document
@@ -24,7 +26,7 @@ export default function BaseDocument({ children }) {
             <AnimatePresence>   
                 {React.Children.map(children, (child) =>
                         child ? (
-                            <motion.div
+                            <MotionDiv
                                 key={child.key} // ensure key is passed
                                 initial={{ opacity: 0, scale: 0.8, y: 50 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -41,7 +43,7 @@ export default function BaseDocument({ children }) {
                                 }}
                             >
                                 {child}
-                            </motion.div>
+                            </MotionDiv>
                         ) : null
                     )};
                 

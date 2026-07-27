@@ -1,9 +1,8 @@
-import { use, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 
 export function Searchbar ({setInput}) {
     const [value, setValue] = useState("");
-    const [finalSearchInput, setFinalSearchInput] = useState(null);
 
 
     const handleChange = useCallback((e) => {

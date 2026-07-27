@@ -1,6 +1,6 @@
 import { BaseHeadlineWithText } from "./base";
 
-export function ProofOfInsurance ({car, driver}) {
+export function ProofOfInsurance ({driver}) {
     const driverProfile = driver?.presented;
 
     return (

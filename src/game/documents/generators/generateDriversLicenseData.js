@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 
 import { generateIssueAndExpiryDate } from "./generateIssueAndExpiryDate";
 
-export function generateDriversLicenseData (birthdate, birthYear) {
+export function generateDriversLicenseData (birthdate) {
     // license number of npcs drivers license
     const licenseNumber = `${faker.string.alpha({ length: 3, casing: 'upper' })}-${faker.number.int({ min: 10000000, max: 99999999 })}`;
 

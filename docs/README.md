@@ -22,6 +22,7 @@ Diese Dokumente erklären, **was technisch geändert wurde**.
 
 | Dokument | Inhalt |
 |---|---|
+| [Bugreport vom 27.07.2026](./system-changes/bug-report-2026-07-27.md) | Behobene Fehler, offene funktionale Lücken und Validierung vom 27.07.2026 |
 | [NPC Manipulated Identity Branch Changes](./system-changes/npc-manipulated-identity-branch-changes.md) | Was auf `feature/npc-manipulated-identity` hinzugefügt, geändert und entfernt wurde |
 | [Domain-Konvention](./system-changes/domain-convention.md) | Projektstruktur und Domain-Regeln |
 | [Refactor Log](./system-changes/refactor-log.md) | Chronologische Refactor-Historie |

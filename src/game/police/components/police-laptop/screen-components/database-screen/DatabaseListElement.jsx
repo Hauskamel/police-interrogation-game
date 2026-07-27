@@ -11,7 +11,7 @@ export function DatabaseListElement ({setHoveredElement, setClickedElement, clic
     const handleClick = useCallback((e) => {
         e.stopPropagation();
         setClickedElement(e)
-    });
+    }, [setClickedElement]);
 
     const handleMouseEnter = useCallback((e) => {
         e.stopPropagation();

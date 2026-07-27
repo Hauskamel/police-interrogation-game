@@ -6,7 +6,7 @@ export function MenuListElement ({setClickedElement, clickedElem, title}) {
     const handleClick = useCallback ((e) => {
         e.stopPropagation();
         setClickedElement(e)
-    })
+    }, [setClickedElement])
 
 
     return (

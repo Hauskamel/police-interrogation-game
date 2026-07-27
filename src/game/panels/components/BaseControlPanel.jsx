@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useClosePanel } from "../hooks";
+import { closePanel } from "../hooks";
 
 import { useGuiVisibilityStatesStore } from "@stores";
 
@@ -22,7 +22,7 @@ export const BaseControlPanel = ({
     const controlPanelsAreVisible = useGuiVisibilityStatesStore(state => state.controlPanelsVisible);
 
     const handleClose = () => {
-        useClosePanel(setPanelVisibility, onClose);
+        closePanel(setPanelVisibility, onClose);
     };
 
     useEffect(() => {

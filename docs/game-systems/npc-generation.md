@@ -317,6 +317,26 @@ driverProfile.presented.address = "Bahnhofstraße 4"
 
 Dokumente lesen aus `presented`. Debug- und interne Vergleichssysteme dürfen zusätzlich auf `real` zugreifen.
 
+### Sichtbares Spielerwissen
+
+Das Kontrollpanel zeigt Fahrername und Fahrerbild nicht automatisch beim Anhalten.
+Die Informationen werden erst sichtbar, nachdem der Spieler ein Dokument mit der
+Fahreridentität geöffnet hat.
+
+Aktuell decken folgende Dokumente die Fahreridentität auf:
+
+```text
+Führerschein
+Versicherungsnachweis
+```
+
+Der Fahrzeugschein deckt den Fahrer nicht pauschal auf. Er zeigt den eingetragenen
+Fahrzeughalter, der eine andere Person sein kann.
+
+Einmal gelesene Fahrerinformationen bleiben während derselben Kontrolle bekannt.
+Die Freischaltung wird mit TrafficEntity-ID und NPC-ID gespeichert, damit sie nach
+einem Austausch des NPCs im Devtool nicht auf eine andere Person übertragen wird.
+
 ## InspectionProfile
 
 Das InspectionProfile beschreibt den Prüfaufwand, nicht körperliche Gefahr:

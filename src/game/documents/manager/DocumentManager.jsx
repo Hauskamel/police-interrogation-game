@@ -9,12 +9,21 @@ import {
 } from "../components";
 import { useTrafficStore } from "@stores";
 
+// ##### Driver Identity Documents
+// -----> Nur Dokumente mit Daten des Fahrers duerfen dessen Identitaet im Kontrollpanel aufdecken.
+// ---> Der Fahrzeugschein zaehlt nicht pauschal, weil dort der Halter und nicht zwingend der Fahrer steht.
+const DRIVER_IDENTITY_DOCUMENTS = new Set([
+    "driversLicense",
+    "proofOfInsurance"
+]);
+
 /**
  * ##### Document Manager
  * -----> Verwaltet, welche Fahrzeug- und Fahrerdokumente aktuell geöffnet sind.
  */
 export function DocumentManager() {
     const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity)
+    const revealDriverIdentity = useTrafficStore(state => state.revealDriverIdentity);
 
     const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
     const [openDocs, setOpenDocs] = useState(() =>
@@ -23,6 +32,21 @@ export function DocumentManager() {
     
     
     const toggleDoc = (doc) => {
+        const documentWillOpen = !openDocs[doc];
+
+        // Bereits gelesene Identitaetsdaten bleiben fuer die laufende Kontrolle bekannt.
+        if (
+            documentWillOpen
+            && DRIVER_IDENTITY_DOCUMENTS.has(doc)
+            && selectedTrafficEntity?.id
+            && selectedTrafficEntity?.npcId
+        ) {
+            revealDriverIdentity(
+                selectedTrafficEntity.id,
+                selectedTrafficEntity.npcId
+            );
+        }
+
         setOpenDocs(prev => ({
             ...prev,
             [doc]: !prev[doc]

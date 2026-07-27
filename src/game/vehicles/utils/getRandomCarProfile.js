@@ -1,8 +1,5 @@
 import { carProfiles } from "../data";
 
-import { faker } from "@faker-js/faker";
-
-
 // ---> Handling car brands
 const brands = Object.keys(carProfiles)
 
@@ -23,7 +20,9 @@ export default function getRandomCarProfile () {
     const weight = vehicleBaseProfile.weight;
 
     // Baujahr
-    const yearOfConstruction = vehicleBaseProfile.yearOfConstructionRange[Math.floor(Math.random())];
+    const yearOfConstruction = vehicleBaseProfile.yearOfConstructionRange[
+        Math.floor(Math.random() * vehicleBaseProfile.yearOfConstructionRange.length)
+    ];
 
     // GLB Model Filename
     const glb = vehicleBaseProfile.glb;

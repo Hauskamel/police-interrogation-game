@@ -5,7 +5,7 @@ import { generateDriversLicenseData } from "@game/documents/generators/generateD
 // ---> Dieser Record wird über npcId mit dem NPC verknüpft.
 export function generateNpcDriversLicenseDocument(npcProfile) {
     const realIdentity = npcProfile.real;
-    const driversLicenseData = realIdentity.driversLicense ?? generateDriversLicenseData(realIdentity.birthDate, realIdentity.birthYear);
+    const driversLicenseData = realIdentity.driversLicense ?? generateDriversLicenseData(realIdentity.birthDate);
 
     return {
         type: "driversLicense",

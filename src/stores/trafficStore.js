@@ -12,6 +12,7 @@ export const useTrafficStore = create((set) => ({
 
     trafficEntities: [],
     selectedTrafficEntity: undefined,
+    revealedDriverIdentityByTrafficEntityId: {},
 
     addTrafficEntity: (trafficEntity) =>
         set((state) => ({
@@ -40,9 +41,23 @@ export const useTrafficStore = create((set) => ({
         }),
 
     removeTrafficEntity: (trafficEntityId) =>
-        set((state) => ({
-            trafficEntities: state.trafficEntities.filter((entity) => entity.id !== trafficEntityId),
-        })),
+        set((state) => {
+            const removedEntityWasSelected = state.selectedTrafficEntity?.id === trafficEntityId;
+            const {
+                [trafficEntityId]: removedIdentity,
+                ...remainingRevealedIdentities
+            } = state.revealedDriverIdentityByTrafficEntityId;
+
+            return {
+                trafficEntities: state.trafficEntities.filter((entity) => entity.id !== trafficEntityId),
+                selectedTrafficEntity: removedEntityWasSelected
+                    ? undefined
+                    : state.selectedTrafficEntity,
+                revealedDriverIdentityByTrafficEntityId: removedIdentity
+                    ? remainingRevealedIdentities
+                    : state.revealedDriverIdentityByTrafficEntityId
+            };
+        }),
 
     stopTrafficEntity: (trafficEntityId) =>
         set((state) => {
@@ -85,8 +100,29 @@ export const useTrafficStore = create((set) => ({
             selectedTrafficEntity: trafficEntity
         }),
 
-    setTrafficEntityPosition: (trafficEntityId, y, z) =>
+    // -----> Merkt sich, welche Fahreridentitaet der Spieler in dieser Kontrolle bereits gesehen hat.
+    // ---> Die npcId verhindert, dass Wissen nach einem Dev-Austausch auf eine andere Person uebertragen wird.
+    revealDriverIdentity: (trafficEntityId, npcId) =>
         set((state) => ({
-            trafficEntities: state.trafficEntities.map((entity) => entity.id === trafficEntityId ? { ...entity, position: {y: y, z: z} } : entity)
-        }))
+            revealedDriverIdentityByTrafficEntityId: {
+                ...state.revealedDriverIdentityByTrafficEntityId,
+                [trafficEntityId]: npcId
+            }
+        })),
+
+    setTrafficEntityPosition: (trafficEntityId, y, z) =>
+        set((state) => {
+            const position = { y, z };
+
+            return {
+                trafficEntities: state.trafficEntities.map((entity) =>
+                    entity.id === trafficEntityId
+                        ? { ...entity, position }
+                        : entity
+                ),
+                selectedTrafficEntity: state.selectedTrafficEntity?.id === trafficEntityId
+                    ? { ...state.selectedTrafficEntity, position }
+                    : state.selectedTrafficEntity
+            };
+        })
 }));

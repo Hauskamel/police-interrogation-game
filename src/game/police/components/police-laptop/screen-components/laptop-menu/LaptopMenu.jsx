@@ -10,7 +10,7 @@ export function LaptopMenu ({setActiveMenuIdx}) {
 
     useEffect(() => {
         setActiveMenuIdx(clickedIdx)
-    }, [clickedIdx, setClickedIdx])
+    }, [clickedIdx, setActiveMenuIdx])
     
 
     return (
