@@ -1,0 +1,30 @@
+import { useEffect } from "react";
+import { randInt } from "three/src/math/MathUtils.js";
+
+import { useNpcStore, useTrafficStore } from "@stores";
+import { generateTrafficEntity } from "../generators";
+
+// ##### Traffic Entity Spawner Hook
+// -----> Erzeugt in einem Intervall neue TrafficEntities und legt sie in den Traffic Store.
+// ---> Der Hook entscheidet nur wann/wo gespawned wird, nicht welche NPC-Daten entstehen.
+export function useTrafficEntitySpawner({ direction, lane, enabled = true, minRespawnTime = 5000, maxRespawnTime = 10000 } = {}) {
+    const addTrafficEntity = useTrafficStore((state) => state.addTrafficEntity);
+    const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
+
+    useEffect(() => {
+        if (!enabled || !direction || lane === undefined) return;
+
+        const intervalId = setInterval(() => {
+            // NPC, Fahrzeug, Wahrheit und Polizeiwissen entstehen im Traffic Generator.
+            const newEntity = generateTrafficEntity({ criminalDatabase });
+
+            // Spawn-Daten gehören zur Weltposition und werden deshalb erst hier ergänzt.
+            addTrafficEntity({
+                ...newEntity,
+                spawn: { direction, lane }
+            });
+        }, randInt(minRespawnTime, maxRespawnTime));
+
+        return () => clearInterval(intervalId);
+    }, [addTrafficEntity, criminalDatabase, direction, enabled, lane, maxRespawnTime, minRespawnTime]);
+}
