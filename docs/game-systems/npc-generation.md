@@ -1,99 +1,29 @@
-# Spielsystem: NPC-Generierung
+# Spielsystem: NPCs, Polizeiwissen und Verkehrskontrollen
 
-Stand: 2026-07-26
+Stand: 2026-07-27
 
-Dieses Dokument beschreibt das Spielsystem hinter der NPC-Generierung. Es erklärt nicht primär, welche Dateien geändert wurden, sondern wie NPCs im Spiel gedacht sind und wie die einzelnen Teile zusammenspielen.
+Dieses Dokument beschreibt die fachliche Idee hinter NPCs, Fahrzeugen, Polizeidaten und Dokumentkontrollen. Technische Änderungen auf dem Branch stehen getrennt in [Branch-Änderungen](../system-changes/npc-manipulated-identity-branch-changes.md).
 
-## Ziel des Systems
+## Spielziel
 
-Das Spiel soll kein Action-Polizeimodus sein. Der Fokus liegt auf:
+Das Spiel orientiert sich an kontroll- und dokumentbasiertem Gameplay:
 
-- Dokumente prüfen
-- Widersprüche finden
-- Datenbankinformationen vergleichen
-- Straftaten aufdecken
-- gesuchte Personen erkennen
-- unbekannte Täter über Hinweise identifizieren
+- Identitäten prüfen
+- Dokumente miteinander vergleichen
+- gefälschte Angaben erkennen
+- Polizeidaten korrekt interpretieren
+- unbekannte Straftäter über Hinweise aufdecken
+- zwischen einem Datenbankeintrag und einer aktiven Fahndung unterscheiden
 
-NPCs sollen deshalb nicht einfach nur "gut" oder "kriminell" sein. Wichtiger ist die Trennung zwischen:
+Ein Polizeieintrag ist kein automatischer Festnahmegrund. Deshalb trennt das Datenmodell Wahrheit, Polizeiwissen, Fahndungsstatus und vorgezeigte Angaben.
 
-```text
-Was ist wirklich wahr?
-Was sieht der Spieler?
-Was weiß die Polizei?
-Was muss geprüft werden?
-```
-
-## Die wichtigsten Begriffe
+## Zentrale Modelle
 
 ### NPC
 
-Ein NPC ist die Person selbst.
+Ein NPC ist eine eigenständige Person mit stabiler `npcId`.
 
-Er hat:
-
-- Name
-- Geburtsdatum
-- Alter
-- Adresse
-- Aussehen
-- Führerscheindaten
-- später Beruf, Tagesablauf, Beziehungen und Wissen
-
-Ein NPC kann existieren, ohne gerade in der Welt gespawned zu sein.
-
-### Vehicle
-
-Ein Vehicle ist das Fahrzeug selbst.
-
-Es hat:
-
-- Marke
-- Modell
-- Kennzeichen
-- Registriernummer
-- Baujahr
-- Gewicht
-- GLB-Modell
-- Fahrzeugdokumentdaten
-
-Ein Fahrzeug ist nicht automatisch identisch mit der TrafficEntity. Es ist nur ein Teil davon.
-
-### TrafficEntity
-
-Eine TrafficEntity ist die konkrete aktive Situation in der Welt:
-
-```text
-Dieser NPC fährt gerade mit diesem Fahrzeug auf dieser Spur.
-```
-
-Sie verbindet:
-
-- NPC
-- Fahrzeug
-- Spawn-Daten
-- Polizeiwissen
-- Wahrheit
-- Prüfprofil
-
-Darum besitzt sie eigene IDs:
-
-| ID | Bedeutung |
-|---|---|
-| `npcId` | echte Personenidentität |
-| `vehicleId` | echtes Fahrzeug |
-| `trafficEntityId` | konkrete Begegnung/Spawn-Situation |
-
-Das ist wichtig, weil später möglich sein soll:
-
-- derselbe NPC fährt ein anderes Fahrzeug
-- ein Fahrzeug gehört jemand anderem
-- ein NPC existiert in der Datenbank, ist aber nicht gespawned
-- ein unbekannter Täter taucht zufällig im Verkehr auf
-
-## `real` und `presented`
-
-Jedes NPC- und Fahrzeugprofil besteht aus:
+Das NPC-Profil enthält:
 
 ```js
 {
@@ -102,117 +32,135 @@ Jedes NPC- und Fahrzeugprofil besteht aus:
 }
 ```
 
-### `real`
+`real` beschreibt die interne Wahrheit. `presented` beschreibt die sichtbaren Angaben auf vorgelegten Dokumenten.
 
-`real` ist die interne Wahrheit.
+Ein NPC kann in der Polizeidatenbank existieren, ohne gerade in der Spielwelt zu fahren.
 
-Das Spiel weiß diese Daten immer. Der Spieler sieht sie aber nicht automatisch.
+### Vehicle
 
-Beispiele:
+Ein Fahrzeug besitzt eine eigene `vehicleId` und ein eigenes Profil:
 
 ```js
-driverProfile.real.firstName
-driverProfile.real.birthDate
-driverProfile.real.address
-vehicleProfile.real.plateNumber
+{
+  real: {},
+  presented: {}
+}
 ```
 
-### `presented`
+Zum Fahrzeug gehören unter anderem:
 
-`presented` ist das, was der NPC vorzeigt oder was auf Dokumenten steht.
+- Hersteller und Modell
+- Kennzeichen
+- Registriernummer
+- technische Daten
+- Fahrzeugdokumentdaten
+- `registeredOwnerNpcId`
 
-Dokumente lesen immer aus `presented`, nicht aus `real`.
+Das Fahrzeug ist nicht der Fahrer und nicht der Halter. Es verweist lediglich auf den eingetragenen Halter.
 
-Aktuell gilt:
+### Fahrzeughalter
+
+Der Halter wird als eigene NPC-Identität gespeichert:
+
+```js
+vehicleOwnerProfile: {
+  real: {},
+  presented: {}
+}
+
+ownership: {
+  registeredOwnerNpcId: "npc--owner",
+  driverIsRegisteredOwner: false
+}
+```
+
+Fahrer und Halter können dieselbe Person sein:
 
 ```text
-presented ist identisch mit real
+driverProfile.real.npcId
+  === ownership.registeredOwnerNpcId
 ```
 
-Das ist Absicht. Es gibt noch keine Fake-Dokument-Generierung.
+Sie können aber auch voneinander abweichen. Dadurch werden später sinnvolle Prüfungen möglich:
 
-Später kann zum Beispiel entstehen:
+- geliehenes Fahrzeug
+- Firmenfahrzeug
+- Mietwagen
+- abweichender Halter
+- gestohlenes Fahrzeug
+- manipulierte Halterangaben
+
+Der Fahrzeugschein zeigt die Daten aus `vehicleOwnerProfile.presented`, nicht automatisch die Daten des Fahrers.
+
+### TrafficEntity
+
+Eine TrafficEntity ist eine konkrete aktive Situation in der Spielwelt:
 
 ```text
-real.address      = "Mühlenweg 12"
-presented.address = "Bahnhofstraße 4"
+Dieser NPC fährt jetzt mit diesem Fahrzeug,
+das auf diesen Halter zugelassen ist.
 ```
 
-Dann kann der Spieler diesen Widerspruch über Dokumente, Datenbank oder Gespräch entdecken.
+Sie verbindet:
 
-## Warum nicht `fakeProfile`?
+- `driverProfile`
+- `vehicleOwnerProfile`
+- `vehicleProfile`
+- `ownership`
+- `truth`
+- `police`
+- `documentState`
+- `inspectionProfile`
+- Spawn- und Bewegungszustand
 
-`fakeProfile` klingt so, als wäre das gesamte Profil gefälscht.
+Wichtige IDs:
 
-Für dieses Spiel ist das zu grob.
+| ID | Bedeutung |
+|---|---|
+| `npcId` | Identität des Fahrers |
+| `vehicleId` | Identität des Fahrzeugs |
+| `registeredOwnerNpcId` | Identität des Fahrzeughalters |
+| `trafficEntityId` | konkrete Spawn- und Kontrollsituation |
 
-Ein NPC kann komplett echt sein, aber nur ein einzelnes Dokument kann falsch sein:
+### ID-Format
 
-- falsche Adresse im Führerschein
-- falsches Kennzeichen im Fahrzeugschein
-- abgelaufene Versicherung
-- Fahrzeugpapiere gehören zu einem anderen Auto
-- Bild stimmt, aber Geburtsdatum nicht
-
-Darum ist `presented` besser. Es beschreibt einfach:
+Alle zur Laufzeit erzeugten Spiel-IDs verwenden dasselbe kompakte Format:
 
 ```text
-Das sind die aktuell vorgezeigten Daten.
+npc--5e77eb571e
+vehicle--b157c42573
+traffic--0052f9a81c
+crime--45aa70d261
+wanted--9e31dc4730
+doc--7b8c14a2ef
 ```
 
-Ob diese Daten echt oder falsch sind, entscheidet später ein eigenes Dokument-/Fälschungssystem.
+Der Präfix beschreibt die Entity-Art. Der zufällige Teil besteht aus zehn Hex-Zeichen und liefert rund 40 Bit. Bereits innerhalb der laufenden Session vergebene IDs werden vom Generator nicht erneut akzeptiert.
 
-## NPC-Kategorien im aktuellen System
+Die IDs sind keine fortlaufenden Nummern. Dadurch lassen sich Records unabhängig erzeugen, ohne eine zentrale Zählervariable speichern zu müssen.
 
-Aktuell gibt es drei aktive Traffic-Typen.
+## Traffic-Typen
+
+Das System unterscheidet vier aktive Fälle.
+
+| Typ | Interne Wahrheit | Polizeiwissen | Datenbankquelle |
+|---|---|---|---|
+| `civilian` | Zivilist | normalerweise unbekannt | neu generiert |
+| `unknownOffender` | Straftäter | Identität nicht bekannt | neu generiert |
+| `knownOffender` | Straftäter | bekannt, nicht gesucht | Criminal Database |
+| `wantedOffender` | Straftäter | aktiv gesucht | Criminal Database plus Fahndungsrecord |
 
 ### `civilian`
-
-Ein normaler Verkehrsteilnehmer.
-
-Eigenschaften:
 
 ```js
 truth.role = "civilian"
 police.status = "unknown"
-crimeRecordIds = []
+police.knownToPolice = false
 ```
 
-Ein Zivilist ist nicht automatisch langweilig. Er kann trotzdem kleine Prüfauffälligkeiten haben:
-
-- abgelaufenes Dokument
-- alte Adresse
-- unklare Halterdaten
-- Routinekontrolle
-
-Diese Auffälligkeiten werden über das `inspectionProfile` vorbereitet.
-
-### `knownWanted`
-
-Ein bekannter gesuchter NPC.
-
-Eigenschaften:
-
-```js
-truth.role = "criminal"
-police.status = "wanted"
-police.knownToPolice = true
-```
-
-Dieser NPC kommt aus der Criminal Database. Er wird also nicht in dem Moment komplett neu erfunden, sondern aus bestehenden Daten gezogen.
-
-Spielerisch bedeutet das:
-
-- Identität prüfen
-- Datenbankabgleich machen
-- bekannte Straftaten erkennen
-- Dokumente gegen Polizeidaten vergleichen
+Ein Zivilist kann trotzdem Dokumentprobleme oder kleinere Unstimmigkeiten besitzen. Eine Auffälligkeit ist nicht automatisch eine Straftat.
 
 ### `unknownOffender`
-
-Ein unbekannter Täter.
-
-Eigenschaften:
 
 ```js
 truth.role = "criminal"
@@ -220,272 +168,288 @@ police.status = "unknown"
 police.knownToPolice = false
 ```
 
-Das Spiel weiß intern, dass der NPC Straftaten begangen hat. Die Polizei weiß es aber noch nicht.
+Das Spiel kennt intern die Straftaten. Der Spieler und die Polizei kennen die Täteridentität noch nicht. Dieser Unterschied ermöglicht Ermittlungen und spätere Identifizierung.
 
-Das ist ein wichtiger Typ für Ermittlungen:
-
-- Der Spieler erkennt vielleicht Widersprüche.
-- Später können Beweise oder Hinweise diesen NPC belasten.
-- Aus einem unbekannten Täter kann ein Verdächtiger werden.
-- Aus einem Verdächtigen kann ein gesuchter Täter werden.
-
-## Wahrheit vs. Polizeiwissen
-
-Das System trennt bewusst:
+### `knownOffender`
 
 ```js
-truth
-police
+truth.role = "criminal"
+police.status = "known"
+police.knownToPolice = true
+police.databaseNpcId = "npc--123"
+police.wantedRecordId = null
 ```
 
-### `truth`
+Die Person besitzt einen Polizeieintrag, wird aber nicht aktiv gesucht. Ein Treffer darf daher nicht wie ein Haftbefehl behandelt werden.
 
-`truth` beschreibt, was wirklich stimmt:
+### `wantedOffender`
+
+```js
+truth.role = "criminal"
+police.status = "wanted"
+police.knownToPolice = true
+police.databaseNpcId = "npc--123"
+police.wantedRecordId = "wanted--456"
+```
+
+Die Person besitzt zusätzlich einen aktiven Fahndungsrecord. Nur dieser eigene Record begründet den Status `wanted`.
+
+## Criminal Database
+
+Die Criminal Database ist tabellenartig aufgebaut:
+
+```js
+{
+  npcsById: {},
+  crimeRecordsById: {},
+  documentsById: {},
+  wantedRecordsById: {},
+  criminalNpcIds: [],
+  knownOffenderNpcIds: [],
+  wantedRecordIds: []
+}
+```
+
+### Bekannte Täter
+
+`knownOffenderNpcIds` enthält Datenbank-NPCs ohne aktive Fahndung.
+
+Diese NPCs können als `knownOffender` erscheinen:
+
+```text
+NPC ist polizeibekannt
+NPC besitzt Crime Records
+NPC hat keinen aktiven Wanted Record
+```
+
+### Eigenständige Fahndungsrecords
+
+Eine Fahndung ist kein Flag im NPC und keine zweite NPC-ID.
+
+Beispiel:
+
+```js
+{
+  id: "wanted--456",
+  npcId: "npc--123",
+  status: "active",
+  reasonCrimeRecordIds: ["crime--789"],
+  issuedAt: "2026-03-18",
+  priorityLevel: 2
+}
+```
+
+Vorteile:
+
+- Eine Fahndung kann widerrufen werden.
+- Eine Fahndung kann ablaufen.
+- Eine Person kann bekannt bleiben, obwohl die Fahndung beendet ist.
+- Der Grund der Fahndung kann über Crime-Record-IDs aufgelöst werden.
+- `wantedRecordId` ist nicht mehr fälschlich identisch mit `npcId`.
+
+Aktuell vorhandene Record-Status:
+
+```text
+active
+revoked
+expired
+resolved
+```
+
+Nur `active` darf einen `wantedOffender` erzeugen.
+
+## Wahrheit und Polizeiwissen
+
+`truth` und `police` erfüllen unterschiedliche Aufgaben:
 
 ```js
 truth: {
   role: "criminal",
   crimeRecordIds: ["crime--123"],
-  caseIds: [],
-  hiddenCrimeRecords: []
+  caseIds: []
+}
+
+police: {
+  status: "known",
+  knownToPolice: true,
+  wantedLevel: 0,
+  databaseNpcId: "npc--456",
+  wantedRecordId: null
 }
 ```
 
-### `police`
+`truth` beantwortet: Was ist wirklich passiert?
 
-`police` beschreibt, was Polizei/Datenbank aktuell wissen:
+`police` beantwortet: Was darf die Polizei aktuell wissen und welche Records belegen es?
+
+## `real`, `presented` und `documentState`
+
+Die drei Ebenen bleiben getrennt:
+
+```text
+real          -> interne Wahrheit
+presented     -> sichtbare oder vorgelegte Daten
+documentState -> Grund und Art einer Manipulation
+```
+
+Beispiel:
+
+```text
+driverProfile.real.address      = "Mühlenweg 12"
+driverProfile.presented.address = "Bahnhofstraße 4"
+```
+
+`documentState` beschreibt dazu:
 
 ```js
-police: {
-  status: "unknown",
-  knownToPolice: false,
-  wantedLevel: 0
+{
+  hasForgery: true,
+  npcDocuments: {
+    driversLicense: {
+      integrity: "forged",
+      forgeryType: "wrong_address",
+      affectedFields: ["address"],
+      detectableBy: ["compare_with_database", "ask_address_question"]
+    }
+  }
 }
 ```
 
-Dadurch kann eine Person intern Täter sein, ohne gesucht zu werden.
-
-Das ist zentral für ein Ermittlungs- und Kontrollspiel.
+Dokumente lesen aus `presented`. Debug- und interne Vergleichssysteme dürfen zusätzlich auf `real` zugreifen.
 
 ## InspectionProfile
 
-Jede TrafficEntity enthält ein `inspectionProfile`.
-
-Es beschreibt, worauf die Kontrolle spielerisch abzielt.
+Das InspectionProfile beschreibt den Prüfaufwand, nicht körperliche Gefahr:
 
 ```js
-inspectionProfile: {
-  complexityLevel: 1,
-  deceptionRisk: 0.05,
-  focusAreas: ["routine_documents", "expired_dates"]
+{
+  complexityLevel: 3,
+  deceptionRisk: 0.4,
+  focusAreas: [
+    "identity_check",
+    "document_consistency"
+  ]
 }
 ```
 
 ### `complexityLevel`
 
-Beschreibt, wie aufwendig die Kontrolle ungefähr ist.
+Bewertet die Anzahl und Tiefe notwendiger Prüfschritte:
 
 ```text
-1 = einfache Routinekontrolle
-2 = kleine Auffälligkeit möglich
-3 = mehrere Datenpunkte prüfen
-4 = komplexe Kontrolle mit Datenbank-/Fallbezug
+1 = Routineprüfung
+2 = einzelne zusätzliche Kontrolle
+3 = mehrere Datenabgleiche
+4 = Datenbank- oder Fahndungsbezug
+5 = komplexer Fall mit mehreren Prüfbereichen
 ```
-
-Das ist kein Gefahrenwert. Es geht um Prüfaufwand.
 
 ### `deceptionRisk`
 
-Beschreibt, wie wahrscheinlich sichtbare Unstimmigkeiten oder Täuschungen sind.
-
-Bei Zivilisten bedeutet das nicht automatisch "kriminell". Es kann auch einfach sein:
-
-- altes Dokument
-- abgelaufene Frist
-- falsche oder veraltete Adresse
-- unstimmige Fahrzeugdaten
+Beschreibt das erwartete Risiko bewusster oder relevanter Widersprüche. Es ist kein Beweis für eine Straftat.
 
 ### `focusAreas`
 
-Beschreibt, worauf der Spieler achten soll.
+Fokusbereiche können kombiniert werden. Das Devtool leitet Komplexität und Täuschungsrisiko aus der Auswahl ab.
 
 Beispiele:
 
 ```js
 ["routine_documents"]
-["routine_documents", "expired_dates"]
-["identity_check", "wanted_database"]
-["inconsistencies", "vehicle_documents", "behavior"]
+["vehicle_documents", "address_consistency"]
+["identity_check", "wanted_database", "document_consistency"]
 ```
 
-`focusAreas` sind noch keine fertige Gameplay-Mechanik. Sie sind aber ein guter Anknüpfungspunkt für spätere UI, Dialoge, Dokumentfehler und Fallakten.
+## lil-gui und Debugging
 
-## Warum haben Zivilisten `civilianInspectionProfiles`?
+Das Devtool kann gezielt folgende Fälle erzeugen:
 
-Zivilisten sollen nicht alle identisch wirken.
+- Zivilist
+- unbekannter Straftäter
+- bekannter Straftäter
+- gesuchter Straftäter
 
-Darum gibt es eine kleine Liste möglicher Routinekontrollen:
-
-```js
-[
-  {
-    complexityLevel: 1,
-    deceptionRisk: 0,
-    focusAreas: ["routine_documents"]
-  },
-  {
-    complexityLevel: 1,
-    deceptionRisk: 0.05,
-    focusAreas: ["routine_documents", "expired_dates"]
-  },
-  {
-    complexityLevel: 2,
-    deceptionRisk: 0.1,
-    focusAreas: ["routine_documents", "address_consistency"]
-  }
-]
-```
-
-Das bedeutet:
-
-- Die meisten Zivilisten sind echte Routinefälle.
-- Manche haben kleine Auffälligkeiten.
-- Nicht jede Auffälligkeit ist eine Straftat.
-
-Bei `knownWanted` und `unknownOffender` ist das `inspectionProfile` aktuell direkt im jeweiligen Generator gesetzt, weil diese Typen schon einen klareren Prüf-Fokus haben.
-
-Langfristig könnte das vereinheitlicht werden:
+Bei datenbankgestützten Typen erscheint ein zusätzliches Dropdown:
 
 ```text
-traffic/inspection/
-  getCivilianInspectionProfile.js
-  getKnownWantedInspectionProfile.js
-  getUnknownOffenderInspectionProfile.js
+Datenbank-NPC
+  -> Zufälliger passender NPC
+  -> konkrete Namen aus der Criminal Database
 ```
 
-Dann wäre die Struktur noch lesbarer.
+Die Optionen werden gefiltert:
+
+- `knownOffender` zeigt nur nicht aktiv gesuchte NPCs.
+- `wantedOffender` zeigt nur NPCs mit aktivem Wanted Record.
+- Zivilisten und unbekannte Täter benötigen keine Datenbankidentität.
+
+Beim Wechsel eines bereits angehaltenen NPCs wird eine vollständige neue Traffic-Konstellation erzeugt. Position, Stop-Zustand und TrafficEntity-ID bleiben bestehen.
+
+Zusätzlich gibt es zwei getrennte Aktionen:
+
+```text
+Auf angehaltenen NPC anwenden
+Spawn NPC an Station
+```
+
+`Spawn NPC an Station` erzeugt eine neue TrafficEntity.
+
+`Auf angehaltenen NPC anwenden` erzeugt aus allen aktuellen Controls eine neue Testkonstellation für die ausgewählte angehaltene TrafficEntity. Der Button ist deaktiviert, solange kein angehaltener NPC ausgewählt ist.
 
 ## Generierungsablauf
 
-Der normale Ablauf:
-
 ```text
-useTrafficEntitySpawner
-  -> erzeugt in einem Intervall einen neuen Spawn
-  -> ruft generateTrafficEntity
-
 generateTrafficEntity
   -> pickTrafficEntityType
+  -> passende Factory
+
+Factories:
   -> createCivilianTrafficEntity
-     oder createKnownWantedTrafficEntity
-     oder createUnknownOffenderTrafficEntity
+  -> createUnknownOffenderTrafficEntity
+  -> createKnownOffenderTrafficEntity
+  -> createWantedOffenderTrafficEntity
 
-create...TrafficEntity
-  -> erzeugt/holt NPC
-  -> erzeugt Fahrzeug
-  -> setzt truth
-  -> setzt police
-  -> setzt inspectionProfile
-  -> ruft createTrafficEntity
+Database Factory:
+  -> gültige NPC-Kandidaten ermitteln
+  -> optionale konkrete Devtool-ID prüfen
+  -> NPC-Profil aus npcsById laden
+  -> bei wanted den aktiven Wanted Record laden
 
-createTrafficEntity
-  -> vergibt trafficEntityId
-  -> vergibt vehicleId
-  -> verbindet NPC, Fahrzeug und Spielzustand
-
-TrafficStore
-  -> speichert die aktive TrafficEntity
+Traffic Factory:
+  -> Fahrer bestimmen
+  -> Fahrzeughalter bestimmen
+  -> Fahrzeug mit registeredOwnerNpcId erzeugen
+  -> documentState erzeugen
+  -> presented erzeugen
+  -> createTrafficEntity
 ```
 
-## Dokumentenfluss
+## Garantierte Beziehungen
 
-Dokumente bekommen von der ausgewählten TrafficEntity:
-
-```js
-selectedTrafficEntity.driverProfile
-selectedTrafficEntity.vehicleProfile
-```
-
-Sie lesen daraus:
-
-```js
-driverProfile.presented
-vehicleProfile.presented
-```
-
-Das ist absichtlich so.
-
-Dokumente zeigen nicht die Wahrheit. Sie zeigen, was vorgelegt wird.
-
-## Beispiel: Normaler Zivilist
-
-```js
-{
-  trafficType: "civilian",
-  driverProfile: {
-    real: { firstName: "Jonas", address: "Aachener Straße 12" },
-    presented: { firstName: "Jonas", address: "Aachener Straße 12" }
-  },
-  vehicleProfile: {
-    real: { plateNumber: "AC - AB 123" },
-    presented: { plateNumber: "AC - AB 123" }
-  },
-  truth: {
-    role: "civilian",
-    crimeRecordIds: []
-  },
-  police: {
-    status: "unknown",
-    knownToPolice: false
-  },
-  inspectionProfile: {
-    complexityLevel: 1,
-    deceptionRisk: 0,
-    focusAreas: ["routine_documents"]
-  }
-}
-```
-
-## Beispiel: Unbekannter Täter
-
-```js
-{
-  trafficType: "unknownOffender",
-  truth: {
-    role: "criminal",
-    crimeRecordIds: ["crime--abc"],
-    hiddenCrimeRecords: [{ id: "crime--abc", type: "burglary" }]
-  },
-  police: {
-    status: "unknown",
-    knownToPolice: false
-  },
-  inspectionProfile: {
-    complexityLevel: 2,
-    deceptionRisk: 0.35,
-    focusAreas: ["inconsistencies", "vehicle_documents", "behavior"]
-  }
-}
-```
-
-## Design-Hintergedanke
-
-Das System ist so gebaut, damit später folgende Gameplay-Momente möglich sind:
-
-- Der Spieler sieht Dokumente, aber nicht automatisch die Wahrheit.
-- Ein NPC kann unschuldig sein, aber trotzdem kleine Dokumentprobleme haben.
-- Ein Täter kann unbekannt sein und erst durch Hinweise auffallen.
-- Ein gesuchter NPC kann über Datenbankabgleich erkannt werden.
-- Fake-Dokumente können später nur `presented` verändern, ohne das restliche System umzubauen.
-
-Kurz gesagt:
+Für einen `knownOffender` gilt:
 
 ```text
-real = Wahrheit
-presented = sichtbare Daten
-truth = interne Rolle und echte Verbrechen
-police = Polizeiwissen
-inspectionProfile = worauf die Kontrolle spielerisch abzielt
-TrafficEntity = aktive Kontroll-/Verkehrssituation
+npcId === police.databaseNpcId
+police.wantedRecordId === null
+police.status === "known"
 ```
 
+Für einen `wantedOffender` gilt:
+
+```text
+npcId === police.databaseNpcId
+wantedRecordsById[police.wantedRecordId].npcId === npcId
+police.status === "wanted"
+```
+
+Für jedes Fahrzeug gilt:
+
+```text
+vehicleProfile.real.registeredOwnerNpcId
+  === ownership.registeredOwnerNpcId
+
+vehicleOwnerProfile.real.npcId
+  === ownership.registeredOwnerNpcId
+```
+
+Diese Beziehungen sind die Grundlage für spätere Datenbankabgleiche und dokumentbasierte Entscheidungen.

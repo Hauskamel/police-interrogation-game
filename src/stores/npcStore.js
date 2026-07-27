@@ -5,7 +5,8 @@ import { create } from "zustand";
 // ---> NPCs, Straftaten und Dokumente sind getrennt gespeichert und per ID verknüpft.
 export const useNpcStore = create((set) => ({
     criminalNpcIds: [],
-    wantedList: [],
+    knownOffenderNpcIds: [],
+    wantedRecordIds: [],
     arrestedNpcs: [],
 
     // criminalDatabase imitiert eine kleine relationale Datenbank im Frontend.
@@ -13,20 +14,18 @@ export const useNpcStore = create((set) => ({
         npcsById: {},
         crimeRecordsById: {},
         documentsById: {},
+        wantedRecordsById: {},
         criminalNpcIds: [],
-        wantedList: []
+        knownOffenderNpcIds: [],
+        wantedRecordIds: []
     },
     // -----> Schreibt die komplette fake database und hält die alten Listen parallel aktuell.
     setCriminalDatabase: (database) =>
         set({
             criminalDatabase: database,
             criminalNpcIds: database.criminalNpcIds,
-            wantedList: database.wantedList
-        }
-    ),
-    setWantedList: (array) =>
-        set({
-            wantedList: array
+            knownOffenderNpcIds: database.knownOffenderNpcIds,
+            wantedRecordIds: database.wantedRecordIds
         }
     )
 }));

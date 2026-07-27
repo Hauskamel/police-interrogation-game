@@ -7,7 +7,8 @@ import { pickWeightedItem } from "./pickWeightedItem.js";
 const defaultTrafficTypeWeights = [
     { type: TRAFFIC_ENTITY_TYPES.CIVILIAN, weight: 70 },
     { type: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER, weight: 15 },
-    { type: TRAFFIC_ENTITY_TYPES.KNOWN_WANTED, weight: 10 }
+    { type: TRAFFIC_ENTITY_TYPES.KNOWN_OFFENDER, weight: 10 },
+    { type: TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER, weight: 5 }
 ];
 
 // ##### Traffic Type Picker

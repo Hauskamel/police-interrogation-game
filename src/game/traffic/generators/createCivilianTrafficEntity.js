@@ -1,8 +1,10 @@
 import { generateNpcProfile } from "@game/npcs/generators";
 import { generateVehicleProfile } from "@game/vehicles/generators";
+import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
 import { createTrafficEntity } from "./createTrafficEntity.js";
+import { createVehicleOwnership } from "./createVehicleOwnership.js";
 
 // ##### Civilian Inspection Profiles
 // -----> Kleine Varianten für normale Kontrollen ohne bekannten Straftatbezug.
@@ -28,10 +30,30 @@ const civilianInspectionProfiles = [
 // ##### Civilian Traffic Entity
 // -----> Erstellt einen normalen Verkehrsteilnehmer ohne bekannte Straftat.
 // ---> Zivilisten können trotzdem kleine Prüfauffälligkeiten haben, z.B. abgelaufene Dokumente.
-export function createCivilianTrafficEntity() {
+export function createCivilianTrafficEntity(options = {}) {
+    const baseDriverProfile = generateNpcProfile();
+    const { vehicleOwnerProfile, ownership } = createVehicleOwnership(baseDriverProfile, options);
+    const baseVehicleProfile = generateVehicleProfile({
+        registeredOwnerNpcId: ownership.registeredOwnerNpcId
+    });
+    const inspectionProfile = pickCivilianInspectionProfile();
+    const documentState = createDocumentState({
+        trafficType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile,
+        forcedHasForgery: options.forcedHasForgery
+    });
+    const { driverProfile, vehicleProfile } = createPresentedProfiles({
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfile,
+        documentState
+    });
+
     return createTrafficEntity({
-        driverProfile: generateNpcProfile(),
-        vehicleProfile: generateVehicleProfile(),
+        driverProfile,
+        vehicleOwnerProfile,
+        vehicleProfile,
+        ownership,
         trafficType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
         truth: {
             role: "civilian",
@@ -45,8 +67,8 @@ export function createCivilianTrafficEntity() {
             databaseNpcId: null,
             wantedRecordId: null
         },
-        inspectionProfile: pickCivilianInspectionProfile(),
-        source: "trafficGenerator"
+        documentState,
+        inspectionProfile
     });
 }
 

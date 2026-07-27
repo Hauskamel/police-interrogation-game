@@ -1,23 +1,25 @@
-import { generateUUID } from "three/src/math/MathUtils.js";
+import { createEntityId } from "@game/shared";
 
 // ##### Traffic Entity Factory
 // -----> Baut die aktive Welt-Instanz aus NPC, Fahrzeug, Wahrheit und Polizeiwissen.
 // ---> Eine TrafficEntity ist nicht der NPC selbst, sondern "dieser NPC fährt gerade mit diesem Fahrzeug".
 export function createTrafficEntity({
     driverProfile,
+    vehicleOwnerProfile,
     vehicleProfile,
+    ownership,
     trafficType,
     truth,
     police,
-    inspectionProfile,
-    source
+    documentState,
+    inspectionProfile
 }) {
     // Gemeinsame ID für diese konkrete Spawn-/Kontrollsituation.
-    const trafficEntityId = `traffic--${generateUUID()}`;
+    const trafficEntityId = createEntityId("traffic");
 
     // Stabile Referenzen auf die echte Person und das konkrete Fahrzeug.
-    const npcId = driverProfile.real.npcUuid;
-    const vehicleId = `vehicle--${generateUUID()}`;
+    const npcId = driverProfile.real.npcId;
+    const vehicleId = createEntityId("vehicle");
 
     // vehicleId wird in real und presented gespiegelt, damit Wahrheit und Dokumentansicht dieselbe Fahrzeug-Referenz kennen.
     const vehicleProfileWithId = {
@@ -38,11 +40,13 @@ export function createTrafficEntity({
         vehicleId,
         trafficType,
         driverProfile,
+        vehicleOwnerProfile,
         vehicleProfile: vehicleProfileWithId,
+        ownership,
         truth,
         police,
+        documentState,
         inspectionProfile,
-        source,
         stopped: false
     };
 }

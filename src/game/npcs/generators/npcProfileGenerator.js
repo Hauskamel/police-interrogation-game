@@ -7,8 +7,8 @@ import { generateDriversLicenseData } from "@game/documents/generators/generateD
 import { getNpcAgeRange } from "../utils";
 
 // ##### NPC Profile Generator
-// -----> Erstellt die echte und die vorgezeigte Identität einer Person.
-// ---> real ist die Spielwahrheit, presented ist das, was Dokumente und Kontrollen anzeigen.
+// -----> Erstellt die echte Identität und eine unveränderte presented-Basis einer Person.
+// ---> Bewusste Dokumentabweichungen werden später zentral über createPresentedProfiles angewendet.
 export function generateNpcProfile (options = {}) {
     const { minimumAge = 16 } = options; // speichert Mindestalter in eine Variable, um die while-Schleife zu steuern
     
@@ -45,9 +45,8 @@ export function generateNpcProfile (options = {}) {
 }
 
 // ##### NPC Profile Factory
-// -----> Bündelt echte Identität und aktuell vorgezeigte Identität.
-// TODO: presented ist aktuell immer identisch mit real, weil noch keine gefälschten Dokumente generiert werden.
-// ---> Später werden hier manipulierte Ausweis- oder Dokumentdaten eingehängt.
+// -----> Bündelt echte Identität und die unveränderte presented-Ausgangslage.
+// ---> Die Traffic-Generatoren können presented danach anhand des documentState gezielt verändern.
 function createNpcProfile(real) {
     return {
         real,
@@ -65,7 +64,7 @@ function createNpcProfile(real) {
 // ---> documentIds und crimeRecordIds sind Foreign-Key-Listen auf die separaten Tabellen.
 function createRealProfile (npcMasterData, physicalNpcCharacteristics, npcImage, driversLicenseData = null) {
     return {
-        npcUuid: npcMasterData.npcUuid,
+        npcId: npcMasterData.npcId,
         sex: npcMasterData.sex,
         firstName: npcMasterData.firstName,
         lastName: npcMasterData.lastName,

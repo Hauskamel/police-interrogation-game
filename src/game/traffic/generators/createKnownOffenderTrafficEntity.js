@@ -1,33 +1,34 @@
-import { generateCrimeRecordsForNpc } from "@game/crimes/generators";
 import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
-import { generateNpcProfile } from "@game/npcs/generators";
 import { generateVehicleProfile } from "@game/vehicles/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
+import { getKnownOffenderNpcIds, pickDatabaseNpcId } from "../utils";
 import { createTrafficEntity } from "./createTrafficEntity.js";
 import { createVehicleOwnership } from "./createVehicleOwnership.js";
 
-// ##### Unknown Offender Traffic Entity
-// -----> Erstellt einen NPC, der intern Straftaten begangen hat, aber der Polizei noch nicht bekannt ist.
-// ---> Genau dieser Fall ist für Ermittlungen spannend: Wahrheit und Polizeiwissen unterscheiden sich.
-export function createUnknownOffenderTrafficEntity(options = {}) {
-    const baseDriverProfile = generateNpcProfile({ minimumAge: 18 });
+// ##### Known Offender Traffic Entity
+// -----> Spawnt einen polizeibekannten Straftäter ohne aktive Fahndung.
+// ---> Die Identität stammt aus der Criminal Database, wantedRecordId bleibt bewusst null.
+export function createKnownOffenderTrafficEntity(options = {}) {
+    const { criminalDatabase } = options;
+    const candidateNpcIds = getKnownOffenderNpcIds(criminalDatabase);
+    const knownNpcId = pickDatabaseNpcId(candidateNpcIds, options.forcedDatabaseNpcId);
+    const baseDriverProfile = criminalDatabase?.npcsById?.[knownNpcId];
+
+    if (!baseDriverProfile) return null;
+
     const { vehicleOwnerProfile, ownership } = createVehicleOwnership(baseDriverProfile, options);
     const baseVehicleProfile = generateVehicleProfile({
         registeredOwnerNpcId: ownership.registeredOwnerNpcId
     });
-    const npcId = baseDriverProfile.real.npcId;
-
-    // Die Straftaten sind intern bekannt, aber noch nicht Teil des Polizeiwissens.
-    const crimeRecords = generateCrimeRecordsForNpc(npcId);
-    const crimeRecordIds = crimeRecords.map((crimeRecord) => crimeRecord.id);
+    const crimeRecordIds = baseDriverProfile.real.crimeRecordIds ?? [];
     const inspectionProfile = {
-        complexityLevel: 2,
-        deceptionRisk: 0.35,
-        focusAreas: ["inconsistencies", "vehicle_documents", "behavior"]
+        complexityLevel: Math.min(4, Math.max(2, crimeRecordIds.length)),
+        deceptionRisk: 0.4,
+        focusAreas: ["identity_check", "document_consistency"]
     };
     const documentState = createDocumentState({
-        trafficType: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER,
+        trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_OFFENDER,
         driverProfile: baseDriverProfile,
         vehicleProfile: baseVehicleProfile,
         forcedHasForgery: options.forcedHasForgery
@@ -43,18 +44,17 @@ export function createUnknownOffenderTrafficEntity(options = {}) {
         vehicleOwnerProfile,
         vehicleProfile,
         ownership,
-        trafficType: TRAFFIC_ENTITY_TYPES.UNKNOWN_OFFENDER,
+        trafficType: TRAFFIC_ENTITY_TYPES.KNOWN_OFFENDER,
         truth: {
             role: "criminal",
             crimeRecordIds,
-            caseIds: [],
-            hiddenCrimeRecords: crimeRecords
+            caseIds: []
         },
         police: {
-            status: POLICE_STATUSES.UNKNOWN,
-            knownToPolice: false,
+            status: POLICE_STATUSES.KNOWN,
+            knownToPolice: true,
             wantedLevel: 0,
-            databaseNpcId: null,
+            databaseNpcId: knownNpcId,
             wantedRecordId: null
         },
         documentState,

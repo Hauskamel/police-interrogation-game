@@ -28,6 +28,7 @@ Nicht jede Domain braucht alle Ordner. Fehlende Layer werden erst angelegt, wenn
 | `traffic` | Aktive Verkehrsteilnehmer, TrafficEntity-Generatoren, Traffic-Spawner |
 | `police` | Laptop, Funkgerät, Notebook, Polizei-Daten |
 | `panels` | Gameplay-Panels zur Fahrzeug-/Polizei-Interaktion |
+| `shared` | Kleine domainübergreifende Game-Utilities wie die Entity-ID-Erzeugung |
 
 ## Außerhalb von `game/`
 

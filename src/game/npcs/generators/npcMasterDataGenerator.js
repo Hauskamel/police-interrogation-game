@@ -1,5 +1,5 @@
 // Diese Funktion kümmert sich um alle Stammdaten eines NPCs
-import { generateUUID } from "three/src/math/MathUtils.js";
+import { createEntityId } from "@game/shared";
 import { getRandomFirstName } from "../utils";
 import { faker } from "@faker-js/faker";
 
@@ -8,8 +8,8 @@ import { getNpcAge } from "../utils";
 
 
 export function generateNpcMasterData () {
-    // uuid
-    const npcUuid = "npc--" + generateUUID();
+    // stabile, kompakte NPC-ID
+    const npcId = createEntityId("npc");
 
     // sex
     const sex = faker.person.sexType('male'); // TODO: funktioniert nicht
@@ -35,7 +35,7 @@ export function generateNpcMasterData () {
     // TODO: Geburtsort einfügen
 
     const npcMasterData = {
-        npcUuid,
+        npcId,
         sex,
         age,
         firstName,

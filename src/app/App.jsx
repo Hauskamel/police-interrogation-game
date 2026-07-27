@@ -16,7 +16,6 @@ import "@styles/App.css";
 
 
 function App() {
-    const trafficEntities = useTrafficStore((state) => state.trafficEntities);
     const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
     const setSelectedTrafficEntity = useTrafficStore(state => state.setSelectedTrafficEntity);
@@ -61,11 +60,10 @@ function App() {
                 </>
             </div>
 
+            <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
+
             {stoppedTrafficEntity && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
                 <>
-                    <VehicleDebugPanel
-                        stoppedCar={trafficEntities.find(entity => entity.stopped)}
-                    />
                     <DocumentManager />
                 </>
             )}

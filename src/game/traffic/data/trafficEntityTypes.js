@@ -3,6 +3,7 @@
 // ---> Aktuell gibt es nur normale Zivilisten, bekannte Gesuchte und unbekannte Täter.
 export const TRAFFIC_ENTITY_TYPES = {
     CIVILIAN: "civilian",
-    KNOWN_WANTED: "knownWanted",
-    UNKNOWN_OFFENDER: "unknownOffender"
+    UNKNOWN_OFFENDER: "unknownOffender",
+    KNOWN_OFFENDER: "knownOffender",
+    WANTED_OFFENDER: "wantedOffender"
 };

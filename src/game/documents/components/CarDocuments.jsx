@@ -1,7 +1,7 @@
 import { BaseHeadlineWithText } from "./base";
 
-export function CarDocuments ({ car, driver }) {
-    const driverProfile = driver?.presented;
+export function CarDocuments ({ car, owner }) {
+    const ownerProfile = owner?.presented;
     const vehicleProfile = car?.presented;
 
     return (
@@ -15,8 +15,11 @@ export function CarDocuments ({ car, driver }) {
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left mb-5">
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Vorname" data={driverProfile?.firstName} />
-                        <BaseHeadlineWithText headline="Nachname" data={driverProfile?.lastName} />
+                        <BaseHeadlineWithText headline="Halter Vorname" data={ownerProfile?.firstName} />
+                        <BaseHeadlineWithText headline="Halter Nachname" data={ownerProfile?.lastName} />
+                    </div>
+                    <div className="flex mb-3">
+                        <BaseHeadlineWithText headline="Halteradresse" data={ownerProfile?.address} />
                     </div>
                     <div className="flex mb-3">
                         <BaseHeadlineWithText headline="Kennzeichen" data={vehicleProfile?.carDocumentsData.plateNumber} />
