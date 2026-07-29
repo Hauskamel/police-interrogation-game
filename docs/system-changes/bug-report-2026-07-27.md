@@ -91,7 +91,7 @@ Die Sichtbarkeitsbedingung prüfte nur, ob irgendein Fahrzeug angehalten war. Si
 
 ### BUG-003: Ausgewähltes Fahrzeug blieb nach dem Despawn im UI
 
-**Priorität:** Mittel  
+**Priorität:** Mittel
 **Status:** Behoben
 
 #### Verhalten
