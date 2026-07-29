@@ -120,7 +120,7 @@ Wichtige IDs:
 | `npcId` | Identität des Fahrers |
 | `vehicleId` | Identität des Fahrzeugs |
 | `registeredOwnerNpcId` | Identität des Fahrzeughalters |
-| `trafficEntityId` | konkrete Spawn- und Kontrollsituation |
+| `id` der TrafficEntity | konkrete Spawn- und Kontrollsituation |
 
 ### ID-Format
 
@@ -155,7 +155,6 @@ Das System unterscheidet vier aktive Fälle.
 ```js
 truth.role = "civilian"
 police.status = "unknown"
-police.knownToPolice = false
 ```
 
 Ein Zivilist kann trotzdem Dokumentprobleme oder kleinere Unstimmigkeiten besitzen. Eine Auffälligkeit ist nicht automatisch eine Straftat.
@@ -165,7 +164,6 @@ Ein Zivilist kann trotzdem Dokumentprobleme oder kleinere Unstimmigkeiten besitz
 ```js
 truth.role = "criminal"
 police.status = "unknown"
-police.knownToPolice = false
 ```
 
 Das Spiel kennt intern die Straftaten. Der Spieler und die Polizei kennen die Täteridentität noch nicht. Dieser Unterschied ermöglicht Ermittlungen und spätere Identifizierung.
@@ -175,7 +173,6 @@ Das Spiel kennt intern die Straftaten. Der Spieler und die Polizei kennen die T�
 ```js
 truth.role = "criminal"
 police.status = "known"
-police.knownToPolice = true
 police.databaseNpcId = "npc--123"
 police.wantedRecordId = null
 ```
@@ -187,7 +184,6 @@ Die Person besitzt einen Polizeieintrag, wird aber nicht aktiv gesucht. Ein Tref
 ```js
 truth.role = "criminal"
 police.status = "wanted"
-police.knownToPolice = true
 police.databaseNpcId = "npc--123"
 police.wantedRecordId = "wanted--456"
 ```
@@ -202,13 +198,37 @@ Die Criminal Database ist tabellenartig aufgebaut:
 {
   npcsById: {},
   crimeRecordsById: {},
-  documentsById: {},
   wantedRecordsById: {},
   criminalNpcIds: [],
   knownOffenderNpcIds: [],
   wantedRecordIds: []
 }
 ```
+
+`npcsById` enthält ausschließlich kanonische NPC-Records:
+
+```js
+{
+  npcId: "npc--123",
+  firstName: "Jonas",
+  lastName: "Keller",
+  driversLicense: {
+    licenseNumber: "ABC-12345678",
+    issueDate: "2021-04-12",
+    expiryDate: "2036-04-12"
+  },
+  crimeRecordIds: ["crime--789"]
+}
+```
+
+`presented` wird nicht in der Polizei-Datenbank gespeichert. Erst eine konkrete
+TrafficEntity baut aus dem kanonischen Record ihr temporäres
+`driverProfile.real` und `driverProfile.presented`.
+
+Der Führerschein liegt aktuell ausschließlich unter `npc.driversLicense`.
+Eine zweite `documentsById`-Kopie existiert nicht. Wenn Dokumente später einen
+eigenen Lebenszyklus erhalten, muss die Migration vollständig auf ein
+eigenständiges Dokumentmodell erfolgen, statt beide Formen parallel zu halten.
 
 ### Bekannte Täter
 
@@ -258,6 +278,65 @@ resolved
 
 Nur `active` darf einen `wantedOffender` erzeugen.
 
+## Interne Weltwahrheit
+
+Nicht jede tatsächlich begangene Straftat ist der Polizei bereits bekannt.
+Deshalb existiert neben der Polizei-Datenbank eine getrennte relationale
+`worldTruthDatabase`:
+
+```js
+{
+  npcsById: {},
+  crimeRecordsById: {}
+}
+```
+
+Ein `unknownOffender` wird nicht in `criminalDatabase` eingetragen. Beim Spawn
+werden seine echte Identität und seine Straftaten stattdessen in
+`worldTruthDatabase` normalisiert gespeichert.
+
+Die TrafficEntity enthält anschließend nur Foreign Keys:
+
+```js
+truth: {
+  role: "criminal",
+  crimeRecordIds: ["crime--123"],
+  caseIds: []
+}
+```
+
+Der vollständige Crime Record ist intern auflösbar über:
+
+```js
+worldTruthDatabase.crimeRecordsById["crime--123"]
+```
+
+Umgekehrt enthält auch der interne NPC-Datensatz seine `crimeRecordIds`.
+Jeder Crime Record verweist über `npcId` wieder auf den Täter.
+
+Solange die Tat weder entdeckt noch der Polizei gemeldet wurde, besitzt sie den
+internen Status `undiscovered`. Sie kann in diesem Zustand nicht gleichzeitig
+`convicted` oder `under_investigation` sein.
+
+Dadurch gilt:
+
+- Die Spielsimulation kennt Täter und Straftat vollständig.
+- Die Polizei-Datenbank verrät die unbekannte Identität nicht.
+- Crime Records liegen nicht als eingebettete Kopie in einer TrafficEntity.
+- Ein späteres Ermittlungs- oder Fallsystem kann dieselben IDs verwenden.
+- Die Records bleiben auch nach dem Entfernen der TrafficEntity erhalten.
+
+Beim Start einer neuen Spielsitzung wird `worldTruthDatabase` geleert.
+
+## Aktuelle Generierungsgrenzen
+
+- NPCs werden derzeit bewusst ausschließlich als männlich generiert.
+- Bei `wrong_name` werden Vor- und Nachname gemeinsam manipuliert.
+- Fahrzeug-Baujahrbereiche sind inklusive Spannen; `[2012, 2022]` erlaubt jedes
+  Jahr von 2012 bis einschließlich 2022.
+- Der Traffic-Store speichert nur `selectedVehicleId`. Das ausgewählte Fahrzeug
+  beziehungsweise die ausgewählte TrafficEntity wird daraus abgeleitet.
+
 ## Wahrheit und Polizeiwissen
 
 `truth` und `police` erfüllen unterschiedliche Aufgaben:
@@ -271,8 +350,6 @@ truth: {
 
 police: {
   status: "known",
-  knownToPolice: true,
-  wantedLevel: 0,
   databaseNpcId: "npc--456",
   wantedRecordId: null
 }
@@ -281,6 +358,13 @@ police: {
 `truth` beantwortet: Was ist wirklich passiert?
 
 `police` beantwortet: Was darf die Polizei aktuell wissen und welche Records belegen es?
+
+Ob ein NPC polizeibekannt ist, wird aus `police.status` abgeleitet. Dadurch können
+`status` und ein separates Boolean-Flag nicht unterschiedliche Aussagen liefern.
+
+Die Priorität einer aktiven Fahndung liegt ausschließlich im zugehörigen
+`wantedRecord.priorityLevel`. Die TrafficEntity referenziert diesen Datensatz nur
+über `police.wantedRecordId`.
 
 ## `real`, `presented` und `documentState`
 
@@ -435,13 +519,22 @@ Database Factory:
   -> NPC-Profil aus npcsById laden
   -> bei wanted den aktiven Wanted Record laden
 
-Traffic Factory:
-  -> Fahrer bestimmen
+Jede Factory:
+  -> Fahrer oder Datenbankidentität bestimmen
+  -> truth, police und inspectionProfile festlegen
+  -> assembleTrafficEntity aufrufen
+
+assembleTrafficEntity:
   -> Fahrzeughalter bestimmen
   -> Fahrzeug mit registeredOwnerNpcId erzeugen
   -> documentState erzeugen
   -> presented erzeugen
-  -> createTrafficEntity
+  -> Traffic-, NPC- und Fahrzeugreferenzen zusammensetzen
+
+unknownOffender nach dem Assemblieren:
+  -> neue NPC- und Crime-Records in worldTruthDatabase registrieren
+  -> temporäres Record-Paket aus der TrafficEntity entfernen
+  -> nur crimeRecordIds in truth behalten
 ```
 
 ## Garantierte Beziehungen

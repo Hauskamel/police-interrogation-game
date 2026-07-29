@@ -2,7 +2,7 @@
 
 Branch: `feature/npc-manipulated-identity`
 
-Stand: 2026-07-27
+Stand: 2026-07-29
 
 Dieses Dokument beschreibt die technischen Änderungen auf dem Branch. Die spielerische Funktionsweise steht in [NPCs, Polizeiwissen und Verkehrskontrollen](../game-systems/npc-generation.md).
 
@@ -44,7 +44,6 @@ Die fertige TrafficEntity enthält:
 ```js
 {
   id,
-  trafficEntityId,
   npcId,
   vehicleId,
   trafficType,
@@ -134,7 +133,6 @@ Vorher:
 {
   npcsById,
   crimeRecordsById,
-  documentsById,
   criminalNpcIds,
   wantedList: ["npc--..."]
 }
@@ -146,7 +144,6 @@ Nachher:
 {
   npcsById,
   crimeRecordsById,
-  documentsById,
   wantedRecordsById,
   criminalNpcIds,
   knownOffenderNpcIds,
@@ -240,7 +237,6 @@ Beim Wechsel des Traffic-Typs wird eine vollständige neue fachliche Konstellati
 
 ```text
 id
-trafficEntityId
 spawn
 position
 stopped
@@ -342,15 +338,24 @@ wrong_vehicle_model
 `trafficStore` besitzt die neue atomare Aktion:
 
 ```js
-updateTrafficEntity(trafficEntityId, updater)
+updateTrafficEntity(entityId, updater)
 ```
 
 Sie aktualisiert gleichzeitig:
 
-- den Eintrag in `trafficEntities`
-- `selectedTrafficEntity`, falls dieselbe ID ausgewählt ist
+- den kanonischen Eintrag in `trafficEntities`
 
-Dadurch reagieren Debug-Panel und Dokumente sofort auf lil-gui-Änderungen.
+Der Store speichert nur noch:
+
+```text
+selectedVehicleId
+```
+
+`selectSelectedTrafficEntity` und `selectSelectedVehicle` lösen daraus reaktiv
+das aktuelle Objekt auf. Dadurch existiert keine zweite Objektkopie mehr, die
+bei Updates parallel gepflegt werden müsste.
+
+Ein zusätzliches `trafficEntityId`-Feld wird nicht mehr gespeichert.
 
 Synchronisierte Controls:
 
@@ -369,9 +374,10 @@ Auf angehaltenen NPC anwenden
 Spawn NPC an Station
 ```
 
-Der Apply-Button ist nur aktiv, wenn `selectedTrafficEntity.stopped === true`. Er verwendet den vollständigen Generatorpfad mit den aktuell eingestellten Controls und erhält anschließend Welt-ID, Position, Spawnzustand und Stop-Zustand der vorhandenen TrafficEntity.
-
-`stopTrafficEntity` und `continueTrafficEntity` aktualisieren deshalb jetzt auch `selectedTrafficEntity`. Dadurch sehen lil-gui und Debug-Panel immer denselben Stop-Zustand.
+Der Apply-Button ist nur aktiv, wenn die über `selectedVehicleId` aufgelöste
+TrafficEntity angehalten wurde. Er verwendet den vollständigen Generatorpfad
+mit den aktuell eingestellten Controls und erhält anschließend Welt-ID,
+Position, Spawnzustand und Stop-Zustand der vorhandenen TrafficEntity.
 
 Änderungen an Focus Areas leiten Complexity und Deception Risk über `inspectionProfileControls.js` neu ab.
 
@@ -445,13 +451,151 @@ createKnownOffenderTrafficEntity
 createWantedOffenderTrafficEntity
 ```
 
+## Refactor und Legacy-Bereinigung vom 29.07.2026
+
+Die drei identischen Implementierungen für gewichtete Zufallsauswahl wurden durch
+einen gemeinsamen Helper ersetzt:
+
+```text
+src/game/shared/utils/pickWeightedItem.js
+```
+
+Er wird jetzt von Traffic-, Crime- und Dokumentgeneratoren verwendet. Die
+jeweiligen Gewichtstabellen bleiben weiterhin in ihrer fachlichen Domain.
+
+Entfernt wurden ausschließlich die bestätigten ungenutzten Altbestände:
+
+```text
+src/game/npcs/data/hairColors.js
+src/game/npcs/data/eyeColors.js
+src/game/vehicles/data/carBrands.json
+src/game/police/components/police-laptop/screen-components/database-screen/
+```
+
+Der alte Laptop-Datenbank-Prototyp inklusive `DatabaseListElement`,
+`DatabaseScreen`, `Database` und `Searchbar` wurde vollständig entfernt. Der
+Laptop erhält später auf einem eigenen Branch eine neue Datenbankoberfläche.
+
+Außerdem wurden folgende doppelt gespeicherten Zustände beseitigt:
+
+- Eine TrafficEntity besitzt nur noch `id`, nicht zusätzlich dieselbe `trafficEntityId`.
+- Polizeibekanntheit wird aus `police.status` abgeleitet.
+- Fahndungspriorität liegt nur in `wantedRecord.priorityLevel`.
+- NPC-ID-Indizes werden nur in `criminalDatabase` gespeichert und nicht parallel im Store gespiegelt.
+
+Die Ausstellung eines Fahrzeugscheins beginnt nun frühestens im Baujahr des
+konkreten Fahrzeugs. Die alte feste Zeitspanne von 1950 bis 1971 wurde entfernt.
+
+## Relationale Weltwahrheit und Traffic-Orchestrierung
+
+Unbekannte Täter speicherten ihre vollständigen Straftaten zuvor eingebettet als
+`truth.hiddenCrimeRecords`. Die gleichzeitig erzeugten `crimeRecordIds` konnten
+außerhalb der TrafficEntity nicht relational aufgelöst werden.
+
+Neu ist:
+
+```text
+src/stores/worldTruthStore.js
+```
+
+Der Store besitzt getrennte Tabellen:
+
+```js
+worldTruthDatabase: {
+  npcsById: {},
+  crimeRecordsById: {}
+}
+```
+
+Beim Hinzufügen oder Ersetzen einer TrafficEntity werden temporär mitgelieferte
+World-Truth-Records in diese Tabellen übertragen. Danach wird das Record-Paket
+entfernt. In `truth` verbleiben ausschließlich `crimeRecordIds`.
+
+Der interne NPC-Datensatz enthält ebenfalls seine `crimeRecordIds`; jeder
+Crime Record besitzt umgekehrt die passende `npcId`.
+
+Diese Datenbank ist ausdrücklich nicht die Polizei-Datenbank:
+
+- `worldTruthDatabase` enthält die vollständige interne Spielwahrheit.
+- `criminalDatabase` enthält nur das Wissen, das der Polizei zugänglich ist.
+- Ein unbekannter Täter wird durch die interne Registrierung nicht automatisch
+  polizeibekannt.
+
+Die vier Traffic-Factories wiederholten zuvor dieselben Schritte für Halter,
+Fahrzeug, Dokumentzustand und presented-Profile. Diese Orchestrierung liegt nun
+zentral in:
+
+```text
+src/game/traffic/generators/assembleTrafficEntity.js
+```
+
+Die Factories bestimmen nur noch ihre fachlichen Unterschiede:
+
+```text
+Fahrerquelle
+truth
+police
+inspectionProfile
+optionale World-Truth-Records
+```
+
+`assembleTrafficEntity` übernimmt:
+
+```text
+Fahrzeughalter
+Fahrzeugprofil
+Dokumentzustand
+real/presented-Aufbau
+Traffic- und Fahrzeug-ID
+fertige TrafficEntity
+```
+
+## Benennungsbereinigung
+
+Folgende Namen wurden vollständig ersetzt:
+
+| Alt | Neu |
+|---|---|
+| `spawnRandomNpcWithVehicle` | `spawnConfiguredTrafficEntityAtStation` |
+| `vehicleMasterData` | `generateVehicleRegistrationData` |
+| `generatePhysicalNpcCharacteristicsGenerator` | `generateNpcAppearance` |
+| `npcPhotoGenerator` | `selectNpcPhoto` |
+| `createTrafficEntity` | `assembleTrafficEntity` |
+| `generateCarDocumentData` | `generateVehicleRegistrationDocument` |
+
+Der ungültige Export `export * from "./utils"` wurde aus
+`src/game/crimes/index.js` entfernt, weil in dieser Domain kein entsprechender
+Ordner existiert.
+
+## Konsistenzkorrekturen
+
+- Polizei-NPCs werden als kanonische Records ohne `presented` gespeichert.
+- Known- und Wanted-Spawns erzeugen `real` und `presented` erst für die Kontrolle.
+- Unbekannte Straftaten erhalten den internen Status `undiscovered`.
+- Devtool-Fallbacks registrieren World-Truth-Records erst nach erfolgreicher Typprüfung.
+- Die Fahrzeugauswahl speichert nur noch `selectedVehicleId`.
+- Baujahrbereiche werden als inklusive Spannen ausgewürfelt.
+- `wrong_name` manipuliert passend zu `affectedFields` Vor- und Nachname.
+- Die NPC-Generierung erzeugt aktuell ausschließlich männliche Personen.
+- Führerscheindaten liegen nur noch in `npc.driversLicense`; die doppelte
+  `documentsById`-Tabelle und `documentIds` wurden entfernt.
+- Der Traffic-Store verhindert auf Aktionsebene mehr als eine angehaltene Entity.
+- World-Truth-Records werden vor dem Traffic-Insert ausdrücklich registriert;
+  `addTrafficEntity` besitzt keinen versteckten Cross-Store-Effekt mehr.
+
 ## Wichtige neue und geänderte Dateien
 
 ```text
 src/game/crimes/data/wantedRecordStatuses.js
 src/game/crimes/generators/criminalDatabaseGenerator.js
 src/game/shared/utils/createEntityId.js
+src/game/shared/utils/pickWeightedItem.js
+src/game/npcs/generators/generateNpcAppearance.js
+src/game/npcs/generators/selectNpcPhoto.js
+src/game/vehicles/generators/generateVehicleRegistrationData.js
+src/game/documents/generators/generateVehicleRegistrationDocument.js
 src/game/traffic/data/trafficEntityTypes.js
+src/game/traffic/generators/assembleTrafficEntity.js
 src/game/traffic/generators/createKnownOffenderTrafficEntity.js
 src/game/traffic/generators/createWantedOffenderTrafficEntity.js
 src/game/traffic/generators/createVehicleOwnership.js
@@ -464,6 +608,7 @@ src/devtools/panels/VehicleDebugPanel.jsx
 src/devtools/panels/PoliceDatabaseDebugPanelContent.jsx
 src/stores/npcStore.js
 src/stores/trafficStore.js
+src/stores/worldTruthStore.js
 ```
 
 ## Validierung
@@ -493,6 +638,15 @@ ownership:
   vehicleProfile.real.registeredOwnerNpcId
     === ownership.registeredOwnerNpcId
   driverIsRegisteredOwner kann true oder false sein
+
+police database:
+  npcsById enthält keine real/presented-Wrapper
+
+unknown offender:
+  alle versteckten Crime Records besitzen status === "undiscovered"
+
+selection:
+  selectedVehicleId wird über Selektoren zum aktuellen Objekt aufgelöst
 ```
 
 Bekannte Build-Warnungen:

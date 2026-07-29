@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { useTrafficStore } from "@stores";
+import { isNpcKnownToPolice } from "@game/traffic";
+import {
+    selectSelectedTrafficEntity,
+    useTrafficStore,
+    useWorldTruthStore
+} from "@stores";
 
 import { PoliceDatabaseDebugPanelContent } from "./PoliceDatabaseDebugPanelContent.jsx";
 
@@ -37,7 +42,7 @@ const debugTabs = [
 export const VehicleDebugPanel = ({ stoppedCar }) => {
     const [activePanel, setActivePanel] = useState(null);
     const [activeTab, setActiveTab] = useState(DEBUG_TABS.OVERVIEW);
-    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const canOpenProfile = Boolean(
         stoppedCar
         && stoppedCar.id === selectedTrafficEntity?.id
@@ -168,17 +173,25 @@ function DebugHeader({ selectedTrafficEntity }) {
 // -----> Zeigt kompakte Kontrollinformationen zur aktuellen TrafficEntity.
 // ---> Dieser Reiter beantwortet schnell: Wer ist gespawned und wie wird er polizeilich bewertet?
 function OverviewTab({ selectedTrafficEntity }) {
+    const worldTruthCrimeRecordsById = useWorldTruthStore(
+        (state) => state.worldTruthDatabase.crimeRecordsById
+    );
     const realDriver = selectedTrafficEntity.driverProfile?.real;
     const presentedDriver = selectedTrafficEntity.driverProfile?.presented;
     const realOwner = selectedTrafficEntity.vehicleOwnerProfile?.real;
     const presentedOwner = selectedTrafficEntity.vehicleOwnerProfile?.presented;
     const realVehicle = selectedTrafficEntity.vehicleProfile?.real;
     const presentedVehicle = selectedTrafficEntity.vehicleProfile?.presented;
+    const resolvedWorldTruthCrimes = (
+        selectedTrafficEntity.truth?.crimeRecordIds ?? []
+    )
+        .map((crimeRecordId) => worldTruthCrimeRecordsById[crimeRecordId])
+        .filter(Boolean);
 
     return (
         <>
             <DebugSection title="TrafficEntity">
-                <DebugRow label="trafficEntityId" value={selectedTrafficEntity.trafficEntityId ?? selectedTrafficEntity.id} />
+                <DebugRow label="id" value={selectedTrafficEntity.id} />
                 <DebugRow label="npcId" value={selectedTrafficEntity.npcId} />
                 <DebugRow label="vehicleId" value={selectedTrafficEntity.vehicleId} />
                 <DebugRow label="trafficType" value={selectedTrafficEntity.trafficType} />
@@ -228,13 +241,15 @@ function OverviewTab({ selectedTrafficEntity }) {
                 <DebugRow label="role" value={selectedTrafficEntity.truth?.role} />
                 <DebugRow label="crimeRecordIds" value={selectedTrafficEntity.truth?.crimeRecordIds} />
                 <DebugRow label="caseIds" value={selectedTrafficEntity.truth?.caseIds} />
-                <DebugRow label="hiddenCrimeCount" value={selectedTrafficEntity.truth?.hiddenCrimeRecords?.length ?? 0} />
+                <DebugRow label="resolvedWorldTruthCrimes" value={resolvedWorldTruthCrimes.length} />
             </DebugSection>
 
             <DebugSection title="Polizei">
                 <DebugRow label="status" value={selectedTrafficEntity.police?.status} />
-                <DebugRow label="knownToPolice" value={selectedTrafficEntity.police?.knownToPolice} />
-                <DebugRow label="wantedLevel" value={selectedTrafficEntity.police?.wantedLevel} />
+                <DebugRow
+                    label="knownToPolice (derived)"
+                    value={isNpcKnownToPolice(selectedTrafficEntity.police?.status)}
+                />
                 <DebugRow label="databaseNpcId" value={selectedTrafficEntity.police?.databaseNpcId} />
                 <DebugRow label="wantedRecordId" value={selectedTrafficEntity.police?.wantedRecordId} />
             </DebugSection>
@@ -290,7 +305,6 @@ function DriversLicenseRows({ profile }) {
             <DebugRow label="licenseNumber" value={profile?.driversLicense?.licenseNumber} />
             <DebugRow label="issueDate" value={profile?.driversLicense?.issueDate} />
             <DebugRow label="expiryDate" value={profile?.driversLicense?.expiryDate} />
-            <DebugRow label="documentIds" value={profile?.documentIds} />
         </>
     );
 }
@@ -458,7 +472,7 @@ function getProfileDifferences(real, presented, path = "") {
 
 // ##### Comparable Object Check
 // -----> Prüft, ob ein Wert als verschachteltes Objekt weiter durchsucht werden soll.
-// ---> Arrays werden nicht rekursiv zerlegt, damit documentIds kompakt bleiben.
+// ---> Arrays werden nicht rekursiv zerlegt, damit ID-Listen kompakt bleiben.
 function isComparableObject(value) {
     return Boolean(value)
         && typeof value === "object"

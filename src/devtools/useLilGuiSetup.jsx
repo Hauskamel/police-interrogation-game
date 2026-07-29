@@ -7,10 +7,16 @@ import {
     generateTrafficEntity,
     getActiveWantedRecords,
     getKnownOffenderNpcIds,
+    isNpcKnownToPolice,
     POLICE_STATUSES,
     TRAFFIC_ENTITY_TYPES
 } from "@game/traffic";
-import { useNpcStore, useTrafficStore } from "@stores";
+import {
+    registerTrafficEntityWorldTruth,
+    selectSelectedTrafficEntity,
+    useNpcStore,
+    useTrafficStore
+} from "@stores";
 
 import {
     deriveInspectionProfile,
@@ -45,9 +51,10 @@ export const useLilGuiSetup = () => {
     const focusSelectionRef = useRef(createFocusSelection(devSpawnDefaults.focusAreas));
 
     const addTrafficEntity = useTrafficStore(state => state.addTrafficEntity);
-    const setSelectedTrafficEntity = useTrafficStore(state => state.setSelectedTrafficEntity);
+    const setSelectedVehicleId = useTrafficStore(state => state.setSelectedVehicleId);
+    const stopTrafficEntity = useTrafficStore(state => state.stopTrafficEntity);
     const updateTrafficEntity = useTrafficStore(state => state.updateTrafficEntity);
-    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const criminalDatabase = useNpcStore(state => state.criminalDatabase);
 
     if (!guiRef.current) {
@@ -61,7 +68,14 @@ export const useLilGuiSetup = () => {
         selectedTrafficEntityRef.current = selectedTrafficEntity;
     }, [selectedTrafficEntity]);
 
-    const spawnRandomNpcWithVehicle = useCallback(() => {
+    const spawnConfiguredTrafficEntityAtStation = useCallback(() => {
+        const trafficState = useTrafficStore.getState();
+
+        // An der Kontrollstation darf zu jedem Zeitpunkt nur ein Fahrzeug stehen.
+        if (trafficState.trafficEntities.some((entity) => entity.stopped)) {
+            return;
+        }
+
         const devOptions = devSpawnOptionsRef.current;
         let newEntity = generateTrafficEntity({
             criminalDatabase,
@@ -84,16 +98,22 @@ export const useLilGuiSetup = () => {
             }
         };
 
-        addTrafficEntity(newEntity);
-        setSelectedTrafficEntity(newEntity);
-        updateTrafficEntity(newEntity.id, { stopped: true });
-    }, [addTrafficEntity, criminalDatabase, setSelectedTrafficEntity, updateTrafficEntity]);
+        newEntity = registerTrafficEntityWorldTruth(newEntity);
+        newEntity = addTrafficEntity(newEntity);
+        setSelectedVehicleId(newEntity.id);
+        stopTrafficEntity(newEntity.id);
+    }, [
+        addTrafficEntity,
+        criminalDatabase,
+        setSelectedVehicleId,
+        stopTrafficEntity
+    ]);
 
     // Wendet die vollständige aktuelle Dev-Konfiguration auf die angehaltene Auswahl an.
     // Der Button nutzt denselben Generatorpfad wie ein Spawn, erhält aber den Weltzustand der TrafficEntity.
     const applyOptionsToStoppedNpc = useCallback(() => {
         const trafficState = useTrafficStore.getState();
-        const selectedEntity = trafficState.selectedTrafficEntity;
+        const selectedEntity = selectSelectedTrafficEntity(trafficState);
         const stoppedEntity = trafficState.trafficEntities.find(
             (entity) => entity.id === selectedEntity?.id && entity.stopped
         );
@@ -112,7 +132,9 @@ export const useLilGuiSetup = () => {
 
     useEffect(() => {
         const guiContent = devSpawnOptionsRef.current;
-        guiContent.spawnCarAtPoliceman = () => spawnRandomNpcWithVehicle();
+        guiContent.spawnCarAtPoliceman = () => {
+            spawnConfiguredTrafficEntityAtStation();
+        };
         guiContent.applyToStoppedNpc = () => applyOptionsToStoppedNpc();
 
         const spawnFolder = gui.addFolder("NPC Dev Spawn");
@@ -253,7 +275,7 @@ export const useLilGuiSetup = () => {
         applyOptionsToStoppedNpc,
         criminalDatabase,
         gui,
-        spawnRandomNpcWithVehicle,
+        spawnConfiguredTrafficEntityAtStation,
         updateTrafficEntity
     ]);
 
@@ -284,7 +306,6 @@ export const useLilGuiSetup = () => {
 // -----> Überschreibt gezielt Debug-Werte einer frisch generierten TrafficEntity.
 // ---> So lassen sich bekannte/verdächtige/manipulierte Fälle testen, ohne auf Zufall zu warten.
 function applyDevSpawnOverrides(trafficEntity, devOptions) {
-    const isWantedOffender = devOptions.trafficType === TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER;
     const isDatabaseOffender = isDatabaseTrafficType(devOptions.trafficType);
     const knownToPolice = isDatabaseOffender || devOptions.knownToPolice;
 
@@ -299,15 +320,11 @@ function applyDevSpawnOverrides(trafficEntity, devOptions) {
         },
         police: {
             ...trafficEntity.police,
-            knownToPolice,
             status: getPoliceStatusForDevSpawn({
                 trafficType: devOptions.trafficType,
                 knownToPolice
             }),
-            wantedLevel: isWantedOffender
-                ? Math.max(1, trafficEntity.police?.wantedLevel ?? 1)
-                : 0,
-            wantedRecordId: isWantedOffender
+            wantedRecordId: devOptions.trafficType === TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER
                 ? trafficEntity.police?.wantedRecordId
                 : null
         },
@@ -371,10 +388,13 @@ function replaceSelectedTrafficScenarioFromGui({
         return;
     }
 
+    // World-Truth-Records werden erst registriert, wenn der erzeugte Fall wirklich übernommen wird.
+    const normalizedGeneratedEntity = registerTrafficEntityWorldTruth(generatedEntity);
+
     updateTrafficEntity(selectedTrafficEntity.id, (currentEntity) => {
         const replacementEntity = preserveTrafficWorldState({
             currentEntity,
-            generatedEntity
+            generatedEntity: normalizedGeneratedEntity
         });
 
         return applyDevSpawnOverrides(replacementEntity, devOptions);
@@ -388,7 +408,6 @@ function preserveTrafficWorldState({ currentEntity, generatedEntity }) {
     return {
         ...generatedEntity,
         id: currentEntity.id,
-        trafficEntityId: currentEntity.trafficEntityId,
         spawn: currentEntity.spawn,
         position: currentEntity.position,
         stopped: currentEntity.stopped
@@ -455,7 +474,7 @@ function syncGuiOptionsFromTrafficEntity({
     Object.assign(devOptions, {
         trafficType: trafficEntity.trafficType,
         databaseNpcId: trafficEntity.police?.databaseNpcId ?? RANDOM_DATABASE_NPC_ID,
-        knownToPolice: Boolean(trafficEntity.police?.knownToPolice),
+        knownToPolice: isNpcKnownToPolice(trafficEntity.police?.status),
         hasForgedDocuments: Boolean(trafficEntity.documentState?.hasForgery),
         complexityLevel: trafficEntity.inspectionProfile?.complexityLevel ?? 1,
         deceptionRisk: trafficEntity.inspectionProfile?.deceptionRisk ?? 0,
@@ -493,8 +512,8 @@ function createDatabaseNpcOptions(criminalDatabase, trafficType) {
     const candidateNpcIds = getDatabaseNpcIdsForTrafficType(criminalDatabase, trafficType);
     const npcOptions = Object.fromEntries(
         candidateNpcIds.map((npcId) => {
-            const realProfile = criminalDatabase.npcsById?.[npcId]?.real;
-            const name = [realProfile?.firstName, realProfile?.lastName]
+            const npcRecord = criminalDatabase.npcsById?.[npcId];
+            const name = [npcRecord?.firstName, npcRecord?.lastName]
                 .filter(Boolean)
                 .join(" ");
 

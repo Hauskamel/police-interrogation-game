@@ -1,6 +1,10 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
 import { VehicleOccupantsPanel } from "./VehicleOccupantsPanel.jsx";
-import { useGuiVisibilityStatesStore, useTrafficStore } from "@stores";
+import {
+    selectSelectedTrafficEntity,
+    useGuiVisibilityStatesStore,
+    useTrafficStore
+} from "@stores";
 
 
 import { closePanel } from "../hooks";
@@ -15,7 +19,7 @@ export const VehicleControlPanel = ({
 }) => {
     const stopTrafficEntity = useTrafficStore((state) => state.stopTrafficEntity);
     const continueTrafficEntity = useTrafficStore((state) => state.continueTrafficEntity);
-    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore((state) => state.trafficEntities.find(entity => entity.stopped));
     const revealedDriverNpcId = useTrafficStore((state) =>
         state.revealedDriverIdentityByTrafficEntityId[selectedTrafficEntity?.id]

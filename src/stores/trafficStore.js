@@ -11,118 +11,164 @@ export const useTrafficStore = create((set) => ({
         }),
 
     trafficEntities: [],
-    selectedTrafficEntity: undefined,
+    selectedVehicleId: null,
     revealedDriverIdentityByTrafficEntityId: {},
 
-    addTrafficEntity: (trafficEntity) =>
-        set((state) => ({
-            trafficEntities: [...state.trafficEntities, trafficEntity],
-        })),
+    // -----> Speichert eine bereits vorbereitete TrafficEntity im aktiven Weltzustand.
+    // ---> World-Truth-Registrierung erfolgt vorher ausdrücklich am Spawn-Commit.
+    addTrafficEntity: (trafficEntity) => {
+        if (trafficEntity.worldTruthRecords) {
+            throw new Error(
+                "TrafficEntity must register worldTruthRecords before addTrafficEntity."
+            );
+        }
+
+        let storedTrafficEntity = trafficEntity;
+
+        set((state) => {
+            // Auch direkte Store-Aufrufe dürfen keine zweite angehaltene Entity erzeugen.
+            if (trafficEntity.stopped && hasOtherStoppedEntity(state, trafficEntity.id)) {
+                storedTrafficEntity = {
+                    ...trafficEntity,
+                    stopped: false
+                };
+            }
+
+            return {
+                trafficEntities: [...state.trafficEntities, storedTrafficEntity],
+            };
+        });
+
+        return storedTrafficEntity;
+    },
 
     // -----> Aktualisiert eine TrafficEntity und dieselbe Referenz in der aktuellen Auswahl.
     // ---> Devtools nutzen diese Funktion, damit Weltzustand und Debug-Panel sofort dieselben Daten sehen.
-    updateTrafficEntity: (trafficEntityId, updater) =>
+    updateTrafficEntity: (entityId, updater) =>
         set((state) => {
-            const currentEntity = state.trafficEntities.find((entity) => entity.id === trafficEntityId);
+            const currentEntity = state.trafficEntities.find((entity) => entity.id === entityId);
             if (!currentEntity) return state;
 
             const updatedEntity = typeof updater === "function"
                 ? updater(currentEntity)
                 : { ...currentEntity, ...updater };
 
+            if (updatedEntity.stopped && hasOtherStoppedEntity(state, entityId)) {
+                return state;
+            }
+
             return {
                 trafficEntities: state.trafficEntities.map((entity) =>
-                    entity.id === trafficEntityId ? updatedEntity : entity
-                ),
-                selectedTrafficEntity: state.selectedTrafficEntity?.id === trafficEntityId
-                    ? updatedEntity
-                    : state.selectedTrafficEntity
+                    entity.id === entityId ? updatedEntity : entity
+                )
             };
         }),
 
-    removeTrafficEntity: (trafficEntityId) =>
+    removeTrafficEntity: (entityId) =>
         set((state) => {
-            const removedEntityWasSelected = state.selectedTrafficEntity?.id === trafficEntityId;
             const {
-                [trafficEntityId]: removedIdentity,
+                [entityId]: removedIdentity,
                 ...remainingRevealedIdentities
             } = state.revealedDriverIdentityByTrafficEntityId;
 
             return {
-                trafficEntities: state.trafficEntities.filter((entity) => entity.id !== trafficEntityId),
-                selectedTrafficEntity: removedEntityWasSelected
-                    ? undefined
-                    : state.selectedTrafficEntity,
+                trafficEntities: state.trafficEntities.filter((entity) => entity.id !== entityId),
+                selectedVehicleId: state.selectedVehicleId === entityId
+                    ? null
+                    : state.selectedVehicleId,
                 revealedDriverIdentityByTrafficEntityId: removedIdentity
                     ? remainingRevealedIdentities
                     : state.revealedDriverIdentityByTrafficEntityId
             };
         }),
 
-    stopTrafficEntity: (trafficEntityId) =>
+    stopTrafficEntity: (entityId) =>
         set((state) => {
+            if (hasOtherStoppedEntity(state, entityId)) {
+                return state;
+            }
+
             const stoppedEntity = state.trafficEntities
-                .find((entity) => entity.id === trafficEntityId);
+                .find((entity) => entity.id === entityId);
             const updatedStoppedEntity = stoppedEntity
                 ? { ...stoppedEntity, stopped: true }
                 : null;
 
             return {
                 trafficEntities: state.trafficEntities.map((entity) =>
-                    entity.id === trafficEntityId ? updatedStoppedEntity : entity
-                ),
-                selectedTrafficEntity: state.selectedTrafficEntity?.id === trafficEntityId
-                    ? updatedStoppedEntity
-                    : state.selectedTrafficEntity
+                    entity.id === entityId ? updatedStoppedEntity : entity
+                )
             };
         }),
 
-    continueTrafficEntity: (trafficEntityId) =>
+    continueTrafficEntity: (entityId) =>
         set((state) => {
             const continuedEntity = state.trafficEntities
-                .find((entity) => entity.id === trafficEntityId);
+                .find((entity) => entity.id === entityId);
             const updatedContinuedEntity = continuedEntity
                 ? { ...continuedEntity, stopped: false }
                 : null;
 
             return {
                 trafficEntities: state.trafficEntities.map((entity) =>
-                    entity.id === trafficEntityId ? updatedContinuedEntity : entity
-                ),
-                selectedTrafficEntity: state.selectedTrafficEntity?.id === trafficEntityId
-                    ? updatedContinuedEntity
-                    : state.selectedTrafficEntity
+                    entity.id === entityId ? updatedContinuedEntity : entity
+                )
             };
         }),
 
-    setSelectedTrafficEntity: (trafficEntity) =>
+    setSelectedVehicleId: (vehicleId) =>
         set({
-            selectedTrafficEntity: trafficEntity
+            selectedVehicleId: vehicleId
         }),
 
     // -----> Merkt sich, welche Fahreridentitaet der Spieler in dieser Kontrolle bereits gesehen hat.
     // ---> Die npcId verhindert, dass Wissen nach einem Dev-Austausch auf eine andere Person uebertragen wird.
-    revealDriverIdentity: (trafficEntityId, npcId) =>
+    revealDriverIdentity: (entityId, npcId) =>
         set((state) => ({
             revealedDriverIdentityByTrafficEntityId: {
                 ...state.revealedDriverIdentityByTrafficEntityId,
-                [trafficEntityId]: npcId
+                [entityId]: npcId
             }
         })),
 
-    setTrafficEntityPosition: (trafficEntityId, y, z) =>
+    setTrafficEntityPosition: (entityId, y, z) =>
         set((state) => {
             const position = { y, z };
 
             return {
                 trafficEntities: state.trafficEntities.map((entity) =>
-                    entity.id === trafficEntityId
+                    entity.id === entityId
                         ? { ...entity, position }
                         : entity
-                ),
-                selectedTrafficEntity: state.selectedTrafficEntity?.id === trafficEntityId
-                    ? { ...state.selectedTrafficEntity, position }
-                    : state.selectedTrafficEntity
+                )
             };
         })
 }));
+
+// ##### Selected Traffic Entity Selector
+// -----> Leitet die ausgewählte TrafficEntity aus ID und kanonischer Entity-Liste ab.
+// ---> Dadurch wird das vollständige Objekt nicht mehr als zweite Zustandskopie gespeichert.
+export function selectSelectedTrafficEntity(state) {
+    return state.trafficEntities.find(
+        (entity) => entity.id === state.selectedVehicleId
+    );
+}
+
+// ##### Selected Vehicle Selector
+// -----> Löst sowohl TrafficEntities als auch das eigene Polizeifahrzeug aus derselben Auswahl-ID auf.
+export function selectSelectedVehicle(state) {
+    if (state.playerPoliceVehicle?.id === state.selectedVehicleId) {
+        return state.playerPoliceVehicle;
+    }
+
+    return selectSelectedTrafficEntity(state);
+}
+
+// ##### Stopped Traffic Guard
+// -----> Prüft, ob bereits eine andere TrafficEntity kontrolliert wird.
+// ---> Store-Aktionen verwenden den Guard als letzte Invariante unterhalb der UI.
+function hasOtherStoppedEntity(state, entityId) {
+    return state.trafficEntities.some(
+        (entity) => entity.id !== entityId && entity.stopped
+    );
+}

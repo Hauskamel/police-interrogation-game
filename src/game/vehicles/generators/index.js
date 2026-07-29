@@ -1,2 +1,4 @@
-export { vehicleMasterData } from "./vehicleMasterDataGenerator.js";
+export {
+    generateVehicleRegistrationData
+} from "./generateVehicleRegistrationData.js";
 export { generateVehicleProfile } from "./vehicleProfileGenerator.js";

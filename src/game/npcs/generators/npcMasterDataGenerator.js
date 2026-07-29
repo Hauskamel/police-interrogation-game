@@ -11,8 +11,9 @@ export function generateNpcMasterData () {
     // stabile, kompakte NPC-ID
     const npcId = createEntityId("npc");
 
-    // sex
-    const sex = faker.person.sexType('male'); // TODO: funktioniert nicht
+    // Geschlecht
+    // -----> Aktuell werden bewusst ausschließlich männliche NPCs generiert.
+    const sex = "male";
 
     // firstname
     const firstName = getRandomFirstName();

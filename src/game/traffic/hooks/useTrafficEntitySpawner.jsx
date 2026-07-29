@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { randInt } from "three/src/math/MathUtils.js";
 
-import { useNpcStore, useTrafficStore } from "@stores";
+import {
+    registerTrafficEntityWorldTruth,
+    useNpcStore,
+    useTrafficStore
+} from "@stores";
 import { generateTrafficEntity } from "../generators";
 
 // ##### Traffic Entity Spawner Hook
@@ -19,10 +23,12 @@ export function useTrafficEntitySpawner({ direction, lane, enabled = true, minRe
             const newEntity = generateTrafficEntity({ criminalDatabase });
 
             // Spawn-Daten gehören zur Weltposition und werden deshalb erst hier ergänzt.
-            addTrafficEntity({
+            const committedEntity = registerTrafficEntityWorldTruth({
                 ...newEntity,
                 spawn: { direction, lane }
             });
+
+            addTrafficEntity(committedEntity);
         }, randInt(minRespawnTime, maxRespawnTime));
 
         return () => clearInterval(intervalId);

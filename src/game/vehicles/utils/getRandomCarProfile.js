@@ -20,9 +20,12 @@ export default function getRandomCarProfile () {
     const weight = vehicleBaseProfile.weight;
 
     // Baujahr
-    const yearOfConstruction = vehicleBaseProfile.yearOfConstructionRange[
-        Math.floor(Math.random() * vehicleBaseProfile.yearOfConstructionRange.length)
-    ];
+    // -----> Die beiden Werte beschreiben eine inklusive Spanne, nicht zwei einzelne Baujahre.
+    const [minimumConstructionYear, maximumConstructionYear] =
+        vehicleBaseProfile.yearOfConstructionRange;
+    const yearOfConstruction = Math.floor(
+        Math.random() * (maximumConstructionYear - minimumConstructionYear + 1)
+    ) + minimumConstructionYear;
 
     // GLB Model Filename
     const glb = vehicleBaseProfile.glb;

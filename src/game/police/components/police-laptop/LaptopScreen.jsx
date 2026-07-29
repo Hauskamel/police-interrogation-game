@@ -1,17 +1,15 @@
-import { LaptopMenu } from "./screen-components/laptop-menu/LaptopMenu.jsx";
-import { HomeScreen } from "./screen-components/home-screen/HomeScreen.jsx";
 import { useState } from "react";
 
-
+import { HomeScreen } from "./screen-components/home-screen/HomeScreen.jsx";
+import { LaptopMenu } from "./screen-components/laptop-menu/LaptopMenu.jsx";
 
 export function LaptopScreen () {
     const [activeMenuIdx,setActiveMenuIdx] = useState(0);
 
-    // TODO: 'components' auslagern und neues key/value pair "menuTitle" o.ä dazuschreiben, dass diese auch aus dem "LaptopMenu" component entfernt werden können
-    // und in Zukunft die Menüpunkter leichter ergänzt, abgeändert werden können
+    // TODO: Die Laptop-Navigation gemeinsam mit den künftigen Screens neu aufbauen.
+    // ---> Der alte, auskommentierte Datenbank-Prototyp wurde bewusst vollständig entfernt.
     const components = [
         {screenComponent: <HomeScreen />},
-        // {screenComponent: <DatabaseScreen />},
         {screenComponent: null},
         {screenComponent: null}                      
     ]
