@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-import { useGameStore, useTrafficStore } from "@stores";
+import {
+    selectSelectedTrafficEntity,
+    selectSelectedVehicle,
+    useGameStore,
+    useTrafficStore
+} from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
 import {
     PoliceCarControlPanel,
@@ -18,8 +23,9 @@ import "@styles/App.css";
 function App() {
     const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
-    const setSelectedTrafficEntity = useTrafficStore(state => state.setSelectedTrafficEntity);
-    const selectedTrafficEntity = useTrafficStore(state => state.selectedTrafficEntity);
+    const setSelectedVehicleId = useTrafficStore(state => state.setSelectedVehicleId);
+    const selectedVehicle = useTrafficStore(selectSelectedVehicle);
+    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore(state => state.trafficEntities.find(entity => entity.stopped));
 
     const gameState = useGameStore(state => state.gameState);
@@ -34,17 +40,17 @@ function App() {
 
             <Startmenu />
 
-        {selectedTrafficEntity && (
-            playerPoliceVehicle?.id === selectedTrafficEntity?.id ? (
+        {selectedVehicle && (
+            playerPoliceVehicle?.id === selectedVehicle.id ? (
                 <PoliceCarControlPanel
                     onClose={() => {
-                        setSelectedTrafficEntity(null)
+                        setSelectedVehicleId(null)
                         ingameMode()
                     }}
                 />
             ) : (
                 <VehicleControlPanel
-                    onClose={() => setSelectedTrafficEntity(null)}
+                    onClose={() => setSelectedVehicleId(null)}
                 />
             )
         )}

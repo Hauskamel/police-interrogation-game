@@ -8,16 +8,14 @@ const DATABASE_TABS = {
     OVERVIEW: "overview",
     WANTED: "wanted",
     NPCS: "npcs",
-    CRIMES: "crimes",
-    DOCUMENTS: "documents"
+    CRIMES: "crimes"
 };
 
 const databaseTabs = [
     { id: DATABASE_TABS.OVERVIEW, label: "Übersicht" },
     { id: DATABASE_TABS.WANTED, label: "Fahndungsliste" },
     { id: DATABASE_TABS.NPCS, label: "NPCs" },
-    { id: DATABASE_TABS.CRIMES, label: "Straftaten" },
-    { id: DATABASE_TABS.DOCUMENTS, label: "Dokumente" }
+    { id: DATABASE_TABS.CRIMES, label: "Straftaten" }
 ];
 
 /**
@@ -32,7 +30,6 @@ export function PoliceDatabaseDebugPanelContent() {
     const databaseTables = useMemo(() => ({
         npcs: Object.values(criminalDatabase.npcsById ?? {}),
         crimes: Object.values(criminalDatabase.crimeRecordsById ?? {}),
-        documents: Object.values(criminalDatabase.documentsById ?? {}),
         wantedRecords: Object.values(criminalDatabase.wantedRecordsById ?? {})
     }), [criminalDatabase]);
 
@@ -41,7 +38,7 @@ export function PoliceDatabaseDebugPanelContent() {
             <div className="flex items-center justify-between gap-3 border-b border-gray-700 p-4">
                 <div>
                     <h3 className="text-sm font-bold text-white">Debug: Polizei-Datenbank</h3>
-                    <p className="text-xs text-gray-400">NPCs, Fahndungen, Straftaten und Dokumente</p>
+                    <p className="text-xs text-gray-400">NPCs, Fahndungen und Straftaten</p>
                 </div>
 
                 <span className="rounded bg-gray-700 px-2 py-1 text-xs font-semibold text-gray-200">
@@ -92,13 +89,6 @@ export function PoliceDatabaseDebugPanelContent() {
                     />
                 )}
 
-                {activeTab === DATABASE_TABS.DOCUMENTS && (
-                    <DatabaseRecordList
-                        emptyMessage="Keine Dokumente vorhanden."
-                        records={databaseTables.documents}
-                        getRecordTitle={(record) => record.id ?? "Dokument"}
-                    />
-                )}
             </div>
         </>
     );
@@ -114,7 +104,6 @@ function DatabaseOverview({ criminalDatabase, databaseTables }) {
             <DatabaseStat label="Bekannt, nicht gesucht" value={(criminalDatabase.knownOffenderNpcIds ?? []).length} />
             <DatabaseStat label="Fahndungsrecords" value={databaseTables.wantedRecords.length} />
             <DatabaseStat label="Straftaten" value={databaseTables.crimes.length} />
-            <DatabaseStat label="Dokumente" value={databaseTables.documents.length} />
         </div>
     );
 }
@@ -162,7 +151,7 @@ function DatabaseRecordList({ records, getRecordTitle, emptyMessage }) {
         <div className="space-y-2">
             {records.map((record, index) => (
                 <details
-                    key={record.id ?? record.real?.npcId ?? index}
+                    key={record.id ?? record.npcId ?? index}
                     className="rounded border border-gray-700 bg-gray-800/70 p-3"
                 >
                     <summary className="cursor-pointer text-xs font-semibold text-gray-100">
@@ -176,12 +165,11 @@ function DatabaseRecordList({ records, getRecordTitle, emptyMessage }) {
 }
 
 // ##### NPC Debug Title
-// -----> Erstellt eine lesbare Beschriftung aus dem real-Profil des Datenbank-NPCs.
+// -----> Erstellt eine lesbare Beschriftung aus dem kanonischen Datenbank-NPC.
 function getNpcTitle(npc) {
-    const real = npc.real ?? {};
-    const fullName = [real.firstName, real.lastName].filter(Boolean).join(" ");
+    const fullName = [npc.firstName, npc.lastName].filter(Boolean).join(" ");
 
-    return fullName || real.npcId || "Unbenannter NPC";
+    return fullName || npc.npcId || "Unbenannter NPC";
 }
 
 // ##### Database Stat

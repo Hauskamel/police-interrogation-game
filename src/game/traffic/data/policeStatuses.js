@@ -10,3 +10,10 @@ export const POLICE_STATUSES = {
     ARRESTED: "arrested",
     ESCAPED: "escaped"
 };
+
+// ##### Police Knowledge Resolver
+// -----> Leitet aus dem fachlichen Polizeistatus ab, ob die Person polizeibekannt ist.
+// ---> Verhindert ein separates knownToPolice-Flag, das dem Status widersprechen könnte.
+export function isNpcKnownToPolice(status) {
+    return Boolean(status) && status !== POLICE_STATUSES.UNKNOWN;
+}

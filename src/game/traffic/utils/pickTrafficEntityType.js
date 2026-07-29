@@ -1,5 +1,6 @@
+import { pickWeightedItem } from "@game/shared";
+
 import { TRAFFIC_ENTITY_TYPES } from "../data";
-import { pickWeightedItem } from "./pickWeightedItem.js";
 
 // ##### Traffic Type Distribution
 // -----> Steuert, welche Art von TrafficEntity im normalen Straßenverkehr auftaucht.
@@ -17,7 +18,9 @@ const defaultTrafficTypeWeights = [
 export function pickTrafficEntityType(options = {}) {
     const { forcedType, weights = defaultTrafficTypeWeights } = options;
 
-    if (forcedType) return forcedType;
+    if (forcedType) {
+        return forcedType;
+    }
 
     return pickWeightedItem(weights).type;
 }

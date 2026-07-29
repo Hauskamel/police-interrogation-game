@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-import { createEntityId } from "@game/shared";
+import { createEntityId, pickWeightedItem } from "@game/shared";
 import { crimeTypes } from "../data";
 
 // ##### Crime Metadata
@@ -74,7 +74,8 @@ const crimeCountWeights = [
 // ---> Wird beim Aufbau der Criminal Database und für unbekannte Täter im Traffic-System genutzt.
 export function generateCrimeRecordsForNpc(npcId, options = {}) {
     // crimeCount kann für Tests oder Story-Fälle explizit überschrieben werden.
-    const crimeCount = options.crimeCount ?? getWeightedRandomItem(crimeCountWeights).count;
+    const crimeCount = options.crimeCount ?? pickWeightedItem(crimeCountWeights).count;
+    const recordStatus = options.status;
 
     // Verhindert doppelte Crime-Types innerhalb desselben NPC-Records.
     const usedCrimeTypes = new Set();
@@ -91,7 +92,8 @@ export function generateCrimeRecordsForNpc(npcId, options = {}) {
             title: formatCrimeTitle(crimeType),
             description: generateCrimeDescription(crimeType),
             committedAt: faker.date.past({ years: 8 }).toISOString().split("T")[0],
-            status: faker.helpers.arrayElement(["open", "convicted", "under_investigation"])
+            status: recordStatus
+                ?? faker.helpers.arrayElement(["open", "convicted", "under_investigation"])
         };
     });
 }
@@ -100,31 +102,16 @@ export function generateCrimeRecordsForNpc(npcId, options = {}) {
 // -----> Wählt einen Crime-Type, der für diesen NPC noch nicht verwendet wurde.
 // ---> Wird pro Crime Record aufgerufen, damit eine Vorstrafenliste abwechslungsreicher wirkt.
 function getUniqueCrimeType(usedCrimeTypes) {
-    let crimeType = getWeightedRandomItem(crimeTypeWeights).type;
+    let crimeType = pickWeightedItem(crimeTypeWeights).type;
     let attempts = 0;
 
     // Nach wenigen Versuchen wird ein Duplikat akzeptiert, damit die Generierung nie hängen bleibt.
     while (usedCrimeTypes.has(crimeType) && attempts < 10) {
-        crimeType = getWeightedRandomItem(crimeTypeWeights).type;
+        crimeType = pickWeightedItem(crimeTypeWeights).type;
         attempts++;
     }
 
     return crimeType;
-}
-
-// ##### Weighted Random Helper
-// -----> Wählt aus einer gewichteten Liste einen Eintrag aus.
-// ---> Wird hier für Crime-Typen und die Anzahl der Crime Records genutzt.
-function getWeightedRandomItem(items) {
-    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
-    let random = Math.random() * totalWeight;
-
-    for (const item of items) {
-        random -= item.weight;
-        if (random <= 0) return item;
-    }
-
-    return items[items.length - 1];
 }
 
 // ##### Crime Title Formatter

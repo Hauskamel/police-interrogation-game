@@ -1,8 +1,8 @@
-import { generateNpcMasterData } from "./npcMasterDataGenerator.js";
-import { generatePhysicalNpcCharacteristicsGenerator } from "./physicalNpcCharacteristicsGenerator.js";
-import { npcPhotoGenerator } from "./npcPhotoGenerator.js";
-
 import { generateDriversLicenseData } from "@game/documents/generators/generateDriversLicenseData.js";
+
+import { generateNpcMasterData } from "./npcMasterDataGenerator.js";
+import { generateNpcAppearance } from "./generateNpcAppearance.js";
+import { selectNpcPhoto } from "./selectNpcPhoto.js";
 
 import { getNpcAgeRange } from "../utils";
 
@@ -26,34 +26,38 @@ export function generateNpcProfile (options = {}) {
     ageRange = getNpcAgeRange(npcMasterData.sex, npcMasterData.age);
 
     // NPC physische Merkmale
-    const physicalNpcCharacteristics = generatePhysicalNpcCharacteristicsGenerator(npcMasterData.sex, ageRange);
+    const npcAppearance = generateNpcAppearance(npcMasterData.sex, ageRange);
 
     if (npcMasterData) {
         // NPC Lichtbild
-        npcImage = npcPhotoGenerator(npcMasterData.sex, ageRange, physicalNpcCharacteristics.hairColor, physicalNpcCharacteristics.eyeColor);
+        npcImage = selectNpcPhoto(
+            npcMasterData.sex,
+            ageRange,
+            npcAppearance.hairColor,
+            npcAppearance.eyeColor
+        );
 
         if (npcMasterData.age < 18) {
-            const real = createRealProfile(npcMasterData, physicalNpcCharacteristics, npcImage);
-            return createNpcProfile(real);
+            const real = createRealProfile(npcMasterData, npcAppearance, npcImage);
+            return createNpcProfileFromReal(real);
         }
     }
 
     const driversLicenseData = generateDriversLicenseData(npcMasterData.birthDate);
-    const real = createRealProfile(npcMasterData, physicalNpcCharacteristics, npcImage, driversLicenseData);
+    const real = createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicenseData);
 
-    return createNpcProfile(real);
+    return createNpcProfileFromReal(real);
 }
 
 // ##### NPC Profile Factory
 // -----> Bündelt echte Identität und die unveränderte presented-Ausgangslage.
 // ---> Die Traffic-Generatoren können presented danach anhand des documentState gezielt verändern.
-function createNpcProfile(real) {
+export function createNpcProfileFromReal(real) {
     return {
         real,
         presented: {
             ...real,
             driversLicense: real.driversLicense ? { ...real.driversLicense } : null,
-            documentIds: [...real.documentIds],
             crimeRecordIds: [...real.crimeRecordIds]
         }
     };
@@ -61,8 +65,8 @@ function createNpcProfile(real) {
 
 // ##### Real Profile Factory
 // -----> Bündelt Stammdaten und biometrische Daten in der echten Personenidentität.
-// ---> documentIds und crimeRecordIds sind Foreign-Key-Listen auf die separaten Tabellen.
-function createRealProfile (npcMasterData, physicalNpcCharacteristics, npcImage, driversLicenseData = null) {
+// ---> crimeRecordIds verweist auf die separaten Straftatdatensätze.
+function createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicenseData = null) {
     return {
         npcId: npcMasterData.npcId,
         sex: npcMasterData.sex,
@@ -73,9 +77,9 @@ function createRealProfile (npcMasterData, physicalNpcCharacteristics, npcImage,
         birthYear: npcMasterData.birthYear,
         birthDate: npcMasterData.birthDate,
 
-        height: physicalNpcCharacteristics.height,
-        hairColor: physicalNpcCharacteristics.hairColor,
-        eyeColor: physicalNpcCharacteristics.eyeColor,
+        height: npcAppearance.height,
+        hairColor: npcAppearance.hairColor,
+        eyeColor: npcAppearance.eyeColor,
 
         npcImage: npcImage,
         driversLicense: driversLicenseData
@@ -85,7 +89,6 @@ function createRealProfile (npcMasterData, physicalNpcCharacteristics, npcImage,
                 expiryDate: driversLicenseData.expiryDate
             }
             : null,
-        documentIds: [],
         crimeRecordIds: []
     }
 }

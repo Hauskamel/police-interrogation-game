@@ -1,6 +1,8 @@
 export { generateBirthDate } from "./generateBirthDate.js";
-export { generateNpcDriversLicenseDocument } from "./npcDriversLicenseDocumentGenerator.js";
+export { generateNpcAppearance } from "./generateNpcAppearance.js";
 export { generateNpcMasterData } from "./npcMasterDataGenerator.js";
-export { npcPhotoGenerator } from "./npcPhotoGenerator.js";
-export { generateNpcProfile } from "./npcProfileGenerator.js";
-export { generatePhysicalNpcCharacteristicsGenerator } from "./physicalNpcCharacteristicsGenerator.js";
+export {
+    createNpcProfileFromReal,
+    generateNpcProfile
+} from "./npcProfileGenerator.js";
+export { selectNpcPhoto } from "./selectNpcPhoto.js";

@@ -7,7 +7,7 @@ import { useCallback } from "react";
  * -----> Buendelt Hover- und Klick-Events fuer auswählbare Fahrzeuge.
  */
 export const useVehicleInteraction = (vehicle, onHoverChange) => {    
-    const setSelectedTrafficEntity = useTrafficStore((state) => state.setSelectedTrafficEntity);
+    const setSelectedVehicleId = useTrafficStore((state) => state.setSelectedVehicleId);
 
     const handlePointerOver = useCallback((e) => {
         e.stopPropagation();
@@ -24,8 +24,8 @@ export const useVehicleInteraction = (vehicle, onHoverChange) => {
 
         if (!vehicle?.id) return;
 
-        setSelectedTrafficEntity(vehicle);
-    }, [vehicle, setSelectedTrafficEntity]);
+        setSelectedVehicleId(vehicle.id);
+    }, [setSelectedVehicleId, vehicle]);
 
     return {
         handlePointerOver,

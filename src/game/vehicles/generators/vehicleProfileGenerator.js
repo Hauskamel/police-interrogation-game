@@ -1,8 +1,10 @@
-import { generateCarDocumentData } from "@game/documents/generators/generateCarDocumentData.js";
+import {
+    generateVehicleRegistrationDocument
+} from "@game/documents/generators/generateVehicleRegistrationDocument.js";
 
 import { getRandomCarProfile } from "../utils";
 
-import { vehicleMasterData } from "./vehicleMasterDataGenerator.js";
+import { generateVehicleRegistrationData } from "./generateVehicleRegistrationData.js";
 
 // ##### Vehicle Profile Generator
 // -----> Erstellt die echten Fahrzeugdaten und eine unveränderte presented-Basis.
@@ -12,10 +14,12 @@ export const generateVehicleProfile = (options = {}) => {
     const vehicleData = getRandomCarProfile();
 
     // car master data
-    const carMasterData = vehicleMasterData()
+    const vehicleRegistrationData = generateVehicleRegistrationData();
 
     // car documents data
-    const carDocumentData = generateCarDocumentData();
+    const vehicleRegistrationDocument = generateVehicleRegistrationDocument({
+        yearOfConstruction: vehicleData.yearOfConstruction
+    });
 
     const real = {
         brand: vehicleData.brand,
@@ -27,9 +31,9 @@ export const generateVehicleProfile = (options = {}) => {
         registeredOwnerNpcId: options.registeredOwnerNpcId ?? null,
 
         carDocumentsData: {
-            formattedIssueDate: carDocumentData.formattedIssueDate,
-            carRegistrationNumber: carMasterData.carRegistrationNumber,
-            plateNumber: carMasterData.plateNumber,
+            formattedIssueDate: vehicleRegistrationDocument.formattedIssueDate,
+            carRegistrationNumber: vehicleRegistrationData.carRegistrationNumber,
+            plateNumber: vehicleRegistrationData.plateNumber,
         }
     }
     

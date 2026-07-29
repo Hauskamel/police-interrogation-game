@@ -23,7 +23,6 @@ function cloneNpcProfile(real) {
     return {
         ...real,
         driversLicense: real.driversLicense ? { ...real.driversLicense } : null,
-        documentIds: [...(real.documentIds ?? [])],
         crimeRecordIds: [...(real.crimeRecordIds ?? [])]
     };
 }
@@ -63,6 +62,7 @@ function applyNpcDocumentForgery(presentedProfile, forgeryType) {
     if (forgeryType === NPC_DOCUMENT_FORGERY_TYPES.WRONG_NAME) {
         return {
             ...presentedProfile,
+            firstName: faker.person.firstName("male"),
             lastName: faker.person.lastName()
         };
     }
