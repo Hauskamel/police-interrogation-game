@@ -48,24 +48,24 @@ export const useInspectionStore = create((set, get) => ({
         }),
 
     // Fügt einen neutralen Prüfpunkt hinzu oder entfernt ihn wieder.
-    toggleDiscrepancy: (discrepancyId) =>
+    toggleFinding: (findingId) =>
         set((state) => {
             const activeInspection = state.activeInspection;
             if (!activeInspection) return state;
 
-            const discrepancyIsMarked = activeInspection.markedDiscrepancies
-                .includes(discrepancyId);
+            const findingIsMarked = activeInspection.markedFindingIds
+                .includes(findingId);
 
             return {
                 activeInspection: {
                     ...activeInspection,
-                    markedDiscrepancies: discrepancyIsMarked
-                        ? activeInspection.markedDiscrepancies.filter(
-                            (markedId) => markedId !== discrepancyId
+                    markedFindingIds: findingIsMarked
+                        ? activeInspection.markedFindingIds.filter(
+                            (markedId) => markedId !== findingId
                         )
                         : [
-                            ...activeInspection.markedDiscrepancies,
-                            discrepancyId
+                            ...activeInspection.markedFindingIds,
+                            findingId
                         ]
                 }
             };
@@ -102,6 +102,12 @@ export const useInspectionStore = create((set, get) => ({
 
     dismissCompletedInspection: () =>
         set({
+            lastCompletedInspection: null
+        }),
+
+    resetInspectionState: () =>
+        set({
+            activeInspection: null,
             lastCompletedInspection: null
         })
 }));

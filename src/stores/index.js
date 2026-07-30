@@ -2,6 +2,12 @@ export { gameStates, useGameStore } from "./gameStore.js";
 export { useInspectionStore } from "./inspectionStore.js";
 export { useNpcStore } from "./npcStore.js";
 export {
+    POLICE_DATABASE_SEARCH_TYPES,
+    POLICE_DATABASE_SECTIONS,
+    POLICE_LAPTOP_VIEWS,
+    usePoliceLaptopStore
+} from "./policeLaptopStore.js";
+export {
     selectSelectedTrafficEntity,
     selectSelectedVehicle,
     useTrafficStore

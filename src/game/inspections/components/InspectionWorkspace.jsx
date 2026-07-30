@@ -11,15 +11,17 @@ import {
 import {
     selectSelectedTrafficEntity,
     useInspectionStore,
+    useNpcStore,
     useTrafficStore
 } from "@stores";
 
 import {
-    DISCREPANCY_DEFINITIONS,
-    DISCREPANCY_DEFINITIONS_BY_ID,
     INSPECTION_DECISION_OPTIONS,
     INSPECTION_DOCUMENT_LABELS,
-    INSPECTION_OUTCOMES
+    INSPECTION_FINDING_CATEGORIES,
+    INSPECTION_FINDING_DEFINITIONS_BY_ID,
+    INSPECTION_OUTCOMES,
+    PLAYER_SELECTABLE_FINDINGS
 } from "../data";
 import { evaluateInspection } from "../utils";
 
@@ -31,8 +33,8 @@ export function InspectionWorkspace() {
     const lastCompletedInspection = useInspectionStore(
         (state) => state.lastCompletedInspection
     );
-    const toggleDiscrepancy = useInspectionStore(
-        (state) => state.toggleDiscrepancy
+    const toggleFinding = useInspectionStore(
+        (state) => state.toggleFinding
     );
     const completeInspection = useInspectionStore(
         (state) => state.completeInspection
@@ -48,6 +50,7 @@ export function InspectionWorkspace() {
     const setSelectedVehicleId = useTrafficStore(
         (state) => state.setSelectedVehicleId
     );
+    const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
 
     const [dialog, setDialog] = useState(null);
     const [selectedDecision, setSelectedDecision] = useState(null);
@@ -72,11 +75,12 @@ export function InspectionWorkspace() {
 
         const playerDecision = {
             type: selectedDecision,
-            reasonCodes: [...activeInspection.markedDiscrepancies]
+            reasonCodes: [...activeInspection.markedFindingIds]
         };
         const resolution = evaluateInspection({
             inspectionSession: activeInspection,
             trafficEntity: activeTrafficEntity,
+            criminalDatabase,
             playerDecision
         });
 
@@ -113,19 +117,19 @@ export function InspectionWorkspace() {
             <InspectionToolbar
                 inspection={activeInspection}
                 selectedEntityMatchesInspection={selectedEntityMatchesInspection}
-                onOpenDiscrepancies={() => setDialog("discrepancies")}
+                onOpenFindings={() => setDialog("findings")}
                 onOpenDecision={() => setDialog("decision")}
             />
 
-            {dialog === "discrepancies" && (
+            {dialog === "findings" && (
                 <InspectionDialog
-                    title="Auffälligkeiten markieren"
-                    description="Markiere nur Angaben, die du durch Dokument- oder Datenbankvergleich für widersprüchlich hältst."
+                    title="Feststellungen markieren"
+                    description="Markiere Dokument- und Gültigkeitsprobleme selbst. Polizeirecords werden bewusst im Police Laptop zur Kontrolle hinzugefügt."
                     onClose={() => setDialog(null)}
                 >
                     <div className="divide-y divide-zinc-200">
-                        {DISCREPANCY_DEFINITIONS.map((definition) => {
-                            const isMarked = activeInspection.markedDiscrepancies
+                        {PLAYER_SELECTABLE_FINDINGS.map((definition) => {
+                            const isMarked = activeInspection.markedFindingIds
                                 .includes(definition.id);
 
                             return (
@@ -137,9 +141,12 @@ export function InspectionWorkspace() {
                                         type="checkbox"
                                         className="mt-1 h-4 w-4 accent-blue-700"
                                         checked={isMarked}
-                                        onChange={() => toggleDiscrepancy(definition.id)}
+                                        onChange={() => toggleFinding(definition.id)}
                                     />
                                     <span>
+                                        <span className="mb-1 block text-[10px] font-semibold uppercase text-blue-700">
+                                            {getFindingCategoryLabel(definition.category)}
+                                        </span>
                                         <span className="block text-sm font-semibold text-zinc-950">
                                             {definition.label}
                                         </span>
@@ -161,9 +168,11 @@ export function InspectionWorkspace() {
                     onClose={() => setDialog(null)}
                 >
                     <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-left text-xs leading-5 text-blue-900">
-                        <strong>Dienstregel Phase 1:</strong> Unauffällige Dokumente
-                        erlauben die Weiterfahrt. Bei einem begründeten
-                        Manipulationsverdacht ist eine weitere Prüfung zu melden.
+                        <strong>Dienstregel Phase 1:</strong> Aktive Fahndungen
+                        werden gemeldet. Manipulationsverdacht geht in die weitere
+                        Prüfung. Ein abgelaufener Führerschein verhindert die
+                        Weiterfahrt. Polizeibekanntheit allein ist kein Grund für
+                        eine Maßnahme.
                     </div>
 
                     <div className="space-y-2">
@@ -214,7 +223,7 @@ export function InspectionWorkspace() {
 function InspectionToolbar({
     inspection,
     selectedEntityMatchesInspection,
-    onOpenDiscrepancies,
+    onOpenFindings,
     onOpenDecision
 }) {
     const elapsedTime = useElapsedTime(inspection.startedAt);
@@ -239,10 +248,10 @@ function InspectionToolbar({
                     <button
                         type="button"
                         className="flex items-center gap-2 rounded bg-zinc-700 px-3 py-2 text-xs font-semibold hover:bg-zinc-600"
-                        onClick={onOpenDiscrepancies}
+                        onClick={onOpenFindings}
                     >
                         <FaFlag aria-hidden="true" />
-                        Auffälligkeiten ({inspection.markedDiscrepancies.length})
+                        Feststellungen ({inspection.markedFindingIds.length})
                     </button>
                     <button
                         type="button"
@@ -259,6 +268,7 @@ function InspectionToolbar({
                     Wähle das angehaltene Fahrzeug erneut aus, um seine Dokumente zu öffnen.
                 </p>
             )}
+
         </aside>
     );
 }
@@ -363,27 +373,24 @@ function InspectionResultDialog({ inspection, onFinish }) {
                         </div>
                     </section>
 
-                    <ResultDiscrepancySection
-                        title="Richtig erkannt"
-                        discrepancyIds={resolution.correctlyMarkedDiscrepancies}
-                        emptyText="Keine korrekten Auffälligkeiten markiert."
-                        tone="success"
+                    <FindingCategoryReport
+                        category={INSPECTION_FINDING_CATEGORIES.DOCUMENT}
+                        title="Dokumentenprüfung"
+                        resolution={resolution}
                     />
-                    <ResultDiscrepancySection
-                        title="Übersehen"
-                        discrepancyIds={resolution.missedDiscrepancies}
-                        emptyText="Keine vorhandenen Auffälligkeiten übersehen."
-                        tone="warning"
+                    <FindingCategoryReport
+                        category={INSPECTION_FINDING_CATEGORIES.VALIDITY}
+                        title="Gültigkeitsprüfung"
+                        resolution={resolution}
                     />
-                    <ResultDiscrepancySection
-                        title="Falsch beanstandet"
-                        discrepancyIds={resolution.falsePositiveDiscrepancies}
-                        emptyText="Keine korrekten Angaben fälschlich beanstandet."
-                        tone="error"
+                    <FindingCategoryReport
+                        category={INSPECTION_FINDING_CATEGORIES.POLICE}
+                        title="Polizeiabgleich"
+                        resolution={resolution}
                     />
 
                     <section>
-                        <h3 className="text-sm font-semibold">Dokumentenprüfung</h3>
+                        <h3 className="text-sm font-semibold">Geöffnete Dokumente</h3>
                         <p className="mt-2 text-sm text-zinc-600">
                             {resolution.unopenedDocuments.length === 0
                                 ? "Alle verfügbaren Dokumente wurden geöffnet."
@@ -409,38 +416,91 @@ function InspectionResultDialog({ inspection, onFinish }) {
     );
 }
 
-// Stellt eine Ergebnisgruppe mit neutralen Definitionstexten dar.
-function ResultDiscrepancySection({
-    title,
-    discrepancyIds,
-    emptyText,
-    tone
-}) {
-    const toneClasses = {
-        success: "border-emerald-200 bg-emerald-50",
-        warning: "border-amber-200 bg-amber-50",
-        error: "border-red-200 bg-red-50"
-    };
+// Gruppiert richtige, übersehene und falsche Findings nach ihrem fachlichen Bereich.
+function FindingCategoryReport({ category, title, resolution }) {
+    const correctFindingIds = filterFindingsByCategory(
+        resolution.correctlyIdentifiedFindings,
+        category
+    );
+    const missedFindingIds = filterFindingsByCategory(
+        resolution.missedFindings,
+        category
+    );
+    const falseFindingIds = filterFindingsByCategory(
+        resolution.falsePositiveFindings,
+        category
+    );
 
     return (
         <section>
             <h3 className="text-sm font-semibold">{title}</h3>
-            <div className={`mt-2 rounded-md border p-4 ${toneClasses[tone]}`}>
-                {discrepancyIds.length > 0 ? (
-                    <ul className="space-y-2 text-sm">
-                        {discrepancyIds.map((discrepancyId) => (
-                            <li key={discrepancyId}>
-                                {DISCREPANCY_DEFINITIONS_BY_ID[discrepancyId]?.label
-                                    ?? discrepancyId}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p className="text-sm text-zinc-600">{emptyText}</p>
+            <div className="mt-2 space-y-2 rounded-md border border-zinc-200 bg-white p-4">
+                <FindingResultRow
+                    label="Richtig erkannt"
+                    findingIds={correctFindingIds}
+                    tone="success"
+                />
+                <FindingResultRow
+                    label="Übersehen"
+                    findingIds={missedFindingIds}
+                    tone="warning"
+                />
+                <FindingResultRow
+                    label="Falsch beanstandet"
+                    findingIds={falseFindingIds}
+                    tone="error"
+                />
+                {correctFindingIds.length === 0
+                && missedFindingIds.length === 0
+                && falseFindingIds.length === 0 && (
+                    <p className="text-sm text-zinc-500">
+                        Keine handlungsrelevante Feststellung in diesem Bereich.
+                    </p>
                 )}
             </div>
         </section>
     );
+}
+
+function FindingResultRow({ label, findingIds, tone }) {
+    if (findingIds.length === 0) return null;
+
+    const toneClasses = {
+        success: "text-emerald-800",
+        warning: "text-amber-800",
+        error: "text-red-800"
+    };
+
+    return (
+        <div>
+            <p className={`text-xs font-semibold ${toneClasses[tone]}`}>{label}</p>
+            <ul className="mt-1 space-y-1 text-sm text-zinc-800">
+                {findingIds.map((findingId) => (
+                    <li key={findingId}>
+                        {INSPECTION_FINDING_DEFINITIONS_BY_ID[findingId]?.label
+                            ?? findingId}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}
+
+function filterFindingsByCategory(findingIds, category) {
+    return findingIds.filter((findingId) => {
+        return INSPECTION_FINDING_DEFINITIONS_BY_ID[findingId]?.category
+            === category;
+    });
+}
+
+function getFindingCategoryLabel(category) {
+    const labels = {
+        [INSPECTION_FINDING_CATEGORIES.DOCUMENT]: "Dokumentenprüfung",
+        [INSPECTION_FINDING_CATEGORIES.VALIDITY]: "Gültigkeitsprüfung",
+        [INSPECTION_FINDING_CATEGORIES.POLICE]: "Polizeiabgleich"
+    };
+
+    return labels[category] ?? category;
 }
 
 function getOutcomeConfiguration(outcome) {

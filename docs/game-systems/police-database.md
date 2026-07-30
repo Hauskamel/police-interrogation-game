@@ -111,6 +111,46 @@ Straftaten werden nicht in die Person kopiert. Der NPC enthält nur
 Im Laptop erscheinen nur diese bereits bekannten Records. Nicht entdeckte
 World-Truth-Straftaten bleiben unsichtbar.
 
+### Verwendung in einer Kontrolle
+
+Während einer aktiven Kontrollsession bleibt die Datenbank ein freies
+Recherchewerkzeug. Personen-, Fahrzeug- und Fahndungsakten werden nicht manuell mit
+der Kontrolle verknüpft.
+
+Der Spieler darf mehrere Treffer vergleichen, falsche Ergebnisse öffnen und danach
+weiter recherchieren. Das Spiel interpretiert weder die zuletzt geöffnete Akte noch
+einen einzelnen Klick als Identifikation des kontrollierten Fahrers.
+
+Die bewusste Schlussfolgerung erfolgt erst über die Kontrollentscheidung. Wählt der
+Spieler `Fahndungstreffer melden`, behauptet er damit, dass der aktuell kontrollierte
+Fahrer aktiv gesucht wird. Der Evaluator prüft diese Aussage gegen den tatsächlichen
+polizeilichen Datensatz.
+
+Die Datenbanknutzung wird in Phase 1 nicht bewertet. Dadurch wird weder blindes
+Durchklicken belohnt noch das Vergessen eines zusätzlichen Zuordnungsbuttons
+bestraft.
+
+### Recherchekontext beim Schließen
+
+Das Schließen des Police Laptops beendet keine laufende Recherche. Beim erneuten
+Öffnen werden deshalb wiederhergestellt:
+
+- zuletzt geöffnete Laptop-Seite
+- Datenbanksuche oder Fahndungsliste
+- gewählte Suchart
+- eingegebener Suchbegriff
+- ausgewählte Personen-, Fahrzeug- oder Fahndungsakte
+
+Der Spieler kann dadurch zwischen Dokumenten und Polizeidaten wechseln, ohne
+dieselbe Person nach jedem Wechsel erneut suchen zu müssen.
+
+Der Zustand enthält ausschließlich UI-Werte und Record-IDs. Es werden keine
+Polizeidatensätze kopiert und keine Aktenklicks als Spieleraussage bewertet.
+
+Beim Start eines neuen Spiels wird der Recherchekontext zurückgesetzt, weil die
+Polizeidatenbank neu generiert wird und alte Record-IDs dann nicht mehr gültig sein
+können.
+
 ## Relationales Modell
 
 ```text

@@ -4,7 +4,9 @@ import { generateCriminalDatabase } from "@game/crimes/generators";
 import {
     gameStates,
     useGameStore,
+    useInspectionStore,
     useNpcStore,
+    usePoliceLaptopStore,
     useWorldTruthStore
 } from "@stores";
 
@@ -15,6 +17,12 @@ export const Startmenu = () => {
     const setCriminalDatabase = useNpcStore((state) => state.setCriminalDatabase);
     const resetWorldTruthDatabase = useWorldTruthStore(
         (state) => state.resetWorldTruthDatabase
+    );
+    const resetInspectionState = useInspectionStore(
+        (state) => state.resetInspectionState
+    );
+    const resetPoliceLaptopState = usePoliceLaptopStore(
+        (state) => state.resetPoliceLaptopState
     );
 
     // -----> Baut die kriminelle NPC-Datenbank einmalig beim Spielstart auf.
@@ -28,6 +36,8 @@ export const Startmenu = () => {
     // -----> Initialisiert die Datenbank und wechselt anschließend in den Spielmodus.
     const handleStartGame = () => {
         resetWorldTruthDatabase();
+        resetInspectionState();
+        resetPoliceLaptopState();
         generateDatabase();
         ingameMode();
     };

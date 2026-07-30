@@ -4,21 +4,25 @@ Stand: 2026-07-30
 
 ## Ziel
 
-Die Kontrollsession verbindet eine angehaltene TrafficEntity mit den Handlungen und
-der Abschlussentscheidung des Spielers. Sie erzeugt keine NPCs, Fahrzeuge oder
-Dokumente und speichert keine zweite Kopie dieser Profile.
+Die Kontrollsession bildet einen vollständigen, nachvollziehbaren Kontrollvorgang
+ab. Sie verbindet eine angehaltene `TrafficEntity` mit den Handlungen des Spielers,
+ohne NPC-, Fahrzeug-, Dokument- oder Polizeidaten zu kopieren.
 
-Der erste geschlossene Gameplay-Ablauf lautet:
+Der aktuelle Gameplay-Ablauf lautet:
 
 ```text
 Fahrzeug anhalten
 → Kontrolle beginnen
-→ Dokumente öffnen
-→ Auffälligkeiten markieren
+→ Dokumente öffnen und vergleichen
+→ Police Laptop durchsuchen
+→ Feststellungen erkennen
 → administrative Entscheidung treffen
 → Kontrolle auswerten
 → Bericht schließen und Fahrzeug freigeben
 ```
+
+Es kann immer nur eine Kontrollsession aktiv sein. Während der Kontrolle kann das
+betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
 
 ## Session-Modell
 
@@ -30,7 +34,7 @@ Fahrzeug anhalten
     startedAt,
     completedAt,
     openedDocuments,
-    markedDiscrepancies,
+    markedFindingIds,
     playerDecision,
     resolution
 }
@@ -38,28 +42,23 @@ Fahrzeug anhalten
 
 ### `inspectionId`
 
-Identifiziert die konkrete Kontrolle unabhängig von NPC und Fahrzeug.
+Identifiziert den Kontrollvorgang unabhängig von NPC und Fahrzeug.
 
 ### `trafficEntityId`
 
-Verweist auf die kontrollierte Kombination aus Fahrer, Fahrzeug und Halter. Profile,
-Dokumentzustände und Polizeistatus werden darüber aufgelöst und nicht in die Session
-kopiert.
+Verweist auf die kontrollierte Kombination aus Fahrer und Fahrzeug. Profile,
+Dokumentzustände und Polizeistatus werden bei Bedarf über diese Referenz aufgelöst.
 
 ### `status`
 
-Phase 1 verwendet:
-
-- `active`
-- `completed`
-- `cancelled`
-
-Es kann immer nur eine Session aktiv sein.
+Phase 1 verwendet `active`, `completed` und `cancelled`.
 
 ### `startedAt` und `completedAt`
 
-Die Zeitpunkte ermöglichen bereits eine sichtbare Kontrolldauer. Später können sie
-für Schichten, Statistiken und chronologische Kontrollhistorien verwendet werden.
+`startedAt` ist nicht nur für den sichtbaren Timer zuständig. Der Zeitpunkt ist auch
+der fachliche Stichtag für die Gültigkeitsprüfung des Führerscheins. Zusammen mit
+`completedAt` ermöglicht er später Schichtstatistiken, Zeitdruck, Auswertungen und
+eine chronologische Kontrollhistorie.
 
 ### `openedDocuments`
 
@@ -69,114 +68,138 @@ Enthält jeden tatsächlich geöffneten Dokumenttyp genau einmal:
 - `carDocuments`
 - `proofOfInsurance`
 
-Alle drei Dokumente sind in Phase 1 weiterhin immer verfügbar. Fehlende,
-vergessene oder verweigerte Dokumente sind noch nicht Bestandteil dieses Systems.
+Eine richtige Abschlussentscheidung wird nur als vollständig korrekt gewertet, wenn
+alle verfügbaren Dokumente geprüft wurden.
 
-### `markedDiscrepancies`
+### `markedFindingIds`
 
-Speichert die vom Spieler beanstandeten Prüfpunkte. Die Auswahl enthält immer alle
-möglichen Punkte und verrät deshalb nicht, ob tatsächlich eine Fälschung vorliegt:
+Speichert die Feststellungen, die der Spieler selbst bei der Dokumentprüfung
+markiert. Die auswählbare Liste zeigt neutrale Prüfpunkte und verrät nicht, ob ein
+Dokument tatsächlich manipuliert wurde.
 
-- Name
-- Adresse
-- Geburtsdatum
+Aktuell prüfbar sind:
+
+- Name, Adresse und Geburtsdatum
 - Führerscheinnummer
-- Kennzeichen
-- Zulassungsnummer
+- Kennzeichen und Zulassungsnummer
 - Fahrzeughersteller oder Modell
+- abgelaufener Führerschein
 
 ### `playerDecision`
 
-Der Spieler kann zwischen vier administrativen Maßnahmen wählen:
+Der Spieler wählt eine administrative Maßnahme:
 
 - Weiterfahrt erlauben
 - Verwarnung aussprechen
 - Weiterfahrt verweigern
 - weitere Prüfung melden
+- Fahndungstreffer melden
 
-Die markierten Prüfpunkte werden als strukturierte Begründungen übernommen.
+Die markierten Feststellungen werden als strukturierte Begründungen übernommen.
+`Fahndungstreffer melden` ist selbst die bewusste Aussage des Spielers, dass für den
+aktuell kontrollierten Fahrer eine aktive Fahndung vorliegt. Es ist keine zusätzliche
+Aktenzuordnung erforderlich.
 
 ### `resolution`
 
-Die Auswertung wird erst nach Bestätigung der Entscheidung erstellt. Sie enthält:
+Die Auswertung entsteht erst nach der bestätigten Entscheidung. Sie enthält:
 
 - Gesamtbewertung
-- korrekte oder falsche Entscheidung
-- richtig erkannte Auffälligkeiten
-- übersehene Auffälligkeiten
-- falsch beanstandete Angaben
+- korrekte oder erwartete Entscheidung
+- richtig erkannte, übersehene und falsch markierte Feststellungen
 - nicht geöffnete Dokumente
 
-Mögliche Gesamtbewertungen:
+Der Bericht gliedert Feststellungen in:
 
-- `correct`
-- `partially_correct`
-- `incorrect`
+- Dokumentenprüfung
+- Gültigkeitsprüfung
+- Polizeiabgleich
 
-Eine zufällig richtige Entscheidung wird nur teilweise korrekt bewertet, wenn
-Dokumente ungeprüft blieben.
+Mögliche Bewertungen sind `correct`, `partially_correct` und `incorrect`.
+
+## Fachliche Regeln
+
+Die erwartete Maßnahme folgt einer eindeutigen Priorität:
+
+```text
+Passende aktive Fahndung
+→ Fahndungstreffer melden
+
+Dokumentenmanipulation
+→ Weitere Prüfung melden
+
+Abgelaufener Führerschein
+→ Weiterfahrt verweigern
+
+Keine handlungsrelevante Feststellung
+→ Weiterfahrt erlauben
+```
+
+Wichtig: Eine Person kann der Polizei bekannt sein oder frühere Straftaten besitzen,
+ohne aktuell gesucht zu werden. Polizeibekanntheit allein rechtfertigt deshalb keine
+Maßnahme. Auch ein anderer eingetragener Fahrzeughalter ist nicht automatisch ein
+Verstoß.
+
+## Datenbankrecherche
+
+Die Polizei-Datenbank ist während einer Kontrolle ein freies Recherchewerkzeug:
+
+- Der Spieler darf beliebig viele Suchergebnisse und Akten öffnen.
+- Die zuletzt geöffnete Akte gilt nicht automatisch als identifizierte Person.
+- Ein Aktenklick wird weder belohnt noch als bewusste Aussage bewertet.
+- Es gibt keine Buttons zum Hinzufügen oder Verknüpfen einer Akte.
+
+Diese Trennung ist wichtig, weil ein Spieler Akten vergleichen, versehentlich öffnen
+oder aus Interesse weiter recherchieren kann. Navigation beweist nicht, welche
+Schlussfolgerung er gezogen hat.
+
+Phase 1 speichert daher keine Datenbank-Klickhistorie. Eine solche Historie könnte
+später als anonyme Balancing- oder Tutorial-Telemetrie interessant sein, darf aber
+nicht zur fachlichen Bewertung einer einzelnen Kontrolle verwendet werden.
+
+Unbekannte World-Truth-Straftaten werden nicht heimlich gegen den Spieler gewertet.
+Sie sind erst relevant, wenn sie durch ein späteres Ermittlungs- oder Beweissystem
+erkennbar werden.
 
 ## Informationsgrenze
 
-Während einer laufenden Kontrolle kennt die Session nur Spielerhandlungen und
-Referenzen auf bestehende Spieldaten. Sie zeigt keine tatsächlichen
-`affectedFields`.
+Während der Kontrolle speichert die Session nur Spielerhandlungen und Referenzen.
+Sie kennt keine internen `affectedFields` und liest keine verborgenen Straftaten.
 
-Erst der Evaluator darf nach der bestätigten Entscheidung den internen
-`documentState` der TrafficEntity lesen. Der Police Laptop bleibt weiterhin auf
-`criminalDatabase` beschränkt und erhält keinen Zugriff auf World Truth.
+Erst der Evaluator darf beim Abschluss:
 
-## Dienstregel in Phase 1
+- den internen Dokumentzustand der kontrollierten TrafficEntity prüfen,
+- das Führerschein-Ablaufdatum mit `startedAt` vergleichen,
+- eine gemeldete Fahndung gegen die `criminalDatabase` prüfen.
 
-Damit die Entscheidung eindeutig bewertbar ist, gilt:
-
-```text
-Unauffällige Dokumente
-→ Weiterfahrt erlauben
-
-Begründeter Manipulationsverdacht
-→ Weitere Prüfung melden
-```
-
-Verwarnung und verweigerte Weiterfahrt sind bereits als Maßnahmen vorhanden, aber
-für die aktuellen reinen Dokumentfälle nicht die erwartete Standardentscheidung.
+Der Police Laptop greift weiterhin ausschließlich auf Polizeiwissen zu und niemals
+direkt auf die `worldTruthDatabase`.
 
 ## Nicht Bestandteil von Phase 1
 
-- vergessene oder fehlende Dokumente
-- verweigerte Dokumentvorlage
-- Befragungen und Aussagen
+- fehlende, vergessene oder verweigerte Dokumente
+- Befragungen und widersprüchliche Aussagen
 - freie Spielernotizen
 - Datenbank-Abfragehistorie
-- Schichten und Karriereauswertung
 - Fallakten und Beweisketten
 - persistente Kontrollhistorie
 - mehrere parallele Kontrollen
 - Speichern einer laufenden Kontrolle
+- tatsächliche Übergabe oder weitere Bearbeitung eines Fahndungstreffers
 
 ## Erweiterbarkeit
 
-Die Session kann später ohne Austausch des Grundmodells ergänzt werden:
-
-```js
-{
-    submittedDocumentIds,
-    databaseQueries,
-    interviewEntries,
-    playerNotes,
-    shiftId,
-    relatedCaseIds,
-    finalSnapshot
-}
-```
-
-Generatoren bleiben dabei vorgelagert:
+Die bestehenden Generatoren bleiben unverändert vorgelagert:
 
 ```text
 Generatoren
 → TrafficEntity
 → InspectionSession
+→ Police-Laptop-Recherche
 → InspectionEvaluator
 ```
 
-Die Session dokumentiert Gameplay. Sie übernimmt keine Generierungsverantwortung.
+Spätere Ergänzungen wie `submittedDocumentIds`, `interviewEntries`, `playerNotes`,
+`shiftId`, `relatedCaseIds` oder ein `finalSnapshot` können an die Session
+angebunden werden. Die Session dokumentiert Gameplay und übernimmt keine
+Generierungsverantwortung.

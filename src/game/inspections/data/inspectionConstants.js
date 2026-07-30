@@ -31,7 +31,8 @@ export const INSPECTION_DECISIONS = {
     ALLOW_TO_CONTINUE: "allow_to_continue",
     ISSUE_WARNING: "issue_warning",
     DENY_CONTINUATION: "deny_continuation",
-    REQUEST_ADDITIONAL_REVIEW: "request_additional_review"
+    REQUEST_ADDITIONAL_REVIEW: "request_additional_review",
+    REPORT_WANTED_HIT: "report_wanted_hit"
 };
 
 export const INSPECTION_DECISION_OPTIONS = [
@@ -54,6 +55,11 @@ export const INSPECTION_DECISION_OPTIONS = [
         id: INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW,
         label: "Weitere Prüfung melden",
         description: "Ein Manipulationsverdacht wird zur fachlichen Prüfung weitergegeben."
+    },
+    {
+        id: INSPECTION_DECISIONS.REPORT_WANTED_HIT,
+        label: "Fahndungstreffer melden",
+        description: "Die aktive Fahndung wird bestätigt und eine geordnete Übergabe angefordert."
     }
 ];
 

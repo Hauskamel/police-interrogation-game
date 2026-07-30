@@ -13,7 +13,7 @@ export function createInspectionSession(trafficEntityId) {
         startedAt: new Date().toISOString(),
         completedAt: null,
         openedDocuments: [],
-        markedDiscrepancies: [],
+        markedFindingIds: [],
         playerDecision: null,
         resolution: null
     };

@@ -1,4 +1,4 @@
-import { createElement, useMemo, useState } from "react";
+import { createElement, useMemo } from "react";
 import {
     FaBullhorn,
     FaCar,
@@ -9,7 +9,12 @@ import {
 } from "react-icons/fa6";
 
 import { BaseImage } from "@game/documents/components/base";
-import { useNpcStore } from "@stores";
+import {
+    POLICE_DATABASE_SEARCH_TYPES,
+    POLICE_DATABASE_SECTIONS,
+    useNpcStore,
+    usePoliceLaptopStore
+} from "@stores";
 
 import {
     getActiveWantedRecordForNpc,
@@ -21,29 +26,18 @@ import {
     searchVehicles
 } from "./policeDatabaseSearch.js";
 
-const DATABASE_SECTIONS = {
-    SEARCH: "search",
-    WANTED: "wanted"
-};
-
-const SEARCH_TYPES = {
-    PERSON: "person",
-    LICENSE: "license",
-    PLATE: "plate"
-};
-
 const searchTypeConfiguration = {
-    [SEARCH_TYPES.PERSON]: {
+    [POLICE_DATABASE_SEARCH_TYPES.PERSON]: {
         label: "Person",
         placeholder: "Name, Adresse oder Personen-ID",
         icon: FaUser
     },
-    [SEARCH_TYPES.LICENSE]: {
+    [POLICE_DATABASE_SEARCH_TYPES.LICENSE]: {
         label: "Führerschein",
         placeholder: "Führerscheinnummer",
         icon: FaIdCard
     },
-    [SEARCH_TYPES.PLATE]: {
+    [POLICE_DATABASE_SEARCH_TYPES.PLATE]: {
         label: "Kennzeichen",
         placeholder: "Kennzeichen oder Zulassungsnummer",
         icon: FaCar
@@ -55,21 +49,35 @@ const searchTypeConfiguration = {
 // ---> Der Screen liest ausschließlich die polizeiliche criminalDatabase aus dem NPC Store.
 export function PoliceDatabaseScreen() {
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
-    const [activeSection, setActiveSection] = useState(DATABASE_SECTIONS.SEARCH);
-    const [searchType, setSearchType] = useState(SEARCH_TYPES.PERSON);
-    const [query, setQuery] = useState("");
-    const [selection, setSelection] = useState(null);
+    const {
+        activeSection,
+        query,
+        searchType,
+        selection
+    } = usePoliceLaptopStore((state) => state.database);
+    const setDatabaseQuery = usePoliceLaptopStore(
+        (state) => state.setDatabaseQuery
+    );
+    const setDatabaseSection = usePoliceLaptopStore(
+        (state) => state.setDatabaseSection
+    );
+    const setDatabaseSearchType = usePoliceLaptopStore(
+        (state) => state.setDatabaseSearchType
+    );
+    const setDatabaseSelection = usePoliceLaptopStore(
+        (state) => state.setDatabaseSelection
+    );
 
     const results = useMemo(() => {
-        if (activeSection === DATABASE_SECTIONS.WANTED) {
+        if (activeSection === POLICE_DATABASE_SECTIONS.WANTED) {
             return getActiveWantedRecords(criminalDatabase);
         }
 
-        if (searchType === SEARCH_TYPES.LICENSE) {
+        if (searchType === POLICE_DATABASE_SEARCH_TYPES.LICENSE) {
             return searchDriverLicenses(criminalDatabase, query);
         }
 
-        if (searchType === SEARCH_TYPES.PLATE) {
+        if (searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE) {
             return searchVehicles(criminalDatabase, query);
         }
 
@@ -77,14 +85,11 @@ export function PoliceDatabaseScreen() {
     }, [activeSection, criminalDatabase, query, searchType]);
 
     const changeSection = (section) => {
-        setActiveSection(section);
-        setSelection(null);
+        setDatabaseSection(section);
     };
 
     const changeSearchType = (type) => {
-        setSearchType(type);
-        setQuery("");
-        setSelection(null);
+        setDatabaseSearchType(type);
     };
 
     return (
@@ -106,27 +111,30 @@ export function PoliceDatabaseScreen() {
 
                 <div className="mt-4 flex gap-6 border-b border-zinc-200">
                     <SectionButton
-                        active={activeSection === DATABASE_SECTIONS.SEARCH}
+                        active={activeSection === POLICE_DATABASE_SECTIONS.SEARCH}
                         icon={FaMagnifyingGlass}
                         label="Suche"
-                        onClick={() => changeSection(DATABASE_SECTIONS.SEARCH)}
+                        onClick={() => {
+                            changeSection(POLICE_DATABASE_SECTIONS.SEARCH);
+                        }}
                     />
                     <SectionButton
-                        active={activeSection === DATABASE_SECTIONS.WANTED}
+                        active={activeSection === POLICE_DATABASE_SECTIONS.WANTED}
                         icon={FaBullhorn}
                         label="Fahndungsliste"
-                        onClick={() => changeSection(DATABASE_SECTIONS.WANTED)}
+                        onClick={() => {
+                            changeSection(POLICE_DATABASE_SECTIONS.WANTED);
+                        }}
                     />
                 </div>
             </header>
 
-            {activeSection === DATABASE_SECTIONS.SEARCH && (
+            {activeSection === POLICE_DATABASE_SECTIONS.SEARCH && (
                 <SearchToolbar
                     query={query}
                     searchType={searchType}
                     onQueryChange={(event) => {
-                        setQuery(event.target.value);
-                        setSelection(null);
+                        setDatabaseQuery(event.target.value);
                     }}
                     onSearchTypeChange={changeSearchType}
                 />
@@ -139,12 +147,12 @@ export function PoliceDatabaseScreen() {
                     results={results}
                     searchType={searchType}
                     selection={selection}
-                    onSelect={setSelection}
+                    onSelect={setDatabaseSelection}
                 />
                 <RecordDetails
                     criminalDatabase={criminalDatabase}
                     selection={selection}
-                    onSelect={setSelection}
+                    onSelect={setDatabaseSelection}
                 />
             </div>
         </div>
@@ -234,13 +242,17 @@ function ResultsList({
     selection,
     onSelect
 }) {
-    const isWaitingForQuery = activeSection === DATABASE_SECTIONS.SEARCH && !query.trim();
+    const isWaitingForQuery = activeSection === POLICE_DATABASE_SECTIONS.SEARCH
+        && !query.trim();
 
     return (
         <section className="min-h-0 overflow-y-auto border-r border-zinc-200 bg-white">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white px-4 py-3">
                 <h2 className="text-sm font-semibold text-zinc-900">
-                    {activeSection === DATABASE_SECTIONS.WANTED ? "Aktive Fahndungen" : "Suchergebnisse"}
+                    {activeSection === POLICE_DATABASE_SECTIONS.WANTED
+                        ? "Aktive Fahndungen"
+                        : "Suchergebnisse"
+                    }
                 </h2>
                 <span className="text-xs text-zinc-500">
                     {isWaitingForQuery ? "–" : results.length}
@@ -283,11 +295,11 @@ function ResultsList({
 
 // Formt die verschiedenen Trefferarten in eine stabile Detailauswahl um.
 function createSelection(activeSection, searchType, record) {
-    if (activeSection === DATABASE_SECTIONS.WANTED) {
+    if (activeSection === POLICE_DATABASE_SECTIONS.WANTED) {
         return { kind: "wanted", id: record.id };
     }
 
-    if (searchType === SEARCH_TYPES.PLATE) {
+    if (searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE) {
         return { kind: "vehicle", id: record.vehicleId };
     }
 
@@ -296,18 +308,18 @@ function createSelection(activeSection, searchType, record) {
 
 // Stellt die für den jeweiligen Suchmodus wichtigsten Trefferinformationen dar.
 function ResultButton({ activeSection, isSelected, record, searchType, onClick }) {
-    const isVehicle = searchType === SEARCH_TYPES.PLATE
-        && activeSection !== DATABASE_SECTIONS.WANTED;
+    const isVehicle = searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE
+        && activeSection !== POLICE_DATABASE_SECTIONS.WANTED;
     const title = isVehicle
         ? record.carDocumentsData?.plateNumber
-        : activeSection === DATABASE_SECTIONS.WANTED
+        : activeSection === POLICE_DATABASE_SECTIONS.WANTED
             ? `Fahndung ${record.id}`
             : `${record.firstName} ${record.lastName}`;
     const subtitle = isVehicle
         ? `${record.brand} ${record.model}`
-        : activeSection === DATABASE_SECTIONS.WANTED
+        : activeSection === POLICE_DATABASE_SECTIONS.WANTED
             ? `Priorität ${record.priorityLevel}`
-            : searchType === SEARCH_TYPES.LICENSE
+            : searchType === POLICE_DATABASE_SEARCH_TYPES.LICENSE
                 ? record.driversLicense?.licenseNumber
                 : record.address;
 
