@@ -14,15 +14,19 @@ export function assembleTrafficEntity({
     police,
     inspectionProfile,
     options = {},
-    worldTruthRecords
+    worldTruthRecords,
+    baseVehicleProfile: registeredVehicleProfile
 }) {
     const { vehicleOwnerProfile, ownership } = createVehicleOwnership(
         baseDriverProfile,
         options
     );
-    const baseVehicleProfile = generateVehicleProfile({
-        registeredOwnerNpcId: ownership.registeredOwnerNpcId
-    });
+    // Polizeibekannte NPCs können ihr bereits registriertes Datenbank-Fahrzeug verwenden.
+    // Für alle anderen Traffic-Fälle wird weiterhin ein neues Fahrzeug generiert.
+    const baseVehicleProfile = registeredVehicleProfile
+        ?? generateVehicleProfile({
+            registeredOwnerNpcId: ownership.registeredOwnerNpcId
+        });
     const documentState = createDocumentState({
         trafficType,
         driverProfile: baseDriverProfile,
@@ -36,7 +40,7 @@ export function assembleTrafficEntity({
     });
     const id = createEntityId("traffic");
     const npcId = driverProfile.real.npcId;
-    const vehicleId = createEntityId("vehicle");
+    const vehicleId = vehicleProfile.real.vehicleId ?? createEntityId("vehicle");
 
     // vehicleId wird in real und presented gespiegelt, damit Wahrheit und Dokumentansicht dieselbe Fahrzeug-Referenz kennen.
     const vehicleProfileWithId = {

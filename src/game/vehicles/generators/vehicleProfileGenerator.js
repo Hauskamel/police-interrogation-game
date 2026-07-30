@@ -37,13 +37,13 @@ export const generateVehicleProfile = (options = {}) => {
         }
     }
     
-    return createVehicleProfile(real);
+    return createVehicleProfileFromReal(real);
 }
 
 // ##### Vehicle Profile Factory
 // -----> Bündelt echte Fahrzeugdaten und die unveränderte presented-Ausgangslage.
-// ---> Die Traffic-Generatoren können presented danach anhand des documentState gezielt verändern.
-function createVehicleProfile(real) {
+// ---> Wird auch genutzt, um ein registriertes Polizeidatenbank-Fahrzeug für einen Spawn aufzubereiten.
+export function createVehicleProfileFromReal(real) {
     return {
         real,
         presented: {
