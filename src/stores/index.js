@@ -1,4 +1,5 @@
 export { gameStates, useGameStore } from "./gameStore.js";
+export { useInspectionStore } from "./inspectionStore.js";
 export { useNpcStore } from "./npcStore.js";
 export {
     selectSelectedTrafficEntity,

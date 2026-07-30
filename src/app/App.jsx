@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     selectSelectedTrafficEntity,
     selectSelectedVehicle,
     useGameStore,
+    useInspectionStore,
     useTrafficStore
 } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
@@ -13,6 +14,7 @@ import {
 } from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
 import { LaptopScreen, Notebook, PoliceRadio } from "@game/police/components";
+import { InspectionWorkspace } from "@game/inspections";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";
@@ -27,12 +29,32 @@ function App() {
     const selectedVehicle = useTrafficStore(selectSelectedVehicle);
     const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore(state => state.trafficEntities.find(entity => entity.stopped));
+    const activeInspection = useInspectionStore((state) => state.activeInspection);
+    const cancelActiveInspection = useInspectionStore(
+        (state) => state.cancelActiveInspection
+    );
 
     const gameState = useGameStore(state => state.gameState);
     const ingameMode = useGameStore(state => state.ingameMode);
     const [hoveringCar, setHoveringCar] = useState(false);
 
     useLilGuiSetup();
+
+    // Eine Session kann nicht aktiv bleiben, wenn ihre TrafficEntity entfernt oder freigegeben wurde.
+    useEffect(() => {
+        if (!activeInspection) return;
+
+        const controlledEntityStillExists = stoppedTrafficEntity?.id
+            === activeInspection.trafficEntityId;
+
+        if (!controlledEntityStillExists) {
+            cancelActiveInspection();
+        }
+    }, [
+        activeInspection,
+        cancelActiveInspection,
+        stoppedTrafficEntity
+    ]);
 
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
@@ -68,10 +90,17 @@ function App() {
 
             <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
 
-            {stoppedTrafficEntity && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
+            {activeInspection
+            && stoppedTrafficEntity
+            && activeInspection.trafficEntityId === stoppedTrafficEntity.id
+            && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
                 <>
                     <DocumentManager />
                 </>
+            )}
+
+            {gameState !== "LAPTOP" && (
+                <InspectionWorkspace />
             )}
         </div>
     )

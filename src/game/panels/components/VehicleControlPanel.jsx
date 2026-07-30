@@ -3,6 +3,7 @@ import { VehicleOccupantsPanel } from "./VehicleOccupantsPanel.jsx";
 import {
     selectSelectedTrafficEntity,
     useGuiVisibilityStatesStore,
+    useInspectionStore,
     useTrafficStore
 } from "@stores";
 
@@ -21,6 +22,11 @@ export const VehicleControlPanel = ({
     const continueTrafficEntity = useTrafficStore((state) => state.continueTrafficEntity);
     const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore((state) => state.trafficEntities.find(entity => entity.stopped));
+    const activeInspection = useInspectionStore((state) => state.activeInspection);
+    const lastCompletedInspection = useInspectionStore(
+        (state) => state.lastCompletedInspection
+    );
+    const startInspection = useInspectionStore((state) => state.startInspection);
     const revealedDriverNpcId = useTrafficStore((state) =>
         state.revealedDriverIdentityByTrafficEntityId[selectedTrafficEntity?.id]
     );
@@ -38,6 +44,10 @@ export const VehicleControlPanel = ({
         selectedEntityIsStopped
         && revealedDriverNpcId === selectedTrafficEntity?.npcId
     );
+    const selectedInspectionIsActive = activeInspection?.trafficEntityId
+        === selectedTrafficEntity?.id;
+    const selectedInspectionHasResult = lastCompletedInspection?.trafficEntityId
+        === selectedTrafficEntity?.id;
 
     
     return (
@@ -64,7 +74,9 @@ export const VehicleControlPanel = ({
                         </button>
                     )}
 
-                    {selectedEntityIsStopped && (
+                    {selectedEntityIsStopped
+                    && !selectedInspectionIsActive
+                    && !selectedInspectionHasResult && (
                         <button
                             onClick={() => {
                                 closePanel(setPanelVisibility, onClose)
@@ -78,14 +90,32 @@ export const VehicleControlPanel = ({
                     
                 </div>
 
-                {selectedEntityIsStopped && (
+                {selectedEntityIsStopped
+                && !selectedInspectionIsActive
+                && !selectedInspectionHasResult && (
                     <div className="flex gap-2">
-                        <button 
-                            className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer"
+                        <button
+                            type="button"
+                            className="w-full bg-sky-700 text-white py-2 px-4 rounded-xl hover:bg-sky-800 transition font-semibold shadow-md cursor-pointer"
+                            onClick={() => startInspection(selectedTrafficEntity.id)}
                         >
-                            Verhaften
+                            Kontrolle beginnen
                         </button>
                     </div>
+                )}
+
+                {selectedInspectionIsActive && (
+                    <p className="rounded bg-blue-50 px-3 py-2 text-xs text-blue-800">
+                        Die Kontrolle läuft. Öffne Dokumente und markiere Auffälligkeiten
+                        über die Kontrollleiste.
+                    </p>
+                )}
+
+                {selectedInspectionHasResult && (
+                    <p className="rounded bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+                        Die Kontrolle ist abgeschlossen. Schließe den Kontrollbericht,
+                        um das Fahrzeug freizugeben.
+                    </p>
                 )}
 
                 {anotherEntityIsStopped && (

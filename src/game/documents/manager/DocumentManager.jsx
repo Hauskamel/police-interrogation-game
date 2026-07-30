@@ -7,7 +7,11 @@ import {
     DriversLicense,
     ProofOfInsurance
 } from "../components";
-import { selectSelectedTrafficEntity, useTrafficStore } from "@stores";
+import {
+    selectSelectedTrafficEntity,
+    useInspectionStore,
+    useTrafficStore
+} from "@stores";
 
 // ##### Driver Identity Documents
 // -----> Nur Dokumente mit Daten des Fahrers duerfen dessen Identitaet im Kontrollpanel aufdecken.
@@ -24,6 +28,9 @@ const DRIVER_IDENTITY_DOCUMENTS = new Set([
 export function DocumentManager() {
     const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const revealDriverIdentity = useTrafficStore(state => state.revealDriverIdentity);
+    const registerOpenedDocument = useInspectionStore(
+        (state) => state.registerOpenedDocument
+    );
 
     const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
     const [openDocs, setOpenDocs] = useState(() =>
@@ -45,6 +52,11 @@ export function DocumentManager() {
                 selectedTrafficEntity.id,
                 selectedTrafficEntity.npcId
             );
+        }
+
+        // Die Kontrollsession unterscheidet verfügbare von tatsächlich geöffneten Dokumenten.
+        if (documentWillOpen) {
+            registerOpenedDocument(doc);
         }
 
         setOpenDocs(prev => ({
