@@ -1,7 +1,12 @@
 import { createNpcProfileFromReal } from "@game/npcs/generators";
+import { createVehicleProfileFromReal } from "@game/vehicles/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
-import { getActiveWantedRecords, pickDatabaseNpcId } from "../utils";
+import {
+    getActiveWantedRecords,
+    getRegisteredVehicleRecord,
+    pickDatabaseNpcId
+} from "../utils";
 import { assembleTrafficEntity } from "./assembleTrafficEntity.js";
 
 // ##### Wanted Offender Traffic Entity
@@ -21,6 +26,13 @@ export function createWantedOffenderTrafficEntity(options = {}) {
     if (!databaseNpcRecord || !wantedRecord) return null;
 
     const baseDriverProfile = createNpcProfileFromReal(databaseNpcRecord);
+    const databaseVehicleRecord = getRegisteredVehicleRecord(
+        criminalDatabase,
+        databaseNpcRecord
+    );
+    const baseVehicleProfile = databaseVehicleRecord
+        ? createVehicleProfileFromReal(databaseVehicleRecord)
+        : undefined;
     const crimeRecordIds = databaseNpcRecord.crimeRecordIds ?? [];
     const inspectionProfile = {
         complexityLevel: Math.min(4, Math.max(2, crimeRecordIds.length + 1)),
@@ -41,6 +53,10 @@ export function createWantedOffenderTrafficEntity(options = {}) {
             wantedRecordId: wantedRecord.id
         },
         inspectionProfile,
-        options
+        options: {
+            ...options,
+            forcedDriverIsRegisteredOwner: true
+        },
+        baseVehicleProfile
     });
 }

@@ -1,22 +1,31 @@
-import { useCallback } from "react";
+import { createElement } from "react";
 
-
-export function MenuListElement ({setClickedElement, clickedElem, title}) {
-
-    const handleClick = useCallback ((e) => {
-        e.stopPropagation();
-        setClickedElement(e)
-    }, [setClickedElement])
-
-
+// ##### Laptop Menu Item
+// -----> Einheitlicher, semantischer Button für Navigation und Laptop-Aktionen.
+export function MenuListElement({
+    active = false,
+    icon,
+    title,
+    onClick
+}) {
     return (
-        <>
-            <div className={`mb-5 ${clickedElem ? "bg-laptop-menu-list-element-selected" : "bg-laptop-menu-list-element-unselected"}`}
-                onClick={handleClick}    
-            >
-                <p>{title}</p>
-            </div>
-            
-        </>
-    )
+        <button
+            type="button"
+            className={`flex h-11 w-full items-center justify-center gap-3 rounded-md px-3 text-sm transition-colors md:justify-start ${
+                active
+                    ? "bg-blue-700 text-white"
+                    : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
+            }`}
+            aria-current={active ? "page" : undefined}
+            aria-label={title}
+            title={title}
+            onClick={onClick}
+        >
+            {createElement(icon, {
+                className: "shrink-0 text-base",
+                "aria-hidden": true
+            })}
+            <span className="hidden truncate md:block">{title}</span>
+        </button>
+    );
 }

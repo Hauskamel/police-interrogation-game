@@ -11,9 +11,11 @@ export const useNpcStore = create((set) => ({
         npcsById: {},
         crimeRecordsById: {},
         wantedRecordsById: {},
+        vehiclesById: {},
         criminalNpcIds: [],
         knownOffenderNpcIds: [],
-        wantedRecordIds: []
+        wantedRecordIds: [],
+        vehicleIds: []
     },
     // -----> Ersetzt die komplette relationale Spieldatenbank.
     // ---> Indizes wie criminalNpcIds liegen ausschließlich innerhalb dieser Datenbank.

@@ -15,6 +15,7 @@ Diese Dokumente erklären, **was ein Feature im Spiel bedeutet** und wie es geda
 | Dokument | Inhalt |
 |---|---|
 | [NPCs, Polizeiwissen und Verkehrskontrollen](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, Halter, Fahndungsrecords, TrafficEntities und Dokumentdaten zusammenhängen |
+| [Spielbare Polizei-Datenbank](./game-systems/police-database.md) | Welche Informationen der Police Laptop zeigt, wie die Suchen funktionieren und warum World Truth verborgen bleibt |
 
 ## System Changes
 
@@ -22,6 +23,7 @@ Diese Dokumente erklären, **was technisch geändert wurde**.
 
 | Dokument | Inhalt |
 |---|---|
+| [Police-Laptop-Prototyp vom 30.07.2026](./system-changes/police-laptop-prototype-2026-07-30.md) | Technische Umsetzung der Suche, Fahndungsakten, Fahrzeugrelationen und Laptop-Überarbeitung |
 | [Branch-Refactor vom 29.07.2026](./system-changes/branch-refactor-summary-2026-07-29.md) | Vollständige Zusammenfassung des NPC-, Traffic-, Datenbank- und Dokument-Refactors auf diesem Branch |
 | [Bugreport vom 27.07.2026](./system-changes/bug-report-2026-07-27.md) | Behobene Fehler, offene funktionale Lücken und Validierung vom 27.07.2026 |
 | [NPC Manipulated Identity Branch Changes](./system-changes/npc-manipulated-identity-branch-changes.md) | Was auf `feature/npc-manipulated-identity` hinzugefügt, geändert und entfernt wurde |

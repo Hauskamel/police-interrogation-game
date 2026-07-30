@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 
 import { generateNpcProfile } from "@game/npcs/generators";
 import { createEntityId } from "@game/shared";
+import { generateVehicleProfile } from "@game/vehicles/generators";
 import { WANTED_RECORD_STATUSES } from "../data";
 import { generateCrimeRecordsForNpc } from "./crimeRecordGenerator.js";
 
@@ -14,19 +15,30 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
     const npcsById = {};
     const crimeRecordsById = {};
     const wantedRecordsById = {};
+    const vehiclesById = {};
     const criminalNpcIds = [];
+    const vehicleIds = [];
 
     while (criminalNpcIds.length < criminalNpcCount) {
         const npcProfile = generateNpcProfile({ minimumAge: 18 });
         const npcId = npcProfile.real.npcId;
         const crimeRecords = generateCrimeRecordsForNpc(npcId);
         const crimeRecordIds = crimeRecords.map((crimeRecord) => crimeRecord.id);
+        const vehicleProfile = generateVehicleProfile({
+            registeredOwnerNpcId: npcId
+        });
+        const vehicleId = createEntityId("vehicle");
 
-        // Die Polizei-Datenbank speichert nur den kanonischen NPC-Record.
-        // presented entsteht erst für eine konkrete Kontrolle aus diesem Record.
+        // Personen- und Fahrzeugdaten werden als getrennte Tabellen gespeichert.
+        // Die Verbindung entsteht ausschließlich über stabile IDs.
         npcsById[npcId] = {
             ...npcProfile.real,
-            crimeRecordIds
+            crimeRecordIds,
+            vehicleIds: [vehicleId]
+        };
+        vehiclesById[vehicleId] = {
+            ...vehicleProfile.real,
+            vehicleId
         };
 
         crimeRecords.forEach((crimeRecord) => {
@@ -34,6 +46,7 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
         });
 
         criminalNpcIds.push(npcId);
+        vehicleIds.push(vehicleId);
     }
 
     const wantedNpcIds = pickWantedNpcIds(criminalNpcIds, wantedNpcCount);
@@ -52,9 +65,11 @@ export function generateCriminalDatabase({ criminalNpcCount = 10, wantedNpcCount
         npcsById,
         crimeRecordsById,
         wantedRecordsById,
+        vehiclesById,
         criminalNpcIds,
         knownOffenderNpcIds,
-        wantedRecordIds
+        wantedRecordIds,
+        vehicleIds
     };
 }
 
