@@ -371,13 +371,19 @@ Explizite Aktionen:
 
 ```text
 Auf angehaltenen NPC anwenden
-Spawn NPC an Station
+Spawn konfigurierten NPC
+Spawn Random NPC (Blindtest)
 ```
 
 Der Apply-Button ist nur aktiv, wenn die über `selectedVehicleId` aufgelöste
 TrafficEntity angehalten wurde. Er verwendet den vollständigen Generatorpfad
 mit den aktuell eingestellten Controls und erhält anschließend Welt-ID,
 Position, Spawnzustand und Stop-Zustand der vorhandenen TrafficEntity.
+
+Der Blindtest-Spawn verwendet dagegen die normalen Traffic- und
+Dokumentwahrscheinlichkeiten. Seine intern erzeugte NPC-Kategorie wird nicht in die
+lil-gui-Controls zurückgeschrieben, bis der Entwickler den Fall über ein Control
+bewusst verändert.
 
 Änderungen an Focus Areas leiten Complexity und Deception Risk über `inspectionProfileControls.js` neu ab.
 

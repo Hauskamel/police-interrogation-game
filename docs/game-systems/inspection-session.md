@@ -1,6 +1,6 @@
 # Spielsystem: Kontrollsession Phase 1
 
-Stand: 2026-07-30
+Stand: 2026-08-03
 
 ## Ziel
 
@@ -34,6 +34,7 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     startedAt,
     completedAt,
     openedDocuments,
+    visibleDocuments,
     markedFindingIds,
     playerDecision,
     resolution
@@ -60,6 +61,11 @@ der fachliche Stichtag für die Gültigkeitsprüfung des Führerscheins. Zusamme
 `completedAt` ermöglicht er später Schichtstatistiken, Zeitdruck, Auswertungen und
 eine chronologische Kontrollhistorie.
 
+Beide Werte stammen aus der zentralen Spieluhr. Phase 1 beginnt am festgelegten
+Spieltag `2026-08-03`; reale verstrichene Sekunden laufen innerhalb der Sitzung
+weiter. Dokumente, NPC-Alter, Straftaten und Fahndungen verwenden denselben
+fachlichen Zeitbezug.
+
 ### `openedDocuments`
 
 Enthält jeden tatsächlich geöffneten Dokumenttyp genau einmal:
@@ -70,6 +76,26 @@ Enthält jeden tatsächlich geöffneten Dokumenttyp genau einmal:
 
 Eine richtige Abschlussentscheidung wird nur als vollständig korrekt gewertet, wenn
 alle verfügbaren Dokumente geprüft wurden.
+
+### `visibleDocuments`
+
+Enthält die Dokumentfenster, die der Spieler momentan geöffnet hat. Dieser reine
+UI-Zustand ist bewusst von `openedDocuments` getrennt:
+
+```text
+Dokument erstmals öffnen
+→ in openedDocuments und visibleDocuments eintragen
+
+Dokument manuell schließen
+→ nur aus visibleDocuments entfernen
+
+Laptop öffnen und schließen
+→ visibleDocuments unverändert lassen
+```
+
+Dadurch erscheinen zuvor sichtbare Dokumente nach dem Schließen des Police Laptops
+wieder, ohne dass der Spieler sie erneut anklicken muss. Ein manuell geschlossenes
+Dokument bleibt für die Auswertung trotzdem als geprüft gespeichert.
 
 ### `markedFindingIds`
 
@@ -84,6 +110,8 @@ Aktuell prüfbar sind:
 - Kennzeichen und Zulassungsnummer
 - Fahrzeughersteller oder Modell
 - abgelaufener Führerschein
+- Policennummer und versichertes Fahrzeug
+- abgelaufener Versicherungsschutz
 
 ### `playerDecision`
 
@@ -128,12 +156,26 @@ Passende aktive Fahndung
 Dokumentenmanipulation
 → Weitere Prüfung melden
 
-Abgelaufener Führerschein
+Abgelaufener Führerschein oder Versicherungsschutz
 → Weiterfahrt verweigern
 
 Keine handlungsrelevante Feststellung
 → Weiterfahrt erlauben
 ```
+
+Die Spielerentscheidung erzeugt außerdem einen fachlichen Endzustand:
+
+| Entscheidung | Endzustand |
+|---|---|
+| Weiterfahrt erlauben | `released` |
+| Verwarnung | `warned_and_released` |
+| Weiterfahrt verweigern | `held` |
+| Weitere Prüfung | `referred` |
+| Fahndungstreffer | `transferred` |
+
+Freigegebene reguläre Fahrzeuge fahren weiter. Zurückgehaltene oder übergebene
+TrafficEntities verlassen den aktiven Verkehrskontext. Dev-Spawns werden nach dem
+Bericht entfernt, weil sie technisch nicht entlang einer Straße weiterfahren.
 
 Wichtig: Eine Person kann der Polizei bekannt sein oder frühere Straftaten besitzen,
 ohne aktuell gesucht zu werden. Polizeibekanntheit allein rechtfertigt deshalb keine
@@ -157,6 +199,27 @@ Phase 1 speichert daher keine Datenbank-Klickhistorie. Eine solche Historie kön
 später als anonyme Balancing- oder Tutorial-Telemetrie interessant sein, darf aber
 nicht zur fachlichen Bewertung einer einzelnen Kontrolle verwendet werden.
 
+## Bedienkontext
+
+Das Dienstwerkzeug-Panel mit dem Police Laptop ist während des Spiels dauerhaft
+erreichbar und benötigt keine Auswahl des Polizeifahrzeugs.
+
+Das Fahrzeug-Panel folgt dieser Priorität:
+
+```text
+aktive Kontrollsession
+→ kontrollierte TrafficEntity
+
+angehaltenes Fahrzeug ohne Session
+→ angehaltene TrafficEntity
+
+sonst
+→ aktuell angeklickte TrafficEntity
+```
+
+Ein aktiver oder angehaltener Kontrollkontext bleibt dadurch sichtbar, selbst wenn
+der Spieler zwischen Dokumenten, Datenbank und 3D-Welt wechselt.
+
 Unbekannte World-Truth-Straftaten werden nicht heimlich gegen den Spieler gewertet.
 Sie sind erst relevant, wenn sie durch ein späteres Ermittlungs- oder Beweissystem
 erkennbar werden.
@@ -170,10 +233,17 @@ Erst der Evaluator darf beim Abschluss:
 
 - den internen Dokumentzustand der kontrollierten TrafficEntity prüfen,
 - das Führerschein-Ablaufdatum mit `startedAt` vergleichen,
-- eine gemeldete Fahndung gegen die `criminalDatabase` prüfen.
+- eine gemeldete Fahndung gegen die `criminalDatabase` prüfen,
+- Führerschein-, Fahrzeug- und Versicherungsabweichungen gegen die jeweils
+  vorhandenen amtlichen Registerrecords auf Erkennbarkeit prüfen.
 
-Der Police Laptop greift weiterhin ausschließlich auf Polizeiwissen zu und niemals
-direkt auf die `worldTruthDatabase`.
+Ein internes `affectedField` reicht allein nicht für eine erwartete Feststellung.
+Der kanonische amtliche Record muss im passenden Register auflösbar sein. Verborgene
+Straftaten oder eine hochwertige, auch amtlich registrierte Tarnidentität werden
+dadurch nicht gegen den Spieler gewertet.
+
+Der Police Laptop greift ausschließlich auf freigegebenes Polizeiwissen und amtliche
+Register zu, niemals direkt auf die `worldTruthDatabase`.
 
 ## Nicht Bestandteil von Phase 1
 
@@ -185,7 +255,7 @@ direkt auf die `worldTruthDatabase`.
 - persistente Kontrollhistorie
 - mehrere parallele Kontrollen
 - Speichern einer laufenden Kontrolle
-- tatsächliche Übergabe oder weitere Bearbeitung eines Fahndungstreffers
+- sichtbare Übergabeanimation oder weitere Bearbeitung nach einem Fahndungstreffer
 
 ## Erweiterbarkeit
 

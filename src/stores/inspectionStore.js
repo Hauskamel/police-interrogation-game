@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 import { createInspectionSession } from "@game/inspections/generators";
 import { INSPECTION_STATUSES } from "@game/inspections/data";
+import { getCurrentGameTimestamp } from "@game/shared";
 
 // ##### Inspection Store
 // -----> Hält genau eine aktive Kontrolle und den letzten abgeschlossenen Bericht.
@@ -47,6 +48,31 @@ export const useInspectionStore = create((set, get) => ({
             };
         }),
 
+    // Öffnet oder schließt ein Dokumentfenster, ohne den Prüfverlauf zurückzusetzen.
+    // `openedDocuments` bleibt deshalb auch nach einem manuellen Schließen unverändert.
+    toggleDocumentVisibility: (documentType) =>
+        set((state) => {
+            const activeInspection = state.activeInspection;
+            if (!activeInspection) return state;
+
+            const visibleDocuments = activeInspection.visibleDocuments ?? [];
+            const documentIsVisible = visibleDocuments.includes(documentType);
+
+            return {
+                activeInspection: {
+                    ...activeInspection,
+                    visibleDocuments: documentIsVisible
+                        ? visibleDocuments.filter(
+                            (visibleDocument) => visibleDocument !== documentType
+                        )
+                        : [
+                            ...visibleDocuments,
+                            documentType
+                        ]
+                }
+            };
+        }),
+
     // Fügt einen neutralen Prüfpunkt hinzu oder entfernt ihn wieder.
     toggleFinding: (findingId) =>
         set((state) => {
@@ -79,7 +105,7 @@ export const useInspectionStore = create((set, get) => ({
             const completedInspection = {
                 ...state.activeInspection,
                 status: INSPECTION_STATUSES.COMPLETED,
-                completedAt: new Date().toISOString(),
+                completedAt: getCurrentGameTimestamp(),
                 playerDecision,
                 resolution
             };

@@ -1,6 +1,12 @@
 export { gameStates, useGameStore } from "./gameStore.js";
 export { useInspectionStore } from "./inspectionStore.js";
+export { commitTrafficEntityRecords } from "./commitTrafficEntityRecords.js";
 export { useNpcStore } from "./npcStore.js";
+export {
+    registerCriminalDatabaseOfficialRecords,
+    registerTrafficEntityOfficialRecords,
+    useOfficialRegistryStore
+} from "./officialRegistryStore.js";
 export {
     POLICE_DATABASE_SEARCH_TYPES,
     POLICE_DATABASE_SECTIONS,
@@ -8,6 +14,8 @@ export {
     usePoliceLaptopStore
 } from "./policeLaptopStore.js";
 export {
+    getActiveTrafficIdentityExclusions,
+    hasActiveTrafficIdentityConflict,
     selectSelectedTrafficEntity,
     selectSelectedVehicle,
     useTrafficStore

@@ -1,15 +1,20 @@
-export function getNpcAge (birthDateString) { 
+import { getCurrentGameDate } from "@game/shared";
+
+export function getNpcAge (birthDateString) {
     // ISO string to Date object
     const birthDate = new Date(birthDateString);
     
-    const today = new Date();
+    const today = getCurrentGameDate();
 
     let age = today.getFullYear() - birthDate.getFullYear();
 
-    const hasHadBirthdayThisYear = today.getMonth() < birthDate.getMonth() ||
-                                  (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+    const hasNotHadBirthdayThisYear = today.getUTCMonth() < birthDate.getUTCMonth()
+        || (
+            today.getUTCMonth() === birthDate.getUTCMonth()
+            && today.getUTCDate() < birthDate.getUTCDate()
+        );
 
-    if (hasHadBirthdayThisYear) age--;
+    if (hasNotHadBirthdayThisYear) age--;
     
     return age;
 }

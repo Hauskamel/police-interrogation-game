@@ -80,6 +80,10 @@ Neu hinzugefügt wurden:
 Die Ergebnisliste und die Detailansicht sind als Master-Detail-Oberfläche aufgebaut.
 Auf schmaleren Ansichten werden beide Bereiche untereinander dargestellt.
 
+Die Fahndungsliste löst für jeden eigenständigen Fahndungsrecord den zugehörigen
+NPC über `npcId` auf. Als Listentitel erscheint der Personenname; Priorität und
+Fahndungs-ID bleiben als sekundäre Metadaten sichtbar.
+
 ### Suchlogik
 
 Die Such- und Relationsfunktionen liegen getrennt von den React-Komponenten in:

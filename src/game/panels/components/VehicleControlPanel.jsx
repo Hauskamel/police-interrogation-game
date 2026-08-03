@@ -1,26 +1,21 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
 import { VehicleOccupantsPanel } from "./VehicleOccupantsPanel.jsx";
 import {
-    selectSelectedTrafficEntity,
-    useGuiVisibilityStatesStore,
     useInspectionStore,
     useTrafficStore
 } from "@stores";
-
-
-import { closePanel } from "../hooks";
-
 
 /**
  * ##### Vehicle Control Panel
  * -----> Zeigt die direkten Spieler-Aktionen fuer ein ausgewaehltes NPC-Fahrzeug.
  */
 export const VehicleControlPanel = ({
-    onClose
+    isPinned = false,
+    onClose,
+    trafficEntity
 }) => {
     const stopTrafficEntity = useTrafficStore((state) => state.stopTrafficEntity);
     const continueTrafficEntity = useTrafficStore((state) => state.continueTrafficEntity);
-    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore((state) => state.trafficEntities.find(entity => entity.stopped));
     const activeInspection = useInspectionStore((state) => state.activeInspection);
     const lastCompletedInspection = useInspectionStore(
@@ -28,37 +23,37 @@ export const VehicleControlPanel = ({
     );
     const startInspection = useInspectionStore((state) => state.startInspection);
     const revealedDriverNpcId = useTrafficStore((state) =>
-        state.revealedDriverIdentityByTrafficEntityId[selectedTrafficEntity?.id]
+        state.revealedDriverIdentityByTrafficEntityId[trafficEntity?.id]
     );
 
-    const setPanelVisibility = useGuiVisibilityStatesStore(state => state.setControlPanelVisibilityState)
     const selectedEntityIsStopped = Boolean(
-        selectedTrafficEntity?.stopped
-        && selectedTrafficEntity.id === stoppedTrafficEntity?.id
+        trafficEntity?.stopped
+        && trafficEntity.id === stoppedTrafficEntity?.id
     );
     const anotherEntityIsStopped = Boolean(
         stoppedTrafficEntity
-        && stoppedTrafficEntity.id !== selectedTrafficEntity?.id
+        && stoppedTrafficEntity.id !== trafficEntity?.id
     );
     const driverIdentityIsKnown = Boolean(
         selectedEntityIsStopped
-        && revealedDriverNpcId === selectedTrafficEntity?.npcId
+        && revealedDriverNpcId === trafficEntity?.npcId
     );
     const selectedInspectionIsActive = activeInspection?.trafficEntityId
-        === selectedTrafficEntity?.id;
+        === trafficEntity?.id;
     const selectedInspectionHasResult = lastCompletedInspection?.trafficEntityId
-        === selectedTrafficEntity?.id;
+        === trafficEntity?.id;
 
     
     return (
         <>
             <BaseControlPanel 
                 title="Fahrzeug Optionen" 
-                margin="bottom-6" 
-                onClose={onClose} 
+                isCloseable={!isPinned}
+                onClose={onClose}
+                positionClassName="bottom-24 left-4 sm:bottom-6 sm:left-[19rem]"
             >
                 <VehicleOccupantsPanel
-                    trafficEntity={selectedTrafficEntity}
+                    trafficEntity={trafficEntity}
                     showDriverIdentity={driverIdentityIsKnown}
                 />
 
@@ -66,7 +61,7 @@ export const VehicleControlPanel = ({
                     {!stoppedTrafficEntity && !selectedEntityIsStopped && (
                         <button
                             onClick={() => {
-                                stopTrafficEntity(selectedTrafficEntity.id);
+                                stopTrafficEntity(trafficEntity.id);
                             }}
                             className="w-full !bg-red-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -79,8 +74,8 @@ export const VehicleControlPanel = ({
                     && !selectedInspectionHasResult && (
                         <button
                             onClick={() => {
-                                closePanel(setPanelVisibility, onClose)
-                                continueTrafficEntity(selectedTrafficEntity.id);
+                                continueTrafficEntity(trafficEntity.id);
+                                onClose?.();
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -97,7 +92,7 @@ export const VehicleControlPanel = ({
                         <button
                             type="button"
                             className="w-full bg-sky-700 text-white py-2 px-4 rounded-xl hover:bg-sky-800 transition font-semibold shadow-md cursor-pointer"
-                            onClick={() => startInspection(selectedTrafficEntity.id)}
+                            onClick={() => startInspection(trafficEntity.id)}
                         >
                             Kontrolle beginnen
                         </button>

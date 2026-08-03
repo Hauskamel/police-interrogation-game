@@ -35,6 +35,16 @@ export const INSPECTION_DECISIONS = {
     REPORT_WANTED_HIT: "report_wanted_hit"
 };
 
+// ##### Inspection Resolution Actions
+// -----> Beschreibt die fachliche Folge der tatsaechlich gewaehlten Spielerentscheidung.
+export const INSPECTION_RESOLUTION_ACTIONS = {
+    RELEASED: "released",
+    WARNED_AND_RELEASED: "warned_and_released",
+    HELD: "held",
+    REFERRED: "referred",
+    TRANSFERRED: "transferred"
+};
+
 export const INSPECTION_DECISION_OPTIONS = [
     {
         id: INSPECTION_DECISIONS.ALLOW_TO_CONTINUE,

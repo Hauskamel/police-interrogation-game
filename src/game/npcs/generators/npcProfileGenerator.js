@@ -85,6 +85,7 @@ function createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicens
         driversLicense: driversLicenseData
             ? {
                 licenseNumber: driversLicenseData.licenseNumber,
+                licensedSince: driversLicenseData.licensedSince,
                 issueDate: driversLicenseData.issueDate,
                 expiryDate: driversLicenseData.expiryDate
             }

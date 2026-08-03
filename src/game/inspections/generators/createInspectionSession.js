@@ -1,4 +1,4 @@
-import { createEntityId } from "@game/shared";
+import { createEntityId, getCurrentGameTimestamp } from "@game/shared";
 
 import { INSPECTION_STATUSES } from "../data";
 
@@ -10,9 +10,10 @@ export function createInspectionSession(trafficEntityId) {
         inspectionId: createEntityId("inspection"),
         trafficEntityId,
         status: INSPECTION_STATUSES.ACTIVE,
-        startedAt: new Date().toISOString(),
+        startedAt: getCurrentGameTimestamp(),
         completedAt: null,
         openedDocuments: [],
+        visibleDocuments: [],
         markedFindingIds: [],
         playerDecision: null,
         resolution: null

@@ -10,7 +10,7 @@ export const INSPECTION_FINDING_CATEGORIES = {
 
 // ##### Finding Definitions
 // -----> Die manuell auswählbaren Einträge sind immer vollständig sichtbar.
-// ---> Polizeitreffer entstehen dagegen nur durch bewusst verknüpfte Laptop-Records.
+// ---> Polizeitreffer entstehen erst durch die bewusste Abschlussentscheidung des Spielers.
 export const INSPECTION_FINDING_DEFINITIONS = [
     {
         id: "driver_name_mismatch",
@@ -19,6 +19,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Vor- oder Nachname weichen von den bekannten Identitätsdaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["firstName", "lastName"],
+        registryType: "driverLicense",
         playerSelectable: true
     },
     {
@@ -28,6 +29,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die vorgelegte Adresse weicht von den bekannten Personendaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["address"],
+        registryType: "driverLicense",
         playerSelectable: true
     },
     {
@@ -37,15 +39,17 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Geburtsdatum passt nicht zum bekannten Personenrecord.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["birthDate", "birthYear", "age"],
+        registryType: "driverLicense",
         playerSelectable: true
     },
     {
         id: "license_number_mismatch",
         category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
         label: "Führerscheinnummer stimmt nicht überein",
-        description: "Die vorgelegte Nummer ist im Polizeibestand nicht auflösbar.",
+        description: "Die vorgelegte Nummer ist im amtlichen Führerscheinregister nicht auflösbar.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["driversLicense.licenseNumber"],
+        registryType: "driverLicense",
         playerSelectable: true
     },
     {
@@ -55,6 +59,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Kennzeichen der Fahrzeugpapiere weicht vom registrierten Fahrzeug ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["carDocumentsData.plateNumber"],
+        registryType: "vehicle",
         playerSelectable: true
     },
     {
@@ -64,6 +69,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die Zulassungsnummer passt nicht zum registrierten Fahrzeug.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["carDocumentsData.carRegistrationNumber"],
+        registryType: "vehicle",
         playerSelectable: true
     },
     {
@@ -73,6 +79,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Hersteller oder Modell weichen von den Registerdaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["brand", "model"],
+        registryType: "vehicle",
         playerSelectable: true
     },
     {
@@ -82,15 +89,47 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Ablaufdatum liegt vor dem Beginn der aktuellen Kontrolle.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: [],
+        registryType: null,
+        playerSelectable: true
+    },
+    {
+        id: "insurance_policy_number_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Versicherungsnummer stimmt nicht überein",
+        description: "Die vorgelegte Policennummer ist im Versicherungsregister nicht auflösbar.",
+        documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
+        affectedFields: ["insurance.policyNumber"],
+        registryType: "insurance",
+        playerSelectable: true
+    },
+    {
+        id: "insurance_vehicle_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Versichertes Fahrzeug stimmt nicht überein",
+        description: "Das Kennzeichen der Police passt nicht zum amtlich versicherten Fahrzeug.",
+        documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
+        affectedFields: ["insurance.insuredPlateNumber"],
+        registryType: "insurance",
+        playerSelectable: true
+    },
+    {
+        id: "expired_insurance",
+        category: INSPECTION_FINDING_CATEGORIES.VALIDITY,
+        label: "Versicherung ist abgelaufen",
+        description: "Das Ende des Versicherungsschutzes liegt vor Kontrollbeginn.",
+        documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
+        affectedFields: [],
+        registryType: null,
         playerSelectable: true
     },
     {
         id: "active_wanted_record",
         category: INSPECTION_FINDING_CATEGORIES.POLICE,
         label: "Aktive Fahndung bestätigt",
-        description: "Der passende aktive Fahndungsrecord wurde der Kontrolle zugeordnet.",
+        description: "Für die kontrollierte Person besteht eine passende aktive Fahndung.",
         documentType: null,
         affectedFields: [],
+        registryType: null,
         playerSelectable: false
     }
 ];

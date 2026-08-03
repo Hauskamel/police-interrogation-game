@@ -12,6 +12,7 @@ import {
     selectSelectedTrafficEntity,
     useInspectionStore,
     useNpcStore,
+    useOfficialRegistryStore,
     useTrafficStore
 } from "@stores";
 
@@ -21,9 +22,11 @@ import {
     INSPECTION_FINDING_CATEGORIES,
     INSPECTION_FINDING_DEFINITIONS_BY_ID,
     INSPECTION_OUTCOMES,
+    INSPECTION_RESOLUTION_ACTIONS,
     PLAYER_SELECTABLE_FINDINGS
 } from "../data";
 import { evaluateInspection } from "../utils";
+import { getCurrentGameDate } from "@game/shared";
 
 // ##### Inspection Workspace
 // -----> Verbindet die aktive Kontrollsession mit Prüfpunkten, Entscheidung und Ergebnis.
@@ -47,10 +50,16 @@ export function InspectionWorkspace() {
     const continueTrafficEntity = useTrafficStore(
         (state) => state.continueTrafficEntity
     );
+    const removeTrafficEntity = useTrafficStore(
+        (state) => state.removeTrafficEntity
+    );
     const setSelectedVehicleId = useTrafficStore(
         (state) => state.setSelectedVehicleId
     );
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
+    const officialRegistry = useOfficialRegistryStore(
+        (state) => state.officialRegistry
+    );
 
     const [dialog, setDialog] = useState(null);
     const [selectedDecision, setSelectedDecision] = useState(null);
@@ -81,6 +90,7 @@ export function InspectionWorkspace() {
             inspectionSession: activeInspection,
             trafficEntity: activeTrafficEntity,
             criminalDatabase,
+            officialRegistry,
             playerDecision
         });
 
@@ -93,7 +103,22 @@ export function InspectionWorkspace() {
     const finishCompletedInspection = () => {
         if (!lastCompletedInspection) return;
 
-        continueTrafficEntity(lastCompletedInspection.trafficEntityId);
+        const trafficEntityId = lastCompletedInspection.trafficEntityId;
+        const resolutionAction = lastCompletedInspection.resolution?.resolutionAction;
+        const entity = useTrafficStore.getState().trafficEntities.find(
+            (trafficEntity) => trafficEntity.id === trafficEntityId
+        );
+        const entityCanLeaveWorld = resolutionAction === INSPECTION_RESOLUTION_ACTIONS.RELEASED
+            || resolutionAction === INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED;
+
+        if (entityCanLeaveWorld && !entity?.spawn?.spawnForDevPurposes) {
+            continueTrafficEntity(trafficEntityId);
+        } else {
+            // Festgehaltene und uebergebene Faelle verlassen den aktiven Verkehrskontext.
+            // Dev-Spawns werden ebenfalls entfernt, da sie technisch nicht weiterfahren.
+            removeTrafficEntity(trafficEntityId);
+        }
+
         setSelectedVehicleId(null);
         dismissCompletedInspection();
     };
@@ -124,7 +149,7 @@ export function InspectionWorkspace() {
             {dialog === "findings" && (
                 <InspectionDialog
                     title="Feststellungen markieren"
-                    description="Markiere Dokument- und Gültigkeitsprobleme selbst. Polizeirecords werden bewusst im Police Laptop zur Kontrolle hinzugefügt."
+                    description="Markiere erkennbare Dokument- und Gültigkeitsprobleme. Datenbanknavigation wird nicht als Spieleraussage gewertet."
                     onClose={() => setDialog(null)}
                 >
                     <div className="divide-y divide-zinc-200">
@@ -275,11 +300,13 @@ function InspectionToolbar({
 
 // Aktualisiert nur die sichtbare Dauer; die gespeicherten Zeitpunkte bleiben unverändert.
 function useElapsedTime(startedAt) {
-    const [currentTime, setCurrentTime] = useState(Date.now());
+    const [currentTime, setCurrentTime] = useState(
+        getCurrentGameDate().getTime()
+    );
 
     useEffect(() => {
         const timerId = window.setInterval(() => {
-            setCurrentTime(Date.now());
+            setCurrentTime(getCurrentGameDate().getTime());
         }, 1000);
 
         return () => window.clearInterval(timerId);
@@ -407,13 +434,25 @@ function InspectionResultDialog({ inspection, onFinish }) {
                             className="w-full rounded-md bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800"
                             onClick={onFinish}
                         >
-                            Bericht schließen und Fahrzeug freigeben
+                            {getResolutionButtonLabel(resolution.resolutionAction)}
                         </button>
                     </div>
                 </div>
             </section>
         </div>
     );
+}
+
+function getResolutionButtonLabel(resolutionAction) {
+    const labelByAction = {
+        [INSPECTION_RESOLUTION_ACTIONS.RELEASED]: "Bericht schließen und Weiterfahrt erlauben",
+        [INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED]: "Verwarnung abschließen und weiterfahren lassen",
+        [INSPECTION_RESOLUTION_ACTIONS.HELD]: "Bericht schließen und Fahrzeug zurückhalten",
+        [INSPECTION_RESOLUTION_ACTIONS.REFERRED]: "Bericht schließen und Fall übergeben",
+        [INSPECTION_RESOLUTION_ACTIONS.TRANSFERRED]: "Bericht schließen und Person übergeben"
+    };
+
+    return labelByAction[resolutionAction] ?? "Bericht schließen";
 }
 
 // Gruppiert richtige, übersehene und falsche Findings nach ihrem fachlichen Bereich.

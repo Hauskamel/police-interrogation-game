@@ -1,4 +1,5 @@
 import { BaseHeadlineWithText } from "./base";
+import { formatDateForDisplay } from "@game/shared";
 
 export function CarDocuments ({ car, owner }) {
     const ownerProfile = owner?.presented;
@@ -31,7 +32,7 @@ export function CarDocuments ({ car, owner }) {
                         <BaseHeadlineWithText headline="Model" data={vehicleProfile?.model} />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={vehicleProfile?.carDocumentsData.formattedIssueDate} />
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={formatDateForDisplay(vehicleProfile?.carDocumentsData.formattedIssueDate)} />
                     </div>
 
                     <div className="flex mb-3">

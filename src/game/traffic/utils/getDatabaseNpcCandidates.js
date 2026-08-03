@@ -10,14 +10,38 @@ export function getActiveWantedRecords(criminalDatabase) {
 
 // ##### Known Offender Candidate Reader
 // -----> Liefert polizeibekannte Täter, gegen die aktuell keine aktive Fahndung besteht.
-export function getKnownOffenderNpcIds(criminalDatabase) {
+export function getKnownOffenderNpcIds(criminalDatabase, options = {}) {
     const wantedNpcIds = new Set(
         getActiveWantedRecords(criminalDatabase).map(({ npcId }) => npcId)
     );
 
-    return (criminalDatabase?.knownOffenderNpcIds ?? criminalDatabase?.criminalNpcIds ?? [])
+    return filterUnavailableDatabaseNpcIds(
+        criminalDatabase,
+        criminalDatabase?.knownOffenderNpcIds ?? criminalDatabase?.criminalNpcIds ?? [],
+        options
+    )
         .filter((npcId) => !wantedNpcIds.has(npcId))
         .filter((npcId) => Boolean(criminalDatabase?.npcsById?.[npcId]));
+}
+
+// ##### Active Database Identity Filter
+// -----> Entfernt Personen und deren registrierte Fahrzeuge, die bereits in der Welt aktiv sind.
+export function filterUnavailableDatabaseNpcIds(
+    criminalDatabase,
+    npcIds,
+    { excludedNpcIds = [], excludedVehicleIds = [] } = {}
+) {
+    const excludedNpcIdSet = new Set(excludedNpcIds);
+    const excludedVehicleIdSet = new Set(excludedVehicleIds);
+
+    return npcIds.filter((npcId) => {
+        const npc = criminalDatabase?.npcsById?.[npcId];
+        const registeredVehicleIsActive = (npc?.vehicleIds ?? []).some(
+            (vehicleId) => excludedVehicleIdSet.has(vehicleId)
+        );
+
+        return !excludedNpcIdSet.has(npcId) && !registeredVehicleIsActive;
+    });
 }
 
 // ##### Database NPC Candidate Picker

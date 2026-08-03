@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 
 import {
     selectSelectedTrafficEntity,
-    selectSelectedVehicle,
+    gameStates,
     useGameStore,
     useInspectionStore,
     useTrafficStore
 } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
+import { GameDateDisplay } from "@app/components/GameDateDisplay";
 import {
-    PoliceCarControlPanel,
+    PoliceServiceToolsPanel,
     VehicleControlPanel,
 } from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
@@ -26,7 +27,6 @@ function App() {
     const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
     const setSelectedVehicleId = useTrafficStore(state => state.setSelectedVehicleId);
-    const selectedVehicle = useTrafficStore(selectSelectedVehicle);
     const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore(state => state.trafficEntities.find(entity => entity.stopped));
     const activeInspection = useInspectionStore((state) => state.activeInspection);
@@ -35,8 +35,18 @@ function App() {
     );
 
     const gameState = useGameStore(state => state.gameState);
-    const ingameMode = useGameStore(state => state.ingameMode);
     const [hoveringCar, setHoveringCar] = useState(false);
+    const inspectionTrafficEntity = useTrafficStore((state) => {
+        return state.trafficEntities.find(
+            (entity) => entity.id === activeInspection?.trafficEntityId
+        );
+    });
+    const controlPanelTrafficEntity = inspectionTrafficEntity
+        ?? stoppedTrafficEntity
+        ?? selectedTrafficEntity;
+    const controlPanelIsPinned = Boolean(
+        inspectionTrafficEntity || stoppedTrafficEntity
+    );
 
     useLilGuiSetup();
 
@@ -62,22 +72,25 @@ function App() {
 
             <Startmenu />
 
-        {selectedVehicle && (
-            playerPoliceVehicle?.id === selectedVehicle.id ? (
-                <PoliceCarControlPanel
-                    onClose={() => {
-                        setSelectedVehicleId(null)
-                        ingameMode()
-                    }}
-                />
-            ) : (
-                <VehicleControlPanel
-                    onClose={() => setSelectedVehicleId(null)}
-                />
-            )
+        {gameState !== gameStates.MENU && (
+            <>
+                <PoliceServiceToolsPanel />
+
+                {gameState !== gameStates.LAPTOP && (
+                    <GameDateDisplay />
+                )}
+            </>
         )}
 
-        {gameState == "LAPTOP" && (
+        {gameState !== gameStates.LAPTOP && controlPanelTrafficEntity && (
+            <VehicleControlPanel
+                trafficEntity={controlPanelTrafficEntity}
+                isPinned={controlPanelIsPinned}
+                onClose={() => setSelectedVehicleId(null)}
+            />
+        )}
+
+        {gameState === gameStates.LAPTOP && (
             <LaptopScreen />
         )}
 
@@ -90,13 +103,8 @@ function App() {
 
             <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
 
-            {activeInspection
-            && stoppedTrafficEntity
-            && activeInspection.trafficEntityId === stoppedTrafficEntity.id
-            && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
-                <>
-                    <DocumentManager />
-                </>
+            {activeInspection && inspectionTrafficEntity && (
+                <DocumentManager />
             )}
 
             {gameState !== "LAPTOP" && (

@@ -44,6 +44,7 @@ und ist deshalb fachlich allgemeiner.
     startedAt,
     completedAt: null,
     openedDocuments: [],
+    visibleDocuments: [],
     markedFindingIds: [],
     playerDecision: null,
     resolution: null
@@ -64,6 +65,7 @@ Store-Aktionen:
 
 - `startInspection`
 - `registerOpenedDocument`
+- `toggleDocumentVisibility`
 - `toggleFinding`
 - `completeInspection`
 - `cancelActiveInspection`
@@ -72,6 +74,10 @@ Store-Aktionen:
 
 `resetInspectionState` verhindert beim Start eines neuen Spiels, dass ein alter
 Kontrollbericht erhalten bleibt.
+
+`openedDocuments` ist ein monotoner Prüfverlauf. `visibleDocuments` ist dagegen ein
+umschaltbarer UI-Zustand. Dadurch kann ein Dokumentfenster geschlossen werden, ohne
+die Information zu verlieren, dass es bereits geprüft wurde.
 
 ## Finding-Definitionen
 
@@ -153,6 +159,26 @@ enthält keine Recherche- oder Aktenzuordnungen.
 `InspectionWorkspace.jsx` verwendet die neutralere Bezeichnung
 `Feststellungen`. Der Entscheidungsdialog nennt die Dienstregel der ersten Phase
 direkt.
+
+`App.jsx` leitet den Fahrzeug-Panel-Kontext nicht mehr ausschließlich aus
+`selectedVehicleId` ab. Eine aktive Session oder angehaltene TrafficEntity besitzt
+Vorrang vor der freien 3D-Auswahl. `DocumentManager` löst seine Daten direkt über
+`activeInspection.trafficEntityId` auf.
+
+Das bisher aus der Polizeifahrzeugauswahl abgeleitete
+`PoliceCarControlPanel` wurde in `PoliceServiceToolsPanel` umbenannt und zum
+dauerhaft verfügbaren Panel `Dienstwerkzeuge`. Der Laptop kann damit auch ohne
+Auswahl des Polizeifahrzeugs geöffnet werden. Das Kontroll-Panel wird parallel
+angezeigt und bei einer angehaltenen oder aktiven Kontrolle angeheftet.
+
+`BaseControlPanel` verwaltet seine Ein- und Ausblendung nun lokal. Mehrere
+gleichzeitig sichtbare Panels teilen sich deshalb keinen globalen Animationszustand
+mehr.
+
+Die Debug-Schalter stehen rechts neben den beiden Gameplay-Panels. Geöffnete
+Debugfenster verwenden eine höhere UI-Ebene als Dienstwerkzeuge und Fahrzeugpanel,
+damit ihr Inhalt nicht mehr teilweise verdeckt wird. Laptop und modale
+Kontrollberichte bleiben weiterhin darüber.
 
 Der Bericht trennt:
 

@@ -2,6 +2,7 @@ import {
     INSPECTION_DECISIONS,
     INSPECTION_FINDING_DEFINITIONS,
     INSPECTION_OUTCOMES,
+    INSPECTION_RESOLUTION_ACTIONS,
     REQUIRED_INSPECTION_DOCUMENTS
 } from "../data";
 
@@ -12,12 +13,14 @@ export function evaluateInspection({
     inspectionSession,
     trafficEntity,
     criminalDatabase,
+    officialRegistry,
     playerDecision
 }) {
     const actualFindingIds = getDetectableFindingIds({
         inspectionSession,
         trafficEntity,
-        criminalDatabase
+        criminalDatabase,
+        officialRegistry
     });
     const playerFindingIds = Array.from(new Set([
         ...inspectionSession.markedFindingIds,
@@ -47,6 +50,7 @@ export function evaluateInspection({
             falsePositiveFindings,
             unopenedDocuments
         }),
+        resolutionAction: getResolutionAction(playerDecision.type),
         decisionWasCorrect,
         expectedDecision,
         actualFindingIds,
@@ -62,17 +66,25 @@ export function evaluateInspection({
 function getDetectableFindingIds({
     inspectionSession,
     trafficEntity,
-    criminalDatabase
+    criminalDatabase,
+    officialRegistry
 }) {
     const affectedFields = [
         ...(trafficEntity.documentState?.npcDocuments?.driversLicense?.affectedFields ?? []),
-        ...(trafficEntity.documentState?.vehicleDocuments?.registration?.affectedFields ?? [])
+        ...(trafficEntity.documentState?.vehicleDocuments?.registration?.affectedFields ?? []),
+        ...(trafficEntity.documentState?.vehicleDocuments?.insurance?.affectedFields ?? [])
     ];
     const documentFindingIds = INSPECTION_FINDING_DEFINITIONS
         .filter((definition) => {
-            return definition.affectedFields.some(
+            const fieldWasAffected = definition.affectedFields.some(
                 (field) => affectedFields.includes(field)
             );
+
+            return fieldWasAffected && isFindingResolvable({
+                definition,
+                trafficEntity,
+                officialRegistry
+            });
         })
         .map((definition) => definition.id);
     const validityFindingIds = isDriversLicenseExpired({
@@ -80,6 +92,12 @@ function getDetectableFindingIds({
         inspectedAt: inspectionSession.startedAt
     })
         ? ["expired_drivers_license"]
+        : [];
+    const insuranceValidityFindingIds = isInsuranceExpired({
+        trafficEntity,
+        inspectedAt: inspectionSession.startedAt
+    })
+        ? ["expired_insurance"]
         : [];
     const policeFindingIds = hasActiveWantedRecord({
         trafficEntity,
@@ -91,8 +109,28 @@ function getDetectableFindingIds({
     return Array.from(new Set([
         ...documentFindingIds,
         ...validityFindingIds,
+        ...insuranceValidityFindingIds,
         ...policeFindingIds
     ]));
+}
+
+// Ein Dokumentfehler wird nur erwartet, wenn sein kanonischer Registerrecord aufloesbar ist.
+function isFindingResolvable({ definition, trafficEntity, officialRegistry }) {
+    if (definition.registryType === "driverLicense") {
+        const licenseNumber = trafficEntity.driverProfile?.real?.driversLicense?.licenseNumber;
+        return Boolean(officialRegistry.driverLicensesByNumber?.[licenseNumber]);
+    }
+
+    if (definition.registryType === "vehicle") {
+        return Boolean(officialRegistry.vehiclesById?.[trafficEntity.vehicleId]);
+    }
+
+    if (definition.registryType === "insurance") {
+        const policyId = trafficEntity.insuranceProfile?.real?.policyId;
+        return Boolean(officialRegistry.insurancePoliciesById?.[policyId]);
+    }
+
+    return true;
 }
 
 // Der Kontrollbeginn ist der fachliche Stichtag für die Führerscheingültigkeit.
@@ -100,7 +138,14 @@ function isDriversLicenseExpired({ trafficEntity, inspectedAt }) {
     const expiryDate = trafficEntity.driverProfile?.real?.driversLicense?.expiryDate;
     if (!expiryDate) return false;
 
-    return new Date(expiryDate).getTime() < new Date(inspectedAt).getTime();
+    return expiryDate < inspectedAt.slice(0, 10);
+}
+
+function isInsuranceExpired({ trafficEntity, inspectedAt }) {
+    const validUntil = trafficEntity.insuranceProfile?.real?.validUntil;
+    if (!validUntil) return false;
+
+    return validUntil < inspectedAt.slice(0, 10);
 }
 
 // Nur ein auflösbarer aktiver Fahndungsrecord ist eine handlungsrelevante Fahndung.
@@ -140,11 +185,26 @@ function getExpectedDecision(actualFindingIds) {
         return INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW;
     }
 
-    if (actualFindingIds.includes("expired_drivers_license")) {
+    if (
+        actualFindingIds.includes("expired_drivers_license")
+        || actualFindingIds.includes("expired_insurance")
+    ) {
         return INSPECTION_DECISIONS.DENY_CONTINUATION;
     }
 
     return INSPECTION_DECISIONS.ALLOW_TO_CONTINUE;
+}
+
+function getResolutionAction(decisionType) {
+    const actionByDecision = {
+        [INSPECTION_DECISIONS.ALLOW_TO_CONTINUE]: INSPECTION_RESOLUTION_ACTIONS.RELEASED,
+        [INSPECTION_DECISIONS.ISSUE_WARNING]: INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED,
+        [INSPECTION_DECISIONS.DENY_CONTINUATION]: INSPECTION_RESOLUTION_ACTIONS.HELD,
+        [INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW]: INSPECTION_RESOLUTION_ACTIONS.REFERRED,
+        [INSPECTION_DECISIONS.REPORT_WANTED_HIT]: INSPECTION_RESOLUTION_ACTIONS.TRANSFERRED
+    };
+
+    return actionByDecision[decisionType] ?? INSPECTION_RESOLUTION_ACTIONS.HELD;
 }
 
 function determineOutcome({

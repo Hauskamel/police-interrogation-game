@@ -24,6 +24,7 @@ Diese Dokumente erklären, **was technisch geändert wurde**.
 
 | Dokument | Inhalt |
 |---|---|
+| [Stabilisierung der Kontrollsession vom 03.08.2026](./system-changes/control-session-phase-1-stabilization-2026-08-03.md) | Amtliche Register, Spielzeit, Dokumentlebenszyklen, Versicherung, erkennbare Findings, Kontrollfolgen und Weltidentitäten |
 | [Kontrollsession Phase 1 vom 30.07.2026](./system-changes/inspection-session-phase-1-2026-07-30.md) | Technische Umsetzung von Session Store, Dokumenttracking, Prüfpunkten, Evaluator und Kontrollbericht |
 | [Police-Laptop-Prototyp vom 30.07.2026](./system-changes/police-laptop-prototype-2026-07-30.md) | Technische Umsetzung der Suche, Fahndungsakten, Fahrzeugrelationen und Laptop-Überarbeitung |
 | [Branch-Refactor vom 29.07.2026](./system-changes/branch-refactor-summary-2026-07-29.md) | Vollständige Zusammenfassung des NPC-, Traffic-, Datenbank- und Dokument-Refactors auf diesem Branch |

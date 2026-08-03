@@ -3,6 +3,7 @@ import { createVehicleProfileFromReal } from "@game/vehicles/generators";
 
 import { POLICE_STATUSES, TRAFFIC_ENTITY_TYPES } from "../data";
 import {
+    filterUnavailableDatabaseNpcIds,
     getActiveWantedRecords,
     getRegisteredVehicleRecord,
     pickDatabaseNpcId
@@ -15,7 +16,11 @@ import { assembleTrafficEntity } from "./assembleTrafficEntity.js";
 export function createWantedOffenderTrafficEntity(options = {}) {
     const { criminalDatabase } = options;
     const activeWantedRecords = getActiveWantedRecords(criminalDatabase);
-    const candidateNpcIds = activeWantedRecords.map(({ npcId }) => npcId);
+    const candidateNpcIds = filterUnavailableDatabaseNpcIds(
+        criminalDatabase,
+        activeWantedRecords.map(({ npcId }) => npcId),
+        options
+    );
     const wantedNpcId = pickDatabaseNpcId(candidateNpcIds, options.forcedDatabaseNpcId);
     const wantedRecord = activeWantedRecords.find(({ npcId }) => npcId === wantedNpcId);
 

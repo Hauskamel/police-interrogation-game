@@ -225,6 +225,12 @@ nicht mehr.
 Das lil-gui kann Traffic-Typ, Datenbank-NPC, Polizeibekanntheit,
 Dokumentfälschung und Inspection Profile steuern.
 
+Die zusätzliche Aktion `Spawn Random NPC (Blindtest)` verwendet
+`generateTrafficEntity` ohne `forcedType`, `forcedHasForgery` oder konkrete
+Datenbank-ID. Der gemeinsame Spawn-Commit übernimmt anschließend Weltregistrierung,
+Auswahl und Stop-Zustand. Die ausgewürfelte Traffic-Kategorie wird für diese Entity
+nicht in die lil-gui-Controls zurücksynchronisiert.
+
 Das Debug-Panel zeigt:
 
 - Traffic-, NPC- und Fahrzeug-IDs

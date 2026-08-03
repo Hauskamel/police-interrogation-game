@@ -1,4 +1,8 @@
-import { createDocumentState, createPresentedProfiles } from "@game/documents/generators";
+import {
+    createDocumentState,
+    createPresentedProfiles,
+    generateInsuranceProfile
+} from "@game/documents/generators";
 import { createEntityId } from "@game/shared";
 import { generateVehicleProfile } from "@game/vehicles/generators";
 
@@ -27,33 +31,38 @@ export function assembleTrafficEntity({
         ?? generateVehicleProfile({
             registeredOwnerNpcId: ownership.registeredOwnerNpcId
         });
-    const documentState = createDocumentState({
-        trafficType,
-        driverProfile: baseDriverProfile,
-        vehicleProfile: baseVehicleProfile,
-        forcedHasForgery: options.forcedHasForgery
-    });
-    const { driverProfile, vehicleProfile } = createPresentedProfiles({
-        driverProfile: baseDriverProfile,
-        vehicleProfile: baseVehicleProfile,
-        documentState
-    });
     const id = createEntityId("traffic");
-    const npcId = driverProfile.real.npcId;
-    const vehicleId = vehicleProfile.real.vehicleId ?? createEntityId("vehicle");
-
-    // vehicleId wird in real und presented gespiegelt, damit Wahrheit und Dokumentansicht dieselbe Fahrzeug-Referenz kennen.
-    const vehicleProfileWithId = {
+    const npcId = baseDriverProfile.real.npcId;
+    const vehicleId = baseVehicleProfile.real.vehicleId ?? createEntityId("vehicle");
+    const baseVehicleProfileWithId = {
         real: {
-            ...vehicleProfile.real,
+            ...baseVehicleProfile.real,
             vehicleId
         },
         presented: {
-            ...vehicleProfile.presented,
+            ...baseVehicleProfile.presented,
             vehicleId
         }
     };
-
+    const baseInsuranceProfile = generateInsuranceProfile({
+        vehicleId,
+        policyHolderNpcId: ownership.registeredOwnerNpcId,
+        insuredPlateNumber: baseVehicleProfileWithId.real.carDocumentsData.plateNumber,
+        forceExpired: options.forcedInsuranceExpired
+    });
+    const documentState = createDocumentState({
+        trafficType,
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfileWithId,
+        insuranceProfile: baseInsuranceProfile,
+        forcedHasForgery: options.forcedHasForgery
+    });
+    const { driverProfile, insuranceProfile, vehicleProfile } = createPresentedProfiles({
+        driverProfile: baseDriverProfile,
+        vehicleProfile: baseVehicleProfileWithId,
+        insuranceProfile: baseInsuranceProfile,
+        documentState
+    });
     return {
         id,
         npcId,
@@ -61,7 +70,8 @@ export function assembleTrafficEntity({
         trafficType,
         driverProfile,
         vehicleOwnerProfile,
-        vehicleProfile: vehicleProfileWithId,
+        vehicleProfile,
+        insuranceProfile,
         ownership,
         truth,
         police,

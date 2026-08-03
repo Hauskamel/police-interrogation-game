@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
     BaseDocument,
     CarDocuments,
@@ -8,7 +6,6 @@ import {
     ProofOfInsurance
 } from "../components";
 import {
-    selectSelectedTrafficEntity,
     useInspectionStore,
     useTrafficStore
 } from "@stores";
@@ -26,17 +23,32 @@ const DRIVER_IDENTITY_DOCUMENTS = new Set([
  * -----> Verwaltet, welche Fahrzeug- und Fahrerdokumente aktuell geöffnet sind.
  */
 export function DocumentManager() {
-    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
-    const revealDriverIdentity = useTrafficStore(state => state.revealDriverIdentity);
+    const activeInspection = useInspectionStore(
+        (state) => state.activeInspection
+    );
+    const controlledTrafficEntity = useTrafficStore((state) => {
+        return state.trafficEntities.find(
+            (entity) => entity.id === activeInspection?.trafficEntityId
+        );
+    });
+    const revealDriverIdentity = useTrafficStore(
+        (state) => state.revealDriverIdentity
+    );
     const registerOpenedDocument = useInspectionStore(
         (state) => state.registerOpenedDocument
     );
+    const toggleDocumentVisibility = useInspectionStore(
+        (state) => state.toggleDocumentVisibility
+    );
 
     const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
-    const [openDocs, setOpenDocs] = useState(() =>
-        Object.fromEntries(activeDocs.map(doc => [doc, false]))
+    const visibleDocuments = activeInspection?.visibleDocuments ?? [];
+    const openDocs = Object.fromEntries(
+        activeDocs.map((documentType) => [
+            documentType,
+            visibleDocuments.includes(documentType)
+        ])
     );
-    
     
     const toggleDoc = (doc) => {
         const documentWillOpen = !openDocs[doc];
@@ -45,12 +57,12 @@ export function DocumentManager() {
         if (
             documentWillOpen
             && DRIVER_IDENTITY_DOCUMENTS.has(doc)
-            && selectedTrafficEntity?.id
-            && selectedTrafficEntity?.npcId
+            && controlledTrafficEntity?.id
+            && controlledTrafficEntity?.npcId
         ) {
             revealDriverIdentity(
-                selectedTrafficEntity.id,
-                selectedTrafficEntity.npcId
+                controlledTrafficEntity.id,
+                controlledTrafficEntity.npcId
             );
         }
 
@@ -59,31 +71,28 @@ export function DocumentManager() {
             registerOpenedDocument(doc);
         }
 
-        setOpenDocs(prev => ({
-            ...prev,
-            [doc]: !prev[doc]
-        }))
+        toggleDocumentVisibility(doc);
     };
 
     const docComponents = {
         driversLicense: (
             <DriversLicense 
                 key={"driversLicense"}
-                driver={selectedTrafficEntity?.driverProfile}
+                driver={controlledTrafficEntity?.driverProfile}
             />
         ),
         carDocuments: (
             <CarDocuments
                 key={"carDocuments"}
-                car={selectedTrafficEntity?.vehicleProfile}
-                owner={selectedTrafficEntity?.vehicleOwnerProfile}
+                car={controlledTrafficEntity?.vehicleProfile}
+                owner={controlledTrafficEntity?.vehicleOwnerProfile}
             />
         ),
         proofOfInsurance: (
             <ProofOfInsurance
                 key={"proofOfInsurance"}
-                car={selectedTrafficEntity?.vehicleProfile}
-                driver={selectedTrafficEntity?.driverProfile}
+                insurance={controlledTrafficEntity?.insuranceProfile}
+                owner={controlledTrafficEntity?.vehicleOwnerProfile}
             />
         )
     }

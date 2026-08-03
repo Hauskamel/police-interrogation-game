@@ -19,7 +19,8 @@ export const POLICE_DATABASE_SECTIONS = {
 export const POLICE_DATABASE_SEARCH_TYPES = {
     PERSON: "person",
     LICENSE: "license",
-    PLATE: "plate"
+    PLATE: "plate",
+    INSURANCE: "insurance"
 };
 
 const initialPoliceLaptopState = {

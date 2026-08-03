@@ -1,11 +1,12 @@
 import { faker } from "@faker-js/faker";
+import { getCurrentGameDate } from "@game/shared";
 
 // ##### Car Document Data Generator
 // -----> Erstellt zeitabhängige Angaben für den Fahrzeugschein.
 // ---> Das Ausstellungsdatum kann frühestens im Baujahr des Fahrzeugs liegen.
 export function generateVehicleRegistrationDocument({ yearOfConstruction } = {}) {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
+    const currentDate = getCurrentGameDate();
+    const currentYear = currentDate.getUTCFullYear();
     const validConstructionYear = Number.isInteger(yearOfConstruction)
         ? Math.min(yearOfConstruction, currentYear)
         : currentYear;

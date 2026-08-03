@@ -1,19 +1,22 @@
 # Spielsystem: Spielbare Polizei-Datenbank
 
-Stand: 2026-07-30
+Stand: 2026-08-03
 
 ## Ziel
 
-Die Polizei-Datenbank ist eine eingeschränkte Recherche-Anwendung im Police Laptop.
+Der Behördenbestand ist eine eingeschränkte Recherche-Anwendung im Police Laptop.
 Sie unterstützt dokumentbasiertes Gameplay nach dem Vorbild einer Kontrollstelle:
 Der Spieler vergleicht Angaben, prüft Identitäten und erkennt Widersprüche.
 
-Die Anwendung ist ausdrücklich kein Debug-Panel. Sie zeigt nur Informationen, die
-der Polizei innerhalb der Spielwelt bereits bekannt sind.
+Die Anwendung ist ausdrücklich kein Debug-Panel. Sie trennt polizeiliche Erkenntnisse
+von amtlichen Verwaltungsdaten und zeigt niemals interne Weltwahrheit.
 
 ## Informationsgrenze
 
-Der Police Laptop liest ausschließlich aus `criminalDatabase`.
+Der Police Laptop liest aus zwei freigegebenen Informationsquellen:
+
+- `criminalDatabase` für Personenakten, bekannte Straftaten und Fahndungen
+- `officialRegistry` für Führerscheine, Fahrzeuge und Versicherungen
 
 Er darf niemals direkt auf `worldTruthDatabase` zugreifen. Dadurch bleibt der
 zentrale Unterschied des Spielsystems erhalten:
@@ -28,6 +31,13 @@ Polizeiwissen
 Presented
   = Was der kontrollierte NPC auf Dokumenten vorzeigt
 ```
+
+Amtliche Register sind kein allwissendes Personenverzeichnis. Eine Personensuche
+bleibt auf polizeilich bekannte Personen begrenzt. Ein unbekannter Täter kann jedoch
+einen amtlich gültigen Führerschein besitzen, ohne deshalb eine Kriminalakte zu haben.
+Erfundene Dokumentnummern liefern keinen Treffer. Eine später registergestützte
+Tarnidentität kann dagegen konsistent erscheinen und bleibt in der normalen Kontrolle
+unentdeckt.
 
 Ein unbekannter Täter kann intern eine Straftat begangen haben, ohne in der
 Polizei-Anwendung aufzutauchen. Erst ein späterer Ermittlungsprozess darf neue
@@ -61,16 +71,17 @@ muss eine konkrete Abfrage durchführen.
 
 ### Führerscheinsuche
 
-Die Führerscheinsuche verwendet die Führerscheinnummer und führt zur zugehörigen
-Personenakte. Der Führerschein ist kein zweiter Personendatensatz, sondern ein
-Bestandteil des kanonischen NPC-Records.
+Die Führerscheinsuche verwendet die Führerscheinnummer aus
+`officialRegistry.driverLicensesByNumber`. Sie führt zum amtlichen Personenrecord.
+Existiert zusätzlich eine Polizeipersonenakte mit derselben `npcId`, können deren
+bereits bekannte Erkenntnisse angezeigt werden.
 
-Dadurch führen Personenname und Führerscheinnummer immer zur gleichen gespeicherten
-Person.
+`licensedSince` beschreibt die erstmalige Fahrerlaubnis. `issueDate` und `expiryDate`
+gehören dagegen zur aktuell registrierten Karte.
 
 ### Kennzeichensuche
 
-Die Kennzeichensuche akzeptiert:
+Die Kennzeichensuche liest das amtliche Fahrzeugregister und akzeptiert:
 
 - amtliches Kennzeichen
 - Zulassungsnummer
@@ -86,6 +97,20 @@ zeigt:
 - den separat verknüpften eingetragenen Halter
 
 Von der Fahrzeugakte kann die bekannte Personenakte des Halters geöffnet werden.
+Ist der Halter nicht polizeibekannt, erscheint nur sein amtlicher Personenrecord.
+
+### Versicherungssuche
+
+Die Versicherungssuche akzeptiert eine konkrete Policennummer und zeigt:
+
+- Versicherer und Policennummer
+- Status, Beginn und Ende des Versicherungsschutzes
+- versichertes Kennzeichen und verknüpftes Fahrzeug
+- den amtlich registrierten Versicherungsnehmer
+
+Eine manipulierte Policennummer kann dadurch bewusst ohne Treffer bleiben. Bei einer
+unveränderten Nummer lassen sich Kennzeichen und Laufzeit mit dem vorgelegten Dokument
+vergleichen.
 
 ### Fahndungsliste
 
@@ -99,6 +124,11 @@ Eine Fahndungsakte enthält:
 - Prioritätsstufe
 - Ausstellungsdatum
 - bekannte Straftat als Fahndungsgrund
+
+Die Fahndungsliste zeigt den Namen der gesuchten Person als primäre Information.
+Prioritätsstufe und Fahndungs-ID stehen ergänzend darunter. Der Name wird beim
+Anzeigen über `WantedRecord.npcId` aus `npcsById` aufgelöst und nicht in den
+Fahndungsrecord kopiert.
 
 `Polizeibekannt` und `Aktiv gesucht` bleiben getrennte Zustände. Eine Person kann
 in der Datenbank existieren, ohne dass gegen sie aktuell eine Fahndung läuft.
@@ -139,10 +169,15 @@ Das Schließen des Police Laptops beendet keine laufende Recherche. Beim erneute
 - Datenbanksuche oder Fahndungsliste
 - gewählte Suchart
 - eingegebener Suchbegriff
-- ausgewählte Personen-, Fahrzeug- oder Fahndungsakte
+- ausgewählte Personen-, Fahrzeug-, Versicherungs- oder Fahndungsakte
 
 Der Spieler kann dadurch zwischen Dokumenten und Polizeidaten wechseln, ohne
 dieselbe Person nach jedem Wechsel erneut suchen zu müssen.
+
+Der Einstieg in den Police Laptop liegt dauerhaft im Panel `Dienstwerkzeuge`.
+Das Polizeifahrzeug muss dafür nicht ausgewählt werden. Nach dem Schließen des
+Laptops erscheinen der angeheftete Kontrollkontext und zuvor sichtbare Dokumente
+wieder.
 
 Der Zustand enthält ausschließlich UI-Werte und Record-IDs. Es werden keine
 Polizeidatensätze kopiert und keine Aktenklicks als Spieleraussage bewertet.
@@ -164,6 +199,18 @@ criminalDatabase
 ├── wantedRecordIds
 └── vehicleIds
 ```
+
+```text
+officialRegistry
+├── peopleById
+├── driverLicensesByNumber
+├── vehiclesById
+└── insurancePoliciesById
+```
+
+Die amtlichen Tabellen enthalten keine `crimeRecordIds`, `wantedRecordIds` oder
+unbekannten World-Truth-Straftaten. Beim Spawn wird ausschließlich `real` registriert;
+`presented` bleibt kontrollspezifisch und kann davon abweichen.
 
 Die Beziehungen entstehen über IDs:
 
@@ -198,7 +245,8 @@ Kennzeichen des registrierten Fahrzeugs
   = Kennzeichen-Suchergebnis
 ```
 
-Manipulierte `presented`-Dokumente werden nicht in der Polizei-Datenbank gespeichert.
+Manipulierte `presented`-Dokumente werden weder in der Polizei-Datenbank noch im
+amtlichen Register gespeichert.
 Der Spieler kann deshalb später echte Registerdaten mit vorgezeigten Dokumenten
 vergleichen.
 
@@ -210,6 +258,10 @@ vergleichen.
 - Fahndungsstatus können im Gameplay-Laptop noch nicht geändert werden.
 - Es gibt noch keine Fallakten, Zeugenaussagen oder Beweisregister.
 - Jeder generierte Datenbank-NPC besitzt im Prototyp genau ein registriertes Fahrzeug.
+- Hochwertige Tarnidentitäten, die auch in amtlichen Registern hinterlegt sind, sind
+  als späterer Ausbau vorgesehen.
+- Policen werden derzeit beim Traffic-Spawn erzeugt; Vertragswechsel und Historien
+  sind noch nicht modelliert.
 
 Diese Grenzen sind bewusst. Der Prototyp bildet zuerst den sicheren Lesezugriff und
 die spielerische Recherche ab.

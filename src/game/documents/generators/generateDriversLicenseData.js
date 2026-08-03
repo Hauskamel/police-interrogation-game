@@ -18,6 +18,7 @@ export function generateDriversLicenseData (birthdate) {
 
     const data = {
         licenseNumber,
+        licensedSince: documentDates.licensedSince,
         issueDate: documentDates.formattedIssueDate,
         expiryDate: documentDates.formattedExpiryDate
     }

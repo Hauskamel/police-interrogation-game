@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { isNpcKnownToPolice } from "@game/traffic";
+import { formatDateForDisplay } from "@game/shared";
 import {
     selectSelectedTrafficEntity,
     useTrafficStore,
@@ -61,6 +62,12 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
             selectedTrafficEntity?.vehicleProfile?.presented
         );
     }, [selectedTrafficEntity]);
+    const insuranceDiffs = useMemo(() => {
+        return getProfileDifferences(
+            selectedTrafficEntity?.insuranceProfile?.real,
+            selectedTrafficEntity?.insuranceProfile?.presented
+        );
+    }, [selectedTrafficEntity]);
 
     // Schließt nur das fahrzeugbezogene Panel, wenn kein angehaltener NPC mehr ausgewählt ist.
     // Die Polizei-Datenbank bleibt unabhängig von der aktuellen Verkehrskontrolle verfügbar.
@@ -71,9 +78,9 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
     }, [activePanel, canOpenProfile]);
 
     return (
-        <div className="fixed bottom-6 left-[370px] z-20 flex flex-col items-start gap-3">
+        <div className="fixed bottom-6 left-[640px] z-[8000] flex flex-col items-start gap-3">
             {activePanel && (
-                <div className="fixed bottom-20 left-6 w-[680px] max-w-[calc(100vw-3rem)] max-h-[78vh] overflow-hidden rounded-lg border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl">
+                <div className="fixed bottom-20 left-6 z-[8000] w-[680px] max-w-[calc(100vw-3rem)] max-h-[78vh] overflow-hidden rounded-lg border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl">
                     {activePanel === DEBUG_PANELS.PROFILE && canOpenProfile && (
                         <>
                             <DebugHeader selectedTrafficEntity={selectedTrafficEntity} />
@@ -99,6 +106,7 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
                                     <DocumentsTab
                                         selectedTrafficEntity={selectedTrafficEntity}
                                         driverDiffs={driverDiffs}
+                                        insuranceDiffs={insuranceDiffs}
                                         vehicleDiffs={vehicleDiffs}
                                     />
                                 )}
@@ -260,6 +268,8 @@ function OverviewTab({ selectedTrafficEntity }) {
                 <DebugRow label="driversLicenseForgery" value={selectedTrafficEntity.documentState?.npcDocuments?.driversLicense?.forgeryType} />
                 <DebugRow label="registrationIntegrity" value={selectedTrafficEntity.documentState?.vehicleDocuments?.registration?.integrity} />
                 <DebugRow label="registrationForgery" value={selectedTrafficEntity.documentState?.vehicleDocuments?.registration?.forgeryType} />
+                <DebugRow label="insuranceIntegrity" value={selectedTrafficEntity.documentState?.vehicleDocuments?.insurance?.integrity} />
+                <DebugRow label="insuranceForgery" value={selectedTrafficEntity.documentState?.vehicleDocuments?.insurance?.forgeryType} />
             </DebugSection>
 
             <DebugSection title="Prüfprofil">
@@ -287,7 +297,7 @@ function NpcIdentityRows({ profile }) {
             <DebugRow label="firstName" value={profile?.firstName} />
             <DebugRow label="lastName" value={profile?.lastName} />
             <DebugRow label="address" value={profile?.address} />
-            <DebugRow label="birthDate" value={profile?.birthDate} />
+            <DebugRow label="birthDate" value={formatDateForDisplay(profile?.birthDate)} />
             <DebugRow label="age" value={profile?.age} />
             <DebugRow label="sex" value={profile?.sex} />
             <DebugRow label="height" value={profile?.height} />
@@ -303,8 +313,9 @@ function DriversLicenseRows({ profile }) {
     return (
         <>
             <DebugRow label="licenseNumber" value={profile?.driversLicense?.licenseNumber} />
-            <DebugRow label="issueDate" value={profile?.driversLicense?.issueDate} />
-            <DebugRow label="expiryDate" value={profile?.driversLicense?.expiryDate} />
+            <DebugRow label="licensedSince" value={formatDateForDisplay(profile?.driversLicense?.licensedSince)} />
+            <DebugRow label="issueDate" value={formatDateForDisplay(profile?.driversLicense?.issueDate)} />
+            <DebugRow label="expiryDate" value={formatDateForDisplay(profile?.driversLicense?.expiryDate)} />
         </>
     );
 }
@@ -320,7 +331,7 @@ function VehicleSummaryRows({ profile }) {
             <DebugRow label="model" value={profile?.model} />
             <DebugRow label="plateNumber" value={profile?.carDocumentsData?.plateNumber} />
             <DebugRow label="registrationNumber" value={profile?.carDocumentsData?.carRegistrationNumber} />
-            <DebugRow label="registrationIssueDate" value={profile?.carDocumentsData?.formattedIssueDate} />
+            <DebugRow label="registrationIssueDate" value={formatDateForDisplay(profile?.carDocumentsData?.formattedIssueDate)} />
             <DebugRow label="yearOfConstruction" value={profile?.yearOfConstruction} />
             <DebugRow label="ps" value={profile?.ps} />
             <DebugRow label="weight" value={profile?.weight} />
@@ -331,7 +342,12 @@ function VehicleSummaryRows({ profile }) {
 // ##### Documents Tab
 // -----> Fokussiert auf Dokumentzustand und automatisch erkannte Abweichungen.
 // ---> Das ist der wichtigste Reiter zum Testen gefälschter Papiere.
-function DocumentsTab({ selectedTrafficEntity, driverDiffs, vehicleDiffs }) {
+function DocumentsTab({
+    selectedTrafficEntity,
+    driverDiffs,
+    insuranceDiffs,
+    vehicleDiffs
+}) {
     return (
         <>
             <DebugSection title="Dokumentzustand">
@@ -341,6 +357,7 @@ function DocumentsTab({ selectedTrafficEntity, driverDiffs, vehicleDiffs }) {
             <DebugSection title="Abweichungen real vs. presented">
                 <DebugDiffList title="Fahrer" diffs={driverDiffs} />
                 <DebugDiffList title="Fahrzeug" diffs={vehicleDiffs} />
+                <DebugDiffList title="Versicherung" diffs={insuranceDiffs} />
             </DebugSection>
         </>
     );
@@ -374,6 +391,14 @@ function ProfilesTab({ selectedTrafficEntity }) {
 
             <DebugSection title="Fahrzeug presented">
                 <DebugJson data={selectedTrafficEntity.vehicleProfile?.presented} />
+            </DebugSection>
+
+            <DebugSection title="Versicherung real">
+                <DebugJson data={selectedTrafficEntity.insuranceProfile?.real} />
+            </DebugSection>
+
+            <DebugSection title="Versicherung presented">
+                <DebugJson data={selectedTrafficEntity.insuranceProfile?.presented} />
             </DebugSection>
         </div>
     );

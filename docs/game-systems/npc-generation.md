@@ -489,16 +489,64 @@ Die Optionen werden gefiltert:
 
 Beim Wechsel eines bereits angehaltenen NPCs wird eine vollständige neue Traffic-Konstellation erzeugt. Position, Stop-Zustand und TrafficEntity-ID bleiben bestehen.
 
-Zusätzlich gibt es zwei getrennte Aktionen:
+Zusätzlich gibt es drei getrennte Aktionen:
 
 ```text
 Auf angehaltenen NPC anwenden
-Spawn NPC an Station
+Spawn konfigurierten NPC
+Spawn Random NPC (Blindtest)
 ```
 
-`Spawn NPC an Station` erzeugt eine neue TrafficEntity.
+`Spawn konfigurierten NPC` erzeugt eine neue TrafficEntity aus den aktuell
+sichtbaren lil-gui-Einstellungen.
+
+`Spawn Random NPC (Blindtest)` ignoriert die eingestellten Dev-Overrides und nutzt
+die normalen Spielwahrscheinlichkeiten:
+
+```text
+Zivilist                 70 %
+Unbekannter Straftäter  15 %
+Bekannter Straftäter    10 %
+Gesuchter Straftäter     5 %
+```
+
+Auch die Dokumentmanipulation wird mit ihrer normalen Generatorwahrscheinlichkeit
+bestimmt. Der erzeugte Traffic-Typ wird nicht zurück in lil-gui synchronisiert,
+damit der Entwickler den Fall wie ein Spieler untersuchen kann.
+
+Ein aktiver manueller Eingriff über NPC-Status, Datenbank-NPC,
+Polizeibekanntheit, Dokumentstatus oder Inspection Profile beendet den Blindtest.
+Ab diesem Zeitpunkt handelt es sich wieder um einen gezielt konfigurierten
+Dev-Fall.
 
 `Auf angehaltenen NPC anwenden` erzeugt aus allen aktuellen Controls eine neue Testkonstellation für die ausgewählte angehaltene TrafficEntity. Der Button ist deaktiviert, solange kein angehaltener NPC ausgewählt ist.
+
+## Amtliche Register
+
+Zwischen `worldTruthDatabase` und `criminalDatabase` liegt zusätzlich das
+`officialRegistry`. Es enthält ausschließlich offiziell registrierte Daten:
+
+```text
+Personenstammdaten
+Führerscheine
+Fahrzeuge
+Versicherungspolicen
+```
+
+Ein amtlicher Record bedeutet nicht, dass eine Person polizeibekannt ist. Die freie
+Personensuche des Police Laptops bleibt deshalb auf `criminalDatabase` beschränkt.
+Dokumentnummern können dagegen in ihrem fachlich passenden Register geprüft werden.
+
+Beim erfolgreichen Spawn werden nur `real`-Profile registriert. `presented` und
+unbekannte Straftaten werden niemals als Behördenwissen gespeichert. Eine erfundene
+Dokumentnummer kann deshalb ohne Treffer bleiben. Eine spätere hochwertige
+Tarnidentität kann dagegen selbst im amtlichen Register konsistent hinterlegt sein.
+
+## Einmalige Weltinstanzen
+
+Eine kanonische `npcId` und `vehicleId` darf nur einmal gleichzeitig im aktiven
+Traffic Store vorkommen. Generatoren schließen belegte Datenbankrecords bereits bei
+der Kandidatenauswahl aus; der Store prüft dieselbe Regel als letzte Invariante.
 
 ## Generierungsablauf
 
@@ -527,12 +575,14 @@ Jede Factory:
 assembleTrafficEntity:
   -> Fahrzeughalter bestimmen
   -> Fahrzeug mit registeredOwnerNpcId erzeugen
+  -> Versicherungspolice für Fahrzeug und Halter erzeugen
   -> documentState erzeugen
   -> presented erzeugen
   -> Traffic-, NPC- und Fahrzeugreferenzen zusammensetzen
 
-unknownOffender nach dem Assemblieren:
+Spawn Commit:
   -> neue NPC- und Crime-Records in worldTruthDatabase registrieren
+  -> echte Personen-, Führerschein-, Fahrzeug- und Versicherungsdaten registrieren
   -> temporäres Record-Paket aus der TrafficEntity entfernen
   -> nur crimeRecordIds in truth behalten
 ```
