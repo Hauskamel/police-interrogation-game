@@ -14,7 +14,7 @@ import {
     VehicleControlPanel,
 } from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
-import { LaptopScreen, Notebook, PoliceRadio } from "@game/police/components";
+import { LaptopScreen } from "@game/police/components";
 import { InspectionWorkspace } from "@game/inspections";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
@@ -93,13 +93,6 @@ function App() {
         {gameState === gameStates.LAPTOP && (
             <LaptopScreen />
         )}
-
-            <div className="fixed bottom-5 right-50 flex gap-2">
-                <>
-                    <Notebook />
-                    <PoliceRadio />
-                </>
-            </div>
 
             <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
 
