@@ -1,13 +1,15 @@
-import { useState } from "react";
-
 import {
     BaseDocument,
     CarDocuments,
-    DocumentBar,
+    DocumentConversation,
     DriversLicense,
     ProofOfInsurance
 } from "../components";
-import { selectSelectedTrafficEntity, useTrafficStore } from "@stores";
+import { INSPECTION_DOCUMENT_TYPES } from "@game/inspections/data";
+import {
+    useInspectionStore,
+    useTrafficStore
+} from "@stores";
 
 // ##### Driver Identity Documents
 // -----> Nur Dokumente mit Daten des Fahrers duerfen dessen Identitaet im Kontrollpanel aufdecken.
@@ -22,56 +24,63 @@ const DRIVER_IDENTITY_DOCUMENTS = new Set([
  * -----> Verwaltet, welche Fahrzeug- und Fahrerdokumente aktuell geöffnet sind.
  */
 export function DocumentManager() {
-    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
-    const revealDriverIdentity = useTrafficStore(state => state.revealDriverIdentity);
-
-    const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
-    const [openDocs, setOpenDocs] = useState(() =>
-        Object.fromEntries(activeDocs.map(doc => [doc, false]))
+    const activeInspection = useInspectionStore(
+        (state) => state.activeInspection
     );
-    
-    
-    const toggleDoc = (doc) => {
-        const documentWillOpen = !openDocs[doc];
+    const controlledTrafficEntity = useTrafficStore((state) => {
+        return state.trafficEntities.find(
+            (entity) => entity.id === activeInspection?.trafficEntityId
+        );
+    });
+    const revealDriverIdentity = useTrafficStore(
+        (state) => state.revealDriverIdentity
+    );
+    const requestDocument = useInspectionStore(
+        (state) => state.requestDocument
+    );
+    const closeDocument = useInspectionStore(
+        (state) => state.closeDocument
+    );
 
+    const activeDocs = Object.values(INSPECTION_DOCUMENT_TYPES);
+    const requestedDocuments = activeInspection?.requestedDocuments ?? [];
+    const visibleDocuments = activeInspection?.visibleDocuments ?? [];
+
+    const handleDocumentRequest = (documentType) => {
         // Bereits gelesene Identitaetsdaten bleiben fuer die laufende Kontrolle bekannt.
         if (
-            documentWillOpen
-            && DRIVER_IDENTITY_DOCUMENTS.has(doc)
-            && selectedTrafficEntity?.id
-            && selectedTrafficEntity?.npcId
+            DRIVER_IDENTITY_DOCUMENTS.has(documentType)
+            && controlledTrafficEntity?.id
+            && controlledTrafficEntity?.npcId
         ) {
             revealDriverIdentity(
-                selectedTrafficEntity.id,
-                selectedTrafficEntity.npcId
+                controlledTrafficEntity.id,
+                controlledTrafficEntity.npcId
             );
         }
 
-        setOpenDocs(prev => ({
-            ...prev,
-            [doc]: !prev[doc]
-        }))
+        requestDocument(documentType);
     };
 
     const docComponents = {
         driversLicense: (
             <DriversLicense 
                 key={"driversLicense"}
-                driver={selectedTrafficEntity?.driverProfile}
+                driver={controlledTrafficEntity?.driverProfile}
             />
         ),
         carDocuments: (
             <CarDocuments
                 key={"carDocuments"}
-                car={selectedTrafficEntity?.vehicleProfile}
-                owner={selectedTrafficEntity?.vehicleOwnerProfile}
+                car={controlledTrafficEntity?.vehicleProfile}
+                owner={controlledTrafficEntity?.vehicleOwnerProfile}
             />
         ),
         proofOfInsurance: (
             <ProofOfInsurance
                 key={"proofOfInsurance"}
-                car={selectedTrafficEntity?.vehicleProfile}
-                driver={selectedTrafficEntity?.driverProfile}
+                insurance={controlledTrafficEntity?.insuranceProfile}
+                owner={controlledTrafficEntity?.vehicleOwnerProfile}
             />
         )
     }
@@ -79,18 +88,21 @@ export function DocumentManager() {
     return (
         <>
             {activeDocs
-                    .filter(doc => openDocs[doc])
+                    .filter(doc => visibleDocuments.includes(doc))
                     .map(doc => (
-                        <BaseDocument key={doc}>
+                        <BaseDocument
+                            key={doc}
+                            onClose={() => closeDocument(doc)}
+                        >
                             {docComponents[doc]}
                         </BaseDocument>
                 ))
             }
 
-            <DocumentBar
-                activeDocs={activeDocs}
-                openDocs={openDocs}
-                onSelect={toggleDoc}
+            <DocumentConversation
+                requestedDocuments={requestedDocuments}
+                visibleDocuments={visibleDocuments}
+                onRequestDocument={handleDocumentRequest}
             />
         </>
     );

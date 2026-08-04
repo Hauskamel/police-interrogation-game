@@ -1,54 +1,59 @@
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
 import { VehicleOccupantsPanel } from "./VehicleOccupantsPanel.jsx";
 import {
-    selectSelectedTrafficEntity,
-    useGuiVisibilityStatesStore,
+    useInspectionStore,
     useTrafficStore
 } from "@stores";
-
-
-import { closePanel } from "../hooks";
-
 
 /**
  * ##### Vehicle Control Panel
  * -----> Zeigt die direkten Spieler-Aktionen fuer ein ausgewaehltes NPC-Fahrzeug.
  */
 export const VehicleControlPanel = ({
-    onClose
+    isPinned = false,
+    onClose,
+    trafficEntity
 }) => {
     const stopTrafficEntity = useTrafficStore((state) => state.stopTrafficEntity);
     const continueTrafficEntity = useTrafficStore((state) => state.continueTrafficEntity);
-    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore((state) => state.trafficEntities.find(entity => entity.stopped));
+    const activeInspection = useInspectionStore((state) => state.activeInspection);
+    const lastCompletedInspection = useInspectionStore(
+        (state) => state.lastCompletedInspection
+    );
+    const startInspection = useInspectionStore((state) => state.startInspection);
     const revealedDriverNpcId = useTrafficStore((state) =>
-        state.revealedDriverIdentityByTrafficEntityId[selectedTrafficEntity?.id]
+        state.revealedDriverIdentityByTrafficEntityId[trafficEntity?.id]
     );
 
-    const setPanelVisibility = useGuiVisibilityStatesStore(state => state.setControlPanelVisibilityState)
     const selectedEntityIsStopped = Boolean(
-        selectedTrafficEntity?.stopped
-        && selectedTrafficEntity.id === stoppedTrafficEntity?.id
+        trafficEntity?.stopped
+        && trafficEntity.id === stoppedTrafficEntity?.id
     );
     const anotherEntityIsStopped = Boolean(
         stoppedTrafficEntity
-        && stoppedTrafficEntity.id !== selectedTrafficEntity?.id
+        && stoppedTrafficEntity.id !== trafficEntity?.id
     );
     const driverIdentityIsKnown = Boolean(
         selectedEntityIsStopped
-        && revealedDriverNpcId === selectedTrafficEntity?.npcId
+        && revealedDriverNpcId === trafficEntity?.npcId
     );
+    const selectedInspectionIsActive = activeInspection?.trafficEntityId
+        === trafficEntity?.id;
+    const selectedInspectionHasResult = lastCompletedInspection?.trafficEntityId
+        === trafficEntity?.id;
 
     
     return (
         <>
             <BaseControlPanel 
                 title="Fahrzeug Optionen" 
-                margin="bottom-6" 
-                onClose={onClose} 
+                isCloseable={!isPinned}
+                onClose={onClose}
+                positionClassName="bottom-24 left-4 sm:bottom-6 sm:left-[19rem]"
             >
                 <VehicleOccupantsPanel
-                    trafficEntity={selectedTrafficEntity}
+                    trafficEntity={trafficEntity}
                     showDriverIdentity={driverIdentityIsKnown}
                 />
 
@@ -56,7 +61,7 @@ export const VehicleControlPanel = ({
                     {!stoppedTrafficEntity && !selectedEntityIsStopped && (
                         <button
                             onClick={() => {
-                                stopTrafficEntity(selectedTrafficEntity.id);
+                                stopTrafficEntity(trafficEntity.id);
                             }}
                             className="w-full !bg-red-500 text-white py-2 px-4 rounded-xl hover:bg-red-800 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -64,11 +69,13 @@ export const VehicleControlPanel = ({
                         </button>
                     )}
 
-                    {selectedEntityIsStopped && (
+                    {selectedEntityIsStopped
+                    && !selectedInspectionIsActive
+                    && !selectedInspectionHasResult && (
                         <button
                             onClick={() => {
-                                closePanel(setPanelVisibility, onClose)
-                                continueTrafficEntity(selectedTrafficEntity.id);
+                                continueTrafficEntity(trafficEntity.id);
+                                onClose?.();
                             }}
                             className="w-full bg-lime-600 text-white py-2 px-4 rounded-xl hover:bg-lime-700 transition font-semibold shadow-md cursor-pointer"
                         >
@@ -78,14 +85,32 @@ export const VehicleControlPanel = ({
                     
                 </div>
 
-                {selectedEntityIsStopped && (
+                {selectedEntityIsStopped
+                && !selectedInspectionIsActive
+                && !selectedInspectionHasResult && (
                     <div className="flex gap-2">
-                        <button 
-                            className="w-full bg-sky-600 text-white py-2 px-4 rounded-xl hover:bg-sky-700 transition font-semibold shadow-md cursor-pointer"
+                        <button
+                            type="button"
+                            className="w-full bg-sky-700 text-white py-2 px-4 rounded-xl hover:bg-sky-800 transition font-semibold shadow-md cursor-pointer"
+                            onClick={() => startInspection(trafficEntity.id)}
                         >
-                            Verhaften
+                            Kontrolle beginnen
                         </button>
                     </div>
+                )}
+
+                {selectedInspectionIsActive && (
+                    <p className="rounded bg-blue-50 px-3 py-2 text-xs text-blue-800">
+                        Die Kontrolle läuft. Fordere die Dokumente im Gespräch mit dem
+                        Fahrer an und markiere erkannte Auffälligkeiten.
+                    </p>
+                )}
+
+                {selectedInspectionHasResult && (
+                    <p className="rounded bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+                        Die Kontrolle ist abgeschlossen. Schließe den Kontrollbericht,
+                        um das Fahrzeug freizugeben.
+                    </p>
                 )}
 
                 {anotherEntityIsStopped && (

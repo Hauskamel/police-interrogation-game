@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 
 import { generateNpcProfile } from "@game/npcs/generators";
-import { createEntityId } from "@game/shared";
+import { createEntityId, getCurrentGameDate } from "@game/shared";
 import { generateVehicleProfile } from "@game/vehicles/generators";
 import { WANTED_RECORD_STATUSES } from "../data";
 import { generateCrimeRecordsForNpc } from "./crimeRecordGenerator.js";
@@ -94,7 +94,10 @@ function createWantedRecord({ npcId, crimeRecordIds }) {
         npcId,
         status: WANTED_RECORD_STATUSES.ACTIVE,
         reasonCrimeRecordIds,
-        issuedAt: faker.date.past({ years: 2 }).toISOString().split("T")[0],
+        issuedAt: faker.date.past({
+            years: 2,
+            refDate: getCurrentGameDate()
+        }).toISOString().split("T")[0],
         priorityLevel: faker.number.int({ min: 1, max: 3 })
     };
 }

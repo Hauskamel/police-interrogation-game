@@ -14,7 +14,7 @@ import { assembleTrafficEntity } from "./assembleTrafficEntity.js";
 // ---> Die Identität stammt aus der Criminal Database, wantedRecordId bleibt bewusst null.
 export function createKnownOffenderTrafficEntity(options = {}) {
     const { criminalDatabase } = options;
-    const candidateNpcIds = getKnownOffenderNpcIds(criminalDatabase);
+    const candidateNpcIds = getKnownOffenderNpcIds(criminalDatabase, options);
     const knownNpcId = pickDatabaseNpcId(candidateNpcIds, options.forcedDatabaseNpcId);
     const databaseNpcRecord = criminalDatabase?.npcsById?.[knownNpcId];
 

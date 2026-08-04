@@ -1,4 +1,5 @@
 import { BaseHeadlineWithText, BaseImage } from "./base";
+import { formatDateForDisplay } from "@game/shared";
 
 export function DriversLicense ({ driver }) {
     const driverProfile = driver?.presented;
@@ -26,14 +27,15 @@ export function DriversLicense ({ driver }) {
                                 </div>
                             </div>
 
-                            <div className="w-1/1 flex">
-                                <BaseHeadlineWithText headline="Geburtsdatum" data={driverProfile?.birthDate}></BaseHeadlineWithText>
+                            <div className="grid w-full grid-cols-3 gap-1">
+                                <BaseHeadlineWithText headline="Geburtsdatum" data={formatDateForDisplay(driverProfile?.birthDate)}></BaseHeadlineWithText>
                                 <BaseHeadlineWithText headline="Lizenznummer" data={driverProfile?.driversLicense?.licenseNumber}></BaseHeadlineWithText>
                             </div>
                             <BaseHeadlineWithText headline="Adresse" data={driverProfile?.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText headline="Ausgabedatum" data={driverProfile?.driversLicense?.issueDate}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText headline="Ablaufdatum" data={driverProfile?.driversLicense?.expiryDate}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Fahrerlaubnis seit" data={formatDateForDisplay(driverProfile?.driversLicense?.licensedSince)}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Ausgabedatum" data={formatDateForDisplay(driverProfile?.driversLicense?.issueDate)}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Ablaufdatum" data={formatDateForDisplay(driverProfile?.driversLicense?.expiryDate)}></BaseHeadlineWithText>
                             </div>
                         </div>
                         <div className="mt-2 flex justify-between">

@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-import { createEntityId, pickWeightedItem } from "@game/shared";
+import { createEntityId, getCurrentGameDate, pickWeightedItem } from "@game/shared";
 import { crimeTypes } from "../data";
 
 // ##### Crime Metadata
@@ -91,7 +91,10 @@ export function generateCrimeRecordsForNpc(npcId, options = {}) {
             severity: crimeSeverityByType[crimeType] ?? "unknown",
             title: formatCrimeTitle(crimeType),
             description: generateCrimeDescription(crimeType),
-            committedAt: faker.date.past({ years: 8 }).toISOString().split("T")[0],
+            committedAt: faker.date.past({
+                years: 8,
+                refDate: getCurrentGameDate()
+            }).toISOString().split("T")[0],
             status: recordStatus
                 ?? faker.helpers.arrayElement(["open", "convicted", "under_investigation"])
         };
@@ -129,7 +132,10 @@ function formatCrimeTitle(type) {
 // ---> Dient als erster Platzhalter für später ausführlichere Fallakten, Zeugenberichte oder Laptop-Einträge.
 function generateCrimeDescription(type) {
     const place = faker.location.city();
-    const year = faker.date.past({ years: 8 }).getFullYear();
+    const year = faker.date.past({
+        years: 8,
+        refDate: getCurrentGameDate()
+    }).getFullYear();
 
     return `${formatCrimeTitle(type)} recorded near ${place} in ${year}.`;
 }

@@ -1,90 +1,111 @@
-import { createElement, useMemo, useState } from "react";
+import { createElement, useMemo } from "react";
 import {
     FaBullhorn,
     FaCar,
     FaFileCircleExclamation,
+    FaFileSignature,
     FaIdCard,
     FaMagnifyingGlass,
     FaUser
 } from "react-icons/fa6";
 
 import { BaseImage } from "@game/documents/components/base";
-import { useNpcStore } from "@stores";
+import { formatDateForDisplay } from "@game/shared";
+import {
+    POLICE_DATABASE_SEARCH_TYPES,
+    POLICE_DATABASE_SECTIONS,
+    useNpcStore,
+    useOfficialRegistryStore,
+    usePoliceLaptopStore
+} from "@stores";
 
 import {
     getActiveWantedRecordForNpc,
     getActiveWantedRecords,
     getCrimeRecordsForNpc,
-    getVehiclesForNpc,
+    getOfficialVehiclesForNpc,
+    searchInsurancePolicies,
     searchDriverLicenses,
     searchPeople,
     searchVehicles
 } from "./policeDatabaseSearch.js";
 
-const DATABASE_SECTIONS = {
-    SEARCH: "search",
-    WANTED: "wanted"
-};
-
-const SEARCH_TYPES = {
-    PERSON: "person",
-    LICENSE: "license",
-    PLATE: "plate"
-};
-
 const searchTypeConfiguration = {
-    [SEARCH_TYPES.PERSON]: {
+    [POLICE_DATABASE_SEARCH_TYPES.PERSON]: {
         label: "Person",
         placeholder: "Name, Adresse oder Personen-ID",
         icon: FaUser
     },
-    [SEARCH_TYPES.LICENSE]: {
+    [POLICE_DATABASE_SEARCH_TYPES.LICENSE]: {
         label: "Führerschein",
         placeholder: "Führerscheinnummer",
         icon: FaIdCard
     },
-    [SEARCH_TYPES.PLATE]: {
+    [POLICE_DATABASE_SEARCH_TYPES.PLATE]: {
         label: "Kennzeichen",
         placeholder: "Kennzeichen oder Zulassungsnummer",
         icon: FaCar
+    },
+    [POLICE_DATABASE_SEARCH_TYPES.INSURANCE]: {
+        label: "Versicherung",
+        placeholder: "Policennummer",
+        icon: FaFileSignature
     }
 };
 
 // ##### Police Database Screen
 // -----> Spielbare Suche für Personen, Führerscheine, Kennzeichen und aktive Fahndungen.
-// ---> Der Screen liest ausschließlich die polizeiliche criminalDatabase aus dem NPC Store.
+// ---> Personenakten stammen aus dem Polizeibestand, Dokumentabfragen aus amtlichen Registern.
 export function PoliceDatabaseScreen() {
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
-    const [activeSection, setActiveSection] = useState(DATABASE_SECTIONS.SEARCH);
-    const [searchType, setSearchType] = useState(SEARCH_TYPES.PERSON);
-    const [query, setQuery] = useState("");
-    const [selection, setSelection] = useState(null);
+    const officialRegistry = useOfficialRegistryStore(
+        (state) => state.officialRegistry
+    );
+    const {
+        activeSection,
+        query,
+        searchType,
+        selection
+    } = usePoliceLaptopStore((state) => state.database);
+    const setDatabaseQuery = usePoliceLaptopStore(
+        (state) => state.setDatabaseQuery
+    );
+    const setDatabaseSection = usePoliceLaptopStore(
+        (state) => state.setDatabaseSection
+    );
+    const setDatabaseSearchType = usePoliceLaptopStore(
+        (state) => state.setDatabaseSearchType
+    );
+    const setDatabaseSelection = usePoliceLaptopStore(
+        (state) => state.setDatabaseSelection
+    );
 
     const results = useMemo(() => {
-        if (activeSection === DATABASE_SECTIONS.WANTED) {
+        if (activeSection === POLICE_DATABASE_SECTIONS.WANTED) {
             return getActiveWantedRecords(criminalDatabase);
         }
 
-        if (searchType === SEARCH_TYPES.LICENSE) {
-            return searchDriverLicenses(criminalDatabase, query);
+        if (searchType === POLICE_DATABASE_SEARCH_TYPES.LICENSE) {
+            return searchDriverLicenses(officialRegistry, query);
         }
 
-        if (searchType === SEARCH_TYPES.PLATE) {
-            return searchVehicles(criminalDatabase, query);
+        if (searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE) {
+            return searchVehicles(officialRegistry, query);
+        }
+
+        if (searchType === POLICE_DATABASE_SEARCH_TYPES.INSURANCE) {
+            return searchInsurancePolicies(officialRegistry, query);
         }
 
         return searchPeople(criminalDatabase, query);
-    }, [activeSection, criminalDatabase, query, searchType]);
+    }, [activeSection, criminalDatabase, officialRegistry, query, searchType]);
 
     const changeSection = (section) => {
-        setActiveSection(section);
-        setSelection(null);
+        setDatabaseSection(section);
     };
 
     const changeSearchType = (type) => {
-        setSearchType(type);
-        setQuery("");
-        setSelection(null);
+        setDatabaseSearchType(type);
     };
 
     return (
@@ -93,10 +114,10 @@ export function PoliceDatabaseScreen() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <p className="text-xs font-semibold uppercase text-blue-700">
-                            Polizeilicher Datenbestand
+                            Polizei- und Verwaltungsbestand
                         </p>
                         <h1 className="mt-1 !text-xl font-semibold tracking-normal text-zinc-950">
-                            Zentrales Polizeiregister
+                            Zentrales Behördenregister
                         </h1>
                     </div>
                     <span className="rounded border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">
@@ -106,27 +127,30 @@ export function PoliceDatabaseScreen() {
 
                 <div className="mt-4 flex gap-6 border-b border-zinc-200">
                     <SectionButton
-                        active={activeSection === DATABASE_SECTIONS.SEARCH}
+                        active={activeSection === POLICE_DATABASE_SECTIONS.SEARCH}
                         icon={FaMagnifyingGlass}
                         label="Suche"
-                        onClick={() => changeSection(DATABASE_SECTIONS.SEARCH)}
+                        onClick={() => {
+                            changeSection(POLICE_DATABASE_SECTIONS.SEARCH);
+                        }}
                     />
                     <SectionButton
-                        active={activeSection === DATABASE_SECTIONS.WANTED}
+                        active={activeSection === POLICE_DATABASE_SECTIONS.WANTED}
                         icon={FaBullhorn}
                         label="Fahndungsliste"
-                        onClick={() => changeSection(DATABASE_SECTIONS.WANTED)}
+                        onClick={() => {
+                            changeSection(POLICE_DATABASE_SECTIONS.WANTED);
+                        }}
                     />
                 </div>
             </header>
 
-            {activeSection === DATABASE_SECTIONS.SEARCH && (
+            {activeSection === POLICE_DATABASE_SECTIONS.SEARCH && (
                 <SearchToolbar
                     query={query}
                     searchType={searchType}
                     onQueryChange={(event) => {
-                        setQuery(event.target.value);
-                        setSelection(null);
+                        setDatabaseQuery(event.target.value);
                     }}
                     onSearchTypeChange={changeSearchType}
                 />
@@ -135,16 +159,19 @@ export function PoliceDatabaseScreen() {
             <div className="grid min-h-0 flex-1 lg:grid-cols-[340px_minmax(0,1fr)]">
                 <ResultsList
                     activeSection={activeSection}
+                    criminalDatabase={criminalDatabase}
+                    officialRegistry={officialRegistry}
                     query={query}
                     results={results}
                     searchType={searchType}
                     selection={selection}
-                    onSelect={setSelection}
+                    onSelect={setDatabaseSelection}
                 />
                 <RecordDetails
                     criminalDatabase={criminalDatabase}
+                    officialRegistry={officialRegistry}
                     selection={selection}
-                    onSelect={setSelection}
+                    onSelect={setDatabaseSelection}
                 />
             </div>
         </div>
@@ -228,19 +255,25 @@ function SearchToolbar({
 // -----> Stellt Suchtreffer und Fahndungen einheitlich als auswählbare Records dar.
 function ResultsList({
     activeSection,
+    criminalDatabase,
+    officialRegistry,
     query,
     results,
     searchType,
     selection,
     onSelect
 }) {
-    const isWaitingForQuery = activeSection === DATABASE_SECTIONS.SEARCH && !query.trim();
+    const isWaitingForQuery = activeSection === POLICE_DATABASE_SECTIONS.SEARCH
+        && !query.trim();
 
     return (
         <section className="min-h-0 overflow-y-auto border-r border-zinc-200 bg-white">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-200 bg-white px-4 py-3">
                 <h2 className="text-sm font-semibold text-zinc-900">
-                    {activeSection === DATABASE_SECTIONS.WANTED ? "Aktive Fahndungen" : "Suchergebnisse"}
+                    {activeSection === POLICE_DATABASE_SECTIONS.WANTED
+                        ? "Aktive Fahndungen"
+                        : "Suchergebnisse"
+                    }
                 </h2>
                 <span className="text-xs text-zinc-500">
                     {isWaitingForQuery ? "–" : results.length}
@@ -255,7 +288,7 @@ function ResultsList({
             ) : results.length === 0 ? (
                 <ListMessage
                     title="Kein Treffer"
-                    text="Im verfügbaren Polizeibestand wurde kein passender Datensatz gefunden."
+                    text="Im verfügbaren Behördenbestand wurde kein passender Datensatz gefunden."
                 />
             ) : (
                 <div className="divide-y divide-zinc-100">
@@ -268,6 +301,8 @@ function ResultsList({
                             <ResultButton
                                 key={`${itemSelection.kind}-${itemSelection.id}`}
                                 activeSection={activeSection}
+                                criminalDatabase={criminalDatabase}
+                                officialRegistry={officialRegistry}
                                 isSelected={isSelected}
                                 record={record}
                                 searchType={searchType}
@@ -283,31 +318,59 @@ function ResultsList({
 
 // Formt die verschiedenen Trefferarten in eine stabile Detailauswahl um.
 function createSelection(activeSection, searchType, record) {
-    if (activeSection === DATABASE_SECTIONS.WANTED) {
+    if (activeSection === POLICE_DATABASE_SECTIONS.WANTED) {
         return { kind: "wanted", id: record.id };
     }
 
-    if (searchType === SEARCH_TYPES.PLATE) {
-        return { kind: "vehicle", id: record.vehicleId };
+    if (searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE) {
+        return { kind: "registryVehicle", id: record.vehicleId };
+    }
+
+    if (searchType === POLICE_DATABASE_SEARCH_TYPES.INSURANCE) {
+        return { kind: "insurancePolicy", id: record.policyId };
+    }
+
+    if (searchType === POLICE_DATABASE_SEARCH_TYPES.LICENSE) {
+        return { kind: "registryPerson", id: record.npcId };
     }
 
     return { kind: "person", id: record.npcId };
 }
 
 // Stellt die für den jeweiligen Suchmodus wichtigsten Trefferinformationen dar.
-function ResultButton({ activeSection, isSelected, record, searchType, onClick }) {
-    const isVehicle = searchType === SEARCH_TYPES.PLATE
-        && activeSection !== DATABASE_SECTIONS.WANTED;
-    const title = isVehicle
+function ResultButton({
+    activeSection,
+    criminalDatabase,
+    officialRegistry,
+    isSelected,
+    record,
+    searchType,
+    onClick
+}) {
+    const isVehicle = searchType === POLICE_DATABASE_SEARCH_TYPES.PLATE
+        && activeSection !== POLICE_DATABASE_SECTIONS.WANTED;
+    const isInsurance = searchType === POLICE_DATABASE_SEARCH_TYPES.INSURANCE
+        && activeSection !== POLICE_DATABASE_SECTIONS.WANTED;
+    const wantedNpc = activeSection === POLICE_DATABASE_SECTIONS.WANTED
+        ? criminalDatabase.npcsById?.[record.npcId]
+        : null;
+    const insuranceVehicle = isInsurance
+        ? officialRegistry.vehiclesById?.[record.vehicleId]
+        : null;
+    const title = isInsurance
+        ? record.policyNumber
+        : isVehicle
         ? record.carDocumentsData?.plateNumber
-        : activeSection === DATABASE_SECTIONS.WANTED
-            ? `Fahndung ${record.id}`
+        : activeSection === POLICE_DATABASE_SECTIONS.WANTED
+            ? formatNpcName(wantedNpc)
             : `${record.firstName} ${record.lastName}`;
-    const subtitle = isVehicle
+    const subtitle = isInsurance
+        ? `${record.provider} · ${insuranceVehicle?.carDocumentsData?.plateNumber ?? "Fahrzeug nicht auflösbar"}`
+        : isVehicle
         ? `${record.brand} ${record.model}`
-        : activeSection === DATABASE_SECTIONS.WANTED
-            ? `Priorität ${record.priorityLevel}`
-            : searchType === SEARCH_TYPES.LICENSE
+        : activeSection === POLICE_DATABASE_SECTIONS.WANTED
+            ? `Priorität ${record.priorityLevel} · Fahndung ${record.id}`
+            : searchType === POLICE_DATABASE_SEARCH_TYPES.LICENSE
                 ? record.driversLicense?.licenseNumber
                 : record.address;
 
@@ -327,30 +390,86 @@ function ResultButton({ activeSection, isSelected, record, searchType, onClick }
     );
 }
 
+// Fahndungsrecords bleiben relational; der Name wird nur für die Anzeige aufgelöst.
+function formatNpcName(npc) {
+    if (!npc) return "Person nicht auflösbar";
+
+    return `${npc.firstName} ${npc.lastName}`;
+}
+
 // ##### Record Details
 // -----> Löst die gewählte Record-ID erst beim Anzeigen gegen die relationale Datenbank auf.
-function RecordDetails({ criminalDatabase, selection, onSelect }) {
+function RecordDetails({ criminalDatabase, officialRegistry, selection, onSelect }) {
     if (!selection) {
         return (
             <div className="flex min-h-0 items-center justify-center overflow-y-auto p-8">
                 <ListMessage
                     title="Kein Datensatz ausgewählt"
-                    text="Wähle links einen Treffer aus, um die polizeilich bekannten Details zu öffnen."
+                    text="Wähle links einen Treffer aus, um die verfügbaren Behördenangaben zu öffnen."
                 />
             </div>
         );
     }
 
-    if (selection.kind === "vehicle") {
-        const vehicle = criminalDatabase.vehiclesById?.[selection.id];
-        const owner = criminalDatabase.npcsById?.[vehicle?.registeredOwnerNpcId];
+    if (selection.kind === "registryVehicle") {
+        const vehicle = officialRegistry.vehiclesById?.[selection.id];
+        const owner = officialRegistry.peopleById?.[vehicle?.registeredOwnerNpcId];
 
         return (
             <VehicleDetails
                 vehicle={vehicle}
                 owner={owner}
                 onSelectOwner={() => {
-                    if (owner) onSelect({ kind: "person", id: owner.npcId });
+                    if (!owner) return;
+
+                    const kind = criminalDatabase.npcsById?.[owner.npcId]
+                        ? "person"
+                        : "registryPerson";
+                    onSelect({ kind, id: owner.npcId });
+                }}
+            />
+        );
+    }
+
+    if (selection.kind === "insurancePolicy") {
+        const policy = officialRegistry.insurancePoliciesById?.[selection.id];
+        const vehicle = officialRegistry.vehiclesById?.[policy?.vehicleId];
+        const holder = officialRegistry.peopleById?.[policy?.policyHolderNpcId];
+
+        return (
+            <InsuranceDetails
+                policy={policy}
+                vehicle={vehicle}
+                holder={holder}
+            />
+        );
+    }
+
+    if (selection.kind === "registryPerson") {
+        const policeNpc = criminalDatabase.npcsById?.[selection.id];
+
+        if (policeNpc) {
+            return (
+                <PersonDetails
+                    criminalDatabase={criminalDatabase}
+                    officialRegistry={officialRegistry}
+                    npc={policeNpc}
+                    onSelect={onSelect}
+                />
+            );
+        }
+
+        const officialPerson = officialRegistry.peopleById?.[selection.id];
+        const license = Object.values(officialRegistry.driverLicensesByNumber ?? {})
+            .find((record) => record.npcId === selection.id);
+
+        return (
+            <OfficialPersonDetails
+                person={officialPerson}
+                license={license}
+                vehicles={getOfficialVehiclesForNpc(officialRegistry, selection.id)}
+                onSelectVehicle={(vehicleId) => {
+                    onSelect({ kind: "registryVehicle", id: vehicleId });
                 }}
             />
         );
@@ -374,15 +493,22 @@ function RecordDetails({ criminalDatabase, selection, onSelect }) {
 
     const npc = criminalDatabase.npcsById[selection.id];
 
-    return <PersonDetails criminalDatabase={criminalDatabase} npc={npc} onSelect={onSelect} />;
+    return (
+        <PersonDetails
+            criminalDatabase={criminalDatabase}
+            officialRegistry={officialRegistry}
+            npc={npc}
+            onSelect={onSelect}
+        />
+    );
 }
 
 // Zeigt Personenstammdaten und alle daran referenzierten Polizeirecords.
-function PersonDetails({ criminalDatabase, npc, onSelect }) {
+function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
     if (!npc) return <MissingRecord />;
 
     const crimes = getCrimeRecordsForNpc(criminalDatabase, npc);
-    const vehicles = getVehiclesForNpc(criminalDatabase, npc);
+    const vehicles = getOfficialVehiclesForNpc(officialRegistry, npc.npcId);
     const wantedRecord = getActiveWantedRecordForNpc(criminalDatabase, npc.npcId);
 
     return (
@@ -404,7 +530,7 @@ function PersonDetails({ criminalDatabase, npc, onSelect }) {
                         <StatusBadge wanted={Boolean(wantedRecord)} />
                     </div>
                     <dl className="mt-5 grid gap-4 sm:grid-cols-3">
-                        <DataField label="Geburtsdatum" value={formatDate(npc.birthDate)} />
+                        <DataField label="Geburtsdatum" value={formatDateForDisplay(npc.birthDate)} />
                         <DataField label="Alter" value={`${npc.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(npc.sex)} />
                         <DataField label="Größe" value={npc.height ? `${npc.height} cm` : "Nicht erfasst"} />
@@ -418,8 +544,9 @@ function PersonDetails({ criminalDatabase, npc, onSelect }) {
                 {npc.driversLicense ? (
                     <dl className="grid gap-4 sm:grid-cols-3">
                         <DataField label="Nummer" value={npc.driversLicense.licenseNumber} />
-                        <DataField label="Ausgestellt" value={formatDate(npc.driversLicense.issueDate)} />
-                        <DataField label="Gültig bis" value={formatDate(npc.driversLicense.expiryDate)} />
+                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(npc.driversLicense.licensedSince)} />
+                        <DataField label="Ausgestellt" value={formatDateForDisplay(npc.driversLicense.issueDate)} />
+                        <DataField label="Gültig bis" value={formatDateForDisplay(npc.driversLicense.expiryDate)} />
                     </dl>
                 ) : (
                     <EmptyInline text="Kein Führerschein im Polizeibestand." />
@@ -432,7 +559,7 @@ function PersonDetails({ criminalDatabase, npc, onSelect }) {
                         key={vehicle.vehicleId}
                         type="button"
                         className="flex w-full items-center justify-between gap-4 border-b border-zinc-100 py-3 text-left last:border-0 hover:text-blue-700"
-                        onClick={() => onSelect({ kind: "vehicle", id: vehicle.vehicleId })}
+                        onClick={() => onSelect({ kind: "registryVehicle", id: vehicle.vehicleId })}
                     >
                         <span>
                             <span className="block text-sm font-semibold">
@@ -450,6 +577,109 @@ function PersonDetails({ criminalDatabase, npc, onSelect }) {
             </DetailSection>
 
             <CrimeRecordList crimes={crimes} />
+        </DetailLayout>
+    );
+}
+
+// Zeigt einen amtlichen Personen- und Fuehrerscheinrecord ohne polizeiliche Erkenntnisse hinzuzufuegen.
+function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
+    if (!person) return <MissingRecord />;
+
+    return (
+        <DetailLayout title="Amtlicher Personenrecord" recordId={person.npcId}>
+            <div className="flex flex-col gap-5 border-b border-zinc-200 pb-6 sm:flex-row">
+                <BaseImage
+                    data={person.npcImage}
+                    alt={`${person.firstName} ${person.lastName}`}
+                    className="h-36 w-28 rounded object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold uppercase text-zinc-500">
+                        Amtlich registriert, keine Personenakte im Polizeibestand
+                    </p>
+                    <h2 className="mt-1 text-2xl font-semibold text-zinc-950">
+                        {person.firstName} {person.lastName}
+                    </h2>
+                    <p className="mt-1 text-sm text-zinc-500">{person.address}</p>
+                    <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+                        <DataField label="Geburtsdatum" value={formatDateForDisplay(person.birthDate)} />
+                        <DataField label="Alter" value={`${person.age} Jahre`} />
+                        <DataField label="Geschlecht" value={formatSex(person.sex)} />
+                    </dl>
+                </div>
+            </div>
+
+            <DetailSection title="Führerscheinregister">
+                {license ? (
+                    <dl className="grid gap-4 sm:grid-cols-3">
+                        <DataField label="Nummer" value={license.licenseNumber} />
+                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(license.licensedSince)} />
+                        <DataField label="Ausgestellt" value={formatDateForDisplay(license.issueDate)} />
+                        <DataField label="Gültig bis" value={formatDateForDisplay(license.expiryDate)} />
+                    </dl>
+                ) : (
+                    <EmptyInline text="Kein Führerschein im amtlichen Register." />
+                )}
+            </DetailSection>
+
+            <DetailSection title="Registrierte Fahrzeuge">
+                {vehicles.length > 0 ? vehicles.map((vehicle) => (
+                    <button
+                        key={vehicle.vehicleId}
+                        type="button"
+                        className="flex w-full items-center justify-between gap-4 border-b border-zinc-100 py-3 text-left last:border-0 hover:text-blue-700"
+                        onClick={() => onSelectVehicle(vehicle.vehicleId)}
+                    >
+                        <span>
+                            <span className="block text-sm font-semibold">
+                                {vehicle.carDocumentsData?.plateNumber}
+                            </span>
+                            <span className="block text-xs text-zinc-500">
+                                {vehicle.brand} {vehicle.model}
+                            </span>
+                        </span>
+                        <FaCar aria-hidden="true" />
+                    </button>
+                )) : (
+                    <EmptyInline text="Kein Fahrzeug im amtlichen Register." />
+                )}
+            </DetailSection>
+        </DetailLayout>
+    );
+}
+
+// Zeigt die kanonische Police und ihre Relationen, ohne eine Kriminalakte vorauszusetzen.
+function InsuranceDetails({ policy, vehicle, holder }) {
+    if (!policy) return <MissingRecord />;
+
+    return (
+        <DetailLayout title="Versicherungsregister" recordId={policy.policyId}>
+            <div className="border-b border-zinc-200 pb-5">
+                <p className="text-xs font-semibold uppercase text-blue-700">
+                    Kraftfahrzeug-Haftpflicht
+                </p>
+                <h2 className="mt-1 text-2xl font-semibold text-zinc-950">
+                    {policy.policyNumber}
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">{policy.provider}</p>
+            </div>
+
+            <DetailSection title="Versicherungsschutz">
+                <dl className="grid gap-4 sm:grid-cols-3">
+                    <DataField label="Status" value={policy.status === "active" ? "Aktiv" : "Abgelaufen"} />
+                    <DataField label="Gültig ab" value={formatDateForDisplay(policy.validFrom)} />
+                    <DataField label="Gültig bis" value={formatDateForDisplay(policy.validUntil)} />
+                    <DataField label="Kennzeichen" value={policy.insuredPlateNumber} />
+                    <DataField
+                        label="Fahrzeug"
+                        value={vehicle ? `${vehicle.brand} ${vehicle.model}` : "Nicht auflösbar"}
+                    />
+                    <DataField
+                        label="Versicherungsnehmer"
+                        value={holder ? `${holder.firstName} ${holder.lastName}` : "Nicht auflösbar"}
+                    />
+                </dl>
+            </DetailSection>
         </DetailLayout>
     );
 }
@@ -482,7 +712,7 @@ function VehicleDetails({ vehicle, owner, onSelectOwner }) {
                     />
                     <DataField
                         label="Ausgestellt"
-                        value={formatDate(vehicle.carDocumentsData?.formattedIssueDate)}
+                        value={formatDateForDisplay(vehicle.carDocumentsData?.formattedIssueDate)}
                     />
                     <DataField label="Baujahr" value={vehicle.yearOfConstruction} />
                     <DataField label="Leistung" value={vehicle.ps ? `${vehicle.ps} PS` : null} />
@@ -510,7 +740,7 @@ function VehicleDetails({ vehicle, owner, onSelectOwner }) {
                         </span>
                     </button>
                 ) : (
-                    <EmptyInline text="Kein Halter im Polizeibestand auflösbar." />
+                    <EmptyInline text="Kein Halter im amtlichen Register auflösbar." />
                 )}
             </DetailSection>
         </DetailLayout>
@@ -554,7 +784,7 @@ function WantedDetails({ criminalDatabase, wantedRecord, npc, onSelectPerson }) 
             <DetailSection title="Fahndungsstatus">
                 <dl className="grid gap-4 sm:grid-cols-3">
                     <DataField label="Status" value="Aktiv" />
-                    <DataField label="Ausgestellt am" value={formatDate(wantedRecord.issuedAt)} />
+                    <DataField label="Ausgestellt am" value={formatDateForDisplay(wantedRecord.issuedAt)} />
                     <DataField label="Prioritätsstufe" value={wantedRecord.priorityLevel} />
                 </dl>
             </DetailSection>
@@ -605,7 +835,7 @@ function CrimeRecordList({ crimes, title = "Bekannte Straftaten" }) {
                                 <p className="text-xs font-medium text-zinc-700">
                                     {formatCrimeStatus(crime.status)}
                                 </p>
-                                <p className="mt-1 text-xs text-zinc-500">{formatDate(crime.committedAt)}</p>
+                                <p className="mt-1 text-xs text-zinc-500">{formatDateForDisplay(crime.committedAt)}</p>
                             </div>
                         </div>
                     ))}
@@ -664,16 +894,6 @@ function MissingRecord() {
             />
         </div>
     );
-}
-
-function formatDate(value) {
-    if (!value) return "Nicht erfasst";
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) return value;
-
-    return new Intl.DateTimeFormat("de-DE").format(date);
 }
 
 function formatSex(value) {

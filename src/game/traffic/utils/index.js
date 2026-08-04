@@ -1,4 +1,5 @@
 export {
+    filterUnavailableDatabaseNpcIds,
     getActiveWantedRecords,
     getKnownOffenderNpcIds,
     pickDatabaseNpcId

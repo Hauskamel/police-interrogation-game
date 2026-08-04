@@ -1,6 +1,6 @@
 // ##### Police Database Search
 // -----> Enthält die reinen Such- und Relationsfunktionen des spielbaren Laptops.
-// ---> Die Funktionen erhalten ausschließlich criminalDatabase und kennen keine World-Truth-Daten.
+// ---> Polizeisuchen und amtliche Registerabfragen bleiben getrennt und kennen keine World-Truth-Daten.
 
 // Normalisiert Suchbegriffe, damit Großschreibung, Leerzeichen und Bindestriche nicht stören.
 function normalizeSearchValue(value) {
@@ -37,23 +37,26 @@ export function searchPeople(criminalDatabase, query) {
 }
 
 // Sucht Führerscheine und liefert den zugehörigen Personenrecord zurück.
-export function searchDriverLicenses(criminalDatabase, query) {
+export function searchDriverLicenses(officialRegistry, query) {
     if (!query.trim()) return [];
 
-    return (criminalDatabase.criminalNpcIds ?? [])
-        .map((npcId) => criminalDatabase.npcsById[npcId])
-        .filter((npc) => npc?.driversLicense)
-        .filter((npc) => {
-            return matchesQuery(query, [npc.driversLicense.licenseNumber]);
-        });
+    return Object.values(officialRegistry.driverLicensesByNumber ?? {})
+        .filter((license) => matchesQuery(query, [license.licenseNumber]))
+        .map((license) => {
+            const person = officialRegistry.peopleById?.[license.npcId];
+
+            return person
+                ? { ...person, driversLicense: license }
+                : null;
+        })
+        .filter(Boolean);
 }
 
 // Sucht registrierte Fahrzeuge anhand von Kennzeichen oder Zulassungsnummer.
-export function searchVehicles(criminalDatabase, query) {
+export function searchVehicles(officialRegistry, query) {
     if (!query.trim()) return [];
 
-    return (criminalDatabase.vehicleIds ?? [])
-        .map((vehicleId) => criminalDatabase.vehiclesById?.[vehicleId])
+    return Object.values(officialRegistry.vehiclesById ?? {})
         .filter(Boolean)
         .filter((vehicle) => {
             return matchesQuery(query, [
@@ -61,6 +64,14 @@ export function searchVehicles(criminalDatabase, query) {
                 vehicle.carDocumentsData?.carRegistrationNumber
             ]);
         });
+}
+
+// Sucht eine konkrete Versicherungspolice anhand ihrer vorgelegten Policennummer.
+export function searchInsurancePolicies(officialRegistry, query) {
+    if (!query.trim()) return [];
+
+    return Object.values(officialRegistry.insurancePoliciesById ?? {})
+        .filter((policy) => matchesQuery(query, [policy.policyNumber]));
 }
 
 // Löst alle aktiven Fahndungen aus der eigenständigen Fahndungstabelle auf.
@@ -82,6 +93,12 @@ export function getVehiclesForNpc(criminalDatabase, npc) {
     return (npc?.vehicleIds ?? [])
         .map((vehicleId) => criminalDatabase.vehiclesById?.[vehicleId])
         .filter(Boolean);
+}
+
+// Amtliche Fahrzeugrelationen werden ueber die Halter-ID statt ueber Polizeirecords aufgeloest.
+export function getOfficialVehiclesForNpc(officialRegistry, npcId) {
+    return Object.values(officialRegistry.vehiclesById ?? {})
+        .filter((vehicle) => vehicle.registeredOwnerNpcId === npcId);
 }
 
 // Ermittelt die aktive Fahndung einer Person, ohne den NPC-Record zu duplizieren.

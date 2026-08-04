@@ -8,29 +8,29 @@ import {
 } from "react-icons/fa6";
 
 import { useNpcStore } from "@stores";
+import { useOfficialRegistryStore } from "@stores";
+import { formatDateForDisplay, getCurrentGameDate } from "@game/shared";
 
 // ##### Laptop Home Screen
 // -----> Zeigt einen knappen Systemstatus und führt in die spielbare Datenbank.
 // ---> Alle Kennzahlen stammen ausschließlich aus dem freigegebenen Polizeibestand.
 export function HomeScreen({ onOpenDatabase }) {
     const criminalDatabase = useNpcStore((state) => state.criminalDatabase);
+    const officialRegistry = useOfficialRegistryStore(
+        (state) => state.officialRegistry
+    );
     const personCount = criminalDatabase.criminalNpcIds.length;
-    const vehicleCount = criminalDatabase.vehicleIds?.length ?? 0;
+    const vehicleCount = Object.keys(officialRegistry.vehiclesById ?? {}).length;
     const activeWantedCount = criminalDatabase.wantedRecordIds.filter((recordId) => {
         return criminalDatabase.wantedRecordsById[recordId]?.status === "active";
     }).length;
 
-    const currentDate = new Intl.DateTimeFormat("de-DE", {
-        weekday: "long",
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-    }).format(new Date());
+    const currentDate = formatDateForDisplay(getCurrentGameDate());
 
     return (
         <div className="h-full overflow-y-auto">
             <header className="border-b border-zinc-200 bg-white px-6 py-5 lg:px-10">
-                <p className="text-sm capitalize text-zinc-500">{currentDate}</p>
+                <p className="text-sm text-zinc-500">{currentDate}</p>
                 <h1 className="mt-1 !text-2xl font-semibold tracking-normal text-zinc-950">
                     Dienstübersicht
                 </h1>
@@ -43,9 +43,9 @@ export function HomeScreen({ onOpenDatabase }) {
                         <div>
                             <h2 className="font-semibold text-zinc-950">Zugriff: Polizeibestand</h2>
                             <p className="mt-1 max-w-2xl text-sm leading-6 text-zinc-600">
-                                Das Terminal zeigt nur bereits erfasste Personen, Fahndungen,
-                                Straftaten und registrierte Fahrzeuge. Interne Weltinformationen
-                                sind nicht Bestandteil dieser Anwendung.
+                                Das Terminal trennt polizeiliche Personenakten von amtlichen
+                                Dokumentregistern. Interne Weltinformationen sind nicht Bestandteil
+                                dieser Anwendung.
                             </p>
                         </div>
                     </div>
@@ -76,7 +76,7 @@ export function HomeScreen({ onOpenDatabase }) {
                     <div>
                         <h2 className="font-semibold text-zinc-950">Datenbankabfrage starten</h2>
                         <p className="mt-1 text-sm text-zinc-600">
-                            Suche nach Personen, Führerscheinen oder Kennzeichen.
+                            Suche nach Personen, Führerscheinen, Kennzeichen oder Policen.
                         </p>
                     </div>
                     <button

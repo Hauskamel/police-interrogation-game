@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     selectSelectedTrafficEntity,
-    selectSelectedVehicle,
+    gameStates,
     useGameStore,
+    useInspectionStore,
     useTrafficStore
 } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
+import { GameDateDisplay } from "@app/components/GameDateDisplay";
 import {
-    PoliceCarControlPanel,
+    PoliceServiceToolsPanel,
     VehicleControlPanel,
 } from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
-import { LaptopScreen, Notebook, PoliceRadio } from "@game/police/components";
+import { LaptopScreen } from "@game/police/components";
+import { InspectionWorkspace } from "@game/inspections";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";
@@ -24,15 +27,44 @@ function App() {
     const playerPoliceVehicle = useTrafficStore(state => state.playerPoliceVehicle);
 
     const setSelectedVehicleId = useTrafficStore(state => state.setSelectedVehicleId);
-    const selectedVehicle = useTrafficStore(selectSelectedVehicle);
     const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
     const stoppedTrafficEntity = useTrafficStore(state => state.trafficEntities.find(entity => entity.stopped));
+    const activeInspection = useInspectionStore((state) => state.activeInspection);
+    const cancelActiveInspection = useInspectionStore(
+        (state) => state.cancelActiveInspection
+    );
 
     const gameState = useGameStore(state => state.gameState);
-    const ingameMode = useGameStore(state => state.ingameMode);
     const [hoveringCar, setHoveringCar] = useState(false);
+    const inspectionTrafficEntity = useTrafficStore((state) => {
+        return state.trafficEntities.find(
+            (entity) => entity.id === activeInspection?.trafficEntityId
+        );
+    });
+    const controlPanelTrafficEntity = inspectionTrafficEntity
+        ?? stoppedTrafficEntity
+        ?? selectedTrafficEntity;
+    const controlPanelIsPinned = Boolean(
+        inspectionTrafficEntity || stoppedTrafficEntity
+    );
 
     useLilGuiSetup();
+
+    // Eine Session kann nicht aktiv bleiben, wenn ihre TrafficEntity entfernt oder freigegeben wurde.
+    useEffect(() => {
+        if (!activeInspection) return;
+
+        const controlledEntityStillExists = stoppedTrafficEntity?.id
+            === activeInspection.trafficEntityId;
+
+        if (!controlledEntityStillExists) {
+            cancelActiveInspection();
+        }
+    }, [
+        activeInspection,
+        cancelActiveInspection,
+        stoppedTrafficEntity
+    ]);
 
     return (
         <div className={`h-full ${hoveringCar ? 'cursor-pointer' : ''}`}>
@@ -40,38 +72,36 @@ function App() {
 
             <Startmenu />
 
-        {selectedVehicle && (
-            playerPoliceVehicle?.id === selectedVehicle.id ? (
-                <PoliceCarControlPanel
-                    onClose={() => {
-                        setSelectedVehicleId(null)
-                        ingameMode()
-                    }}
-                />
-            ) : (
-                <VehicleControlPanel
-                    onClose={() => setSelectedVehicleId(null)}
-                />
-            )
+        {gameState !== gameStates.MENU && (
+            <>
+                <PoliceServiceToolsPanel />
+
+                {gameState !== gameStates.LAPTOP && (
+                    <GameDateDisplay />
+                )}
+            </>
         )}
 
-        {gameState == "LAPTOP" && (
+        {gameState !== gameStates.LAPTOP && controlPanelTrafficEntity && (
+            <VehicleControlPanel
+                trafficEntity={controlPanelTrafficEntity}
+                isPinned={controlPanelIsPinned}
+                onClose={() => setSelectedVehicleId(null)}
+            />
+        )}
+
+        {gameState === gameStates.LAPTOP && (
             <LaptopScreen />
         )}
 
-            <div className="fixed bottom-5 right-50 flex gap-2">
-                <>
-                    <Notebook />
-                    <PoliceRadio />
-                </>
-            </div>
-
             <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
 
-            {stoppedTrafficEntity && stoppedTrafficEntity.id === selectedTrafficEntity?.id && (
-                <>
-                    <DocumentManager />
-                </>
+            {activeInspection && inspectionTrafficEntity && (
+                <DocumentManager />
+            )}
+
+            {gameState !== "LAPTOP" && (
+                <InspectionWorkspace />
             )}
         </div>
     )

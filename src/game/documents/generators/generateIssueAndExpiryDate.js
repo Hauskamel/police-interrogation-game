@@ -1,24 +1,69 @@
 import { faker } from "@faker-js/faker";
+import { getCurrentGameDate } from "@game/shared";
 
-export function generateIssueAndExpiryDate (birthdate) {
-    const date = new Date(birthdate);
-    date.setFullYear(date.getFullYear() + 18);
-    const minIssueDate = date.toISOString().split('T')[0];
+const LICENSE_VALIDITY_YEARS = 15;
+const EXPIRED_LICENSE_CHANCE = 0.08;
 
-    const today = new Date().toJSON().slice(0, 10);
-    const maxIssueDate = today;
+// ##### Driver License Dates
+// -----> Trennt die erste Fahrerlaubnis vom Ausstellungsdatum des aktuell vorgelegten Dokuments.
+// ---> Nur ein kleiner, bewusst gesteuerter Anteil der Dokumente ist bei Spielbeginn abgelaufen.
+export function generateIssueAndExpiryDate(birthdate, options = {}) {
+    const licensedSince = addYears(new Date(`${birthdate}T00:00:00.000Z`), 18);
+    const gameDate = getCurrentGameDate();
+    const validIssueThreshold = addDays(addYears(gameDate, -LICENSE_VALIDITY_YEARS), 1);
+    const canGenerateExpiredDocument = licensedSince < validIssueThreshold;
+    const shouldBeExpired = options.forceExpired
+        ?? (canGenerateExpiredDocument && Math.random() < EXPIRED_LICENSE_CHANCE);
+    const issueDate = shouldBeExpired
+        ? generateExpiredIssueDate({ licensedSince, gameDate })
+        : generateValidIssueDate({ licensedSince, gameDate });
+    const expiryDate = addYears(issueDate, LICENSE_VALIDITY_YEARS);
 
-    const issueDate = faker.date.between({ from: minIssueDate, to: maxIssueDate });
-    
-    const formattedIssueDate = issueDate.toISOString().split('T')[0];
+    return {
+        licensedSince: formatDate(licensedSince),
+        formattedIssueDate: formatDate(issueDate),
+        formattedExpiryDate: formatDate(expiryDate)
+    };
+}
 
-    const vDate = new Date(formattedIssueDate); // validation date -- copy of original birthdate
-    vDate.setFullYear(vDate.getFullYear() + 15); // license valid for 15 years
-    const formattedExpiryDate = vDate.toISOString().split('T')[0];
+// Abgelaufene Karten liegen maximal drei Jahre zurueck und stammen nie aus der Zeit vor der Fahrerlaubnis.
+function generateExpiredIssueDate({ licensedSince, gameDate }) {
+    const latestIssueDate = addDays(addYears(gameDate, -LICENSE_VALIDITY_YEARS), -1);
+    const recentExpiredWindow = addYears(gameDate, -(LICENSE_VALIDITY_YEARS + 3));
+    const earliestIssueDate = licensedSince > recentExpiredWindow
+        ? licensedSince
+        : recentExpiredWindow;
 
-    const documentDates = {
-        formattedIssueDate,
-        formattedExpiryDate
-    }
-    return  documentDates
+    return faker.date.between({
+        from: earliestIssueDate,
+        to: latestIssueDate
+    });
+}
+
+// Eine gueltige Karte wurde innerhalb ihres aktuellen 15-Jahres-Zyklus ausgestellt.
+function generateValidIssueDate({ licensedSince, gameDate }) {
+    const earliestIssueDate = licensedSince > addYears(gameDate, -14)
+        ? licensedSince
+        : addYears(gameDate, -14);
+
+    return faker.date.between({
+        from: earliestIssueDate,
+        to: gameDate
+    });
+}
+
+function addYears(date, years) {
+    const result = new Date(date);
+    result.setUTCFullYear(result.getUTCFullYear() + years);
+    return result;
+}
+
+function addDays(date, days) {
+    const result = new Date(date);
+    result.setUTCDate(result.getUTCDate() + days);
+    return result;
+}
+
+function formatDate(date) {
+    return date.toISOString().split("T")[0];
 }

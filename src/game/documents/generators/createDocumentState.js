@@ -1,4 +1,7 @@
-import { DOCUMENT_INTEGRITY_TYPES } from "../data";
+import {
+    DOCUMENT_INTEGRITY_TYPES,
+    INSURANCE_DOCUMENT_FORGERY_TYPES
+} from "../data";
 import { pickNpcDocumentForgeryType, pickVehicleDocumentForgeryType } from "../utils";
 
 // ##### Forgery Chance By Traffic Type
@@ -18,6 +21,7 @@ export function createDocumentState({
     trafficType,
     driverProfile,
     vehicleProfile,
+    insuranceProfile,
     forcedHasForgery
 } = {}) {
     const baseState = createValidDocumentState();
@@ -28,7 +32,8 @@ export function createDocumentState({
     if (forcedHasForgery === true) {
         return applyForgeryTarget(baseState, {
             canForgeNpcDocument: Boolean(driverProfile?.real?.driversLicense),
-            canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData)
+            canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData),
+            canForgeInsuranceDocument: Boolean(insuranceProfile?.real)
         });
     }
 
@@ -36,7 +41,8 @@ export function createDocumentState({
 
     return applyForgeryTarget(baseState, {
         canForgeNpcDocument: Boolean(driverProfile?.real?.driversLicense),
-        canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData)
+        canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData),
+        canForgeInsuranceDocument: Boolean(insuranceProfile?.real)
     });
 }
 
@@ -60,22 +66,29 @@ function createValidDocumentState() {
                 forgeryType: null,
                 affectedFields: [],
                 detectableBy: []
+            },
+            insurance: {
+                integrity: DOCUMENT_INTEGRITY_TYPES.VALID,
+                forgeryType: null,
+                affectedFields: [],
+                detectableBy: []
             }
         }
     };
 }
 
 // ##### Forgery Target Applier
-// -----> Entscheidet, ob die Manipulation Personenpapiere, Fahrzeugpapiere oder beides betrifft.
+// -----> Entscheidet, ob die Manipulation Fuehrerschein, Fahrzeugpapiere oder Versicherung betrifft.
 // ---> Diese Information steuert danach, welche Felder in presented verändert werden.
 function applyForgeryTarget(documentState, {
     canForgeNpcDocument,
-    canForgeVehicleDocument
+    canForgeVehicleDocument,
+    canForgeInsuranceDocument
 }) {
     const targetPool = [
         canForgeNpcDocument ? "npc" : null,
         canForgeVehicleDocument ? "vehicle" : null,
-        canForgeNpcDocument && canForgeVehicleDocument ? "both" : null
+        canForgeInsuranceDocument ? "insurance" : null
     ].filter(Boolean);
 
     if (targetPool.length === 0) return documentState;
@@ -86,15 +99,42 @@ function applyForgeryTarget(documentState, {
         ...documentState,
         hasForgery: true,
         npcDocuments: {
-            driversLicense: target === "npc" || target === "both"
+            driversLicense: target === "npc"
                 ? createForgedNpcDriversLicenseState()
                 : documentState.npcDocuments.driversLicense
         },
         vehicleDocuments: {
-            registration: target === "vehicle" || target === "both"
+            registration: target === "vehicle"
                 ? createForgedVehicleRegistrationState()
-                : documentState.vehicleDocuments.registration
+                : documentState.vehicleDocuments.registration,
+            insurance: target === "insurance"
+                ? createForgedInsuranceState()
+                : documentState.vehicleDocuments.insurance
         }
+    };
+}
+
+// ##### Forged Insurance State
+// -----> Beschreibt Manipulationen, die ueber die Versicherungsnummernsuche pruefbar sind.
+function createForgedInsuranceState() {
+    const forgeryType = Math.random() < 0.5
+        ? INSURANCE_DOCUMENT_FORGERY_TYPES.WRONG_POLICY_NUMBER
+        : INSURANCE_DOCUMENT_FORGERY_TYPES.WRONG_INSURED_PLATE;
+    const metadataByForgeryType = {
+        [INSURANCE_DOCUMENT_FORGERY_TYPES.WRONG_POLICY_NUMBER]: {
+            affectedFields: ["insurance.policyNumber"],
+            detectableBy: ["insurance_registry_lookup"]
+        },
+        [INSURANCE_DOCUMENT_FORGERY_TYPES.WRONG_INSURED_PLATE]: {
+            affectedFields: ["insurance.insuredPlateNumber"],
+            detectableBy: ["insurance_registry_lookup", "compare_plate_with_vehicle"]
+        }
+    };
+
+    return {
+        integrity: DOCUMENT_INTEGRITY_TYPES.FORGED,
+        forgeryType,
+        ...metadataByForgeryType[forgeryType]
     };
 }
 

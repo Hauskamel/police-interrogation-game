@@ -26,6 +26,11 @@ export const useTrafficStore = create((set) => ({
         let storedTrafficEntity = trafficEntity;
 
         set((state) => {
+            if (hasActiveTrafficIdentityConflict(state, trafficEntity)) {
+                storedTrafficEntity = null;
+                return state;
+            }
+
             // Auch direkte Store-Aufrufe dürfen keine zweite angehaltene Entity erzeugen.
             if (trafficEntity.stopped && hasOtherStoppedEntity(state, trafficEntity.id)) {
                 storedTrafficEntity = {
@@ -52,6 +57,10 @@ export const useTrafficStore = create((set) => ({
             const updatedEntity = typeof updater === "function"
                 ? updater(currentEntity)
                 : { ...currentEntity, ...updater };
+
+            if (hasActiveTrafficIdentityConflict(state, updatedEntity, entityId)) {
+                return state;
+            }
 
             if (updatedEntity.stopped && hasOtherStoppedEntity(state, entityId)) {
                 return state;
@@ -144,6 +153,32 @@ export const useTrafficStore = create((set) => ({
             };
         })
 }));
+
+// ##### Active Traffic Identity Guard
+// -----> Verhindert dieselbe kanonische Person oder dasselbe Fahrzeug mehrfach in der Welt.
+export function hasActiveTrafficIdentityConflict(
+    state,
+    trafficEntity,
+    ignoredTrafficEntityId = null
+) {
+    return state.trafficEntities.some((activeEntity) => {
+        if (activeEntity.id === ignoredTrafficEntityId) return false;
+
+        return activeEntity.npcId === trafficEntity.npcId
+            || activeEntity.vehicleId === trafficEntity.vehicleId;
+    });
+}
+
+export function getActiveTrafficIdentityExclusions(state, ignoredTrafficEntityId = null) {
+    const activeEntities = state.trafficEntities.filter(
+        (entity) => entity.id !== ignoredTrafficEntityId
+    );
+
+    return {
+        excludedNpcIds: activeEntities.map((entity) => entity.npcId),
+        excludedVehicleIds: activeEntities.map((entity) => entity.vehicleId)
+    };
+}
 
 // ##### Selected Traffic Entity Selector
 // -----> Leitet die ausgewählte TrafficEntity aus ID und kanonischer Entity-Liste ab.

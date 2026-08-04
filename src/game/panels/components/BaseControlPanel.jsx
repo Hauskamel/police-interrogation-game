@@ -1,7 +1,4 @@
-import { useEffect } from "react";
-import { closePanel } from "../hooks";
-
-import { useGuiVisibilityStatesStore } from "@stores";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * ##### Base Control Panel
@@ -16,25 +13,35 @@ export const BaseControlPanel = ({
         margin, 
         children,
         onClose,
-        isCloseable = true
+        isCloseable = true,
+        positionClassName = "bottom-6 left-8"
 }) => {
-    const setPanelVisibility = useGuiVisibilityStatesStore(state => state.setControlPanelVisibilityState);
-    const controlPanelsAreVisible = useGuiVisibilityStatesStore(state => state.controlPanelsVisible);
+    const [isVisible, setIsVisible] = useState(true);
+    const closeTimerRef = useRef(null);
 
     const handleClose = () => {
-        closePanel(setPanelVisibility, onClose);
+        if (!onClose) return;
+
+        setIsVisible(false);
+        closeTimerRef.current = window.setTimeout(() => {
+            onClose();
+        }, 150);
     };
 
     useEffect(() => {
-        setPanelVisibility(true);
-    }, [setPanelVisibility]);
+        return () => {
+            if (closeTimerRef.current) {
+                window.clearTimeout(closeTimerRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div
-            className={`${margin} absolute left-8 z-1 sm:w-80 bg-white rounded-3xl shadow-lg p-5 space-y-4 ${controlPanelsAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            className={`${margin ?? ""} ${positionClassName} fixed z-[700] sm:w-80 bg-white rounded-3xl shadow-lg p-5 space-y-4 ${isVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
             style={{
-                width: `${width}px`,
-                height: `${height}px`
+                width: width ? `${width}px` : undefined,
+                height: height ? `${height}px` : undefined
         }}
         >
             <div className="flex justify-between items-center">
@@ -45,7 +52,7 @@ export const BaseControlPanel = ({
                 )}
                 <div>
 
-                    {isCloseable && handleClose && (
+                    {isCloseable && onClose && (
                         <button
                             onClick={() => handleClose()}
                             className="text-gray-900 hover:text-gray-800 transition-colors text-lg cursor-pointer"

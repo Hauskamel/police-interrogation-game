@@ -13,3 +13,8 @@ export const VEHICLE_DOCUMENT_FORGERY_TYPES = {
     WRONG_REGISTRATION_NUMBER: "wrong_registration_number",
     WRONG_VEHICLE_MODEL: "wrong_vehicle_model"
 };
+
+export const INSURANCE_DOCUMENT_FORGERY_TYPES = {
+    WRONG_POLICY_NUMBER: "wrong_policy_number",
+    WRONG_INSURED_PLATE: "wrong_insured_plate"
+};

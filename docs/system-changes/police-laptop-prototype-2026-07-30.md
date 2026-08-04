@@ -35,6 +35,34 @@ Die neue Startseite zeigt:
 
 Die Werte werden ausschließlich aus `useNpcStore().criminalDatabase` gelesen.
 
+### Persistenter Recherchekontext
+
+`LaptopScreen` und `PoliceDatabaseScreen` verwendeten zuvor lokalen React-State.
+Da der gesamte Laptop beim Schließen aus dem React-Baum entfernt wird, gingen
+aktive Ansicht, Suchtext und ausgewählte Akte bei jedem Wechsel verloren.
+
+Der neue `usePoliceLaptopStore` hält:
+
+```js
+{
+    activeView,
+    database: {
+        activeSection,
+        searchType,
+        query,
+        selection
+    }
+}
+```
+
+Der Store bewahrt den Zustand über das Schließen und erneute Öffnen des Laptops
+hinweg. Er speichert nur UI-Zustand und Record-IDs, keine Kopien aus
+`criminalDatabase`.
+
+`Startmenu` ruft bei einem neuen Spiel `resetPoliceLaptopState` auf. Dadurch kann
+eine Auswahl aus der vorherigen, neu generierten Polizeidatenbank nicht als
+veraltete Referenz bestehen bleiben.
+
 ### Datenbankansicht
 
 Neu hinzugefügt wurden:
@@ -51,6 +79,10 @@ Neu hinzugefügt wurden:
 
 Die Ergebnisliste und die Detailansicht sind als Master-Detail-Oberfläche aufgebaut.
 Auf schmaleren Ansichten werden beide Bereiche untereinander dargestellt.
+
+Die Fahndungsliste löst für jeden eigenständigen Fahndungsrecord den zugehörigen
+NPC über `npcId` auf. Als Listentitel erscheint der Personenname; Priorität und
+Fahndungs-ID bleiben als sekundäre Metadaten sichtbar.
 
 ### Suchlogik
 
@@ -156,7 +188,8 @@ src/
 │   └── vehicles/generators/
 │       └── vehicleProfileGenerator.js
 └── stores/
-    └── npcStore.js
+    ├── npcStore.js
+    └── policeLaptopStore.js
 ```
 
 ## Validierung
@@ -171,6 +204,7 @@ Folgende Abläufe wurden im laufenden Spiel geprüft:
 - dieselbe Person über Führerscheinnummer finden
 - registriertes Fahrzeug über normalisiertes Kennzeichen finden
 - Halterbeziehung in der Fahrzeugakte auflösen
+- Laptop in einer geöffneten Personenakte schließen und denselben Suchkontext wiederherstellen
 - Layout bei Desktop- und schmalerer Fensterbreite prüfen
 - Browser-Konsole auf Laufzeitfehler prüfen
 
