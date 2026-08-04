@@ -1,10 +1,11 @@
 import {
     BaseDocument,
     CarDocuments,
-    DocumentBar,
+    DocumentConversation,
     DriversLicense,
     ProofOfInsurance
 } from "../components";
+import { INSPECTION_DOCUMENT_TYPES } from "@game/inspections/data";
 import {
     useInspectionStore,
     useTrafficStore
@@ -34,29 +35,21 @@ export function DocumentManager() {
     const revealDriverIdentity = useTrafficStore(
         (state) => state.revealDriverIdentity
     );
-    const registerOpenedDocument = useInspectionStore(
-        (state) => state.registerOpenedDocument
+    const requestDocument = useInspectionStore(
+        (state) => state.requestDocument
     );
-    const toggleDocumentVisibility = useInspectionStore(
-        (state) => state.toggleDocumentVisibility
+    const closeDocument = useInspectionStore(
+        (state) => state.closeDocument
     );
 
-    const activeDocs = ["driversLicense", "carDocuments", "proofOfInsurance"];
+    const activeDocs = Object.values(INSPECTION_DOCUMENT_TYPES);
+    const requestedDocuments = activeInspection?.requestedDocuments ?? [];
     const visibleDocuments = activeInspection?.visibleDocuments ?? [];
-    const openDocs = Object.fromEntries(
-        activeDocs.map((documentType) => [
-            documentType,
-            visibleDocuments.includes(documentType)
-        ])
-    );
-    
-    const toggleDoc = (doc) => {
-        const documentWillOpen = !openDocs[doc];
 
+    const handleDocumentRequest = (documentType) => {
         // Bereits gelesene Identitaetsdaten bleiben fuer die laufende Kontrolle bekannt.
         if (
-            documentWillOpen
-            && DRIVER_IDENTITY_DOCUMENTS.has(doc)
+            DRIVER_IDENTITY_DOCUMENTS.has(documentType)
             && controlledTrafficEntity?.id
             && controlledTrafficEntity?.npcId
         ) {
@@ -66,12 +59,7 @@ export function DocumentManager() {
             );
         }
 
-        // Die Kontrollsession unterscheidet verfügbare von tatsächlich geöffneten Dokumenten.
-        if (documentWillOpen) {
-            registerOpenedDocument(doc);
-        }
-
-        toggleDocumentVisibility(doc);
+        requestDocument(documentType);
     };
 
     const docComponents = {
@@ -100,18 +88,21 @@ export function DocumentManager() {
     return (
         <>
             {activeDocs
-                    .filter(doc => openDocs[doc])
+                    .filter(doc => visibleDocuments.includes(doc))
                     .map(doc => (
-                        <BaseDocument key={doc}>
+                        <BaseDocument
+                            key={doc}
+                            onClose={() => closeDocument(doc)}
+                        >
                             {docComponents[doc]}
                         </BaseDocument>
                 ))
             }
 
-            <DocumentBar
-                activeDocs={activeDocs}
-                openDocs={openDocs}
-                onSelect={toggleDoc}
+            <DocumentConversation
+                requestedDocuments={requestedDocuments}
+                visibleDocuments={visibleDocuments}
+                onRequestDocument={handleDocumentRequest}
             />
         </>
     );

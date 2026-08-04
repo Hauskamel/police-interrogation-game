@@ -1,5 +1,6 @@
 import React, { useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion";
+import { FaXmark } from "react-icons/fa6";
 import { useDraggable } from "../hooks";
 
 import { useGuiVisibilityStatesStore } from "@stores";
@@ -11,7 +12,7 @@ const MotionDiv = motion.div;
  * ##### Base Document
  * -----> Beweglicher Rahmen fuer geöffnete Dokumente wie Führerschein oder Versicherung.
  */
-export default function BaseDocument({ children }) {
+export default function BaseDocument({ children, onClose }) {
     const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32});
 
     const setDocumentsAreVisible = useGuiVisibilityStatesStore(state => state.setDocumentVisibilityState)
@@ -42,6 +43,15 @@ export default function BaseDocument({ children }) {
                                     cursor: 'move'
                                 }}
                             >
+                                <button
+                                    type="button"
+                                    className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900/85 text-white shadow hover:bg-zinc-800"
+                                    aria-label="Dokument schließen"
+                                    onMouseDown={(event) => event.stopPropagation()}
+                                    onClick={onClose}
+                                >
+                                    <FaXmark aria-hidden="true" />
+                                </button>
                                 {child}
                             </MotionDiv>
                         ) : null

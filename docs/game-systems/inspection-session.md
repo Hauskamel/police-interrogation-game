@@ -1,6 +1,6 @@
 # Spielsystem: Kontrollsession Phase 1
 
-Stand: 2026-08-03
+Stand: 04.08.2026
 
 ## Ziel
 
@@ -13,7 +13,8 @@ Der aktuelle Gameplay-Ablauf lautet:
 ```text
 Fahrzeug anhalten
 → Kontrolle beginnen
-→ Dokumente öffnen und vergleichen
+→ Fahrer nach Dokumenten fragen
+→ vorgezeigte Dokumente öffnen und vergleichen
 → Police Laptop durchsuchen
 → Feststellungen erkennen
 → administrative Entscheidung treffen
@@ -33,6 +34,7 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     status,
     startedAt,
     completedAt,
+    requestedDocuments,
     openedDocuments,
     visibleDocuments,
     markedFindingIds,
@@ -66,6 +68,13 @@ Spieltag `2026-08-03`; reale verstrichene Sekunden laufen innerhalb der Sitzung
 weiter. Dokumente, NPC-Alter, Straftaten und Fahndungen verwenden denselben
 fachlichen Zeitbezug.
 
+### `requestedDocuments`
+
+Enthält jeden Dokumenttyp, den der Spieler im Gespräch mit dem Fahrer angefordert
+hat. In Phase 1 zeigt der NPC jedes angeforderte Dokument unmittelbar vor. Später
+kann genau an dieser Aktion entschieden werden, ob ein Dokument vorhanden,
+vergessen oder verweigert wurde.
+
 ### `openedDocuments`
 
 Enthält jeden tatsächlich geöffneten Dokumenttyp genau einmal:
@@ -83,8 +92,8 @@ Enthält die Dokumentfenster, die der Spieler momentan geöffnet hat. Dieser rei
 UI-Zustand ist bewusst von `openedDocuments` getrennt:
 
 ```text
-Dokument erstmals öffnen
-→ in openedDocuments und visibleDocuments eintragen
+Dokument im Gespräch anfordern
+→ in requestedDocuments, openedDocuments und visibleDocuments eintragen
 
 Dokument manuell schließen
 → nur aus visibleDocuments entfernen
@@ -203,6 +212,11 @@ nicht zur fachlichen Bewertung einer einzelnen Kontrolle verwendet werden.
 
 Das Dienstwerkzeug-Panel mit dem Police Laptop ist während des Spiels dauerhaft
 erreichbar und benötigt keine Auswahl des Polizeifahrzeugs.
+
+Während einer aktiven Kontrolle erscheint unten rechts eine breite Gesprächsbox.
+Sie zeigt die Aussagen von Spieler und Fahrer sowie die drei verfügbaren
+Dokumentfragen. Bereits geschlossene Dokumente können dort erneut angesehen werden.
+Die frühere globale Dokumentleiste existiert nicht mehr.
 
 Das Fahrzeug-Panel folgt dieser Priorität:
 

@@ -12,6 +12,7 @@ export function createInspectionSession(trafficEntityId) {
         status: INSPECTION_STATUSES.ACTIVE,
         startedAt: getCurrentGameTimestamp(),
         completedAt: null,
+        requestedDocuments: [],
         openedDocuments: [],
         visibleDocuments: [],
         markedFindingIds: [],

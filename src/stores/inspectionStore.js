@@ -25,50 +25,50 @@ export const useInspectionStore = create((set, get) => ({
         return inspectionSession;
     },
 
-    // Merkt sich ein geöffnetes Dokument einmalig für die aktive Kontrolle.
-    registerOpenedDocument: (documentType) =>
+    // Fordert ein Dokument beim Fahrer an und zeigt es in Phase 1 unmittelbar an.
+    // ---> requestedDocuments schafft die spätere Erweiterungsstelle für vergessen oder verweigert.
+    requestDocument: (documentType) =>
         set((state) => {
             const activeInspection = state.activeInspection;
+            if (!activeInspection || !documentType) return state;
 
-            if (
-                !activeInspection
-                || activeInspection.openedDocuments.includes(documentType)
-            ) {
-                return state;
-            }
+            const requestedDocuments = activeInspection.requestedDocuments ?? [];
+            const openedDocuments = activeInspection.openedDocuments ?? [];
+            const visibleDocuments = activeInspection.visibleDocuments ?? [];
 
             return {
                 activeInspection: {
                     ...activeInspection,
-                    openedDocuments: [
-                        ...activeInspection.openedDocuments,
+                    requestedDocuments: appendOnce(
+                        requestedDocuments,
                         documentType
-                    ]
+                    ),
+                    openedDocuments: appendOnce(
+                        openedDocuments,
+                        documentType
+                    ),
+                    visibleDocuments: appendOnce(
+                        visibleDocuments,
+                        documentType
+                    )
                 }
             };
         }),
 
-    // Öffnet oder schließt ein Dokumentfenster, ohne den Prüfverlauf zurückzusetzen.
-    // `openedDocuments` bleibt deshalb auch nach einem manuellen Schließen unverändert.
-    toggleDocumentVisibility: (documentType) =>
+    // Schließt nur das sichtbare Dokumentfenster, ohne Anfrage oder Prüfverlauf zu löschen.
+    closeDocument: (documentType) =>
         set((state) => {
             const activeInspection = state.activeInspection;
             if (!activeInspection) return state;
 
             const visibleDocuments = activeInspection.visibleDocuments ?? [];
-            const documentIsVisible = visibleDocuments.includes(documentType);
 
             return {
                 activeInspection: {
                     ...activeInspection,
-                    visibleDocuments: documentIsVisible
-                        ? visibleDocuments.filter(
-                            (visibleDocument) => visibleDocument !== documentType
-                        )
-                        : [
-                            ...visibleDocuments,
-                            documentType
-                        ]
+                    visibleDocuments: visibleDocuments.filter(
+                        (visibleDocument) => visibleDocument !== documentType
+                    )
                 }
             };
         }),
@@ -137,3 +137,8 @@ export const useInspectionStore = create((set, get) => ({
             lastCompletedInspection: null
         })
 }));
+
+// Fügt einen Sessionwert nur einmal hinzu und hält die Reihenfolge der Spieleraktionen stabil.
+function appendOnce(values, value) {
+    return values.includes(value) ? values : [...values, value];
+}

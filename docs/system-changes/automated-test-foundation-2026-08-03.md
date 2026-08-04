@@ -66,8 +66,8 @@ werden. Eine künstliche Mindestquote ist noch nicht eingerichtet.
 
 - Es kann nur eine Kontrollsession gleichzeitig aktiv sein.
 - `startedAt` und `completedAt` stammen aus der zentralen Spieluhr.
-- `openedDocuments` speichert ein Dokument nur einmal.
-- `visibleDocuments` bleibt vom Prüfverlauf getrennt.
+- `requestedDocuments` und `openedDocuments` speichern ein Dokument nur einmal.
+- `visibleDocuments` bleibt von Anfrage und Prüfverlauf getrennt.
 - Eine abgeschlossene Session wird in den letzten Kontrollbericht verschoben.
 
 ### Kontrollauswertung
@@ -81,7 +81,7 @@ werden. Eine künstliche Mindestquote ist noch nicht eingerichtet.
 
 ## Aktueller Umfang
 
-Die Suite enthält 23 Tests in acht Testdateien. Sie bildet eine erste fachliche
+Die Suite enthält 24 Tests in acht Testdateien. Sie bildet eine erste fachliche
 Sicherheitslinie, aber noch keine vollständige Testabdeckung des Projekts.
 
 Bewusst offen bleiben:

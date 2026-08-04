@@ -37,19 +37,34 @@ describe("inspectionStore", () => {
         expect(useInspectionStore.getState().activeInspection).toBe(firstInspection);
     });
 
-    it("separates reviewed documents from currently visible windows", () => {
+    it("separates requested and reviewed documents from visible windows", () => {
         const documentType = INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE;
         const store = useInspectionStore.getState();
         store.startInspection("traffic--one");
-        store.registerOpenedDocument(documentType);
-        store.registerOpenedDocument(documentType);
-        store.toggleDocumentVisibility(documentType);
-        store.toggleDocumentVisibility(documentType);
+        store.requestDocument(documentType);
+        store.requestDocument(documentType);
+        store.closeDocument(documentType);
 
         const activeInspection = useInspectionStore.getState().activeInspection;
 
+        expect(activeInspection.requestedDocuments).toEqual([documentType]);
         expect(activeInspection.openedDocuments).toEqual([documentType]);
         expect(activeInspection.visibleDocuments).toEqual([]);
+    });
+
+    it("shows a previously requested document again without duplicating history", () => {
+        const documentType = INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION;
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.requestDocument(documentType);
+        store.closeDocument(documentType);
+        store.requestDocument(documentType);
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.requestedDocuments).toEqual([documentType]);
+        expect(activeInspection.openedDocuments).toEqual([documentType]);
+        expect(activeInspection.visibleDocuments).toEqual([documentType]);
     });
 
     it("moves a completed inspection into the last report", () => {

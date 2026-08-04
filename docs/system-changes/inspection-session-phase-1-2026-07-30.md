@@ -1,6 +1,6 @@
 # Technische Änderungen: Kontrollsession Phase 1
 
-Datum: 2026-07-30
+Datum: 30.07.2026
 
 ## Zusammenfassung
 
@@ -43,6 +43,7 @@ und ist deshalb fachlich allgemeiner.
     status,
     startedAt,
     completedAt: null,
+    requestedDocuments: [],
     openedDocuments: [],
     visibleDocuments: [],
     markedFindingIds: [],
@@ -64,8 +65,8 @@ abgeschlossene Kontrolle:
 Store-Aktionen:
 
 - `startInspection`
-- `registerOpenedDocument`
-- `toggleDocumentVisibility`
+- `requestDocument`
+- `closeDocument`
 - `toggleFinding`
 - `completeInspection`
 - `cancelActiveInspection`
@@ -75,9 +76,10 @@ Store-Aktionen:
 `resetInspectionState` verhindert beim Start eines neuen Spiels, dass ein alter
 Kontrollbericht erhalten bleibt.
 
-`openedDocuments` ist ein monotoner Prüfverlauf. `visibleDocuments` ist dagegen ein
-umschaltbarer UI-Zustand. Dadurch kann ein Dokumentfenster geschlossen werden, ohne
-die Information zu verlieren, dass es bereits geprüft wurde.
+`requestedDocuments` und `openedDocuments` sind monotone Verläufe. `visibleDocuments`
+ist dagegen ein schließbarer UI-Zustand. Dadurch kann ein Dokumentfenster geschlossen
+werden, ohne die Anfrage oder die Information zu verlieren, dass es bereits geprüft
+wurde. Eine erneute Anfrage blendet das Dokument wieder ein.
 
 ## Finding-Definitionen
 
