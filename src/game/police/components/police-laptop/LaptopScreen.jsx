@@ -17,7 +17,7 @@ export function LaptopScreen() {
     const ingameMode = useGameStore((state) => state.ingameMode);
 
     return (
-        <div className="fixed inset-0 z-[10000] flex min-h-0 bg-zinc-100 text-zinc-900">
+        <div className="fixed inset-0 z-[8000] flex min-h-0 bg-zinc-100 text-zinc-900">
             <LaptopMenu
                 activeView={activeView}
                 onSelect={setActiveView}

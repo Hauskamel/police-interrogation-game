@@ -8,7 +8,10 @@ import { assembleTrafficEntity } from "./assembleTrafficEntity.js";
 // -----> Erstellt einen NPC, der intern Straftaten begangen hat, aber der Polizei noch nicht bekannt ist.
 // ---> Genau dieser Fall ist für Ermittlungen spannend: Wahrheit und Polizeiwissen unterscheiden sich.
 export function createUnknownOffenderTrafficEntity(options = {}) {
-    const baseDriverProfile = generateNpcProfile({ minimumAge: 18 });
+    const baseDriverProfile = generateNpcProfile({
+        minimumAge: options.forcedLicenseExpired ? 34 : 18,
+        forcedLicenseExpired: options.forcedLicenseExpired
+    });
     const npcId = baseDriverProfile.real.npcId;
 
     // Die Straftaten sind intern bekannt, aber noch nicht Teil des Polizeiwissens.

@@ -4,10 +4,12 @@ import { randInt } from "three/src/math/MathUtils.js";
 import {
     commitTrafficEntityRecords,
     getActiveTrafficIdentityExclusions,
+    useControlScenarioStore,
     useNpcStore,
     useTrafficStore
 } from "@stores";
 import { generateTrafficEntity } from "../generators";
+import { getUnavailableControlScenarioTypes } from "../utils";
 
 // ##### Traffic Entity Spawner Hook
 // -----> Erzeugt in einem Intervall neue TrafficEntities und legt sie in den Traffic Store.
@@ -24,10 +26,19 @@ export function useTrafficEntitySpawner({ direction, lane, enabled = true, minRe
             const identityExclusions = getActiveTrafficIdentityExclusions(
                 useTrafficStore.getState()
             );
+            const scenarioStore = useControlScenarioStore.getState();
+            const controlScenario = scenarioStore.selectNextScenario({
+                excludedTypes: getUnavailableControlScenarioTypes({
+                    criminalDatabase,
+                    ...identityExclusions
+                })
+            });
             const newEntity = generateTrafficEntity({
                 criminalDatabase,
-                ...identityExclusions
+                ...identityExclusions,
+                controlScenario
             });
+            if (!newEntity) return;
 
             // Spawn-Daten gehören zur Weltposition und werden deshalb erst hier ergänzt.
             const committedEntity = commitTrafficEntityRecords({
@@ -37,7 +48,10 @@ export function useTrafficEntitySpawner({ direction, lane, enabled = true, minRe
 
             if (!committedEntity) return;
 
-            addTrafficEntity(committedEntity);
+            const storedEntity = addTrafficEntity(committedEntity);
+            if (!storedEntity) return;
+
+            scenarioStore.recordSpawnedScenario(controlScenario);
         }, randInt(minRespawnTime, maxRespawnTime));
 
         return () => clearInterval(intervalId);

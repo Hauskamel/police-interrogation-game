@@ -1,5 +1,7 @@
+import { FaLaptop } from "react-icons/fa6";
+
 import { BaseControlPanel } from "./BaseControlPanel.jsx";
-import { Notebook, PoliceRadio } from "@game/police/components";
+import { Notebook } from "@game/police/components";
 import { useGameStore } from "@stores";
 
 
@@ -23,14 +25,14 @@ export const PoliceServiceToolsPanel = () => {
                     <>
                         <button
                             onClick={laptopMode}
-                            className="w-full !bg-blue-500 text-white py-2 px-4 rounded-xl hover:!bg-blue-600 transition font-semibold shadow-md cursor-pointer"
+                            className="flex w-full items-center justify-center gap-2 !bg-blue-500 px-4 py-2 text-white rounded-xl hover:!bg-blue-600 transition font-semibold shadow-md cursor-pointer"
                         >
+                            <FaLaptop aria-hidden="true" />
                             Laptop öffnen
                         </button>
 
-                        <div className="grid grid-cols-2 gap-2">
+                        <div>
                             <Notebook />
-                            <PoliceRadio />
                         </div>
                     </>
                 )}

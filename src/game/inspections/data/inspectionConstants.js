@@ -8,7 +8,7 @@ export const INSPECTION_STATUSES = {
 
 // ##### Inspection Document Types
 // -----> Verwendet dieselben Keys wie der bestehende DocumentManager.
-// ---> In Phase 1 sind alle drei Dokumente bei jeder Kontrolle verfügbar.
+// ---> Die fachliche Verfügbarkeit wird pro TrafficEntity festgelegt.
 export const INSPECTION_DOCUMENT_TYPES = {
     DRIVERS_LICENSE: "driversLicense",
     VEHICLE_REGISTRATION: "carDocuments",
@@ -25,6 +25,16 @@ export const REQUIRED_INSPECTION_DOCUMENTS = Object.values(
     INSPECTION_DOCUMENT_TYPES
 );
 
+// ##### Document Availability
+// -----> Trennt den Besitz eines Dokuments von dessen Verhalten bei einer Kontrolle.
+export const DOCUMENT_AVAILABILITY_STATUSES = {
+    PROVIDED: "provided",
+    FORGOTTEN: "forgotten",
+    LOST: "lost",
+    INITIALLY_REFUSED: "initially_refused",
+    DAMAGED: "damaged"
+};
+
 // ##### Inspection Decisions
 // -----> Beschreibt die administrativen Maßnahmen der ersten Gameplay-Version.
 export const INSPECTION_DECISIONS = {
@@ -32,6 +42,8 @@ export const INSPECTION_DECISIONS = {
     ISSUE_WARNING: "issue_warning",
     DENY_CONTINUATION: "deny_continuation",
     REQUEST_ADDITIONAL_REVIEW: "request_additional_review",
+    SEIZE_DOCUMENTS: "seize_documents",
+    HOLD_FOR_CLARIFICATION: "hold_for_clarification",
     REPORT_WANTED_HIT: "report_wanted_hit"
 };
 
@@ -41,6 +53,7 @@ export const INSPECTION_RESOLUTION_ACTIONS = {
     RELEASED: "released",
     WARNED_AND_RELEASED: "warned_and_released",
     HELD: "held",
+    DOCUMENTS_SEIZED: "documents_seized",
     REFERRED: "referred",
     TRANSFERRED: "transferred"
 };
@@ -64,7 +77,17 @@ export const INSPECTION_DECISION_OPTIONS = [
     {
         id: INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW,
         label: "Weitere Prüfung melden",
-        description: "Ein Manipulationsverdacht wird zur fachlichen Prüfung weitergegeben."
+        description: "Ein unklarer Sachverhalt wird zur fachlichen Prüfung weitergegeben."
+    },
+    {
+        id: INSPECTION_DECISIONS.SEIZE_DOCUMENTS,
+        label: "Dokumente sicherstellen",
+        description: "Manipulierte oder erheblich beschädigte Dokumente werden zur Prüfung sichergestellt."
+    },
+    {
+        id: INSPECTION_DECISIONS.HOLD_FOR_CLARIFICATION,
+        label: "Person zur Klärung festhalten",
+        description: "Widersprüchliche Identitätsangaben müssen vor Ort weiter geklärt werden."
     },
     {
         id: INSPECTION_DECISIONS.REPORT_WANTED_HIT,

@@ -7,6 +7,7 @@ import {
     generateTrafficEntity,
     getActiveWantedRecords,
     getKnownOffenderNpcIds,
+    getUnavailableControlScenarioTypes,
     isNpcKnownToPolice,
     POLICE_STATUSES,
     TRAFFIC_ENTITY_TYPES
@@ -15,6 +16,7 @@ import {
     commitTrafficEntityRecords,
     getActiveTrafficIdentityExclusions,
     selectSelectedTrafficEntity,
+    useControlScenarioStore,
     useNpcStore,
     useTrafficStore
 } from "@stores";
@@ -132,20 +134,33 @@ export const useLilGuiSetup = () => {
         criminalDatabase
     ]);
 
-    // Erzeugt einen unveränderten Traffic-Fall mit den normalen Spielwahrscheinlichkeiten.
-    // Der Typ bleibt in lil-gui verborgen, damit der Spawn als echter Blindtest nutzbar ist.
+    // Erzeugt einen vom Pacing-Director gewaehlten Kontrollfall fuer einen echten Blindtest.
+    // NPC-Typ und Auffaelligkeit bleiben in lil-gui verborgen.
     const spawnRandomTrafficEntityAtStation = useCallback(() => {
         const identityExclusions = getActiveTrafficIdentityExclusions(
             useTrafficStore.getState()
         );
+        const scenarioStore = useControlScenarioStore.getState();
+        const controlScenario = scenarioStore.selectNextScenario({
+            excludedTypes: getUnavailableControlScenarioTypes({
+                criminalDatabase,
+                ...identityExclusions
+            })
+        });
         const randomEntity = generateTrafficEntity({
             criminalDatabase,
-            ...identityExclusions
+            ...identityExclusions,
+            controlScenario
         });
+        if (!randomEntity) return;
 
-        commitTrafficEntityAtStation(randomEntity, {
+        const committedEntity = commitTrafficEntityAtStation(randomEntity, {
             concealFromGui: true
         });
+
+        if (committedEntity) {
+            scenarioStore.recordSpawnedScenario(controlScenario);
+        }
     }, [commitTrafficEntityAtStation, criminalDatabase]);
 
     // Wendet die vollständige aktuelle Dev-Konfiguration auf die angehaltene Auswahl an.

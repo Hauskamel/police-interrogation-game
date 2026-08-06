@@ -4,6 +4,7 @@ import {
     generateInsuranceProfile
 } from "@game/documents/generators";
 import { createEntityId } from "@game/shared";
+import { createControlInteractionProfile } from "@game/inspections/generators";
 import { generateVehicleProfile } from "@game/vehicles/generators";
 
 import { createVehicleOwnership } from "./createVehicleOwnership.js";
@@ -55,13 +56,19 @@ export function assembleTrafficEntity({
         driverProfile: baseDriverProfile,
         vehicleProfile: baseVehicleProfileWithId,
         insuranceProfile: baseInsuranceProfile,
-        forcedHasForgery: options.forcedHasForgery
+        forcedHasForgery: options.forcedHasForgery,
+        forcedForgeryTarget: options.forcedForgeryTarget
     });
     const { driverProfile, insuranceProfile, vehicleProfile } = createPresentedProfiles({
         driverProfile: baseDriverProfile,
         vehicleProfile: baseVehicleProfileWithId,
         insuranceProfile: baseInsuranceProfile,
         documentState
+    });
+    const controlInteractionProfile = createControlInteractionProfile({
+        controlScenario: options.controlScenario,
+        driverProfile,
+        vehicleOwnerProfile
     });
     return {
         id,
@@ -76,8 +83,32 @@ export function assembleTrafficEntity({
         truth,
         police,
         documentState,
-        inspectionProfile,
+        ...controlInteractionProfile,
+        inspectionProfile: createInspectionProfileForScenario(
+            inspectionProfile,
+            options.controlScenario
+        ),
+        controlScenario: options.controlScenario
+            ? {
+                type: options.controlScenario.type,
+                category: options.controlScenario.category,
+                complexityLevel: options.controlScenario.complexityLevel,
+                deceptionRisk: options.controlScenario.deceptionRisk,
+                focusAreas: [...options.controlScenario.focusAreas]
+            }
+            : null,
         stopped: false,
         ...(worldTruthRecords ? { worldTruthRecords } : {})
+    };
+}
+
+// Kontrollfall-Metadaten ersetzen nur die spielbezogene Pruefkomplexitaet, nicht die NPC-Wahrheit.
+function createInspectionProfileForScenario(baseProfile, controlScenario) {
+    if (!controlScenario) return baseProfile;
+
+    return {
+        complexityLevel: controlScenario.complexityLevel,
+        deceptionRisk: controlScenario.deceptionRisk,
+        focusAreas: [...controlScenario.focusAreas]
     };
 }

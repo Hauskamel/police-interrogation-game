@@ -1,9 +1,9 @@
 // ##### Weighted Random Helper
 // -----> Wählt einen Eintrag anhand seines numerischen weight-Werts aus.
 // ---> Wird von mehreren Domains genutzt, damit alle gewichteten Ziehungen gleich funktionieren.
-export function pickWeightedItem(items) {
+export function pickWeightedItem(items, random = Math.random) {
     const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
-    let remainingWeight = Math.random() * totalWeight;
+    let remainingWeight = random() * totalWeight;
 
     for (const item of items) {
         remainingWeight -= item.weight;

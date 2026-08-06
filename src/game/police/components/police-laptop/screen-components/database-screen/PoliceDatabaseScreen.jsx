@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa6";
 
 import { BaseImage } from "@game/documents/components/base";
+import { useInspectionFieldInteraction } from "@game/inspections/hooks/useInspectionFieldInteraction.js";
 import { formatDateForDisplay } from "@game/shared";
 import {
     POLICE_DATABASE_SEARCH_TYPES,
@@ -530,7 +531,10 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
                         <StatusBadge wanted={Boolean(wantedRecord)} />
                     </div>
                     <dl className="mt-5 grid gap-4 sm:grid-cols-3">
-                        <DataField label="Geburtsdatum" value={formatDateForDisplay(npc.birthDate)} />
+                        <DataField label="Vorname" value={npc.firstName} fieldId="registryPerson.firstName" recordId={npc.npcId} />
+                        <DataField label="Nachname" value={npc.lastName} fieldId="registryPerson.lastName" recordId={npc.npcId} />
+                        <DataField label="Adresse" value={npc.address} fieldId="registryPerson.address" recordId={npc.npcId} />
+                        <DataField label="Geburtsdatum" value={formatDateForDisplay(npc.birthDate)} selectionValue={npc.birthDate} fieldId="registryPerson.birthDate" recordId={npc.npcId} />
                         <DataField label="Alter" value={`${npc.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(npc.sex)} />
                         <DataField label="Größe" value={npc.height ? `${npc.height} cm` : "Nicht erfasst"} />
@@ -543,9 +547,9 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
             <DetailSection title="Führerschein">
                 {npc.driversLicense ? (
                     <dl className="grid gap-4 sm:grid-cols-3">
-                        <DataField label="Nummer" value={npc.driversLicense.licenseNumber} />
-                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(npc.driversLicense.licensedSince)} />
-                        <DataField label="Ausgestellt" value={formatDateForDisplay(npc.driversLicense.issueDate)} />
+                        <DataField label="Nummer" value={npc.driversLicense.licenseNumber} fieldId="registryLicense.number" recordId={npc.npcId} />
+                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(npc.driversLicense.licensedSince)} selectionValue={npc.driversLicense.licensedSince} fieldId="registryLicense.licensedSince" recordId={npc.npcId} />
+                        <DataField label="Ausgestellt" value={formatDateForDisplay(npc.driversLicense.issueDate)} selectionValue={npc.driversLicense.issueDate} fieldId="registryLicense.issueDate" recordId={npc.npcId} />
                         <DataField label="Gültig bis" value={formatDateForDisplay(npc.driversLicense.expiryDate)} />
                     </dl>
                 ) : (
@@ -602,7 +606,10 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
                     </h2>
                     <p className="mt-1 text-sm text-zinc-500">{person.address}</p>
                     <dl className="mt-5 grid gap-4 sm:grid-cols-3">
-                        <DataField label="Geburtsdatum" value={formatDateForDisplay(person.birthDate)} />
+                        <DataField label="Vorname" value={person.firstName} fieldId="registryPerson.firstName" recordId={person.npcId} />
+                        <DataField label="Nachname" value={person.lastName} fieldId="registryPerson.lastName" recordId={person.npcId} />
+                        <DataField label="Adresse" value={person.address} fieldId="registryPerson.address" recordId={person.npcId} />
+                        <DataField label="Geburtsdatum" value={formatDateForDisplay(person.birthDate)} selectionValue={person.birthDate} fieldId="registryPerson.birthDate" recordId={person.npcId} />
                         <DataField label="Alter" value={`${person.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(person.sex)} />
                     </dl>
@@ -612,9 +619,9 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
             <DetailSection title="Führerscheinregister">
                 {license ? (
                     <dl className="grid gap-4 sm:grid-cols-3">
-                        <DataField label="Nummer" value={license.licenseNumber} />
-                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(license.licensedSince)} />
-                        <DataField label="Ausgestellt" value={formatDateForDisplay(license.issueDate)} />
+                        <DataField label="Nummer" value={license.licenseNumber} fieldId="registryLicense.number" recordId={person.npcId} />
+                        <DataField label="Fahrerlaubnis seit" value={formatDateForDisplay(license.licensedSince)} selectionValue={license.licensedSince} fieldId="registryLicense.licensedSince" recordId={person.npcId} />
+                        <DataField label="Ausgestellt" value={formatDateForDisplay(license.issueDate)} selectionValue={license.issueDate} fieldId="registryLicense.issueDate" recordId={person.npcId} />
                         <DataField label="Gültig bis" value={formatDateForDisplay(license.expiryDate)} />
                     </dl>
                 ) : (
@@ -667,9 +674,10 @@ function InsuranceDetails({ policy, vehicle, holder }) {
             <DetailSection title="Versicherungsschutz">
                 <dl className="grid gap-4 sm:grid-cols-3">
                     <DataField label="Status" value={policy.status === "active" ? "Aktiv" : "Abgelaufen"} />
+                    <DataField label="Policennummer" value={policy.policyNumber} fieldId="registryInsurance.policyNumber" recordId={policy.policyId} />
                     <DataField label="Gültig ab" value={formatDateForDisplay(policy.validFrom)} />
                     <DataField label="Gültig bis" value={formatDateForDisplay(policy.validUntil)} />
-                    <DataField label="Kennzeichen" value={policy.insuredPlateNumber} />
+                    <DataField label="Kennzeichen" value={policy.insuredPlateNumber} fieldId="registryInsurance.plateNumber" recordId={policy.policyId} />
                     <DataField
                         label="Fahrzeug"
                         value={vehicle ? `${vehicle.brand} ${vehicle.model}` : "Nicht auflösbar"}
@@ -707,38 +715,58 @@ function VehicleDetails({ vehicle, owner, onSelectOwner }) {
             <DetailSection title="Zulassungsdaten">
                 <dl className="grid gap-4 sm:grid-cols-3">
                     <DataField
+                        label="Kennzeichen"
+                        value={vehicle.carDocumentsData?.plateNumber}
+                        fieldId="registryVehicle.plateNumber"
+                        recordId={vehicle.vehicleId}
+                    />
+                    <DataField
                         label="Zulassungsnummer"
                         value={vehicle.carDocumentsData?.carRegistrationNumber}
+                        fieldId="registryVehicle.registrationNumber"
+                        recordId={vehicle.vehicleId}
                     />
                     <DataField
                         label="Ausgestellt"
                         value={formatDateForDisplay(vehicle.carDocumentsData?.formattedIssueDate)}
+                        selectionValue={vehicle.carDocumentsData?.formattedIssueDate}
+                        fieldId="registryVehicle.issueDate"
+                        recordId={vehicle.vehicleId}
                     />
-                    <DataField label="Baujahr" value={vehicle.yearOfConstruction} />
-                    <DataField label="Leistung" value={vehicle.ps ? `${vehicle.ps} PS` : null} />
-                    <DataField label="Gewicht" value={vehicle.weight ? `${vehicle.weight} kg` : null} />
+                    <DataField label="Hersteller" value={vehicle.brand} fieldId="registryVehicle.brand" recordId={vehicle.vehicleId} />
+                    <DataField label="Modell" value={vehicle.model} fieldId="registryVehicle.model" recordId={vehicle.vehicleId} />
+                    <DataField label="Baujahr" value={vehicle.yearOfConstruction} fieldId="registryVehicle.yearOfConstruction" recordId={vehicle.vehicleId} />
+                    <DataField label="Leistung" value={vehicle.ps ? `${vehicle.ps} PS` : null} selectionValue={vehicle.ps} fieldId="registryVehicle.ps" recordId={vehicle.vehicleId} />
+                    <DataField label="Gewicht" value={vehicle.weight ? `${vehicle.weight} kg` : null} selectionValue={vehicle.weight} fieldId="registryVehicle.weight" recordId={vehicle.vehicleId} />
                 </dl>
             </DetailSection>
 
             <DetailSection title="Eingetragener Halter">
                 {owner ? (
-                    <button
-                        type="button"
-                        className="flex w-full items-center gap-4 rounded-md border border-zinc-200 bg-white p-4 text-left hover:border-blue-300 hover:bg-blue-50"
-                        onClick={onSelectOwner}
-                    >
-                        <BaseImage
-                            data={owner.npcImage}
-                            alt={`${owner.firstName} ${owner.lastName}`}
-                            className="h-16 w-12 rounded object-cover"
-                        />
-                        <span>
-                            <span className="block font-semibold text-zinc-950">
-                                {owner.firstName} {owner.lastName}
+                    <>
+                        <button
+                            type="button"
+                            className="flex w-full items-center gap-4 rounded-md border border-zinc-200 bg-white p-4 text-left hover:border-blue-300 hover:bg-blue-50"
+                            onClick={onSelectOwner}
+                        >
+                            <BaseImage
+                                data={owner.npcImage}
+                                alt={`${owner.firstName} ${owner.lastName}`}
+                                className="h-16 w-12 rounded object-cover"
+                            />
+                            <span>
+                                <span className="block font-semibold text-zinc-950">
+                                    {owner.firstName} {owner.lastName}
+                                </span>
+                                <span className="mt-1 block text-xs text-zinc-500">{owner.address}</span>
                             </span>
-                            <span className="mt-1 block text-xs text-zinc-500">{owner.address}</span>
-                        </span>
-                    </button>
+                        </button>
+                        <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+                            <DataField label="Halter Vorname" value={owner.firstName} fieldId="registryOwner.firstName" recordId={owner.npcId} />
+                            <DataField label="Halter Nachname" value={owner.lastName} fieldId="registryOwner.lastName" recordId={owner.npcId} />
+                            <DataField label="Halteradresse" value={owner.address} fieldId="registryOwner.address" recordId={owner.npcId} />
+                        </dl>
+                    </>
                 ) : (
                     <EmptyInline text="Kein Halter im amtlichen Register auflösbar." />
                 )}
@@ -847,12 +875,54 @@ function CrimeRecordList({ crimes, title = "Bekannte Straftaten" }) {
     );
 }
 
-// Kleine Definition-List-Zelle für Stammdaten.
-function DataField({ label, value }) {
+// Kleine Definition-List-Zelle fuer Stammdaten und auswählbare Registerwerte.
+// Nur konfigurierte Felder reagieren waehrend des aktiven Diskrepanzmodus auf Klicks.
+function DataField({
+    label,
+    value,
+    fieldId,
+    recordId,
+    selectionValue = value
+}) {
+    const {
+        isInteractive,
+        isSelected,
+        isCompatible,
+        selectField
+    } = useInspectionFieldInteraction(fieldId, recordId);
+    const content = (
+        <>
+            <span className="block text-xs text-zinc-500">{label}</span>
+            <span className="mt-1 block text-sm font-medium text-zinc-900">
+                {value || "Nicht erfasst"}
+            </span>
+        </>
+    );
+
+    if (isInteractive) {
+        return (
+            <div>
+                <button
+                    type="button"
+                    className={`w-full rounded px-2 py-1.5 text-left transition ${
+                        isSelected
+                            ? "bg-blue-700 text-white ring-2 ring-blue-300 [&_span]:text-white"
+                            : isCompatible
+                                ? "hover:bg-blue-100 hover:ring-2 hover:ring-blue-500"
+                                : "opacity-45 hover:opacity-75"
+                    }`}
+                    aria-pressed={isSelected}
+                    onClick={() => selectField(selectionValue)}
+                >
+                    {content}
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div>
-            <dt className="text-xs text-zinc-500">{label}</dt>
-            <dd className="mt-1 text-sm font-medium text-zinc-900">{value || "Nicht erfasst"}</dd>
+            {content}
         </div>
     );
 }

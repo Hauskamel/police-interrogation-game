@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { FaBug, FaDatabase } from "react-icons/fa6";
 
 import { isNpcKnownToPolice } from "@game/traffic";
 import { formatDateForDisplay } from "@game/shared";
@@ -38,7 +39,7 @@ const debugTabs = [
 /**
  * ##### Vehicle Debug Panel
  * -----> Temporäres Entwickler-Panel für TrafficEntity-, Fahrer-, Fahrzeug- und Dokumentdaten.
- * ---> Der Button sitzt rechts neben den Fahrzeugoptionen; das Panel ist bewusst als Devtool gestaltet.
+ * ---> Die graue Iconleiste sitzt getrennt vom Gameplay direkt ueber den Dienstwerkzeugen.
  */
 export const VehicleDebugPanel = ({ stoppedCar }) => {
     const [activePanel, setActivePanel] = useState(null);
@@ -78,9 +79,9 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
     }, [activePanel, canOpenProfile]);
 
     return (
-        <div className="fixed bottom-6 left-[640px] z-[8000] flex flex-col items-start gap-3">
+        <div className="fixed bottom-[220px] left-4 z-[7800] flex flex-col items-start gap-3 sm:left-8">
             {activePanel && (
-                <div className="fixed bottom-20 left-6 z-[8000] w-[680px] max-w-[calc(100vw-3rem)] max-h-[78vh] overflow-hidden rounded-lg border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl">
+                <div className="fixed bottom-[280px] left-4 z-[7800] max-h-[calc(100vh-19rem)] w-[680px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg border border-gray-500 bg-gray-900/95 text-gray-100 shadow-xl sm:left-8">
                     {activePanel === DEBUG_PANELS.PROFILE && canOpenProfile && (
                         <>
                             <DebugHeader selectedTrafficEntity={selectedTrafficEntity} />
@@ -128,7 +129,7 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
                 </div>
             )}
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 rounded-md border border-gray-600 bg-gray-900/90 p-1.5 shadow-xl">
                 <button
                     onClick={() => setActivePanel((currentPanel) =>
                         currentPanel === DEBUG_PANELS.PROFILE
@@ -136,10 +137,12 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
                             : DEBUG_PANELS.PROFILE
                     )}
                     disabled={!canOpenProfile}
-                    className={`${activePanel === DEBUG_PANELS.PROFILE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} rounded px-4 py-2 text-sm font-semibold shadow-lg transition hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer`}
+                    className={`${activePanel === DEBUG_PANELS.PROFILE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} flex h-10 w-10 items-center justify-center rounded text-sm shadow transition hover:!bg-gray-600 disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer`}
+                    aria-label="Fahrer- und Fahrzeugprofil debuggen"
+                    aria-pressed={activePanel === DEBUG_PANELS.PROFILE}
                     title={canOpenProfile ? "Fahrer- und Fahrzeugdaten öffnen" : "Dafür muss ein angehaltener NPC ausgewählt sein"}
                 >
-                    Debug Profile
+                    <FaBug aria-hidden="true" />
                 </button>
 
                 <button
@@ -148,9 +151,12 @@ export const VehicleDebugPanel = ({ stoppedCar }) => {
                             ? null
                             : DEBUG_PANELS.POLICE_DATABASE
                     )}
-                    className={`${activePanel === DEBUG_PANELS.POLICE_DATABASE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} rounded px-4 py-2 text-sm font-semibold shadow-lg transition hover:bg-gray-600 cursor-pointer`}
+                    className={`${activePanel === DEBUG_PANELS.POLICE_DATABASE ? "!bg-blue-600 text-white" : "!bg-gray-700 text-gray-100"} flex h-10 w-10 items-center justify-center rounded text-sm shadow transition hover:!bg-gray-600 cursor-pointer`}
+                    aria-label="Polizei-Datenbank debuggen"
+                    aria-pressed={activePanel === DEBUG_PANELS.POLICE_DATABASE}
+                    title="Datenbank-Debug öffnen"
                 >
-                    Polizei-Datenbank
+                    <FaDatabase aria-hidden="true" />
                 </button>
             </div>
         </div>
@@ -203,6 +209,14 @@ function OverviewTab({ selectedTrafficEntity }) {
                 <DebugRow label="npcId" value={selectedTrafficEntity.npcId} />
                 <DebugRow label="vehicleId" value={selectedTrafficEntity.vehicleId} />
                 <DebugRow label="trafficType" value={selectedTrafficEntity.trafficType} />
+                <DebugRow
+                    label="controlScenarioType"
+                    value={selectedTrafficEntity.controlScenario?.type}
+                />
+                <DebugRow
+                    label="controlScenarioCategory"
+                    value={selectedTrafficEntity.controlScenario?.category}
+                />
                 <DebugRow label="stopped" value={selectedTrafficEntity.stopped} />
             </DebugSection>
 

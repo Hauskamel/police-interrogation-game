@@ -28,7 +28,10 @@ const civilianInspectionProfiles = [
 // -----> Erstellt einen normalen Verkehrsteilnehmer ohne bekannte Straftat.
 // ---> Zivilisten können trotzdem kleine Prüfauffälligkeiten haben, z.B. abgelaufene Dokumente.
 export function createCivilianTrafficEntity(options = {}) {
-    const baseDriverProfile = generateNpcProfile();
+    const baseDriverProfile = generateNpcProfile({
+        minimumAge: options.forcedLicenseExpired ? 34 : 18,
+        forcedLicenseExpired: options.forcedLicenseExpired
+    });
     const inspectionProfile = pickCivilianInspectionProfile();
 
     return assembleTrafficEntity({

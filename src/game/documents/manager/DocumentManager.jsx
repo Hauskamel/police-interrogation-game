@@ -5,7 +5,10 @@ import {
     DriversLicense,
     ProofOfInsurance
 } from "../components";
-import { INSPECTION_DOCUMENT_TYPES } from "@game/inspections/data";
+import {
+    DOCUMENT_AVAILABILITY_STATUSES,
+    INSPECTION_DOCUMENT_TYPES
+} from "@game/inspections/data";
 import {
     useInspectionStore,
     useTrafficStore
@@ -41,15 +44,42 @@ export function DocumentManager() {
     const closeDocument = useInspectionStore(
         (state) => state.closeDocument
     );
-
+    const recordInterviewAnswer = useInspectionStore(
+        (state) => state.recordInterviewAnswer
+    );
     const activeDocs = Object.values(INSPECTION_DOCUMENT_TYPES);
     const requestedDocuments = activeInspection?.requestedDocuments ?? [];
     const visibleDocuments = activeInspection?.visibleDocuments ?? [];
+    const discrepancyMode = activeInspection?.discrepancyMode ?? {
+        active: false,
+        selectedFields: []
+    };
+    const radioInquiryMode = activeInspection?.radioInquiryMode ?? {
+        active: false
+    };
+    const fieldSelectionModeActive = Boolean(
+        discrepancyMode.active || radioInquiryMode.active
+    );
 
     const handleDocumentRequest = (documentType) => {
+        const availability = controlledTrafficEntity?.documentAvailability?.[
+            documentType
+        ] ?? DOCUMENT_AVAILABILITY_STATUSES.PROVIDED;
+        const previousAttempts = activeInspection?.documentRequestStates?.[
+            documentType
+        ]?.attempts ?? 0;
+        const identityWillBeVisible = availability
+            === DOCUMENT_AVAILABILITY_STATUSES.PROVIDED
+            || availability === DOCUMENT_AVAILABILITY_STATUSES.DAMAGED
+            || (
+                availability === DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED
+                && previousAttempts >= 1
+            );
+
         // Bereits gelesene Identitaetsdaten bleiben fuer die laufende Kontrolle bekannt.
         if (
             DRIVER_IDENTITY_DOCUMENTS.has(documentType)
+            && identityWillBeVisible
             && controlledTrafficEntity?.id
             && controlledTrafficEntity?.npcId
         ) {
@@ -59,7 +89,22 @@ export function DocumentManager() {
             );
         }
 
-        requestDocument(documentType);
+        requestDocument({ documentType, availability });
+    };
+
+    const handleInterviewQuestion = ({ id, playerText }) => {
+        const statementProfile = controlledTrafficEntity?.statementProfile;
+        const npcText = statementProfile?.responses?.[id];
+        if (!npcText) return;
+
+        recordInterviewAnswer({
+            questionId: id,
+            playerText,
+            npcText,
+            findingId: statementProfile.contradictionQuestionId === id
+                ? "inconsistent_driver_statement"
+                : null
+        });
     };
 
     const docComponents = {
@@ -92,7 +137,9 @@ export function DocumentManager() {
                     .map(doc => (
                         <BaseDocument
                             key={doc}
+                            documentType={doc}
                             onClose={() => closeDocument(doc)}
+                            discrepancyModeActive={fieldSelectionModeActive}
                         >
                             {docComponents[doc]}
                         </BaseDocument>
@@ -101,8 +148,15 @@ export function DocumentManager() {
 
             <DocumentConversation
                 requestedDocuments={requestedDocuments}
+                documentRequestStates={activeInspection?.documentRequestStates ?? {}}
                 visibleDocuments={visibleDocuments}
+                conversationEntries={activeInspection?.conversationEntries ?? []}
+                dispatchConversationEntries={activeInspection?.dispatchConversationEntries ?? []}
+                discrepancyModeActive={discrepancyMode.active}
+                radioInquiryModeActive={radioInquiryMode.active}
                 onRequestDocument={handleDocumentRequest}
+                askedQuestionIds={activeInspection?.askedQuestionIds ?? []}
+                onAskQuestion={handleInterviewQuestion}
             />
         </>
     );

@@ -1,4 +1,5 @@
 export { gameStates, useGameStore } from "./gameStore.js";
+export { useControlScenarioStore } from "./controlScenarioStore.js";
 export { useInspectionStore } from "./inspectionStore.js";
 export { commitTrafficEntityRecords } from "./commitTrafficEntityRecords.js";
 export { useNpcStore } from "./npcStore.js";

@@ -15,7 +15,10 @@ import {
 } from "@game/panels/components";
 import { DocumentManager } from "@game/documents/manager";
 import { LaptopScreen } from "@game/police/components";
-import { InspectionWorkspace } from "@game/inspections";
+import {
+    InspectionFieldInteractionProvider,
+    InspectionWorkspace
+} from "@game/inspections";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";
@@ -90,19 +93,19 @@ function App() {
             />
         )}
 
-        {gameState === gameStates.LAPTOP && (
-            <LaptopScreen />
-        )}
+            <InspectionFieldInteractionProvider>
+                {gameState === gameStates.LAPTOP && (
+                    <LaptopScreen />
+                )}
+
+                {activeInspection && inspectionTrafficEntity && (
+                    <DocumentManager />
+                )}
+            </InspectionFieldInteractionProvider>
 
             <VehicleDebugPanel stoppedCar={stoppedTrafficEntity} />
 
-            {activeInspection && inspectionTrafficEntity && (
-                <DocumentManager />
-            )}
-
-            {gameState !== "LAPTOP" && (
-                <InspectionWorkspace />
-            )}
+            <InspectionWorkspace />
         </div>
     )
 }

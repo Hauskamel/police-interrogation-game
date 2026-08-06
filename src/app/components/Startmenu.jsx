@@ -4,6 +4,7 @@ import { generateCriminalDatabase } from "@game/crimes/generators";
 import { resetGameClock } from "@game/shared";
 import {
     gameStates,
+    useControlScenarioStore,
     useGameStore,
     useInspectionStore,
     useNpcStore,
@@ -30,6 +31,9 @@ export const Startmenu = () => {
     const resetPoliceLaptopState = usePoliceLaptopStore(
         (state) => state.resetPoliceLaptopState
     );
+    const resetScenarioHistory = useControlScenarioStore(
+        (state) => state.resetScenarioHistory
+    );
 
     // -----> Baut die kriminelle NPC-Datenbank einmalig beim Spielstart auf.
     const generateDatabase = useCallback(() => {
@@ -49,6 +53,7 @@ export const Startmenu = () => {
         resetOfficialRegistry();
         resetInspectionState();
         resetPoliceLaptopState();
+        resetScenarioHistory();
         generateDatabase();
         ingameMode();
     };

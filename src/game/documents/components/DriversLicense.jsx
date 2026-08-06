@@ -22,20 +22,20 @@ export function DriversLicense ({ driver }) {
                         <div className="mt-1">
                             <div className="w-1/1">
                                 <div className="w-1/1 justify-between flex">
-                                    <BaseHeadlineWithText headline="Vorname" data={driverProfile?.firstName}></BaseHeadlineWithText>
-                                    <BaseHeadlineWithText headline="Nachname" data={driverProfile?.lastName}></BaseHeadlineWithText>
+                                    <BaseHeadlineWithText headline="Vorname" data={driverProfile?.firstName} fieldId="driversLicense.firstName" />
+                                    <BaseHeadlineWithText headline="Nachname" data={driverProfile?.lastName} fieldId="driversLicense.lastName" />
                                 </div>
                             </div>
 
                             <div className="grid w-full grid-cols-3 gap-1">
-                                <BaseHeadlineWithText headline="Geburtsdatum" data={formatDateForDisplay(driverProfile?.birthDate)}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText headline="Lizenznummer" data={driverProfile?.driversLicense?.licenseNumber}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Geburtsdatum" data={formatDateForDisplay(driverProfile?.birthDate)} selectionValue={driverProfile?.birthDate} fieldId="driversLicense.birthDate" />
+                                <BaseHeadlineWithText headline="Lizenznummer" data={driverProfile?.driversLicense?.licenseNumber} fieldId="driversLicense.licenseNumber" />
                             </div>
-                            <BaseHeadlineWithText headline="Adresse" data={driverProfile?.address} individualWidth="w-1/1" ></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Adresse" data={driverProfile?.address} fieldId="driversLicense.address" individualWidth="w-full" />
                             <div className="w-1/1 flex">
-                                <BaseHeadlineWithText headline="Fahrerlaubnis seit" data={formatDateForDisplay(driverProfile?.driversLicense?.licensedSince)}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText headline="Ausgabedatum" data={formatDateForDisplay(driverProfile?.driversLicense?.issueDate)}></BaseHeadlineWithText>
-                                <BaseHeadlineWithText headline="Ablaufdatum" data={formatDateForDisplay(driverProfile?.driversLicense?.expiryDate)}></BaseHeadlineWithText>
+                                <BaseHeadlineWithText headline="Fahrerlaubnis seit" data={formatDateForDisplay(driverProfile?.driversLicense?.licensedSince)} selectionValue={driverProfile?.driversLicense?.licensedSince} fieldId="driversLicense.licensedSince" />
+                                <BaseHeadlineWithText headline="Ausgabedatum" data={formatDateForDisplay(driverProfile?.driversLicense?.issueDate)} selectionValue={driverProfile?.driversLicense?.issueDate} fieldId="driversLicense.issueDate" />
+                                <BaseHeadlineWithText headline="Ablaufdatum" data={formatDateForDisplay(driverProfile?.driversLicense?.expiryDate)} selectionValue={driverProfile?.driversLicense?.expiryDate} fieldId="driversLicense.expiryDate" />
                             </div>
                         </div>
                         <div className="mt-2 flex justify-between">

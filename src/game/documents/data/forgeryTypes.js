@@ -1,6 +1,12 @@
 // ##### Forgery Types
 // -----> Beschreibt konkrete Arten von bewussten Dokumentmanipulationen.
 // ---> Die Werte werden vom Presented-Generator genutzt, um einzelne sichtbare Felder zu verändern.
+export const DOCUMENT_FORGERY_TARGETS = {
+    DRIVER: "npc",
+    VEHICLE: "vehicle",
+    INSURANCE: "insurance"
+};
+
 export const NPC_DOCUMENT_FORGERY_TYPES = {
     WRONG_ADDRESS: "wrong_address",
     WRONG_BIRTH_DATE: "wrong_birth_date",

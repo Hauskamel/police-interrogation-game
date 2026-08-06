@@ -1,6 +1,8 @@
 import { pickWeightedItem } from "@game/shared";
+import { CONTROL_SCENARIO_TYPES } from "@game/inspections/data";
 
 import { TRAFFIC_ENTITY_TYPES } from "../data";
+import { getTrafficTypeWeightsForControlScenario } from "./getControlScenarioGenerationOptions.js";
 
 // ##### Traffic Type Distribution
 // -----> Steuert, welche Art von TrafficEntity im normalen Straßenverkehr auftaucht.
@@ -16,11 +18,20 @@ const defaultTrafficTypeWeights = [
 // -----> Wählt den Spawn-Fall für eine neue TrafficEntity.
 // ---> forcedType ist für Devtools oder gezielte Tests gedacht.
 export function pickTrafficEntityType(options = {}) {
-    const { forcedType, weights = defaultTrafficTypeWeights } = options;
+    const { forcedType, controlScenario } = options;
 
     if (forcedType) {
         return forcedType;
     }
+
+    if (controlScenario?.type === CONTROL_SCENARIO_TYPES.WANTED_PERSON) {
+        return TRAFFIC_ENTITY_TYPES.WANTED_OFFENDER;
+    }
+
+    const weights = options.weights
+        ?? (controlScenario
+            ? getTrafficTypeWeightsForControlScenario(controlScenario)
+            : defaultTrafficTypeWeights);
 
     return pickWeightedItem(weights).type;
 }

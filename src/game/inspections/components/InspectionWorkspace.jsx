@@ -4,13 +4,15 @@ import {
     FaClipboardCheck,
     FaClock,
     FaFileCircleExclamation,
-    FaFlag,
+    FaTowerBroadcast,
+    FaTriangleExclamation,
     FaXmark
 } from "react-icons/fa6";
 
 import {
-    selectSelectedTrafficEntity,
+    gameStates,
     useInspectionStore,
+    useGameStore,
     useNpcStore,
     useOfficialRegistryStore,
     useTrafficStore
@@ -18,12 +20,13 @@ import {
 
 import {
     INSPECTION_DECISION_OPTIONS,
+    DISCREPANCY_CHECK_TYPES,
+    DISCREPANCY_FIELD_DEFINITIONS_BY_ID,
     INSPECTION_DOCUMENT_LABELS,
     INSPECTION_FINDING_CATEGORIES,
     INSPECTION_FINDING_DEFINITIONS_BY_ID,
     INSPECTION_OUTCOMES,
-    INSPECTION_RESOLUTION_ACTIONS,
-    PLAYER_SELECTABLE_FINDINGS
+    INSPECTION_RESOLUTION_ACTIONS
 } from "../data";
 import { evaluateInspection } from "../utils";
 import { getCurrentGameDate } from "@game/shared";
@@ -36,8 +39,17 @@ export function InspectionWorkspace() {
     const lastCompletedInspection = useInspectionStore(
         (state) => state.lastCompletedInspection
     );
-    const toggleFinding = useInspectionStore(
-        (state) => state.toggleFinding
+    const startDiscrepancyMode = useInspectionStore(
+        (state) => state.startDiscrepancyMode
+    );
+    const cancelDiscrepancyMode = useInspectionStore(
+        (state) => state.cancelDiscrepancyMode
+    );
+    const startRadioInquiryMode = useInspectionStore(
+        (state) => state.startRadioInquiryMode
+    );
+    const cancelRadioInquiryMode = useInspectionStore(
+        (state) => state.cancelRadioInquiryMode
     );
     const completeInspection = useInspectionStore(
         (state) => state.completeInspection
@@ -46,7 +58,7 @@ export function InspectionWorkspace() {
         (state) => state.dismissCompletedInspection
     );
 
-    const selectedTrafficEntity = useTrafficStore(selectSelectedTrafficEntity);
+    const gameState = useGameStore((state) => state.gameState);
     const continueTrafficEntity = useTrafficStore(
         (state) => state.continueTrafficEntity
     );
@@ -63,6 +75,7 @@ export function InspectionWorkspace() {
 
     const [dialog, setDialog] = useState(null);
     const [selectedDecision, setSelectedDecision] = useState(null);
+    const [selectedReasonCodes, setSelectedReasonCodes] = useState([]);
 
     const activeTrafficEntity = useTrafficStore((state) => {
         return state.trafficEntities.find(
@@ -74,6 +87,7 @@ export function InspectionWorkspace() {
         if (!activeInspection) {
             setDialog(null);
             setSelectedDecision(null);
+            setSelectedReasonCodes([]);
         }
     }, [activeInspection]);
 
@@ -84,7 +98,7 @@ export function InspectionWorkspace() {
 
         const playerDecision = {
             type: selectedDecision,
-            reasonCodes: [...activeInspection.markedFindingIds]
+            reasonCodes: [...selectedReasonCodes]
         };
         const resolution = evaluateInspection({
             inspectionSession: activeInspection,
@@ -134,70 +148,39 @@ export function InspectionWorkspace() {
 
     if (!activeInspection || !activeTrafficEntity) return null;
 
-    const selectedEntityMatchesInspection = selectedTrafficEntity?.id
-        === activeInspection.trafficEntityId;
-
     return (
         <>
-            <InspectionToolbar
+            <InspectionActionDock
                 inspection={activeInspection}
-                selectedEntityMatchesInspection={selectedEntityMatchesInspection}
-                onOpenFindings={() => setDialog("findings")}
-                onOpenDecision={() => setDialog("decision")}
+                onStartDiscrepancy={startDiscrepancyMode}
+                onCancelDiscrepancy={cancelDiscrepancyMode}
+                onStartRadioInquiry={startRadioInquiryMode}
+                onCancelRadioInquiry={cancelRadioInquiryMode}
+                onOpenDecision={() => {
+                    setSelectedReasonCodes([...activeInspection.markedFindingIds]);
+                    setDialog("decision");
+                }}
             />
 
-            {dialog === "findings" && (
-                <InspectionDialog
-                    title="Feststellungen markieren"
-                    description="Markiere erkennbare Dokument- und Gültigkeitsprobleme. Datenbanknavigation wird nicht als Spieleraussage gewertet."
-                    onClose={() => setDialog(null)}
-                >
-                    <div className="divide-y divide-zinc-200">
-                        {PLAYER_SELECTABLE_FINDINGS.map((definition) => {
-                            const isMarked = activeInspection.markedFindingIds
-                                .includes(definition.id);
-
-                            return (
-                                <label
-                                    key={definition.id}
-                                    className="flex cursor-pointer gap-3 py-4 text-left"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="mt-1 h-4 w-4 accent-blue-700"
-                                        checked={isMarked}
-                                        onChange={() => toggleFinding(definition.id)}
-                                    />
-                                    <span>
-                                        <span className="mb-1 block text-[10px] font-semibold uppercase text-blue-700">
-                                            {getFindingCategoryLabel(definition.category)}
-                                        </span>
-                                        <span className="block text-sm font-semibold text-zinc-950">
-                                            {definition.label}
-                                        </span>
-                                        <span className="mt-1 block text-xs leading-5 text-zinc-500">
-                                            {definition.description}
-                                        </span>
-                                    </span>
-                                </label>
-                            );
-                        })}
-                    </div>
-                </InspectionDialog>
+            {(activeInspection.discrepancyMode?.active || activeInspection.radioInquiryMode?.active) && (
+                <InspectionFocusOverlay
+                    laptopOpen={gameState === gameStates.LAPTOP}
+                    radioInquiryActive={activeInspection.radioInquiryMode?.active}
+                />
             )}
 
             {dialog === "decision" && (
                 <InspectionDialog
                     title="Kontrolle abschließen"
-                    description="Wähle die administrative Maßnahme. Danach wird die Kontrolle endgültig ausgewertet."
+                    description="Wähle Maßnahme und die Feststellungen, auf die du deine Entscheidung stützt."
                     onClose={() => setDialog(null)}
                 >
                     <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-left text-xs leading-5 text-blue-900">
-                        <strong>Dienstregel Phase 1:</strong> Aktive Fahndungen
-                        werden gemeldet. Manipulationsverdacht geht in die weitere
-                        Prüfung. Ein abgelaufener Führerschein verhindert die
-                        Weiterfahrt. Polizeibekanntheit allein ist kein Grund für
-                        eine Maßnahme.
+                        <strong>Dienstregel:</strong> Aktive Fahndungen werden
+                        gemeldet. Manipulierte Dokumente werden sichergestellt,
+                        widersprüchliche Identitätsangaben vor Ort geklärt. Fehlende
+                        oder abgelaufene Pflichtnachweise verhindern die Weiterfahrt.
+                        Polizeibekanntheit allein ist kein Grund für eine Maßnahme.
                     </div>
 
                     <div className="space-y-2">
@@ -229,6 +212,50 @@ export function InspectionWorkspace() {
                         ))}
                     </div>
 
+                    <div className="mt-5 border-t border-zinc-200 pt-4 text-left">
+                        <h3 className="text-sm font-semibold">Begründung</h3>
+                        <p className="mt-1 text-xs leading-5 text-zinc-500">
+                            Es werden nur Feststellungen angeboten, die du während dieser Kontrolle belegt hast.
+                        </p>
+                        {activeInspection.findings.length === 0 ? (
+                            <p className="mt-3 rounded bg-zinc-100 px-3 py-2 text-xs text-zinc-500">
+                                Keine Feststellung dokumentiert.
+                            </p>
+                        ) : (
+                            <div className="mt-3 space-y-2">
+                                {activeInspection.findings.map((finding) => {
+                                    const definition = INSPECTION_FINDING_DEFINITIONS_BY_ID[
+                                        finding.findingId
+                                    ];
+
+                                    return (
+                                        <label
+                                            key={finding.id}
+                                            className="flex cursor-pointer gap-3 rounded border border-zinc-200 bg-white p-3 text-sm"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                className="mt-0.5 accent-blue-700"
+                                                checked={selectedReasonCodes.includes(finding.findingId)}
+                                                onChange={() => setSelectedReasonCodes((current) => {
+                                                    return current.includes(finding.findingId)
+                                                        ? current.filter((id) => id !== finding.findingId)
+                                                        : [...current, finding.findingId];
+                                                })}
+                                            />
+                                            <span>
+                                                <strong className="block">{definition?.label ?? finding.findingId}</strong>
+                                                <span className="mt-1 block text-xs text-zinc-500">
+                                                    Erkannt durch {getFindingSourceLabel(finding.discoveredVia)}
+                                                </span>
+                                            </span>
+                                        </label>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
                     <button
                         type="button"
                         className="mt-5 w-full rounded-md bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
@@ -243,58 +270,140 @@ export function InspectionWorkspace() {
     );
 }
 
-// ##### Inspection Toolbar
-// -----> Zeigt den laufenden Kontrollstatus, ohne Dokumente oder Panels zu verdecken.
-function InspectionToolbar({
+// ##### Inspection Action Dock
+// -----> Haelt alle kontrollbezogenen Aktionen stabil links neben der Gespraechsbox.
+function InspectionActionDock({
     inspection,
-    selectedEntityMatchesInspection,
-    onOpenFindings,
+    onStartDiscrepancy,
+    onCancelDiscrepancy,
+    onStartRadioInquiry,
+    onCancelRadioInquiry,
     onOpenDecision
 }) {
     const elapsedTime = useElapsedTime(inspection.startedAt);
+    const discrepancyMode = inspection.discrepancyMode ?? {};
+    const discrepancyIsActive = Boolean(discrepancyMode.active);
+    const radioInquiryMode = inspection.radioInquiryMode ?? {};
+    const radioInquiryIsActive = Boolean(radioInquiryMode.active);
+    const fieldModeIsActive = discrepancyIsActive || radioInquiryIsActive;
+    const canStartFieldMode = inspection.visibleDocuments.length > 0;
+    const discrepancyLabel = discrepancyIsActive
+        ? "Diskrepanzprüfung abbrechen"
+        : "Diskrepanz entdecken";
 
     return (
-        <aside className="fixed left-1/2 top-4 z-[900] w-[min(680px,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-zinc-700 bg-zinc-900 px-4 py-3 text-white shadow-xl">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-blue-700">
-                        <FaClipboardCheck aria-hidden="true" />
-                    </div>
-                    <div className="min-w-0 text-left">
-                        <p className="truncate text-sm font-semibold">Kontrolle aktiv</p>
-                        <p className="flex items-center gap-1.5 text-xs text-zinc-400">
-                            <FaClock aria-hidden="true" />
-                            {elapsedTime}
-                        </p>
-                    </div>
+        <aside className="fixed bottom-[410px] right-4 z-[9700] flex items-end gap-2 text-white sm:right-8 lg:bottom-4 lg:right-[calc(580px+2.5rem)] lg:flex-col">
+            {fieldModeIsActive && (discrepancyMode.feedback || radioInquiryMode.feedback) && (
+                <div className="absolute bottom-full right-0 mb-2 w-64 rounded-md border border-blue-400 bg-zinc-900 px-3 py-2 text-left text-xs leading-5 text-zinc-200 shadow-xl lg:bottom-auto lg:left-auto lg:right-full lg:top-0 lg:mb-0 lg:mr-2">
+                    <span className="font-semibold text-blue-300">
+                        {radioInquiryIsActive
+                            ? "Funkabfrage"
+                            : getDiscrepancyProgressLabel(discrepancyMode)
+                        }
+                    </span>
+                    <span className="mt-0.5 block">
+                        {radioInquiryMode.feedback ?? discrepancyMode.feedback}
+                    </span>
                 </div>
-
-                <div className="flex gap-2">
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 rounded bg-zinc-700 px-3 py-2 text-xs font-semibold hover:bg-zinc-600"
-                        onClick={onOpenFindings}
-                    >
-                        <FaFlag aria-hidden="true" />
-                        Feststellungen ({inspection.markedFindingIds.length})
-                    </button>
-                    <button
-                        type="button"
-                        className="rounded bg-blue-700 px-3 py-2 text-xs font-semibold hover:bg-blue-800"
-                        onClick={onOpenDecision}
-                    >
-                        Entscheidung
-                    </button>
-                </div>
-            </div>
-
-            {!selectedEntityMatchesInspection && (
-                <p className="mt-2 border-t border-zinc-700 pt-2 text-left text-xs text-amber-300">
-                    Wähle das angehaltene Fahrzeug erneut aus, um seine Dokumente zu öffnen.
-                </p>
             )}
 
+            <div
+                className="flex h-11 min-w-11 items-center justify-center gap-1 rounded-md border border-zinc-700 bg-zinc-900 px-2 text-[11px] font-semibold text-zinc-300 shadow-xl"
+                title="Dauer der aktuellen Kontrolle"
+                aria-label={`Kontrolldauer ${elapsedTime}`}
+            >
+                <FaClock aria-hidden="true" />
+                <span>{elapsedTime}</span>
+            </div>
+
+            <button
+                type="button"
+                className={`relative flex h-11 w-11 items-center justify-center rounded-md border text-base shadow-xl transition ${
+                    discrepancyIsActive
+                        ? "border-blue-400 bg-blue-700 text-white hover:bg-blue-800"
+                        : "border-zinc-700 bg-zinc-900 text-zinc-200 hover:bg-zinc-800"
+                } disabled:cursor-not-allowed disabled:opacity-40`}
+                disabled={radioInquiryIsActive || (!canStartFieldMode && !discrepancyIsActive) || discrepancyMode.isResolving}
+                aria-label={discrepancyLabel}
+                aria-pressed={discrepancyIsActive}
+                title={!canStartFieldMode && !discrepancyIsActive
+                    ? "Öffnen Sie zuerst mindestens ein Dokument."
+                    : discrepancyLabel
+                }
+                onClick={discrepancyIsActive
+                    ? onCancelDiscrepancy
+                    : onStartDiscrepancy
+                }
+            >
+                <FaTriangleExclamation aria-hidden="true" />
+                {inspection.markedFindingIds.length > 0 && (
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1 text-[10px] font-bold text-white ring-2 ring-zinc-900">
+                        {inspection.markedFindingIds.length}
+                    </span>
+                )}
+            </button>
+
+            <button
+                type="button"
+                className={`flex h-11 w-11 items-center justify-center rounded-md border text-base shadow-xl transition ${
+                    radioInquiryIsActive
+                        ? "border-blue-400 bg-blue-700 text-white hover:bg-blue-800"
+                        : "border-zinc-700 bg-zinc-900 text-zinc-200 hover:bg-zinc-800"
+                } disabled:cursor-not-allowed disabled:opacity-40`}
+                disabled={discrepancyIsActive || (!canStartFieldMode && !radioInquiryIsActive) || radioInquiryMode.isResolving}
+                aria-label={radioInquiryIsActive ? "Funkabfrage abbrechen" : "Zentrale per Funk anfragen"}
+                aria-pressed={radioInquiryIsActive}
+                title={!canStartFieldMode && !radioInquiryIsActive
+                    ? "Öffnen Sie zuerst mindestens ein Dokument."
+                    : radioInquiryIsActive
+                        ? "Funkabfrage abbrechen"
+                        : "Zentrale per Funk anfragen"
+                }
+                onClick={radioInquiryIsActive
+                    ? onCancelRadioInquiry
+                    : onStartRadioInquiry
+                }
+            >
+                <FaTowerBroadcast aria-hidden="true" />
+            </button>
+
+            <button
+                type="button"
+                className="flex h-11 w-11 items-center justify-center rounded-md border border-blue-500 bg-blue-700 text-base text-white shadow-xl transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={fieldModeIsActive}
+                aria-label="Kontrolle abschließen"
+                title="Kontrolle abschließen"
+                onClick={onOpenDecision}
+            >
+                <FaClipboardCheck aria-hidden="true" />
+            </button>
         </aside>
+    );
+}
+
+function getDiscrepancyProgressLabel(discrepancyMode) {
+    const firstSelectedField = discrepancyMode.selectedFields?.[0];
+    if (!firstSelectedField) return "Feld auswählen";
+
+    const definition = DISCREPANCY_FIELD_DEFINITIONS_BY_ID[
+        firstSelectedField.fieldId
+    ];
+
+    return definition?.checkType === DISCREPANCY_CHECK_TYPES.PAIR
+        ? "Vergleich 1/2"
+        : "Prüfung läuft";
+}
+
+// ##### Inspection Focus Overlay
+// -----> Diskrepanzen lassen den Laptop als Vergleichsflaeche frei; Funkabfragen dunkeln ihn mit ab.
+function InspectionFocusOverlay({ laptopOpen, radioInquiryActive }) {
+    return (
+        <div
+            className={`pointer-events-none fixed inset-0 ${
+                laptopOpen && !radioInquiryActive ? "z-[7900]" : "z-[8500]"
+            } bg-black/75 backdrop-blur-[1px]`}
+            aria-hidden="true"
+        />
     );
 }
 
@@ -327,7 +436,7 @@ function useElapsedTime(startedAt) {
 // -----> Einheitlicher Modalrahmen für Markierungen und Abschlussentscheidung.
 function InspectionDialog({ title, description, children, onClose }) {
     return (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/55 p-4">
+        <div className="fixed inset-0 z-[13000] flex items-center justify-center bg-black/55 p-4">
             <section
                 className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-md bg-zinc-50 text-zinc-900 shadow-2xl"
                 role="dialog"
@@ -369,7 +478,7 @@ function InspectionResultDialog({ inspection, onFinish }) {
     );
 
     return (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4">
+        <div className="fixed inset-0 z-[13000] flex items-center justify-center bg-black/60 p-4">
             <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-md bg-zinc-50 text-zinc-900 shadow-2xl">
                 <header className={`border-b px-6 py-5 text-left ${outcomeConfiguration.headerClass}`}>
                     <p className="text-xs font-semibold uppercase">Kontrollbericht</p>
@@ -384,6 +493,9 @@ function InspectionResultDialog({ inspection, onFinish }) {
                             inspection.startedAt,
                             inspection.completedAt
                         )}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold">
+                        Bewertung: {resolution.score}/100 Punkte
                     </p>
                 </header>
 
@@ -403,6 +515,11 @@ function InspectionResultDialog({ inspection, onFinish }) {
                     <FindingCategoryReport
                         category={INSPECTION_FINDING_CATEGORIES.DOCUMENT}
                         title="Dokumentenprüfung"
+                        resolution={resolution}
+                    />
+                    <FindingCategoryReport
+                        category={INSPECTION_FINDING_CATEGORIES.COOPERATION}
+                        title="Dokumentvorlage und Aussagen"
                         resolution={resolution}
                     />
                     <FindingCategoryReport
@@ -428,6 +545,23 @@ function InspectionResultDialog({ inspection, onFinish }) {
                         </p>
                     </section>
 
+                    <section>
+                        <h3 className="text-sm font-semibold">Einsatzfeedback</h3>
+                        <div className="mt-2 rounded-md border border-zinc-200 bg-white p-4">
+                            <ul className="space-y-1 text-sm text-zinc-700">
+                                {resolution.feedback.map((message) => (
+                                    <li key={message}>{message}</li>
+                                ))}
+                            </ul>
+                            {resolution.scenario && (
+                                <p className="mt-3 border-t border-zinc-100 pt-3 text-xs text-zinc-500">
+                                    Falltyp nach Abschluss: {resolution.scenario.type}
+                                    {` · Komplexität ${resolution.scenario.complexityLevel}`}
+                                </p>
+                            )}
+                        </div>
+                    </section>
+
                     <div className="sticky bottom-0 -mx-6 -mb-5 border-t border-zinc-200 bg-white px-6 py-4">
                         <button
                             type="button"
@@ -448,11 +582,23 @@ function getResolutionButtonLabel(resolutionAction) {
         [INSPECTION_RESOLUTION_ACTIONS.RELEASED]: "Bericht schließen und Weiterfahrt erlauben",
         [INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED]: "Verwarnung abschließen und weiterfahren lassen",
         [INSPECTION_RESOLUTION_ACTIONS.HELD]: "Bericht schließen und Fahrzeug zurückhalten",
+        [INSPECTION_RESOLUTION_ACTIONS.DOCUMENTS_SEIZED]: "Bericht schließen und Dokumente sicherstellen",
         [INSPECTION_RESOLUTION_ACTIONS.REFERRED]: "Bericht schließen und Fall übergeben",
         [INSPECTION_RESOLUTION_ACTIONS.TRANSFERRED]: "Bericht schließen und Person übergeben"
     };
 
     return labelByAction[resolutionAction] ?? "Bericht schließen";
+}
+
+function getFindingSourceLabel(source) {
+    const labelBySource = {
+        document_comparison: "Dokumentenvergleich",
+        radio_inquiry: "Funkabfrage",
+        document_request: "Dokumentanfrage",
+        driver_statement: "Fahrerbefragung"
+    };
+
+    return labelBySource[source] ?? source;
 }
 
 // Gruppiert richtige, übersehene und falsche Findings nach ihrem fachlichen Bereich.
@@ -530,16 +676,6 @@ function filterFindingsByCategory(findingIds, category) {
         return INSPECTION_FINDING_DEFINITIONS_BY_ID[findingId]?.category
             === category;
     });
-}
-
-function getFindingCategoryLabel(category) {
-    const labels = {
-        [INSPECTION_FINDING_CATEGORIES.DOCUMENT]: "Dokumentenprüfung",
-        [INSPECTION_FINDING_CATEGORIES.VALIDITY]: "Gültigkeitsprüfung",
-        [INSPECTION_FINDING_CATEGORIES.POLICE]: "Polizeiabgleich"
-    };
-
-    return labels[category] ?? category;
 }
 
 function getOutcomeConfiguration(outcome) {

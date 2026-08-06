@@ -1,4 +1,5 @@
 import {
+    DOCUMENT_FORGERY_TARGETS,
     DOCUMENT_INTEGRITY_TYPES,
     INSURANCE_DOCUMENT_FORGERY_TYPES
 } from "../data";
@@ -22,7 +23,8 @@ export function createDocumentState({
     driverProfile,
     vehicleProfile,
     insuranceProfile,
-    forcedHasForgery
+    forcedHasForgery,
+    forcedForgeryTarget
 } = {}) {
     const baseState = createValidDocumentState();
     const forgeryChance = forgeryChanceByTrafficType[trafficType] ?? 0;
@@ -33,7 +35,8 @@ export function createDocumentState({
         return applyForgeryTarget(baseState, {
             canForgeNpcDocument: Boolean(driverProfile?.real?.driversLicense),
             canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData),
-            canForgeInsuranceDocument: Boolean(insuranceProfile?.real)
+            canForgeInsuranceDocument: Boolean(insuranceProfile?.real),
+            forcedForgeryTarget
         });
     }
 
@@ -42,7 +45,8 @@ export function createDocumentState({
     return applyForgeryTarget(baseState, {
         canForgeNpcDocument: Boolean(driverProfile?.real?.driversLicense),
         canForgeVehicleDocument: Boolean(vehicleProfile?.real?.carDocumentsData),
-        canForgeInsuranceDocument: Boolean(insuranceProfile?.real)
+        canForgeInsuranceDocument: Boolean(insuranceProfile?.real),
+        forcedForgeryTarget
     });
 }
 
@@ -83,31 +87,34 @@ function createValidDocumentState() {
 function applyForgeryTarget(documentState, {
     canForgeNpcDocument,
     canForgeVehicleDocument,
-    canForgeInsuranceDocument
+    canForgeInsuranceDocument,
+    forcedForgeryTarget
 }) {
     const targetPool = [
-        canForgeNpcDocument ? "npc" : null,
-        canForgeVehicleDocument ? "vehicle" : null,
-        canForgeInsuranceDocument ? "insurance" : null
+        canForgeNpcDocument ? DOCUMENT_FORGERY_TARGETS.DRIVER : null,
+        canForgeVehicleDocument ? DOCUMENT_FORGERY_TARGETS.VEHICLE : null,
+        canForgeInsuranceDocument ? DOCUMENT_FORGERY_TARGETS.INSURANCE : null
     ].filter(Boolean);
 
     if (targetPool.length === 0) return documentState;
 
-    const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+    const target = targetPool.includes(forcedForgeryTarget)
+        ? forcedForgeryTarget
+        : targetPool[Math.floor(Math.random() * targetPool.length)];
 
     return {
         ...documentState,
         hasForgery: true,
         npcDocuments: {
-            driversLicense: target === "npc"
+            driversLicense: target === DOCUMENT_FORGERY_TARGETS.DRIVER
                 ? createForgedNpcDriversLicenseState()
                 : documentState.npcDocuments.driversLicense
         },
         vehicleDocuments: {
-            registration: target === "vehicle"
+            registration: target === DOCUMENT_FORGERY_TARGETS.VEHICLE
                 ? createForgedVehicleRegistrationState()
                 : documentState.vehicleDocuments.registration,
-            insurance: target === "insurance"
+            insurance: target === DOCUMENT_FORGERY_TARGETS.INSURANCE
                 ? createForgedInsuranceState()
                 : documentState.vehicleDocuments.insurance
         }

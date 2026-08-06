@@ -16,28 +16,29 @@ export function CarDocuments ({ car, owner }) {
 
                 <div className="col-span-2 flex flex-col text-gray-800 text-sm text-left mb-5">
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Halter Vorname" data={ownerProfile?.firstName} />
-                        <BaseHeadlineWithText headline="Halter Nachname" data={ownerProfile?.lastName} />
+                        <BaseHeadlineWithText headline="Halter Vorname" data={ownerProfile?.firstName} fieldId="vehicleRegistration.ownerFirstName" />
+                        <BaseHeadlineWithText headline="Halter Nachname" data={ownerProfile?.lastName} fieldId="vehicleRegistration.ownerLastName" />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Halteradresse" data={ownerProfile?.address} />
+                        <BaseHeadlineWithText headline="Halteradresse" data={ownerProfile?.address} fieldId="vehicleRegistration.ownerAddress" />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Kennzeichen" data={vehicleProfile?.carDocumentsData.plateNumber} />
-                        <BaseHeadlineWithText headline="Registriernummer" data={vehicleProfile?.carDocumentsData.carRegistrationNumber} />
+                        <BaseHeadlineWithText headline="Kennzeichen" data={vehicleProfile?.carDocumentsData?.plateNumber} fieldId="vehicleRegistration.plateNumber" />
+                        <BaseHeadlineWithText headline="Registriernummer" data={vehicleProfile?.carDocumentsData?.carRegistrationNumber} fieldId="vehicleRegistration.registrationNumber" />
                         
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Hersteller" data={vehicleProfile?.brand} />
-                        <BaseHeadlineWithText headline="Model" data={vehicleProfile?.model} />
+                        <BaseHeadlineWithText headline="Hersteller" data={vehicleProfile?.brand} fieldId="vehicleRegistration.brand" />
+                        <BaseHeadlineWithText headline="Modell" data={vehicleProfile?.model} fieldId="vehicleRegistration.model" />
                     </div>
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={formatDateForDisplay(vehicleProfile?.carDocumentsData.formattedIssueDate)} />
+                        <BaseHeadlineWithText headline="Ausstellungsdatum" data={formatDateForDisplay(vehicleProfile?.carDocumentsData.formattedIssueDate)} selectionValue={vehicleProfile?.carDocumentsData.formattedIssueDate} fieldId="vehicleRegistration.issueDate" />
                     </div>
 
                     <div className="flex mb-3">
-                        <BaseHeadlineWithText headline="PS" data={vehicleProfile?.ps} />
-                        <BaseHeadlineWithText headline="Gewicht (kg)" data={vehicleProfile?.weight} />
+                        <BaseHeadlineWithText headline="Baujahr" data={vehicleProfile?.yearOfConstruction} fieldId="vehicleRegistration.yearOfConstruction" />
+                        <BaseHeadlineWithText headline="PS" data={vehicleProfile?.ps} fieldId="vehicleRegistration.ps" />
+                        <BaseHeadlineWithText headline="Gewicht (kg)" data={vehicleProfile?.weight} fieldId="vehicleRegistration.weight" />
                     </div>
                 </div>
             </div>

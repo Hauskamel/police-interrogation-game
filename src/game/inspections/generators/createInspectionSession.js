@@ -15,7 +15,24 @@ export function createInspectionSession(trafficEntityId) {
         requestedDocuments: [],
         openedDocuments: [],
         visibleDocuments: [],
+        documentRequestStates: {},
+        findings: [],
         markedFindingIds: [],
+        discrepancyMode: {
+            active: false,
+            selectedFields: [],
+            feedback: null,
+            isResolving: false
+        },
+        radioInquiryMode: {
+            active: false,
+            selectedField: null,
+            feedback: null,
+            isResolving: false
+        },
+        conversationEntries: [],
+        dispatchConversationEntries: [],
+        askedQuestionIds: [],
         playerDecision: null,
         resolution: null
     };

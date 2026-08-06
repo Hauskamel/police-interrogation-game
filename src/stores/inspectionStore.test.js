@@ -67,6 +67,66 @@ describe("inspectionStore", () => {
         expect(activeInspection.visibleDocuments).toEqual([documentType]);
     });
 
+    it("records a missing document without opening it", () => {
+        const documentType = INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE;
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.requestDocument({
+            documentType,
+            availability: "forgotten"
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.openedDocuments).toEqual([]);
+        expect(activeInspection.documentRequestStates[documentType].result).toBe(
+            "unavailable"
+        );
+        expect(activeInspection.findings[0]).toMatchObject({
+            findingId: "missing_drivers_license",
+            discoveredVia: "document_request"
+        });
+    });
+
+    it("opens an initially refused document after the second request", () => {
+        const documentType = INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION;
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.requestDocument({
+            documentType,
+            availability: "initially_refused"
+        });
+        store.requestDocument({
+            documentType,
+            availability: "initially_refused"
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.documentRequestStates[documentType].attempts).toBe(2);
+        expect(activeInspection.visibleDocuments).toEqual([documentType]);
+        expect(activeInspection.conversationEntries).toHaveLength(2);
+    });
+
+    it("stores interview contradictions as structured findings", () => {
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.recordInterviewAnswer({
+            questionId: "address",
+            playerText: "Wie lautet Ihre Anschrift?",
+            npcText: "Lindenstraße 14",
+            findingId: "inconsistent_driver_statement"
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.askedQuestionIds).toEqual(["address"]);
+        expect(activeInspection.findings[0]).toMatchObject({
+            findingId: "inconsistent_driver_statement",
+            discoveredVia: "driver_statement"
+        });
+    });
+
     it("moves a completed inspection into the last report", () => {
         useInspectionStore.getState().startInspection("traffic--one");
         vi.advanceTimersByTime(90_000);
@@ -89,5 +149,94 @@ describe("inspectionStore", () => {
         expect(state.lastCompletedInspection.completedAt).toBe(
             "2026-08-03T08:01:30.000Z"
         );
+    });
+
+    it("stores discrepancy selection separately from confirmed findings", () => {
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.startDiscrepancyMode();
+        store.setDiscrepancySelection({
+            selectedFields: [{ fieldId: "driversLicense.lastName", value: "Test" }],
+            feedback: "Zweites Feld wählen"
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.discrepancyMode.active).toBe(true);
+        expect(activeInspection.discrepancyMode.selectedFields).toHaveLength(1);
+        expect(activeInspection.markedFindingIds).toEqual([]);
+    });
+
+    it("records a confirmed discrepancy and its dialogue atomically", () => {
+        const store = useInspectionStore.getState();
+        const conversationEntry = {
+            id: "dialogue--one",
+            playerText: "Das Dokument ist abgelaufen.",
+            npcText: "Das habe ich übersehen."
+        };
+        store.startInspection("traffic--one");
+        store.startDiscrepancyMode();
+        store.recordDiscrepancy({
+            findingId: "expired_drivers_license",
+            conversationEntry
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.markedFindingIds).toEqual([
+            "expired_drivers_license"
+        ]);
+        expect(activeInspection.conversationEntries).toEqual([conversationEntry]);
+        expect(activeInspection.discrepancyMode.active).toBe(false);
+    });
+
+    it("keeps radio inquiries separate from the driver conversation", () => {
+        const store = useInspectionStore.getState();
+        const conversationEntry = {
+            id: "radio-message--one",
+            playerText: "Zentrale, bitte Zulassungsnummer prüfen: REG-FAKE.",
+            dispatchText: "Negativ. Kein Datensatz vorhanden."
+        };
+        store.startInspection("traffic--one");
+        store.startRadioInquiryMode();
+        store.setRadioInquirySelection({
+            selectedField: {
+                fieldId: "vehicleRegistration.registrationNumber",
+                value: "REG-FAKE"
+            },
+            feedback: "Zentrale prüft ...",
+            isResolving: true
+        });
+        store.recordRadioInquiry({
+            findingId: "vehicle_registration_number_mismatch",
+            conversationEntry
+        });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.radioInquiryMode.active).toBe(false);
+        expect(activeInspection.dispatchConversationEntries).toEqual([
+            conversationEntry
+        ]);
+        expect(activeInspection.conversationEntries).toEqual([]);
+        expect(activeInspection.markedFindingIds).toEqual([
+            "vehicle_registration_number_mismatch"
+        ]);
+    });
+
+    it("allows only one field selection mode at a time", () => {
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.startDiscrepancyMode();
+        store.startRadioInquiryMode();
+
+        let activeInspection = useInspectionStore.getState().activeInspection;
+        expect(activeInspection.discrepancyMode.active).toBe(false);
+        expect(activeInspection.radioInquiryMode.active).toBe(true);
+
+        store.startDiscrepancyMode();
+        activeInspection = useInspectionStore.getState().activeInspection;
+        expect(activeInspection.discrepancyMode.active).toBe(true);
+        expect(activeInspection.radioInquiryMode.active).toBe(false);
     });
 });

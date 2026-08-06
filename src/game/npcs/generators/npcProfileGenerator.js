@@ -43,7 +43,12 @@ export function generateNpcProfile (options = {}) {
         }
     }
 
-    const driversLicenseData = generateDriversLicenseData(npcMasterData.birthDate);
+    const driversLicenseData = generateDriversLicenseData(
+        npcMasterData.birthDate,
+        {
+            forceExpired: options.forcedLicenseExpired
+        }
+    );
     const real = createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicenseData);
 
     return createNpcProfileFromReal(real);

@@ -12,7 +12,12 @@ const MotionDiv = motion.div;
  * ##### Base Document
  * -----> Beweglicher Rahmen fuer geöffnete Dokumente wie Führerschein oder Versicherung.
  */
-export default function BaseDocument({ children, onClose }) {
+export default function BaseDocument({
+    children,
+    documentType,
+    onClose,
+    discrepancyModeActive = false
+}) {
     const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32});
 
     const setDocumentsAreVisible = useGuiVisibilityStatesStore(state => state.setDocumentVisibilityState)
@@ -23,7 +28,10 @@ export default function BaseDocument({ children, onClose }) {
     }, [setDocumentsAreVisible]);
 
     return (
-        <div className={`fixed top-0 left-0 ${documentsAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}>
+        <div
+            className={`fixed left-0 top-0 z-[9000] ${discrepancyModeActive ? "drop-shadow-[0_0_16px_rgba(96,165,250,0.55)]" : ""} ${documentsAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            data-document-type={documentType}
+        >
             <AnimatePresence>   
                 {React.Children.map(children, (child) =>
                         child ? (

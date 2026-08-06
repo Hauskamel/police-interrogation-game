@@ -42,7 +42,7 @@ describe("evaluateInspection", () => {
         expect(result.outcome).toBe(INSPECTION_OUTCOMES.CORRECT);
     });
 
-    it("requires additional review for a resolvable document forgery", () => {
+    it("requires forged documents to be seized", () => {
         const trafficEntity = createTrafficEntity();
         trafficEntity.documentState.npcDocuments.driversLicense.affectedFields = [
             "address"
@@ -51,13 +51,11 @@ describe("evaluateInspection", () => {
         const result = evaluateCase({
             trafficEntity,
             markedFindingIds: ["driver_address_mismatch"],
-            playerDecisionType: INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW
+            playerDecisionType: INSPECTION_DECISIONS.SEIZE_DOCUMENTS
         });
 
         expect(result.actualFindingIds).toEqual(["driver_address_mismatch"]);
-        expect(result.expectedDecision).toBe(
-            INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW
-        );
+        expect(result.expectedDecision).toBe(INSPECTION_DECISIONS.SEIZE_DOCUMENTS);
         expect(result.outcome).toBe(INSPECTION_OUTCOMES.CORRECT);
     });
 

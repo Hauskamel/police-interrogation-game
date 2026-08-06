@@ -5,6 +5,7 @@ import { INSPECTION_DOCUMENT_TYPES } from "./inspectionConstants.js";
 export const INSPECTION_FINDING_CATEGORIES = {
     DOCUMENT: "document",
     VALIDITY: "validity",
+    COOPERATION: "cooperation",
     POLICE: "police"
 };
 
@@ -19,8 +20,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Vor- oder Nachname weichen von den bekannten Identitätsdaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["firstName", "lastName"],
-        registryType: "driverLicense",
-        playerSelectable: true
+        registryType: "driverLicense"
     },
     {
         id: "driver_address_mismatch",
@@ -29,8 +29,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die vorgelegte Adresse weicht von den bekannten Personendaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["address"],
-        registryType: "driverLicense",
-        playerSelectable: true
+        registryType: "driverLicense"
     },
     {
         id: "driver_birth_date_mismatch",
@@ -39,8 +38,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Geburtsdatum passt nicht zum bekannten Personenrecord.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["birthDate", "birthYear", "age"],
-        registryType: "driverLicense",
-        playerSelectable: true
+        registryType: "driverLicense"
     },
     {
         id: "license_number_mismatch",
@@ -49,8 +47,16 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die vorgelegte Nummer ist im amtlichen Führerscheinregister nicht auflösbar.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: ["driversLicense.licenseNumber"],
-        registryType: "driverLicense",
-        playerSelectable: true
+        registryType: "driverLicense"
+    },
+    {
+        id: "driver_license_dates_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Führerscheindaten stimmen nicht überein",
+        description: "Ausgabe- oder Erteilungsdatum weichen vom amtlichen Führerscheinregister ab.",
+        documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
+        affectedFields: ["driversLicense.licensedSince", "driversLicense.issueDate"],
+        registryType: "driverLicense"
     },
     {
         id: "vehicle_plate_mismatch",
@@ -59,8 +65,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Kennzeichen der Fahrzeugpapiere weicht vom registrierten Fahrzeug ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["carDocumentsData.plateNumber"],
-        registryType: "vehicle",
-        playerSelectable: true
+        registryType: "vehicle"
     },
     {
         id: "vehicle_registration_number_mismatch",
@@ -69,8 +74,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die Zulassungsnummer passt nicht zum registrierten Fahrzeug.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["carDocumentsData.carRegistrationNumber"],
-        registryType: "vehicle",
-        playerSelectable: true
+        registryType: "vehicle"
     },
     {
         id: "vehicle_model_mismatch",
@@ -79,8 +83,16 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Hersteller oder Modell weichen von den Registerdaten ab.",
         documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
         affectedFields: ["brand", "model"],
-        registryType: "vehicle",
-        playerSelectable: true
+        registryType: "vehicle"
+    },
+    {
+        id: "vehicle_issue_date_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Ausstellungsdatum stimmt nicht überein",
+        description: "Das Ausstellungsdatum des Fahrzeugscheins weicht vom Zulassungsregister ab.",
+        documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
+        affectedFields: ["carDocumentsData.formattedIssueDate"],
+        registryType: "vehicle"
     },
     {
         id: "expired_drivers_license",
@@ -89,8 +101,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Ablaufdatum liegt vor dem Beginn der aktuellen Kontrolle.",
         documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
         affectedFields: [],
-        registryType: null,
-        playerSelectable: true
+        registryType: null
     },
     {
         id: "insurance_policy_number_mismatch",
@@ -99,8 +110,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Die vorgelegte Policennummer ist im Versicherungsregister nicht auflösbar.",
         documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
         affectedFields: ["insurance.policyNumber"],
-        registryType: "insurance",
-        playerSelectable: true
+        registryType: "insurance"
     },
     {
         id: "insurance_vehicle_mismatch",
@@ -109,8 +119,7 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Kennzeichen der Police passt nicht zum amtlich versicherten Fahrzeug.",
         documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
         affectedFields: ["insurance.insuredPlateNumber"],
-        registryType: "insurance",
-        playerSelectable: true
+        registryType: "insurance"
     },
     {
         id: "expired_insurance",
@@ -119,8 +128,52 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Das Ende des Versicherungsschutzes liegt vor Kontrollbeginn.",
         documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
         affectedFields: [],
-        registryType: null,
-        playerSelectable: true
+        registryType: null
+    },
+    {
+        id: "missing_drivers_license",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Führerschein nicht vorgelegt",
+        description: "Der Fahrer kann den erforderlichen Führerschein nicht vorlegen.",
+        documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "missing_vehicle_registration",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Fahrzeugpapiere nicht vorgelegt",
+        description: "Die erforderlichen Fahrzeugpapiere können nicht vorgelegt werden.",
+        documentType: INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "missing_insurance",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Versicherungsnachweis nicht vorgelegt",
+        description: "Ein Versicherungsnachweis kann nicht vorgelegt werden.",
+        documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "damaged_document",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Dokument erheblich beschädigt",
+        description: "Ein vorgelegtes Dokument ist nur eingeschränkt prüfbar.",
+        documentType: null,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "inconsistent_driver_statement",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Widersprüchliche Fahreraussage",
+        description: "Eine Aussage des Fahrers widerspricht den vorgelegten oder amtlichen Angaben.",
+        documentType: null,
+        affectedFields: [],
+        registryType: null
     },
     {
         id: "active_wanted_record",
@@ -129,14 +182,9 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         description: "Für die kontrollierte Person besteht eine passende aktive Fahndung.",
         documentType: null,
         affectedFields: [],
-        registryType: null,
-        playerSelectable: false
+        registryType: null
     }
 ];
-
-export const PLAYER_SELECTABLE_FINDINGS = INSPECTION_FINDING_DEFINITIONS.filter(
-    (definition) => definition.playerSelectable
-);
 
 export const INSPECTION_FINDING_DEFINITIONS_BY_ID = Object.fromEntries(
     INSPECTION_FINDING_DEFINITIONS.map((definition) => [

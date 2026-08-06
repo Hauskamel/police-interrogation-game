@@ -102,7 +102,7 @@ export const VehicleControlPanel = ({
                 {selectedInspectionIsActive && (
                     <p className="rounded bg-blue-50 px-3 py-2 text-xs text-blue-800">
                         Die Kontrolle läuft. Fordere die Dokumente im Gespräch mit dem
-                        Fahrer an und markiere erkannte Auffälligkeiten.
+                        Fahrer an und belege erkannte Diskrepanzen direkt an den Dokumenten.
                     </p>
                 )}
 

@@ -1,6 +1,6 @@
-# Spielsystem: Kontrollsession Phase 1
+# Spielsystem: Kontrollsession Phase 2
 
-Stand: 04.08.2026
+Stand: 06.08.2026
 
 ## Ziel
 
@@ -37,7 +37,13 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     requestedDocuments,
     openedDocuments,
     visibleDocuments,
+    documentRequestStates,
+    findings,
     markedFindingIds,
+    discrepancyMode,
+    conversationEntries,
+    dispatchConversationEntries,
+    askedQuestionIds,
     playerDecision,
     resolution
 }
@@ -68,12 +74,13 @@ Spieltag `2026-08-03`; reale verstrichene Sekunden laufen innerhalb der Sitzung
 weiter. Dokumente, NPC-Alter, Straftaten und Fahndungen verwenden denselben
 fachlichen Zeitbezug.
 
-### `requestedDocuments`
+### Dokumentanforderungen
 
-Enthält jeden Dokumenttyp, den der Spieler im Gespräch mit dem Fahrer angefordert
-hat. In Phase 1 zeigt der NPC jedes angeforderte Dokument unmittelbar vor. Später
-kann genau an dieser Aktion entschieden werden, ob ein Dokument vorhanden,
-vergessen oder verweigert wurde.
+`requestedDocuments` enthält jeden angeforderten Dokumenttyp. `documentRequestStates`
+speichert zusätzlich Anzahl der Anfragen, fachliche Verfügbarkeit und das letzte
+Ergebnis. Ein Dokument kann vorgelegt, vergessen, verloren, zunächst verweigert oder
+beschädigt sein. Eine anfängliche Weigerung kann durch eine zweite Aufforderung
+aufgelöst werden.
 
 ### `openedDocuments`
 
@@ -106,13 +113,15 @@ Dadurch erscheinen zuvor sichtbare Dokumente nach dem Schließen des Police Lapt
 wieder, ohne dass der Spieler sie erneut anklicken muss. Ein manuell geschlossenes
 Dokument bleibt für die Auswertung trotzdem als geprüft gespeichert.
 
-### `markedFindingIds`
+### `findings` und `markedFindingIds`
 
-Speichert die Feststellungen, die der Spieler selbst bei der Dokumentprüfung
-markiert. Die auswählbare Liste zeigt neutrale Prüfpunkte und verrät nicht, ob ein
-Dokument tatsächlich manipuliert wurde.
+`findings` ist die kanonische Belegliste. Jeder Eintrag enthält Finding-ID,
+Erkennungsweg, sichtbare Belegfelder, optionalen Registerrecord und Zeitpunkt.
+Mögliche Erkennungswege sind Dokumentvergleich, Funkabfrage, Dokumentanforderung und
+Fahrerbefragung. `markedFindingIds` ist nur noch eine abgeleitete
+Kompatibilitätssicht für bestehende Oberflächen.
 
-Aktuell prüfbar sind:
+Aktuell pruefbar sind:
 
 - Name, Adresse und Geburtsdatum
 - Führerscheinnummer
@@ -121,6 +130,13 @@ Aktuell prüfbar sind:
 - abgelaufener Führerschein
 - Policennummer und versichertes Fahrzeug
 - abgelaufener Versicherungsschutz
+- fehlende oder erheblich beschädigte Dokumente
+- widersprüchliche Fahreraussagen
+
+`discrepancyMode` enthaelt nur die laufende Feldauswahl und neutrales Bedienfeedback.
+`conversationEntries` speichert die daraus entstandene Ansprache und Fahrerantwort.
+Der genaue Ablauf ist unter
+[Diskrepanzen entdecken](./discrepancy-interaction.md) beschrieben.
 
 ### `playerDecision`
 
@@ -130,9 +146,13 @@ Der Spieler wählt eine administrative Maßnahme:
 - Verwarnung aussprechen
 - Weiterfahrt verweigern
 - weitere Prüfung melden
+- Dokumente sicherstellen
+- Person zur Klärung festhalten
 - Fahndungstreffer melden
 
-Die markierten Feststellungen werden als strukturierte Begründungen übernommen.
+Im Abschlussdialog wählt der Spieler aus seinen belegten Feststellungen die
+tatsächlichen Entscheidungsgründe aus. Reines Öffnen einer Akte oder eines Dokuments
+erzeugt keine Begründung.
 `Fahndungstreffer melden` ist selbst die bewusste Aussage des Spielers, dass für den
 aktuell kontrollierten Fahrer eine aktive Fahndung vorliegt. Es ist keine zusätzliche
 Aktenzuordnung erforderlich.
@@ -145,12 +165,15 @@ Die Auswertung entsteht erst nach der bestätigten Entscheidung. Sie enthält:
 - korrekte oder erwartete Entscheidung
 - richtig erkannte, übersehene und falsch markierte Feststellungen
 - nicht geöffnete Dokumente
+- Punktwert von 0 bis 100 und konkretes Einsatzfeedback
+- nach Abschluss aufgedeckter Falltyp und Komplexitätsstufe
 
 Der Bericht gliedert Feststellungen in:
 
 - Dokumentenprüfung
 - Gültigkeitsprüfung
 - Polizeiabgleich
+- Dokumentvorlage und Aussagen
 
 Mögliche Bewertungen sind `correct`, `partially_correct` und `incorrect`.
 
@@ -162,10 +185,13 @@ Die erwartete Maßnahme folgt einer eindeutigen Priorität:
 Passende aktive Fahndung
 → Fahndungstreffer melden
 
-Dokumentenmanipulation
-→ Weitere Prüfung melden
+Widersprüchliche Identitätsaussage
+→ Person zur Klärung festhalten
 
-Abgelaufener Führerschein oder Versicherungsschutz
+Dokumentenmanipulation oder erheblich beschädigtes Dokument
+→ Dokumente sicherstellen
+
+Abgelaufener oder nicht vorgelegter Pflichtnachweis
 → Weiterfahrt verweigern
 
 Keine handlungsrelevante Feststellung
@@ -180,6 +206,8 @@ Die Spielerentscheidung erzeugt außerdem einen fachlichen Endzustand:
 | Verwarnung | `warned_and_released` |
 | Weiterfahrt verweigern | `held` |
 | Weitere Prüfung | `referred` |
+| Dokumente sicherstellen | `documents_seized` |
+| Person zur Klärung festhalten | `held` |
 | Fahndungstreffer | `transferred` |
 
 Freigegebene reguläre Fahrzeuge fahren weiter. Zurückgehaltene oder übergebene
@@ -204,7 +232,7 @@ Diese Trennung ist wichtig, weil ein Spieler Akten vergleichen, versehentlich ö
 oder aus Interesse weiter recherchieren kann. Navigation beweist nicht, welche
 Schlussfolgerung er gezogen hat.
 
-Phase 1 speichert daher keine Datenbank-Klickhistorie. Eine solche Historie könnte
+Die aktuelle Version speichert daher keine Datenbank-Klickhistorie. Eine solche Historie könnte
 später als anonyme Balancing- oder Tutorial-Telemetrie interessant sein, darf aber
 nicht zur fachlichen Bewertung einer einzelnen Kontrolle verwendet werden.
 
@@ -259,10 +287,20 @@ dadurch nicht gegen den Spieler gewertet.
 Der Police Laptop greift ausschließlich auf freigegebenes Polizeiwissen und amtliche
 Register zu, niemals direkt auf die `worldTruthDatabase`.
 
-## Nicht Bestandteil von Phase 1
+Der Wechsel in den Police Laptop beendet oder pausiert die Kontrollsession nicht.
+Gespraechsbox, Aktionsdock und geoeffnete Dokumente bleiben als kontrollbezogene
+Arbeitsmittel sichtbar. Der Spieler kann dadurch Datenbank und Dokumente vergleichen,
+ohne Fenster nach jedem Moduswechsel erneut aufbauen zu muessen.
 
-- fehlende, vergessene oder verweigerte Dokumente
-- Befragungen und widersprüchliche Aussagen
+Funkabfragen sind ebenfalls Teil der Session. Der Spieler markiert ein sichtbares
+Dokumentfeld und erhaelt eine Antwort aus denselben freigegebenen Registern wie im
+Police Laptop. Fahrer- und Zentralenverlauf bleiben getrennt gespeichert. Details
+stehen unter [Funkabfragen an die Zentrale](./radio-inquiries.md).
+
+## Noch nicht Bestandteil
+
+- freie oder verzweigte Dialoge
+- KI-generierte Antworten
 - freie Spielernotizen
 - Datenbank-Abfragehistorie
 - Fallakten und Beweisketten
@@ -273,17 +311,24 @@ Register zu, niemals direkt auf die `worldTruthDatabase`.
 
 ## Erweiterbarkeit
 
-Die bestehenden Generatoren bleiben unverändert vorgelagert:
+Vor der eigentlichen Generierung plant der Control Scenario Director den spielbaren
+Inhalt der naechsten zufaelligen Kontrolle:
 
 ```text
-Generatoren
+Control Scenario Director
+→ Generatoren
 → TrafficEntity
 → InspectionSession
 → Police-Laptop-Recherche
 → InspectionEvaluator
 ```
 
-Spätere Ergänzungen wie `submittedDocumentIds`, `interviewEntries`, `playerNotes`,
+Diese vorgelagerte Auswahl veraendert das Session-Modell nicht. Die Session bleibt
+fuer Spielerhandlungen verantwortlich und uebernimmt weder Balancing noch
+Generierungsverantwortung. Details stehen unter
+[Kontrollfaelle und Pacing](./control-scenario-pacing.md).
+
+Spätere Ergänzungen wie `submittedDocumentIds`, `playerNotes`,
 `shiftId`, `relatedCaseIds` oder ein `finalSnapshot` können an die Session
 angebunden werden. Die Session dokumentiert Gameplay und übernimmt keine
 Generierungsverantwortung.
