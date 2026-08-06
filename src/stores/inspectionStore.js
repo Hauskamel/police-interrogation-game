@@ -91,9 +91,6 @@ export const useInspectionStore = create((set, get) => ({
                         }
                     },
                     findings: appendFinding(activeInspection.findings, finding),
-                    markedFindingIds: finding
-                        ? appendOnce(activeInspection.markedFindingIds, finding.findingId)
-                        : activeInspection.markedFindingIds,
                     conversationEntries: [
                         ...(activeInspection.conversationEntries ?? []),
                         requestResult.conversationEntry
@@ -128,9 +125,6 @@ export const useInspectionStore = create((set, get) => ({
                         questionId
                     ),
                     findings: appendFinding(activeInspection.findings, finding),
-                    markedFindingIds: finding
-                        ? appendOnce(activeInspection.markedFindingIds, finding.findingId)
-                        : activeInspection.markedFindingIds,
                     conversationEntries: [
                         ...(activeInspection.conversationEntries ?? []),
                         {
@@ -207,10 +201,6 @@ export const useInspectionStore = create((set, get) => ({
             return {
                 activeInspection: {
                     ...activeInspection,
-                    markedFindingIds: appendOnce(
-                        activeInspection.markedFindingIds,
-                        findingId
-                    ),
                     findings: appendFinding(activeInspection.findings, finding),
                     discrepancyMode: createEmptyDiscrepancyMode(),
                     conversationEntries: [
@@ -271,9 +261,6 @@ export const useInspectionStore = create((set, get) => ({
             return {
                 activeInspection: {
                     ...activeInspection,
-                    markedFindingIds: findingId
-                        ? appendOnce(activeInspection.markedFindingIds, findingId)
-                        : activeInspection.markedFindingIds,
                     findings: appendFinding(activeInspection.findings, finding),
                     radioInquiryMode: createEmptyRadioInquiryMode(),
                     dispatchConversationEntries: [
@@ -345,7 +332,9 @@ function resolveDocumentRequest({ documentType, availability, attempts }) {
     const responseByAvailability = {
         [DOCUMENT_AVAILABILITY_STATUSES.FORGOTTEN]: `Den ${documentLabel} habe ich leider vergessen.`,
         [DOCUMENT_AVAILABILITY_STATUSES.LOST]: `Den ${documentLabel} kann ich nicht vorlegen. Ich habe ihn verloren.`,
-        [DOCUMENT_AVAILABILITY_STATUSES.DAMAGED]: `Hier ist der ${documentLabel}. Er ist leider beschädigt.`
+        [DOCUMENT_AVAILABILITY_STATUSES.DAMAGED]: `Hier ist der ${documentLabel}. Er ist leider beschädigt.`,
+        [DOCUMENT_AVAILABILITY_STATUSES.REFUSED]: `Nein. Den ${documentLabel} werde ich nicht vorlegen.`,
+        [DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT]: `Ich habe nur diesen Nachweis dabei. Er gehört zu einem anderen Fahrzeug.`
     };
     const initiallyRefused = availability
         === DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED
@@ -361,6 +350,10 @@ function resolveDocumentRequest({ documentType, availability, attempts }) {
                 ?? `Natürlich. Hier ist der ${documentLabel}.`;
     const findingId = availability === DOCUMENT_AVAILABILITY_STATUSES.DAMAGED
         ? "damaged_document"
+        : availability === DOCUMENT_AVAILABILITY_STATUSES.REFUSED
+            ? "document_refusal"
+            : availability === DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT
+                ? "wrong_document_presented"
         : availability === DOCUMENT_AVAILABILITY_STATUSES.FORGOTTEN
             || availability === DOCUMENT_AVAILABILITY_STATUSES.LOST
             ? missingFindingId
@@ -369,7 +362,15 @@ function resolveDocumentRequest({ documentType, availability, attempts }) {
     return {
         opensDocument,
         findingId,
-        result: initiallyRefused ? "refused" : opensDocument ? "provided" : "unavailable",
+        result: initiallyRefused
+            ? "initially_refused"
+            : availability === DOCUMENT_AVAILABILITY_STATUSES.REFUSED
+                ? "refused"
+                : availability === DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT
+                    ? "wrong_document"
+                    : opensDocument
+                        ? "provided"
+                        : "unavailable",
         conversationEntry: {
             id: createEntityId("conversation"),
             type: "document_request",

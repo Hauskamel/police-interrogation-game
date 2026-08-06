@@ -51,7 +51,6 @@ export function useTrafficEntitySpawner({ direction, lane, enabled = true, minRe
             const storedEntity = addTrafficEntity(committedEntity);
             if (!storedEntity) return;
 
-            scenarioStore.recordSpawnedScenario(controlScenario);
         }, randInt(minRespawnTime, maxRespawnTime));
 
         return () => clearInterval(intervalId);

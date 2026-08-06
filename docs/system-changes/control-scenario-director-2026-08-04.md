@@ -4,6 +4,11 @@ Stand: 04.08.2026
 
 Branch: `codex/control-session-phase-2`
 
+Hinweis: Dieses Dokument beschreibt die ursprüngliche Einführung. Das aktuelle
+Pacing anhand abgeschlossener Kontrollen ist in
+[Stabilisierung der Kontrollsession Phase 2](./control-session-phase-2-stabilization-2026-08-06.md)
+beschrieben.
+
 ## Anlass
 
 Die bisherige Zufallsgenerierung leitete Dokumentfaelschungen direkt aus dem

@@ -9,6 +9,7 @@ import {
     DOCUMENT_AVAILABILITY_STATUSES,
     INSPECTION_DOCUMENT_TYPES
 } from "@game/inspections/data";
+import { getAvailableInterviewQuestions } from "@game/inspections/utils";
 import {
     useInspectionStore,
     useTrafficStore
@@ -60,6 +61,10 @@ export function DocumentManager() {
     const fieldSelectionModeActive = Boolean(
         discrepancyMode.active || radioInquiryMode.active
     );
+    const availableInterviewQuestions = getAvailableInterviewQuestions({
+        openedDocuments: activeInspection?.openedDocuments,
+        findings: activeInspection?.findings
+    });
 
     const handleDocumentRequest = (documentType) => {
         const availability = controlledTrafficEntity?.documentAvailability?.[
@@ -94,16 +99,15 @@ export function DocumentManager() {
 
     const handleInterviewQuestion = ({ id, playerText }) => {
         const statementProfile = controlledTrafficEntity?.statementProfile;
-        const npcText = statementProfile?.responses?.[id];
+        const response = statementProfile?.responses?.[id];
+        const npcText = response?.text;
         if (!npcText) return;
 
         recordInterviewAnswer({
             questionId: id,
             playerText,
             npcText,
-            findingId: statementProfile.contradictionQuestionId === id
-                ? "inconsistent_driver_statement"
-                : null
+            findingId: response.findingId ?? null
         });
     };
 
@@ -156,6 +160,7 @@ export function DocumentManager() {
                 radioInquiryModeActive={radioInquiryMode.active}
                 onRequestDocument={handleDocumentRequest}
                 askedQuestionIds={activeInspection?.askedQuestionIds ?? []}
+                interviewQuestions={availableInterviewQuestions}
                 onAskQuestion={handleInterviewQuestion}
             />
         </>

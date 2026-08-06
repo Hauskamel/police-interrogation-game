@@ -39,7 +39,6 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     visibleDocuments,
     documentRequestStates,
     findings,
-    markedFindingIds,
     discrepancyMode,
     conversationEntries,
     dispatchConversationEntries,
@@ -60,7 +59,7 @@ Dokumentzustände und Polizeistatus werden bei Bedarf über diese Referenz aufge
 
 ### `status`
 
-Phase 1 verwendet `active`, `completed` und `cancelled`.
+Die Session verwendet `active`, `completed` und `cancelled`.
 
 ### `startedAt` und `completedAt`
 
@@ -69,7 +68,7 @@ der fachliche Stichtag für die Gültigkeitsprüfung des Führerscheins. Zusamme
 `completedAt` ermöglicht er später Schichtstatistiken, Zeitdruck, Auswertungen und
 eine chronologische Kontrollhistorie.
 
-Beide Werte stammen aus der zentralen Spieluhr. Phase 1 beginnt am festgelegten
+Beide Werte stammen aus der zentralen Spieluhr. Das Spiel beginnt am festgelegten
 Spieltag `2026-08-03`; reale verstrichene Sekunden laufen innerhalb der Sitzung
 weiter. Dokumente, NPC-Alter, Straftaten und Fahndungen verwenden denselben
 fachlichen Zeitbezug.
@@ -78,9 +77,9 @@ fachlichen Zeitbezug.
 
 `requestedDocuments` enthält jeden angeforderten Dokumenttyp. `documentRequestStates`
 speichert zusätzlich Anzahl der Anfragen, fachliche Verfügbarkeit und das letzte
-Ergebnis. Ein Dokument kann vorgelegt, vergessen, verloren, zunächst verweigert oder
-beschädigt sein. Eine anfängliche Weigerung kann durch eine zweite Aufforderung
-aufgelöst werden.
+Ergebnis. Ein Dokument kann vorgelegt, vergessen, verloren, zunächst oder endgültig
+verweigert, unpassend oder beschädigt sein. Eine anfängliche Weigerung kann durch
+eine zweite Aufforderung aufgelöst werden.
 
 ### `openedDocuments`
 
@@ -100,7 +99,8 @@ UI-Zustand ist bewusst von `openedDocuments` getrennt:
 
 ```text
 Dokument im Gespräch anfordern
-→ in requestedDocuments, openedDocuments und visibleDocuments eintragen
+→ immer in requestedDocuments eintragen
+→ nur bei tatsächlicher Vorlage in openedDocuments und visibleDocuments eintragen
 
 Dokument manuell schließen
 → nur aus visibleDocuments entfernen
@@ -113,13 +113,13 @@ Dadurch erscheinen zuvor sichtbare Dokumente nach dem Schließen des Police Lapt
 wieder, ohne dass der Spieler sie erneut anklicken muss. Ein manuell geschlossenes
 Dokument bleibt für die Auswertung trotzdem als geprüft gespeichert.
 
-### `findings` und `markedFindingIds`
+### `findings`
 
 `findings` ist die kanonische Belegliste. Jeder Eintrag enthält Finding-ID,
 Erkennungsweg, sichtbare Belegfelder, optionalen Registerrecord und Zeitpunkt.
 Mögliche Erkennungswege sind Dokumentvergleich, Funkabfrage, Dokumentanforderung und
-Fahrerbefragung. `markedFindingIds` ist nur noch eine abgeleitete
-Kompatibilitätssicht für bestehende Oberflächen.
+Fahrerbefragung. Es gibt keine zweite Finding-ID-Liste; Badge, Abschlussgründe und
+Auswertung werden direkt aus diesen strukturierten Einträgen abgeleitet.
 
 Aktuell pruefbar sind:
 
@@ -131,6 +131,7 @@ Aktuell pruefbar sind:
 - Policennummer und versichertes Fahrzeug
 - abgelaufener Versicherungsschutz
 - fehlende oder erheblich beschädigte Dokumente
+- endgültig verweigerte oder unpassende Dokumente
 - widersprüchliche Fahreraussagen
 
 `discrepancyMode` enthaelt nur die laufende Feldauswahl und neutrales Bedienfeedback.
@@ -143,9 +144,7 @@ Der genaue Ablauf ist unter
 Der Spieler wählt eine administrative Maßnahme:
 
 - Weiterfahrt erlauben
-- Verwarnung aussprechen
 - Weiterfahrt verweigern
-- weitere Prüfung melden
 - Dokumente sicherstellen
 - Person zur Klärung festhalten
 - Fahndungstreffer melden
@@ -203,9 +202,7 @@ Die Spielerentscheidung erzeugt außerdem einen fachlichen Endzustand:
 | Entscheidung | Endzustand |
 |---|---|
 | Weiterfahrt erlauben | `released` |
-| Verwarnung | `warned_and_released` |
 | Weiterfahrt verweigern | `held` |
-| Weitere Prüfung | `referred` |
 | Dokumente sicherstellen | `documents_seized` |
 | Person zur Klärung festhalten | `held` |
 | Fahndungstreffer | `transferred` |

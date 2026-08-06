@@ -9,18 +9,24 @@ import { useControlScenarioStore } from "./controlScenarioStore.js";
 
 describe("controlScenarioStore", () => {
     afterEach(() => {
-        useControlScenarioStore.getState().resetScenarioHistory();
+        useControlScenarioStore.getState().resetCompletedScenarioHistory();
     });
 
-    it("records only the pacing metadata of a successful scenario", () => {
+    it("records completed scenarios with their result", () => {
         const scenario = CONTROL_SCENARIOS_BY_TYPE[CONTROL_SCENARIO_TYPES.CLEAN];
 
-        useControlScenarioStore.getState().recordSpawnedScenario(scenario);
+        useControlScenarioStore.getState().recordCompletedScenario({
+            scenario,
+            score: 85,
+            outcome: "correct"
+        });
 
-        expect(useControlScenarioStore.getState().scenarioHistory).toEqual([
+        expect(useControlScenarioStore.getState().completedScenarioHistory).toEqual([
             {
                 type: scenario.type,
-                category: scenario.category
+                category: scenario.category,
+                score: 85,
+                outcome: "correct"
             }
         ]);
     });
@@ -29,13 +35,17 @@ describe("controlScenarioStore", () => {
         const scenario = CONTROL_SCENARIOS_BY_TYPE[CONTROL_SCENARIO_TYPES.CLEAN];
 
         for (let index = 0; index < 25; index += 1) {
-            useControlScenarioStore.getState().recordSpawnedScenario({
-                ...scenario,
-                type: `scenario-${index}`
+            useControlScenarioStore.getState().recordCompletedScenario({
+                scenario: {
+                    ...scenario,
+                    type: `scenario-${index}`
+                },
+                score: 70,
+                outcome: "partially_correct"
             });
         }
 
-        const history = useControlScenarioStore.getState().scenarioHistory;
+        const history = useControlScenarioStore.getState().completedScenarioHistory;
 
         expect(history).toHaveLength(20);
         expect(history[0].type).toBe("scenario-5");
@@ -46,8 +56,16 @@ describe("controlScenarioStore", () => {
         const store = useControlScenarioStore.getState();
         const cleanScenario = CONTROL_SCENARIOS_BY_TYPE[CONTROL_SCENARIO_TYPES.CLEAN];
 
-        store.recordSpawnedScenario(cleanScenario);
-        store.recordSpawnedScenario(cleanScenario);
+        store.recordCompletedScenario({
+            scenario: cleanScenario,
+            score: 100,
+            outcome: "correct"
+        });
+        store.recordCompletedScenario({
+            scenario: cleanScenario,
+            score: 100,
+            outcome: "correct"
+        });
 
         const nextScenario = useControlScenarioStore.getState().selectNextScenario({
             random: () => 0
@@ -55,7 +73,9 @@ describe("controlScenarioStore", () => {
 
         expect(nextScenario.type).not.toBe(CONTROL_SCENARIO_TYPES.CLEAN);
 
-        useControlScenarioStore.getState().resetScenarioHistory();
-        expect(useControlScenarioStore.getState().scenarioHistory).toEqual([]);
+        useControlScenarioStore.getState().resetCompletedScenarioHistory();
+        expect(
+            useControlScenarioStore.getState().completedScenarioHistory
+        ).toEqual([]);
     });
 });

@@ -167,6 +167,24 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         registryType: null
     },
     {
+        id: "document_refusal",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Pflichtdokument endgültig verweigert",
+        description: "Der Fahrer verweigert die Vorlage eines erforderlichen Dokuments endgültig.",
+        documentType: null,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "wrong_document_presented",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Unpassendes Dokument vorgelegt",
+        description: "Das vorgelegte Dokument gehört nicht zum kontrollierten Fahrer oder Fahrzeug.",
+        documentType: null,
+        affectedFields: [],
+        registryType: null
+    },
+    {
         id: "inconsistent_driver_statement",
         category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
         label: "Widersprüchliche Fahreraussage",

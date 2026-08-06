@@ -89,13 +89,30 @@ describe("generateTrafficEntity control scenarios", () => {
         expect(entity.documentAvailability.carDocuments).toBe("provided");
     });
 
+    it.each([
+        [CONTROL_SCENARIO_TYPES.FINAL_REFUSAL, "carDocuments", "refused"],
+        [CONTROL_SCENARIO_TYPES.WRONG_DOCUMENT, "proofOfInsurance", "wrong_document"]
+    ])("creates terminal document behavior for %s", (
+        scenarioType,
+        documentType,
+        expectedAvailability
+    ) => {
+        const entity = createCivilianScenarioEntity(scenarioType);
+
+        expect(entity.documentAvailability[documentType]).toBe(
+            expectedAvailability
+        );
+    });
+
     it("creates a stable contradictory statement for an interview case", () => {
         const entity = createCivilianScenarioEntity(
             CONTROL_SCENARIO_TYPES.CONTRADICTORY_STATEMENT
         );
 
-        expect(entity.statementProfile.contradictionQuestionId).toBe("address");
-        expect(entity.statementProfile.responses.address).not.toBe(
+        expect(entity.statementProfile.responses.address.findingId).toBe(
+            "inconsistent_driver_statement"
+        );
+        expect(entity.statementProfile.responses.address.text).not.toBe(
             entity.driverProfile.real.address
         );
     });

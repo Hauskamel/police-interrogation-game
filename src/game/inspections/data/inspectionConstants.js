@@ -32,6 +32,8 @@ export const DOCUMENT_AVAILABILITY_STATUSES = {
     FORGOTTEN: "forgotten",
     LOST: "lost",
     INITIALLY_REFUSED: "initially_refused",
+    REFUSED: "refused",
+    WRONG_DOCUMENT: "wrong_document",
     DAMAGED: "damaged"
 };
 
@@ -39,9 +41,7 @@ export const DOCUMENT_AVAILABILITY_STATUSES = {
 // -----> Beschreibt die administrativen Maßnahmen der ersten Gameplay-Version.
 export const INSPECTION_DECISIONS = {
     ALLOW_TO_CONTINUE: "allow_to_continue",
-    ISSUE_WARNING: "issue_warning",
     DENY_CONTINUATION: "deny_continuation",
-    REQUEST_ADDITIONAL_REVIEW: "request_additional_review",
     SEIZE_DOCUMENTS: "seize_documents",
     HOLD_FOR_CLARIFICATION: "hold_for_clarification",
     REPORT_WANTED_HIT: "report_wanted_hit"
@@ -51,10 +51,8 @@ export const INSPECTION_DECISIONS = {
 // -----> Beschreibt die fachliche Folge der tatsaechlich gewaehlten Spielerentscheidung.
 export const INSPECTION_RESOLUTION_ACTIONS = {
     RELEASED: "released",
-    WARNED_AND_RELEASED: "warned_and_released",
     HELD: "held",
     DOCUMENTS_SEIZED: "documents_seized",
-    REFERRED: "referred",
     TRANSFERRED: "transferred"
 };
 
@@ -65,19 +63,9 @@ export const INSPECTION_DECISION_OPTIONS = [
         description: "Die Kontrolle ist unauffällig und das Fahrzeug darf weiterfahren."
     },
     {
-        id: INSPECTION_DECISIONS.ISSUE_WARNING,
-        label: "Verwarnung aussprechen",
-        description: "Eine leichte Auffälligkeit wird dokumentiert, verhindert die Weiterfahrt aber nicht."
-    },
-    {
         id: INSPECTION_DECISIONS.DENY_CONTINUATION,
         label: "Weiterfahrt verweigern",
         description: "Fahrer oder Fahrzeug dürfen die Kontrollstelle vorerst nicht verlassen."
-    },
-    {
-        id: INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW,
-        label: "Weitere Prüfung melden",
-        description: "Ein unklarer Sachverhalt wird zur fachlichen Prüfung weitergegeben."
     },
     {
         id: INSPECTION_DECISIONS.SEIZE_DOCUMENTS,

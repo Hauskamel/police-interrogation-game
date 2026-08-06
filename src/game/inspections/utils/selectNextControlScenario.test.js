@@ -101,14 +101,29 @@ describe("selectNextControlScenario", () => {
         expect(earlyScenario).toBeNull();
         expect(advancedScenario.type).toBe(CONTROL_SCENARIO_TYPES.MULTI_ISSUE);
     });
+
+    it("keeps advanced cases locked when recent completed controls are weak", () => {
+        const weakHistory = Array.from({ length: 10 }, () => ({
+            ...historyEntry(CONTROL_SCENARIO_TYPES.CLEAN),
+            score: 40
+        }));
+        const scenario = selectNextControlScenario({
+            history: weakHistory,
+            scenarios: [CONTROL_SCENARIOS_BY_TYPE[CONTROL_SCENARIO_TYPES.MULTI_ISSUE]],
+            random: () => 0
+        });
+
+        expect(scenario).toBeNull();
+    });
 });
 
-function historyEntry(type) {
+function historyEntry(type, score = 100) {
     const scenario = CONTROL_SCENARIOS_BY_TYPE[type];
 
     return {
         type: scenario.type,
-        category: scenario.category
+        category: scenario.category,
+        score
     };
 }
 

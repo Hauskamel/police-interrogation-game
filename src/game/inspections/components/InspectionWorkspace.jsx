@@ -12,6 +12,7 @@ import {
 import {
     gameStates,
     useInspectionStore,
+    useControlScenarioStore,
     useGameStore,
     useNpcStore,
     useOfficialRegistryStore,
@@ -56,6 +57,9 @@ export function InspectionWorkspace() {
     );
     const dismissCompletedInspection = useInspectionStore(
         (state) => state.dismissCompletedInspection
+    );
+    const recordCompletedScenario = useControlScenarioStore(
+        (state) => state.recordCompletedScenario
     );
 
     const gameState = useGameStore((state) => state.gameState);
@@ -119,11 +123,12 @@ export function InspectionWorkspace() {
 
         const trafficEntityId = lastCompletedInspection.trafficEntityId;
         const resolutionAction = lastCompletedInspection.resolution?.resolutionAction;
+        const completedScenario = lastCompletedInspection.resolution?.scenario;
         const entity = useTrafficStore.getState().trafficEntities.find(
             (trafficEntity) => trafficEntity.id === trafficEntityId
         );
-        const entityCanLeaveWorld = resolutionAction === INSPECTION_RESOLUTION_ACTIONS.RELEASED
-            || resolutionAction === INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED;
+        const entityCanLeaveWorld = resolutionAction
+            === INSPECTION_RESOLUTION_ACTIONS.RELEASED;
 
         if (entityCanLeaveWorld && !entity?.spawn?.spawnForDevPurposes) {
             continueTrafficEntity(trafficEntityId);
@@ -134,6 +139,13 @@ export function InspectionWorkspace() {
         }
 
         setSelectedVehicleId(null);
+        if (completedScenario) {
+            recordCompletedScenario({
+                scenario: completedScenario,
+                score: lastCompletedInspection.resolution.score,
+                outcome: lastCompletedInspection.resolution.outcome
+            });
+        }
         dismissCompletedInspection();
     };
 
@@ -157,7 +169,9 @@ export function InspectionWorkspace() {
                 onStartRadioInquiry={startRadioInquiryMode}
                 onCancelRadioInquiry={cancelRadioInquiryMode}
                 onOpenDecision={() => {
-                    setSelectedReasonCodes([...activeInspection.markedFindingIds]);
+                    setSelectedReasonCodes(
+                        activeInspection.findings.map((finding) => finding.findingId)
+                    );
                     setDialog("decision");
                 }}
             />
@@ -336,9 +350,9 @@ function InspectionActionDock({
                 }
             >
                 <FaTriangleExclamation aria-hidden="true" />
-                {inspection.markedFindingIds.length > 0 && (
+                {inspection.findings.length > 0 && (
                     <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1 text-[10px] font-bold text-white ring-2 ring-zinc-900">
-                        {inspection.markedFindingIds.length}
+                        {inspection.findings.length}
                     </span>
                 )}
             </button>
@@ -580,10 +594,8 @@ function InspectionResultDialog({ inspection, onFinish }) {
 function getResolutionButtonLabel(resolutionAction) {
     const labelByAction = {
         [INSPECTION_RESOLUTION_ACTIONS.RELEASED]: "Bericht schließen und Weiterfahrt erlauben",
-        [INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED]: "Verwarnung abschließen und weiterfahren lassen",
         [INSPECTION_RESOLUTION_ACTIONS.HELD]: "Bericht schließen und Fahrzeug zurückhalten",
         [INSPECTION_RESOLUTION_ACTIONS.DOCUMENTS_SEIZED]: "Bericht schließen und Dokumente sicherstellen",
-        [INSPECTION_RESOLUTION_ACTIONS.REFERRED]: "Bericht schließen und Fall übergeben",
         [INSPECTION_RESOLUTION_ACTIONS.TRANSFERRED]: "Bericht schließen und Person übergeben"
     };
 

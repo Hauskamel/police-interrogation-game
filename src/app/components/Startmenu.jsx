@@ -31,8 +31,8 @@ export const Startmenu = () => {
     const resetPoliceLaptopState = usePoliceLaptopStore(
         (state) => state.resetPoliceLaptopState
     );
-    const resetScenarioHistory = useControlScenarioStore(
-        (state) => state.resetScenarioHistory
+    const resetCompletedScenarioHistory = useControlScenarioStore(
+        (state) => state.resetCompletedScenarioHistory
     );
 
     // -----> Baut die kriminelle NPC-Datenbank einmalig beim Spielstart auf.
@@ -53,7 +53,7 @@ export const Startmenu = () => {
         resetOfficialRegistry();
         resetInspectionState();
         resetPoliceLaptopState();
-        resetScenarioHistory();
+        resetCompletedScenarioHistory();
         generateDatabase();
         ingameMode();
     };

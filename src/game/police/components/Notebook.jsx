@@ -1,14 +1,21 @@
 import { useState } from "react";
-// import { WantedList } from "./pages/WantedList";
-
+import { FaXmark } from "react-icons/fa6";
 import { LuNotebook } from "react-icons/lu";
+
+import { INSPECTION_RULE_SECTIONS } from "@game/inspections/data";
 
 /**
  * ##### Notebook
  * -----> Polizeiliches Notizbuch fuer Spielinformationen und spaetere Wanted-List-Daten.
  */
 export function Notebook () {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(false);
+    const [activeSectionId, setActiveSectionId] = useState(
+        INSPECTION_RULE_SECTIONS[0].id
+    );
+    const activeSection = INSPECTION_RULE_SECTIONS.find(
+        (section) => section.id === activeSectionId
+    );
     
     return (
         <>
@@ -30,14 +37,70 @@ export function Notebook () {
                 Handbuch
             </button>
 
-            { isOpen &&
-                <div className="fixed bottom-25 right-4 z-[750] h-105 w-150 bg-[url(/images/notebook.png)] bg-contain bg-cover bg-no-repeat">
-                    <div className="w-1/2 h-full pt-15 pl-10 pr-10 text-gray-800 border-r border-gray-300">
-                        {/* <WantedList /> */}
+            {isOpen && (
+                <section
+                    className="fixed inset-x-4 bottom-4 z-[11000] mx-auto flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-md border border-zinc-300 bg-zinc-50 text-left text-zinc-900 shadow-2xl sm:bottom-8"
+                    role="dialog"
+                    aria-modal="false"
+                    aria-labelledby="service-manual-title"
+                >
+                    <header className="flex items-center justify-between border-b border-zinc-200 bg-white px-5 py-4">
+                        <div>
+                            <p className="text-xs font-semibold uppercase text-blue-700">
+                                Diensthandbuch
+                            </p>
+                            <h2 id="service-manual-title" className="!text-xl font-semibold">
+                                Kontrollstelle
+                            </h2>
+                        </div>
+                        <button
+                            type="button"
+                            className="rounded p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                            aria-label="Handbuch schließen"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            <FaXmark aria-hidden="true" />
+                        </button>
+                    </header>
+
+                    <div className="grid min-h-0 flex-1 grid-cols-1 sm:grid-cols-[190px_1fr]">
+                        <nav className="flex gap-1 overflow-x-auto border-b border-zinc-200 bg-zinc-100 p-3 sm:flex-col sm:border-b-0 sm:border-r">
+                            {INSPECTION_RULE_SECTIONS.map((section) => (
+                                <button
+                                    type="button"
+                                    key={section.id}
+                                    className={`whitespace-nowrap rounded px-3 py-2 text-left text-sm font-semibold ${
+                                        activeSectionId === section.id
+                                            ? "bg-blue-700 text-white"
+                                            : "text-zinc-600 hover:bg-white hover:text-zinc-950"
+                                    }`}
+                                    onClick={() => setActiveSectionId(section.id)}
+                                >
+                                    {section.label}
+                                </button>
+                            ))}
+                        </nav>
+
+                        <article className="min-h-0 overflow-y-auto px-6 py-5">
+                            <h3 className="!text-lg font-semibold">{activeSection.title}</h3>
+                            <p className="mt-2 text-sm leading-6 text-zinc-600">
+                                {activeSection.intro}
+                            </p>
+                            <ol className="mt-5 space-y-3">
+                                {activeSection.rules.map((rule, index) => (
+                                    <li key={rule} className="flex gap-3 text-sm leading-6">
+                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-blue-100 text-xs font-bold text-blue-800">
+                                            {index + 1}
+                                        </span>
+                                        <span>{rule}</span>
+                                    </li>
+                                ))}
+                            </ol>
+                        </article>
                     </div>
-                </div>
-            }
+                </section>
+            )}
         </>
-    )
+    );
     
 }

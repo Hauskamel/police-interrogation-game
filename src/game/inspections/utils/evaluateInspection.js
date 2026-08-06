@@ -1,5 +1,6 @@
 import {
     INSPECTION_DECISIONS,
+    INSPECTION_BALANCING,
     INSPECTION_FINDING_DEFINITIONS,
     INSPECTION_OUTCOMES,
     INSPECTION_RESOLUTION_ACTIONS,
@@ -22,8 +23,7 @@ export function evaluateInspection({
         criminalDatabase,
         officialRegistry
     });
-    const selectedReasonCodes = playerDecision.reasonCodes
-        ?? inspectionSession.markedFindingIds;
+    const selectedReasonCodes = playerDecision.reasonCodes ?? [];
     const playerFindingIds = Array.from(new Set([
         ...selectedReasonCodes,
         ...getDecisionFindingIds(playerDecision)
@@ -154,8 +154,24 @@ function getControlInteractionFindingIds(trafficEntity) {
         })
         .filter(Boolean);
 
-    if (trafficEntity.statementProfile?.contradictionQuestionId) {
+    const hasContradictoryResponse = Object.values(
+        trafficEntity.statementProfile?.responses ?? {}
+    ).some((response) => response.findingId === "inconsistent_driver_statement");
+
+    if (hasContradictoryResponse) {
         findings.push("inconsistent_driver_statement");
+    }
+
+    const availabilityValues = Object.values(
+        trafficEntity.documentAvailability ?? {}
+    );
+
+    if (availabilityValues.includes("refused")) {
+        findings.push("document_refusal");
+    }
+
+    if (availabilityValues.includes("wrong_document")) {
+        findings.push("wrong_document_presented");
     }
 
     return findings;
@@ -240,6 +256,8 @@ function getExpectedDecision(actualFindingIds) {
         actualFindingIds.includes("expired_drivers_license")
         || actualFindingIds.includes("expired_insurance")
         || actualFindingIds.some((findingId) => findingId.startsWith("missing_"))
+        || actualFindingIds.includes("document_refusal")
+        || actualFindingIds.includes("wrong_document_presented")
     ) {
         return INSPECTION_DECISIONS.DENY_CONTINUATION;
     }
@@ -250,9 +268,7 @@ function getExpectedDecision(actualFindingIds) {
 function getResolutionAction(decisionType) {
     const actionByDecision = {
         [INSPECTION_DECISIONS.ALLOW_TO_CONTINUE]: INSPECTION_RESOLUTION_ACTIONS.RELEASED,
-        [INSPECTION_DECISIONS.ISSUE_WARNING]: INSPECTION_RESOLUTION_ACTIONS.WARNED_AND_RELEASED,
         [INSPECTION_DECISIONS.DENY_CONTINUATION]: INSPECTION_RESOLUTION_ACTIONS.HELD,
-        [INSPECTION_DECISIONS.REQUEST_ADDITIONAL_REVIEW]: INSPECTION_RESOLUTION_ACTIONS.REFERRED,
         [INSPECTION_DECISIONS.SEIZE_DOCUMENTS]: INSPECTION_RESOLUTION_ACTIONS.DOCUMENTS_SEIZED,
         [INSPECTION_DECISIONS.HOLD_FOR_CLARIFICATION]: INSPECTION_RESOLUTION_ACTIONS.HELD,
         [INSPECTION_DECISIONS.REPORT_WANTED_HIT]: INSPECTION_RESOLUTION_ACTIONS.TRANSFERRED
@@ -263,7 +279,11 @@ function getResolutionAction(decisionType) {
 
 function getUnavailableRequestedDocuments(inspectionSession) {
     return Object.entries(inspectionSession.documentRequestStates ?? {})
-        .filter(([, requestState]) => requestState.result === "unavailable")
+        .filter(([, requestState]) => {
+            return ["unavailable", "refused", "wrong_document"].includes(
+                requestState.result
+            );
+        })
         .map(([documentType]) => documentType);
 }
 
@@ -279,11 +299,18 @@ function calculateInspectionScore({
     const findingRatio = actualFindingIds.length === 0
         ? 1
         : correctlyIdentifiedFindings.length / actualFindingIds.length;
-    const findingPoints = Math.round(findingRatio * 40);
-    const reviewPoints = unopenedDocuments.length === 0 ? 10 : 0;
-    const precisionPoints = falsePositiveFindings.length === 0 ? 10 : 0;
+    const scoreWeights = INSPECTION_BALANCING.score;
+    const findingPoints = Math.round(
+        findingRatio * scoreWeights.identifiedFindings
+    );
+    const reviewPoints = unopenedDocuments.length === 0
+        ? scoreWeights.reviewedDocuments
+        : 0;
+    const precisionPoints = falsePositiveFindings.length === 0
+        ? scoreWeights.noFalsePositives
+        : 0;
 
-    return (decisionWasCorrect ? 40 : 0)
+    return (decisionWasCorrect ? scoreWeights.correctDecision : 0)
         + findingPoints
         + reviewPoints
         + precisionPoints;

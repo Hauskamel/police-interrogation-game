@@ -3,26 +3,22 @@ import { pickWeightedItem } from "@game/shared";
 import {
     CONTROL_SCENARIO_CATEGORIES,
     CONTROL_SCENARIO_TYPES,
-    DEFAULT_CONTROL_SCENARIOS
+    DEFAULT_CONTROL_SCENARIOS,
+    INSPECTION_BALANCING
 } from "../data";
 
-const MAX_CONSECUTIVE_CLEAN_CASES = 2;
-const MAX_CONSECUTIVE_IDENTICAL_CASES = 2;
-const FORGERY_GUARANTEE_WINDOW = 5;
-const WANTED_COOLDOWN_CASES = 3;
-const INTERMEDIATE_CASE_THRESHOLD = 3;
-const ADVANCED_CASE_THRESHOLD = 10;
+const PACING = INSPECTION_BALANCING.pacing;
 
 // ##### Next Control Scenario Selector
 // -----> Waehlt einen gewichteten Kontrollfall und verhindert ereignisarme Zufallsserien.
-// ---> history enthaelt nur erfolgreich gespawnte Faelle; abgelehnte Spawns veraendern das Pacing nicht.
+// ---> history enthält nur abgeschlossene Kontrollen; reine Spawns verändern das Pacing nicht.
 export function selectNextControlScenario({
     history = [],
     scenarios = DEFAULT_CONTROL_SCENARIOS,
     excludedTypes = [],
     random = Math.random
 } = {}) {
-    const maximumComplexity = getMaximumComplexity(history.length);
+    const maximumComplexity = getMaximumComplexity(history);
     const unlockedScenarios = scenarios.filter((scenario) => {
         return !excludedTypes.includes(scenario.type)
             && scenario.complexityLevel <= maximumComplexity;
@@ -49,16 +45,27 @@ export function selectNextControlScenario({
 
 // Die ersten Kontrollen lehren einzelne Regeln. Danach werden Täuschungen und schließlich
 // kombinierte Fälle freigeschaltet, ohne einen separaten Schwierigkeitszustand zu speichern.
-function getMaximumComplexity(completedCaseCount) {
-    if (completedCaseCount >= ADVANCED_CASE_THRESHOLD) return 3;
-    if (completedCaseCount >= INTERMEDIATE_CASE_THRESHOLD) return 2;
+function getMaximumComplexity(history) {
+    const completedCaseCount = history.length;
+    const recentScores = history
+        .slice(-PACING.advancedScoreWindow)
+        .map((entry) => entry.score ?? 100);
+    const recentAverageScore = recentScores.length === 0
+        ? 0
+        : recentScores.reduce((sum, score) => sum + score, 0) / recentScores.length;
+    const advancedTierUnlocked = completedCaseCount
+        >= PACING.advancedUnlockAfterCompletedCases
+        && recentAverageScore >= PACING.advancedMinimumRecentAverageScore;
+
+    if (advancedTierUnlocked) return 3;
+    if (completedCaseCount >= PACING.intermediateUnlockAfterCompletedCases) return 2;
     return 1;
 }
 
 // Erzwingt innerhalb von jeweils fuenf erfolgreichen Kontrollen mindestens eine Falschung.
 function mustSpawnForgery(history) {
-    const previousCases = history.slice(-(FORGERY_GUARANTEE_WINDOW - 1));
-    if (previousCases.length < FORGERY_GUARANTEE_WINDOW - 1) return false;
+    const previousCases = history.slice(-(PACING.forgeryGuaranteeWindow - 1));
+    if (previousCases.length < PACING.forgeryGuaranteeWindow - 1) return false;
 
     return previousCases.every(
         (entry) => entry.category !== CONTROL_SCENARIO_CATEGORIES.FORGED_DOCUMENT
@@ -67,12 +74,14 @@ function mustSpawnForgery(history) {
 
 function applyPacingConstraints(candidates, history) {
     let constrainedCandidates = [...candidates];
-    const recentCleanCases = history.slice(-MAX_CONSECUTIVE_CLEAN_CASES);
-    const recentIdenticalCases = history.slice(-MAX_CONSECUTIVE_IDENTICAL_CASES);
-    const recentWantedCases = history.slice(-WANTED_COOLDOWN_CASES);
+    const recentCleanCases = history.slice(-PACING.maximumConsecutiveCleanCases);
+    const recentIdenticalCases = history.slice(
+        -PACING.maximumConsecutiveIdenticalCases
+    );
+    const recentWantedCases = history.slice(-PACING.wantedCooldownCases);
 
     if (
-        recentCleanCases.length === MAX_CONSECUTIVE_CLEAN_CASES
+        recentCleanCases.length === PACING.maximumConsecutiveCleanCases
         && recentCleanCases.every(
             (entry) => entry.type === CONTROL_SCENARIO_TYPES.CLEAN
         )
@@ -83,7 +92,7 @@ function applyPacingConstraints(candidates, history) {
     }
 
     if (
-        recentIdenticalCases.length === MAX_CONSECUTIVE_IDENTICAL_CASES
+        recentIdenticalCases.length === PACING.maximumConsecutiveIdenticalCases
         && recentIdenticalCases.every(
             (entry) => entry.type === recentIdenticalCases[0].type
         )

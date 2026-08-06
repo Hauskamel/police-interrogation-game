@@ -31,7 +31,7 @@ describe("evaluateInspection", () => {
 
         const result = evaluateCase({
             trafficEntity,
-            markedFindingIds: ["expired_drivers_license"],
+            reasonCodes: ["expired_drivers_license"],
             playerDecisionType: INSPECTION_DECISIONS.DENY_CONTINUATION
         });
 
@@ -50,7 +50,7 @@ describe("evaluateInspection", () => {
 
         const result = evaluateCase({
             trafficEntity,
-            markedFindingIds: ["driver_address_mismatch"],
+            reasonCodes: ["driver_address_mismatch"],
             playerDecisionType: INSPECTION_DECISIONS.SEIZE_DOCUMENTS
         });
 
@@ -136,27 +136,51 @@ describe("evaluateInspection", () => {
         );
         expect(result.outcome).toBe(INSPECTION_OUTCOMES.CORRECT);
     });
+
+    it.each([
+        ["refused", "document_refusal"],
+        ["wrong_document", "wrong_document_presented"]
+    ])("denies continuation for terminal document state %s", (
+        availability,
+        findingId
+    ) => {
+        const trafficEntity = createTrafficEntity();
+        trafficEntity.documentAvailability = {
+            proofOfInsurance: availability
+        };
+
+        const result = evaluateCase({
+            trafficEntity,
+            reasonCodes: [findingId],
+            playerDecisionType: INSPECTION_DECISIONS.DENY_CONTINUATION
+        });
+
+        expect(result.actualFindingIds).toContain(findingId);
+        expect(result.expectedDecision).toBe(
+            INSPECTION_DECISIONS.DENY_CONTINUATION
+        );
+    });
 });
 
 function evaluateCase({
     trafficEntity = createTrafficEntity(),
     officialRegistry = createOfficialRegistry(),
     criminalDatabase = { wantedRecordsById: {} },
-    markedFindingIds = [],
+    reasonCodes = [],
     playerDecisionType
 }) {
     return evaluateInspection({
         inspectionSession: {
             startedAt: "2026-08-03T08:00:00.000Z",
             openedDocuments: Object.values(INSPECTION_DOCUMENT_TYPES),
-            markedFindingIds
+            findings: reasonCodes.map((findingId) => ({ findingId }))
         },
         trafficEntity,
         criminalDatabase,
         officialRegistry,
         playerDecision: {
             type: playerDecisionType,
-            findingIds: markedFindingIds
+            reasonCodes
         }
     });
 }

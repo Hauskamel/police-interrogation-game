@@ -18,7 +18,8 @@ Pacing-Verlauf
 -> passenden NPC-Typ bestimmen
 -> NPC, Fahrzeug und Dokumente erzeugen
 -> erfolgreich spawnen
--> Kontrollfall in den Verlauf aufnehmen
+-> Kontrolle abschliessen
+-> Ergebnis und Kontrollfall in den Verlauf aufnehmen
 ```
 
 ## Zwei getrennte Fragen
@@ -51,6 +52,8 @@ Eine Faelschung macht ihn nicht automatisch zu einem bereits bekannten Straftaet
 | `missing_license` | Dokumentvorlage | 7 | Fuehrerschein vergessen |
 | `missing_insurance` | Dokumentvorlage | 6 | Versicherungsnachweis verloren |
 | `initial_refusal` | Dokumentvorlage | 5 | Fahrzeugpapiere erst nach erneuter Aufforderung |
+| `final_refusal` | Dokumentvorlage | 4 | Fahrzeugpapiere werden endgültig verweigert |
+| `wrong_document` | Dokumentvorlage | 4 | Unpassender Versicherungsnachweis wird vorgelegt |
 | `damaged_document` | Dokumentvorlage | 5 | Erheblich beschaedigte Fahrzeugpapiere |
 | `contradictory_statement` | Befragung | 7 | Anschrift widerspricht der Identitaet |
 | `hidden_offender` | verborgener Hintergrund | 5 | Unbekannter Straftaeter ohne erkennbare Auffaelligkeit |
@@ -63,7 +66,7 @@ geben die Gewichte aber die gewuenschte Tendenz vor.
 
 ## Schutz vor langweiligen oder vorhersehbaren Serien
 
-Der Director betrachtet nur erfolgreich gespawnte Zufallsfaelle und wendet folgende
+Der Director betrachtet nur abgeschlossene Zufallskontrollen und wendet folgende
 Regeln an:
 
 - hoechstens zwei unauffaellige Faelle direkt hintereinander
@@ -72,19 +75,28 @@ Regeln an:
 - nach einem Fahndungsfall mindestens drei andere Kontrollen
 - kein Fahndungsfall, wenn aktuell kein geeigneter Datenbank-NPC verfuegbar ist
 
-Ein fehlgeschlagener Spawn veraendert den Verlauf nicht. Dadurch kann ein technisch
-nicht erzeugbarer Fall das Pacing nicht unbemerkt verschieben.
+Ein Spawn oder eine nie abgeschlossene Kontrolle veraendert den Verlauf nicht. Dadurch
+kann weder ein technisch nicht erzeugbarer noch ein lediglich vorbeifahrender Fall
+das Pacing unbemerkt verschieben.
 
 ## Schwierigkeitsstufen
 
-Die Zahl erfolgreich erzeugter Zufallsfaelle schaltet Komplexitaet stufenweise frei:
+Die Zahl abgeschlossener Kontrollen schaltet Komplexitaet stufenweise frei:
 
 - Faelle 1 bis 3: einzelne Auffaelligkeiten mit `complexityLevel: 1`
 - ab Fall 4: Vergleiche, Befragungen und Fahndungen mit `complexityLevel: 2`
-- ab Fall 11: kombinierte Faelle mit `complexityLevel: 3`
+- ab Fall 11 und mindestens 60 Punkten im Durchschnitt der letzten fünf Kontrollen:
+  kombinierte Faelle mit `complexityLevel: 3`
 
-Die Stufe wird aus dem vorhandenen Pacing-Verlauf abgeleitet und nicht redundant in
-einem zweiten Fortschrittsstore gespeichert.
+Der Verlauf speichert Falltyp, Kategorie, Ergebnis und Punktzahl. Die Stufe wird
+daraus abgeleitet und nicht redundant in einem zweiten Fortschrittswert gespeichert.
+
+## Zentrales Balancing
+
+Szenariogewichte, Seriengrenzen, Freischaltschwellen und Punkteanteile liegen zentral
+in `inspectionBalancing.js`. Auswahl und Evaluator lesen dieselbe Konfiguration.
+Dadurch kann das Spielgefühl angepasst werden, ohne Fachlogik an mehreren Stellen zu
+verändern.
 
 ## Zusammenspiel mit den Generatoren
 

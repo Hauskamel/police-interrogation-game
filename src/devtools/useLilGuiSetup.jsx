@@ -154,13 +154,11 @@ export const useLilGuiSetup = () => {
         });
         if (!randomEntity) return;
 
-        const committedEntity = commitTrafficEntityAtStation(randomEntity, {
+        commitTrafficEntityAtStation(randomEntity, {
             concealFromGui: true
         });
 
-        if (committedEntity) {
-            scenarioStore.recordSpawnedScenario(controlScenario);
-        }
+        // Der Fall beeinflusst das Pacing erst, nachdem der Spieler die Kontrolle abschließt.
     }, [commitTrafficEntityAtStation, criminalDatabase]);
 
     // Wendet die vollständige aktuelle Dev-Konfiguration auf die angehaltene Auswahl an.

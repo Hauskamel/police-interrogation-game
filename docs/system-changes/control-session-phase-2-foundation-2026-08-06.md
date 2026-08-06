@@ -2,6 +2,10 @@
 
 Stand: 06.08.2026
 
+Hinweis: Der aktuelle Stand nach der anschließenden Stabilisierung ist unter
+[Stabilisierung der Kontrollsession Phase 2](./control-session-phase-2-stabilization-2026-08-06.md)
+dokumentiert.
+
 ## Umfang
 
 Diese Änderung setzt die ersten sieben vorgesehenen Phase-2-Bausteine um. Das

@@ -108,6 +108,27 @@ describe("inspectionStore", () => {
         expect(activeInspection.conversationEntries).toHaveLength(2);
     });
 
+    it.each([
+        ["refused", "document_refusal"],
+        ["wrong_document", "wrong_document_presented"]
+    ])("records terminal document response %s as a structured finding", (
+        availability,
+        findingId
+    ) => {
+        const documentType = INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE;
+        const store = useInspectionStore.getState();
+        store.startInspection("traffic--one");
+        store.requestDocument({ documentType, availability });
+
+        const activeInspection = useInspectionStore.getState().activeInspection;
+
+        expect(activeInspection.openedDocuments).toEqual([]);
+        expect(activeInspection.findings[0]).toMatchObject({
+            findingId,
+            discoveredVia: "document_request"
+        });
+    });
+
     it("stores interview contradictions as structured findings", () => {
         const store = useInspectionStore.getState();
         store.startInspection("traffic--one");
@@ -164,7 +185,7 @@ describe("inspectionStore", () => {
 
         expect(activeInspection.discrepancyMode.active).toBe(true);
         expect(activeInspection.discrepancyMode.selectedFields).toHaveLength(1);
-        expect(activeInspection.markedFindingIds).toEqual([]);
+        expect(activeInspection.findings).toEqual([]);
     });
 
     it("records a confirmed discrepancy and its dialogue atomically", () => {
@@ -183,9 +204,9 @@ describe("inspectionStore", () => {
 
         const activeInspection = useInspectionStore.getState().activeInspection;
 
-        expect(activeInspection.markedFindingIds).toEqual([
+        expect(activeInspection.findings[0].findingId).toBe(
             "expired_drivers_license"
-        ]);
+        );
         expect(activeInspection.conversationEntries).toEqual([conversationEntry]);
         expect(activeInspection.discrepancyMode.active).toBe(false);
     });
@@ -219,9 +240,9 @@ describe("inspectionStore", () => {
             conversationEntry
         ]);
         expect(activeInspection.conversationEntries).toEqual([]);
-        expect(activeInspection.markedFindingIds).toEqual([
+        expect(activeInspection.findings[0].findingId).toBe(
             "vehicle_registration_number_mismatch"
-        ]);
+        );
     });
 
     it("allows only one field selection mode at a time", () => {

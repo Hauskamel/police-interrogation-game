@@ -10,6 +10,15 @@ export {
     DEFAULT_CONTROL_SCENARIOS
 } from "./controlScenarios.js";
 export {
+    CONTROL_SCENARIO_WEIGHTS,
+    INSPECTION_BALANCING
+} from "./inspectionBalancing.js";
+export {
+    INTERVIEW_QUESTIONS,
+    INTERVIEW_QUESTIONS_BY_ID
+} from "./interviewQuestions.js";
+export { INSPECTION_RULE_SECTIONS } from "./inspectionRules.js";
+export {
     DISCREPANCY_CHECK_TYPES,
     DISCREPANCY_FIELD_DEFINITIONS,
     DISCREPANCY_FIELD_DEFINITIONS_BY_ID,

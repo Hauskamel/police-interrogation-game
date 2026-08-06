@@ -115,7 +115,9 @@ oder waehrend einer Einzelfeldpruefung `Pruefung laeuft`.
 
 ## Feststellung und Gespraech
 
-Ein bestaetigtes Finding wird genau einmal in `markedFindingIds` aufgenommen. Der
+Ein bestaetigtes Finding wird genau einmal als strukturierter Eintrag in `findings`
+aufgenommen. Der Eintrag enthält Finding-ID, Erkennungsweg, ausgewählte Belegfelder
+und Spielzeitpunkt. Der
 Fokusmodus schliesst sich anschliessend automatisch. Die Gespraechsbox zeigt dann:
 
 1. die konkrete Ansprache des Polizisten,

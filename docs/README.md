@@ -14,6 +14,7 @@ Diese Dokumente erklären, **was ein Feature im Spiel bedeutet** und wie es geda
 
 | Dokument | Inhalt |
 |---|---|
+| [Stabilisierung der Kontrollsession Phase 2 vom 06.08.2026](./system-changes/control-session-phase-2-stabilization-2026-08-06.md) | Einheitliche Findings, Dokumentreaktionen, kontextbezogene Befragung, Abschluss-Pacing, Balancing und Diensthandbuch |
 | [NPCs, Polizeiwissen und Verkehrskontrollen](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, Halter, Fahndungsrecords, TrafficEntities und Dokumentdaten zusammenhängen |
 | [Spielbare Polizei-Datenbank](./game-systems/police-database.md) | Welche Informationen der Police Laptop zeigt, wie die Suchen funktionieren und warum World Truth verborgen bleibt |
 | [Kontrollsession Phase 2](./game-systems/inspection-session.md) | Gameplay-Ablauf, Dokumentverfügbarkeit, Befragung, Belege, Entscheidungen und Auswertung |

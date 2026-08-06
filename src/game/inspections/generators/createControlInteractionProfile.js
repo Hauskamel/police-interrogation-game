@@ -56,6 +56,14 @@ function getDocumentAvailabilityOverride(scenarioType) {
             [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]:
                 DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED
         },
+        [CONTROL_SCENARIO_TYPES.FINAL_REFUSAL]: {
+            [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]:
+                DOCUMENT_AVAILABILITY_STATUSES.REFUSED
+        },
+        [CONTROL_SCENARIO_TYPES.WRONG_DOCUMENT]: {
+            [INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE]:
+                DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT
+        },
         [CONTROL_SCENARIO_TYPES.DAMAGED_DOCUMENT]: {
             [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]:
                 DOCUMENT_AVAILABILITY_STATUSES.DAMAGED
@@ -72,23 +80,36 @@ function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerPr
     const owner = vehicleOwnerProfile.real;
     const ownerName = [owner.firstName, owner.lastName].filter(Boolean).join(" ");
     const responses = {
-        full_name: [driver.firstName, driver.lastName].filter(Boolean).join(" "),
-        address: driver.address,
-        vehicle_owner: driver.npcId === owner.npcId
-            ? "Das Fahrzeug gehört mir."
-            : `Das Fahrzeug gehört ${ownerName || "einer anderen Person"}.`,
-        travel_reason: "Ich bin auf dem Weg zu einem privaten Termin."
+        full_name: {
+            text: [driver.firstName, driver.lastName].filter(Boolean).join(" ")
+        },
+        address: {
+            text: driver.address
+        },
+        vehicle_owner: {
+            text: driver.npcId === owner.npcId
+                ? "Das Fahrzeug gehört mir."
+                : `Das Fahrzeug gehört ${ownerName || "einer anderen Person"}.`
+        },
+        travel_reason: {
+            text: "Ich bin auf dem Weg zu einem privaten Termin."
+        },
+        address_follow_up: {
+            text: "Nein, die genannte Anschrift ist korrekt. Dabei bleibe ich."
+        }
     };
     const hasContradiction = controlScenario?.type
         === CONTROL_SCENARIO_TYPES.CONTRADICTORY_STATEMENT
         || controlScenario?.type === CONTROL_SCENARIO_TYPES.MULTI_ISSUE;
 
     if (hasContradiction) {
-        responses.address = "Ich wohne in der Lindenstraße 14.";
+        responses.address = {
+            text: "Ich wohne in der Lindenstraße 14.",
+            findingId: "inconsistent_driver_statement"
+        };
     }
 
     return {
-        responses,
-        contradictionQuestionId: hasContradiction ? "address" : null
+        responses
     };
 }

@@ -1,37 +1,38 @@
 import { create } from "zustand";
 
 import { selectNextControlScenario } from "@game/inspections/utils";
-
-const MAX_STORED_SCENARIOS = 20;
+import { INSPECTION_BALANCING } from "@game/inspections/data";
 
 // ##### Control Scenario Store
-// -----> Speichert nur die erfolgreich erzeugten Kontrollfaelle fuer das Spawn-Pacing.
+// -----> Speichert nur abgeschlossene Kontrollfälle für Fortschritt und Pacing.
 // ---> Die eigentlichen NPC-, Dokument- und Fahrzeugdaten bleiben in ihren Fachstores.
 export const useControlScenarioStore = create((set, get) => ({
-    scenarioHistory: [],
+    completedScenarioHistory: [],
 
     selectNextScenario: (options = {}) => {
         return selectNextControlScenario({
             ...options,
-            history: get().scenarioHistory
+            history: get().completedScenarioHistory
         });
     },
 
-    recordSpawnedScenario: (scenario) => {
+    recordCompletedScenario: ({ scenario, score, outcome }) => {
         if (!scenario) return;
 
         set((state) => ({
-            scenarioHistory: [
-                ...state.scenarioHistory,
+            completedScenarioHistory: [
+                ...state.completedScenarioHistory,
                 {
                     type: scenario.type,
-                    category: scenario.category
+                    category: scenario.category,
+                    score,
+                    outcome
                 }
-            ].slice(-MAX_STORED_SCENARIOS)
+            ].slice(-INSPECTION_BALANCING.historyLimit)
         }));
     },
 
-    resetScenarioHistory: () => {
-        set({ scenarioHistory: [] });
+    resetCompletedScenarioHistory: () => {
+        set({ completedScenarioHistory: [] });
     }
 }));

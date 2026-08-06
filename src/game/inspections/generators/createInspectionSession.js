@@ -17,7 +17,6 @@ export function createInspectionSession(trafficEntityId) {
         visibleDocuments: [],
         documentRequestStates: {},
         findings: [],
-        markedFindingIds: [],
         discrepancyMode: {
             active: false,
             selectedFields: [],

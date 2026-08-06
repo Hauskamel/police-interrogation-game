@@ -24,13 +24,6 @@ const DOCUMENT_OPTIONS = [
     }
 ];
 
-const INTERVIEW_OPTIONS = [
-    { id: "full_name", label: "Name", playerText: "Nennen Sie mir bitte Ihren vollständigen Namen." },
-    { id: "address", label: "Adresse", playerText: "Wie lautet Ihre aktuelle Anschrift?" },
-    { id: "vehicle_owner", label: "Fahrzeughalter", playerText: "Wem gehört dieses Fahrzeug?" },
-    { id: "travel_reason", label: "Fahrtgrund", playerText: "Wohin sind Sie unterwegs?" }
-];
-
 const CONVERSATION_TABS = {
     DRIVER: "driver",
     DISPATCH: "dispatch"
@@ -38,8 +31,8 @@ const CONVERSATION_TABS = {
 
 /**
  * ##### Document Conversation
- * -----> Bildet den einfachen Phase-1-Dialog zwischen Spieler und Fahrer ab.
- * ---> Fehlende oder verweigerte Dokumente kommen erst in einer späteren Ausbaustufe hinzu.
+ * -----> Bildet Dokumentanfragen und kontextbezogene Standardfragen an den Fahrer ab.
+ * ---> Die Antwortquelle bleibt austauschbar und kann später regelbasiert oder KI-gestützt sein.
  */
 export function DocumentConversation({
     requestedDocuments = [],
@@ -51,6 +44,7 @@ export function DocumentConversation({
     radioInquiryModeActive = false,
     onRequestDocument,
     askedQuestionIds = [],
+    interviewQuestions = [],
     onAskQuestion
 }) {
     const [openTabs, setOpenTabs] = useState([CONVERSATION_TABS.DRIVER]);
@@ -140,13 +134,16 @@ export function DocumentConversation({
                             isVisible,
                             requestState: documentRequestStates[type]
                         });
+                        const terminalRequest = isTerminalDocumentRequest(
+                            documentRequestStates[type]
+                        );
 
                         return (
                             <button
                                 type="button"
                                 key={type}
                                 className="flex min-w-0 items-center justify-center gap-2 rounded bg-zinc-700 px-2 py-2 text-xs font-semibold leading-4 hover:bg-zinc-600 disabled:cursor-default disabled:bg-blue-700 disabled:text-white"
-                                disabled={isVisible}
+                                disabled={isVisible || terminalRequest}
                                 onClick={() => onRequestDocument(type)}
                                 title={label}
                             >
@@ -163,14 +160,14 @@ export function DocumentConversation({
                     Fahrer befragen
                 </p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {INTERVIEW_OPTIONS.map((option) => (
+                    {interviewQuestions.map((option) => (
                         <button
                             type="button"
                             key={option.id}
                             className="rounded border border-zinc-700 bg-zinc-800 px-2 py-2 text-xs font-semibold hover:border-zinc-500 hover:bg-zinc-700"
                             onClick={() => onAskQuestion(option)}
                         >
-                            {askedQuestionIds.includes(option.id)
+                            {askedQuestionIds.includes(option.id) && !option.followUp
                                 ? `${option.label} erneut fragen`
                                 : option.label
                             }
@@ -314,8 +311,16 @@ function getOptionLabel({ documentType, wasRequested, isVisible, requestState })
     const documentLabel = INSPECTION_DOCUMENT_LABELS[documentType];
 
     if (isVisible) return `${documentLabel} geöffnet`;
-    if (requestState?.result === "refused") return `${documentLabel} erneut verlangen`;
+    if (requestState?.result === "initially_refused") return `${documentLabel} erneut verlangen`;
+    if (requestState?.result === "refused") return `${documentLabel} endgültig verweigert`;
+    if (requestState?.result === "wrong_document") return "Unpassender Nachweis vorgelegt";
     if (requestState?.result === "unavailable") return `${documentLabel} nicht verfügbar`;
     if (wasRequested) return `${documentLabel} erneut ansehen`;
     return `${documentLabel} anfordern`;
+}
+
+function isTerminalDocumentRequest(requestState) {
+    return ["unavailable", "refused", "wrong_document"].includes(
+        requestState?.result
+    );
 }
