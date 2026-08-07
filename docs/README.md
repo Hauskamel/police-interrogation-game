@@ -14,6 +14,7 @@ Diese Dokumente erklären, **was ein Feature im Spiel bedeutet** und wie es geda
 
 | Dokument | Inhalt |
 |---|---|
+| [Strassenverkehr](./game-systems/traffic.md) | Fahrspuren, zufaellige Ambient-Spawns, Trennung vom Story-Pacing, Pfadbewegung und moegliche Ausbaustufen |
 | [Narrative Schicht](./game-systems/shift-story.md) | Wie fünf normale Kontrollen einen kleinen Fall erzählen und frühere Gespräche spätere Nachfragen freischalten |
 | [Stabilisierung der Kontrollsession Phase 2 vom 06.08.2026](./system-changes/control-session-phase-2-stabilization-2026-08-06.md) | Einheitliche Findings, Dokumentreaktionen, kontextbezogene Befragung, Abschluss-Pacing, Balancing und Diensthandbuch |
 | [NPCs, Polizeiwissen und Verkehrskontrollen](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, Halter, Fahndungsrecords, TrafficEntities und Dokumentdaten zusammenhängen |

@@ -1,5 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei"
+import { Suspense } from "react";
 
 import { useTrafficStore } from "@stores";
 import { getTrafficSpawnTransform } from "@game/world/spawn";
@@ -10,6 +11,7 @@ import { useTrafficEntityRefs } from "../hooks";
 import { Car } from "./Car";
 import { BorderStation } from "./BorderStation";
 import { PoliceCar } from "./PoliceCar";
+import { TrafficRouteVisualizer } from "./TrafficRouteVisualizer";
 
 
 export function Gamecanvas({ playersPoliceVehicle, setHoveringCar }) {
@@ -30,6 +32,7 @@ export function Gamecanvas({ playersPoliceVehicle, setHoveringCar }) {
 
                 {/* INGAME COMPONENTS */}
                 <BorderStation receiveShadow />
+                <TrafficRouteVisualizer trafficEntities={trafficEntities} />
                 <PoliceCar
                     castShadow
                     position={POLICECAR_POSITION}
@@ -41,15 +44,16 @@ export function Gamecanvas({ playersPoliceVehicle, setHoveringCar }) {
                     const { position, rotation } = getTrafficSpawnTransform(trafficEntity);
                     
                     return (
-                        <Car
-                            castShadow
-                            key={trafficEntity.id}
-                            ref={trafficEntityRefs}
-                            car={trafficEntity}
-                            onHoverChange={(hovering) => setHoveringCar(hovering ? trafficEntity.id : null)}
-                            position={ position }
-                            rotation={ rotation }
-                        />
+                        <Suspense fallback={null} key={trafficEntity.id}>
+                            <Car
+                                castShadow
+                                ref={trafficEntityRefs}
+                                car={trafficEntity}
+                                onHoverChange={(hovering) => setHoveringCar(hovering ? trafficEntity.id : null)}
+                                position={ position }
+                                rotation={ rotation }
+                            />
+                        </Suspense>
                     );
                 })}
             </Canvas>
