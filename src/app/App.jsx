@@ -20,6 +20,7 @@ import {
     InspectionFieldInteractionProvider,
     InspectionWorkspace
 } from "@game/inspections";
+import { useAmbientTrafficSpawner } from "@game/traffic";
 import { Gamecanvas } from "@game/world/components";
 import { useLilGuiSetup } from "@devtools/useLilGuiSetup";
 import { VehicleDebugPanel } from "@devtools/panels/VehicleDebugPanel";
@@ -53,6 +54,7 @@ function App() {
     );
 
     useLilGuiSetup();
+    useAmbientTrafficSpawner();
 
     // Eine Session kann nicht aktiv bleiben, wenn ihre TrafficEntity entfernt oder freigegeben wurde.
     useEffect(() => {
