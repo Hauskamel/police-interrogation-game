@@ -9,6 +9,7 @@ import {
 } from "@stores";
 import { Startmenu } from "@app/components/Startmenu";
 import { GameDateDisplay } from "@app/components/GameDateDisplay";
+import { ShiftStatusPanel } from "@game/shifts";
 import {
     PoliceServiceToolsPanel,
     VehicleControlPanel,
@@ -78,6 +79,7 @@ function App() {
         {gameState !== gameStates.MENU && (
             <>
                 <PoliceServiceToolsPanel />
+                <ShiftStatusPanel />
 
                 {gameState !== gameStates.LAPTOP && (
                     <GameDateDisplay />

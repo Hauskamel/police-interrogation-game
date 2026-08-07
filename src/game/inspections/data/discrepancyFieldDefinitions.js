@@ -47,6 +47,10 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createPairField("insurance.plateNumber", INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE, "Versichertes Kennzeichen", "vehicle.plateNumber", "insurance_vehicle_mismatch"),
     createSingleField("insurance.validUntil", INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE, "Gueltig bis", "expired_insurance", "date.expiry"),
 
+    // Fahreraussagen sind sichtbare Belege. Sie erzeugen erst durch einen bewussten
+    // Vergleich mit Dokument- oder Registerangaben eine Feststellung.
+    createPairField("statement.address", null, "Genannte Adresse", "person.address", "inconsistent_driver_statement", "statement"),
+
     createRegistryPairField("registryPerson.firstName", "registry.person", "Vorname", "person.firstName", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryPerson.lastName", "registry.person", "Nachname", "person.lastName", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryPerson.address", "registry.person", "Adresse", "person.address", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
@@ -88,11 +92,18 @@ function createSingleField(id, documentType, label, findingId, valueSource) {
     };
 }
 
-function createPairField(id, documentType, label, comparisonGroup, findingId = null) {
+function createPairField(
+    id,
+    documentType,
+    label,
+    comparisonGroup,
+    findingId = null,
+    surface = documentType
+) {
     return {
         id,
         documentType,
-        surface: documentType,
+        surface,
         label,
         checkType: DISCREPANCY_CHECK_TYPES.PAIR,
         comparisonGroup,

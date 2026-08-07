@@ -7,23 +7,23 @@ import {
 import {
     DOCUMENT_AVAILABILITY_STATUSES,
     INSPECTION_DOCUMENT_LABELS,
-    INSPECTION_DOCUMENT_TYPES,
     INSPECTION_STATUSES
 } from "@game/inspections/data";
+import { resolveDocumentRequest } from "@game/inspections/utils";
 import { createEntityId, getCurrentGameTimestamp } from "@game/shared";
 
 // ##### Inspection Store
 // -----> Hält genau eine aktive Kontrolle und den letzten abgeschlossenen Bericht.
-// ---> Phase 1 verzichtet bewusst auf eine persistente Kontrollhistorie.
+// ---> Eine persistente Kontrollhistorie ist weiterhin bewusst nicht Teil dieses Stores.
 export const useInspectionStore = create((set, get) => ({
     activeInspection: null,
     lastCompletedInspection: null,
 
     // Erstellt nur dann eine Session, wenn keine andere Kontrolle aktiv ist.
-    startInspection: (trafficEntityId) => {
+    startInspection: (trafficEntityId, options = {}) => {
         if (!trafficEntityId || get().activeInspection) return null;
 
-        const inspectionSession = createInspectionSession(trafficEntityId);
+        const inspectionSession = createInspectionSession(trafficEntityId, options);
 
         set({
             activeInspection: inspectionSession,
@@ -45,7 +45,6 @@ export const useInspectionStore = create((set, get) => ({
                 : request?.availability ?? DOCUMENT_AVAILABILITY_STATUSES.PROVIDED;
             if (!activeInspection || !documentType) return state;
 
-            const requestedDocuments = activeInspection.requestedDocuments ?? [];
             const openedDocuments = activeInspection.openedDocuments ?? [];
             const visibleDocuments = activeInspection.visibleDocuments ?? [];
             const previousRequestState = activeInspection.documentRequestStates?.[
@@ -72,10 +71,6 @@ export const useInspectionStore = create((set, get) => ({
             return {
                 activeInspection: {
                     ...activeInspection,
-                    requestedDocuments: appendOnce(
-                        requestedDocuments,
-                        documentType
-                    ),
                     openedDocuments: requestResult.opensDocument
                         ? appendOnce(openedDocuments, documentType)
                         : openedDocuments,
@@ -99,32 +94,16 @@ export const useInspectionStore = create((set, get) => ({
             };
         }),
 
-    // Speichert eine gestellte Standardfrage und die für diesen NPC vorbereitete Antwort.
-    recordInterviewAnswer: ({ questionId, playerText, npcText, findingId = null }) =>
+    // Speichert eine gestellte Standardfrage als beobachtbaren Teil des Gesprächs.
+    // Eine Aussage wird erst durch einen bewussten Feldvergleich zur Feststellung.
+    recordInterviewAnswer: ({ questionId, playerText, npcText, fieldId = null, value = null }) =>
         set((state) => {
             const activeInspection = state.activeInspection;
             if (!activeInspection || !questionId || !playerText || !npcText) return state;
 
-            const finding = findingId
-                ? createInspectionFinding({
-                    findingId,
-                    discoveredVia: "driver_statement",
-                    evidence: [{
-                        fieldId: `statement.${questionId}`,
-                        label: "Fahreraussage",
-                        value: npcText
-                    }]
-                })
-                : null;
-
             return {
                 activeInspection: {
                     ...activeInspection,
-                    askedQuestionIds: appendOnce(
-                        activeInspection.askedQuestionIds ?? [],
-                        questionId
-                    ),
-                    findings: appendFinding(activeInspection.findings, finding),
                     conversationEntries: [
                         ...(activeInspection.conversationEntries ?? []),
                         {
@@ -132,7 +111,10 @@ export const useInspectionStore = create((set, get) => ({
                             type: "interview",
                             questionId,
                             playerText,
-                            npcText
+                            npcText,
+                            statementField: fieldId
+                                ? { fieldId, value: value ?? npcText }
+                                : null
                         }
                     ]
                 }
@@ -323,82 +305,6 @@ function appendFinding(findings = [], finding) {
     }
 
     return [...findings, finding];
-}
-
-function resolveDocumentRequest({ documentType, availability, attempts }) {
-    const documentLabel = INSPECTION_DOCUMENT_LABELS[documentType];
-    const playerText = `Bitte zeigen Sie mir ${getDocumentRequestObject(documentType)}.`;
-    const missingFindingId = getMissingDocumentFindingId(documentType);
-    const responseByAvailability = {
-        [DOCUMENT_AVAILABILITY_STATUSES.FORGOTTEN]: `Den ${documentLabel} habe ich leider vergessen.`,
-        [DOCUMENT_AVAILABILITY_STATUSES.LOST]: `Den ${documentLabel} kann ich nicht vorlegen. Ich habe ihn verloren.`,
-        [DOCUMENT_AVAILABILITY_STATUSES.DAMAGED]: `Hier ist der ${documentLabel}. Er ist leider beschädigt.`,
-        [DOCUMENT_AVAILABILITY_STATUSES.REFUSED]: `Nein. Den ${documentLabel} werde ich nicht vorlegen.`,
-        [DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT]: `Ich habe nur diesen Nachweis dabei. Er gehört zu einem anderen Fahrzeug.`
-    };
-    const initiallyRefused = availability
-        === DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED
-        && attempts === 1;
-    const opensDocument = availability === DOCUMENT_AVAILABILITY_STATUSES.PROVIDED
-        || availability === DOCUMENT_AVAILABILITY_STATUSES.DAMAGED
-        || (availability === DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED && attempts > 1);
-    const npcText = initiallyRefused
-        ? `Muss das sein? Den ${documentLabel} möchte ich nicht zeigen.`
-        : availability === DOCUMENT_AVAILABILITY_STATUSES.INITIALLY_REFUSED
-            ? `In Ordnung. Hier ist der ${documentLabel}.`
-            : responseByAvailability[availability]
-                ?? `Natürlich. Hier ist der ${documentLabel}.`;
-    const findingId = availability === DOCUMENT_AVAILABILITY_STATUSES.DAMAGED
-        ? "damaged_document"
-        : availability === DOCUMENT_AVAILABILITY_STATUSES.REFUSED
-            ? "document_refusal"
-            : availability === DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT
-                ? "wrong_document_presented"
-        : availability === DOCUMENT_AVAILABILITY_STATUSES.FORGOTTEN
-            || availability === DOCUMENT_AVAILABILITY_STATUSES.LOST
-            ? missingFindingId
-            : null;
-
-    return {
-        opensDocument,
-        findingId,
-        result: initiallyRefused
-            ? "initially_refused"
-            : availability === DOCUMENT_AVAILABILITY_STATUSES.REFUSED
-                ? "refused"
-                : availability === DOCUMENT_AVAILABILITY_STATUSES.WRONG_DOCUMENT
-                    ? "wrong_document"
-                    : opensDocument
-                        ? "provided"
-                        : "unavailable",
-        conversationEntry: {
-            id: createEntityId("conversation"),
-            type: "document_request",
-            documentType,
-            playerText,
-            npcText
-        }
-    };
-}
-
-function getMissingDocumentFindingId(documentType) {
-    const findingByDocument = {
-        [INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE]: "missing_drivers_license",
-        [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]: "missing_vehicle_registration",
-        [INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE]: "missing_insurance"
-    };
-
-    return findingByDocument[documentType];
-}
-
-function getDocumentRequestObject(documentType) {
-    const requestObjectByDocument = {
-        [INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE]: "Ihren Führerschein",
-        [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]: "die Fahrzeugpapiere",
-        [INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE]: "den Versicherungsnachweis"
-    };
-
-    return requestObjectByDocument[documentType];
 }
 
 function updateDiscrepancyMode(state, discrepancyMode) {

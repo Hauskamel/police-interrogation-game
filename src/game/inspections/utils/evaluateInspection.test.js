@@ -160,12 +160,47 @@ describe("evaluateInspection", () => {
             INSPECTION_DECISIONS.DENY_CONTINUATION
         );
     });
+
+    it("does not expect a contradictory statement before the question was asked", () => {
+        const trafficEntity = createTrafficEntity();
+        trafficEntity.statementProfile = {
+            responses: {
+                address: {
+                    value: "Lindenstraße 14"
+                }
+            }
+        };
+        const officialRegistry = createOfficialRegistry();
+        officialRegistry.peopleById[trafficEntity.npcId].address = "Hauptstrasse 1";
+
+        const unaskedResult = evaluateCase({
+            trafficEntity,
+            officialRegistry,
+            playerDecisionType: INSPECTION_DECISIONS.ALLOW_TO_CONTINUE
+        });
+        const askedResult = evaluateCase({
+            trafficEntity,
+            officialRegistry,
+            conversationEntries: [{
+                type: "interview",
+                questionId: "address"
+            }],
+            reasonCodes: ["inconsistent_driver_statement"],
+            playerDecisionType: INSPECTION_DECISIONS.HOLD_FOR_CLARIFICATION
+        });
+
+        expect(unaskedResult.actualFindingIds).toEqual([]);
+        expect(askedResult.actualFindingIds).toContain(
+            "inconsistent_driver_statement"
+        );
+    });
 });
 
 function evaluateCase({
     trafficEntity = createTrafficEntity(),
     officialRegistry = createOfficialRegistry(),
     criminalDatabase = { wantedRecordsById: {} },
+    conversationEntries = [],
     reasonCodes = [],
     playerDecisionType
 }) {
@@ -173,6 +208,7 @@ function evaluateCase({
         inspectionSession: {
             startedAt: "2026-08-03T08:00:00.000Z",
             openedDocuments: Object.values(INSPECTION_DOCUMENT_TYPES),
+            conversationEntries,
             findings: reasonCodes.map((findingId) => ({ findingId }))
         },
         trafficEntity,

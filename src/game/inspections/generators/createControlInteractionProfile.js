@@ -84,7 +84,9 @@ function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerPr
             text: [driver.firstName, driver.lastName].filter(Boolean).join(" ")
         },
         address: {
-            text: driver.address
+            text: driver.address,
+            value: driver.address,
+            fieldId: "statement.address"
         },
         vehicle_owner: {
             text: driver.npcId === owner.npcId
@@ -105,7 +107,8 @@ function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerPr
     if (hasContradiction) {
         responses.address = {
             text: "Ich wohne in der Lindenstraße 14.",
-            findingId: "inconsistent_driver_statement"
+            value: "Lindenstraße 14",
+            fieldId: "statement.address"
         };
     }
 

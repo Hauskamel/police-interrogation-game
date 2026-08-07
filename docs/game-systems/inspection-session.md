@@ -18,8 +18,8 @@ Fahrzeug anhalten
 → Police Laptop durchsuchen
 → Feststellungen erkennen
 → administrative Entscheidung treffen
-→ Kontrolle auswerten
-→ Bericht schließen und Fahrzeug freigeben
+→ Kontrolle auswerten und Konsequenz anwenden
+→ Ergebnisbericht schließen
 ```
 
 Es kann immer nur eine Kontrollsession aktiv sein. Während der Kontrolle kann das
@@ -34,7 +34,6 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     status,
     startedAt,
     completedAt,
-    requestedDocuments,
     openedDocuments,
     visibleDocuments,
     documentRequestStates,
@@ -42,7 +41,6 @@ betroffene Fahrzeug nicht versehentlich weitergeschickt werden.
     discrepancyMode,
     conversationEntries,
     dispatchConversationEntries,
-    askedQuestionIds,
     playerDecision,
     resolution
 }
@@ -59,7 +57,8 @@ Dokumentzustände und Polizeistatus werden bei Bedarf über diese Referenz aufge
 
 ### `status`
 
-Die Session verwendet `active`, `completed` und `cancelled`.
+Die Session verwendet `active` und `completed`. Ein technisch abgebrochener Vorgang
+wird derzeit nicht als eigener historischer Datensatz gespeichert.
 
 ### `startedAt` und `completedAt`
 
@@ -75,11 +74,12 @@ fachlichen Zeitbezug.
 
 ### Dokumentanforderungen
 
-`requestedDocuments` enthält jeden angeforderten Dokumenttyp. `documentRequestStates`
-speichert zusätzlich Anzahl der Anfragen, fachliche Verfügbarkeit und das letzte
-Ergebnis. Ein Dokument kann vorgelegt, vergessen, verloren, zunächst oder endgültig
-verweigert, unpassend oder beschädigt sein. Eine anfängliche Weigerung kann durch
-eine zweite Aufforderung aufgelöst werden.
+`documentRequestStates` speichert pro Dokumenttyp Anzahl der Anfragen, fachliche
+Verfügbarkeit und das letzte Ergebnis. Die Liste angeforderter Dokumente wird aus
+diesen Keys abgeleitet und nicht ein zweites Mal gespeichert. Ein Dokument kann
+vorgelegt, vergessen, verloren, zunächst oder endgültig verweigert, unpassend oder
+beschädigt sein. Eine anfängliche Weigerung kann durch eine zweite Aufforderung
+aufgelöst werden.
 
 ### `openedDocuments`
 
@@ -99,7 +99,7 @@ UI-Zustand ist bewusst von `openedDocuments` getrennt:
 
 ```text
 Dokument im Gespräch anfordern
-→ immer in requestedDocuments eintragen
+→ Anfrage in documentRequestStates aktualisieren
 → nur bei tatsächlicher Vorlage in openedDocuments und visibleDocuments eintragen
 
 Dokument manuell schließen
@@ -118,8 +118,11 @@ Dokument bleibt für die Auswertung trotzdem als geprüft gespeichert.
 `findings` ist die kanonische Belegliste. Jeder Eintrag enthält Finding-ID,
 Erkennungsweg, sichtbare Belegfelder, optionalen Registerrecord und Zeitpunkt.
 Mögliche Erkennungswege sind Dokumentvergleich, Funkabfrage, Dokumentanforderung und
-Fahrerbefragung. Es gibt keine zweite Finding-ID-Liste; Badge, Abschlussgründe und
-Auswertung werden direkt aus diesen strukturierten Einträgen abgeleitet.
+Feldvergleich. Eine Fahreraussage ist zunächst nur ein sichtbarer Gesprächsbeleg.
+Sie wird erst nach dem bewussten Vergleich mit einer Dokument- oder Registerangabe
+zum Finding. Nicht gestellte Fragen werden nicht als übersehene Hinweise bewertet.
+Es gibt keine zweite Finding-ID-Liste; Badge, Abschlussgründe und Auswertung werden
+direkt aus diesen strukturierten Einträgen abgeleitet.
 
 Aktuell pruefbar sind:
 
@@ -175,6 +178,11 @@ Der Bericht gliedert Feststellungen in:
 - Dokumentvorlage und Aussagen
 
 Mögliche Bewertungen sind `correct`, `partially_correct` und `incorrect`.
+
+Auswertung, Szenariofortschritt und die Folge für die TrafficEntity werden beim
+Bestätigen der Entscheidung gemeinsam durch den Finalization Service ausgeführt.
+Der Button im Ergebnisbericht schließt danach nur noch die Anzeige und kann keinen
+Spielstand mehr unvollständig zurücklassen.
 
 ## Fachliche Regeln
 

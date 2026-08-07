@@ -11,6 +11,7 @@ import {
     registerCriminalDatabaseOfficialRecords,
     useOfficialRegistryStore,
     usePoliceLaptopStore,
+    useShiftStore,
     useWorldTruthStore
 } from "@stores";
 
@@ -34,6 +35,7 @@ export const Startmenu = () => {
     const resetCompletedScenarioHistory = useControlScenarioStore(
         (state) => state.resetCompletedScenarioHistory
     );
+    const resetShift = useShiftStore((state) => state.resetShift);
 
     // -----> Baut die kriminelle NPC-Datenbank einmalig beim Spielstart auf.
     const generateDatabase = useCallback(() => {
@@ -54,6 +56,7 @@ export const Startmenu = () => {
         resetInspectionState();
         resetPoliceLaptopState();
         resetCompletedScenarioHistory();
+        resetShift();
         generateDatabase();
         ingameMode();
     };

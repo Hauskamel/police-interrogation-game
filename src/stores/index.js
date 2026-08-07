@@ -1,6 +1,7 @@
 export { gameStates, useGameStore } from "./gameStore.js";
 export { useControlScenarioStore } from "./controlScenarioStore.js";
 export { useInspectionStore } from "./inspectionStore.js";
+export { useShiftStore } from "./shiftStore.js";
 export { commitTrafficEntityRecords } from "./commitTrafficEntityRecords.js";
 export { useNpcStore } from "./npcStore.js";
 export {
@@ -21,7 +22,6 @@ export {
     selectSelectedVehicle,
     useTrafficStore
 } from "./trafficStore.js";
-export { useGuiVisibilityStatesStore } from "./uiVisibilityStore.js";
 export {
     registerTrafficEntityWorldTruth,
     useWorldTruthStore

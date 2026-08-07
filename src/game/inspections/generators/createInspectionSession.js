@@ -3,16 +3,17 @@ import { createEntityId, getCurrentGameTimestamp } from "@game/shared";
 import { INSPECTION_STATUSES } from "../data";
 
 // ##### Inspection Session Factory
-// -----> Erstellt den kleinen, kontrollspezifischen Zustand für Phase 1.
+// -----> Erstellt den kontrollspezifischen Zustand für den aktuellen Gameplay-Loop.
 // ---> Personen-, Fahrzeug- und Dokumentdaten bleiben über die TrafficEntity referenziert.
-export function createInspectionSession(trafficEntityId) {
+export function createInspectionSession(trafficEntityId, options = {}) {
     return {
         inspectionId: createEntityId("inspection"),
         trafficEntityId,
+        shiftEncounter: options.shiftEncounter ?? null,
+        conversationMemory: options.conversationMemory ?? { clueIds: [] },
         status: INSPECTION_STATUSES.ACTIVE,
         startedAt: getCurrentGameTimestamp(),
         completedAt: null,
-        requestedDocuments: [],
         openedDocuments: [],
         visibleDocuments: [],
         documentRequestStates: {},
@@ -31,7 +32,6 @@ export function createInspectionSession(trafficEntityId) {
         },
         conversationEntries: [],
         dispatchConversationEntries: [],
-        askedQuestionIds: [],
         playerDecision: null,
         resolution: null
     };

@@ -2,6 +2,7 @@ import { BaseControlPanel } from "./BaseControlPanel.jsx";
 import { VehicleOccupantsPanel } from "./VehicleOccupantsPanel.jsx";
 import {
     useInspectionStore,
+    useShiftStore,
     useTrafficStore
 } from "@stores";
 
@@ -22,6 +23,8 @@ export const VehicleControlPanel = ({
         (state) => state.lastCompletedInspection
     );
     const startInspection = useInspectionStore((state) => state.startInspection);
+    const getCurrentEncounter = useShiftStore((state) => state.getCurrentEncounter);
+    const getConversationMemory = useShiftStore((state) => state.getConversationMemory);
     const revealedDriverNpcId = useTrafficStore((state) =>
         state.revealedDriverIdentityByTrafficEntityId[trafficEntity?.id]
     );
@@ -92,7 +95,10 @@ export const VehicleControlPanel = ({
                         <button
                             type="button"
                             className="w-full bg-sky-700 text-white py-2 px-4 rounded-xl hover:bg-sky-800 transition font-semibold shadow-md cursor-pointer"
-                            onClick={() => startInspection(trafficEntity.id)}
+                            onClick={() => startInspection(trafficEntity.id, {
+                                shiftEncounter: getCurrentEncounter(),
+                                conversationMemory: getConversationMemory()
+                            })}
                         >
                             Kontrolle beginnen
                         </button>

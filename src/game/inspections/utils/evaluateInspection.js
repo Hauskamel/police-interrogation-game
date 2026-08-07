@@ -2,6 +2,7 @@ import {
     INSPECTION_DECISIONS,
     INSPECTION_BALANCING,
     INSPECTION_FINDING_DEFINITIONS,
+    getExpectedInspectionDecision,
     INSPECTION_OUTCOMES,
     INSPECTION_RESOLUTION_ACTIONS,
     REQUIRED_INSPECTION_DOCUMENTS
@@ -38,7 +39,7 @@ export function evaluateInspection({
     const falsePositiveFindings = playerFindingIds.filter(
         (findingId) => !actualFindingIds.includes(findingId)
     );
-    const expectedDecision = getExpectedDecision(actualFindingIds);
+    const expectedDecision = getExpectedInspectionDecision(actualFindingIds);
     const decisionWasCorrect = playerDecision.type === expectedDecision;
     const unavailableDocuments = getUnavailableRequestedDocuments(inspectionSession);
     const unopenedDocuments = REQUIRED_INSPECTION_DOCUMENTS.filter((documentType) => {
@@ -125,7 +126,11 @@ function getDetectableFindingIds({
     })
         ? ["active_wanted_record"]
         : [];
-    const controlFindingIds = getControlInteractionFindingIds(trafficEntity);
+    const controlFindingIds = getControlInteractionFindingIds({
+        inspectionSession,
+        trafficEntity,
+        officialRegistry
+    });
 
     return Array.from(new Set([
         ...documentFindingIds,
@@ -136,8 +141,13 @@ function getDetectableFindingIds({
     ]));
 }
 
-// Dokumentverfügbarkeit und vorbereitete Widersprüche sind Teil des konkreten Kontrollfalls.
-function getControlInteractionFindingIds(trafficEntity) {
+// Dokumentverfügbarkeit ist sofort beobachtbar. Fahreraussagen werden dagegen nur
+// bewertet, wenn der Spieler die betreffende Frage in dieser Kontrolle gestellt hat.
+function getControlInteractionFindingIds({
+    inspectionSession,
+    trafficEntity,
+    officialRegistry
+}) {
     const findingByDocument = {
         driversLicense: "missing_drivers_license",
         carDocuments: "missing_vehicle_registration",
@@ -154,9 +164,18 @@ function getControlInteractionFindingIds(trafficEntity) {
         })
         .filter(Boolean);
 
-    const hasContradictoryResponse = Object.values(
-        trafficEntity.statementProfile?.responses ?? {}
-    ).some((response) => response.findingId === "inconsistent_driver_statement");
+    const addressWasAsked = (inspectionSession.conversationEntries ?? []).some(
+        (entry) => entry.type === "interview" && entry.questionId === "address"
+    );
+    const statedAddress = trafficEntity.statementProfile?.responses?.address?.value;
+    const registeredAddress = officialRegistry.peopleById?.[
+        trafficEntity.npcId
+    ]?.address;
+    const hasContradictoryResponse = addressWasAsked
+        && statedAddress
+        && registeredAddress
+        && normalizeComparableValue(statedAddress)
+            !== normalizeComparableValue(registeredAddress);
 
     if (hasContradictoryResponse) {
         findings.push("inconsistent_driver_statement");
@@ -175,6 +194,10 @@ function getControlInteractionFindingIds(trafficEntity) {
     }
 
     return findings;
+}
+
+function normalizeComparableValue(value) {
+    return String(value).trim().toLocaleLowerCase("de-DE");
 }
 
 // Ein Dokumentfehler wird nur erwartet, wenn sein kanonischer Registerrecord aufloesbar ist.
@@ -227,42 +250,6 @@ function getDecisionFindingIds(playerDecision) {
     }
 
     return [];
-}
-
-// ##### Expected Decision Resolver
-// -----> Priorisiert Fahndungen vor Manipulationen und abgelaufenen Führerscheinen.
-function getExpectedDecision(actualFindingIds) {
-    if (actualFindingIds.includes("active_wanted_record")) {
-        return INSPECTION_DECISIONS.REPORT_WANTED_HIT;
-    }
-
-    const hasDocumentManipulation = actualFindingIds.some((findingId) => {
-        const definition = INSPECTION_FINDING_DEFINITIONS.find(
-            ({ id }) => id === findingId
-        );
-
-        return definition?.category === "document";
-    });
-
-    if (actualFindingIds.includes("inconsistent_driver_statement")) {
-        return INSPECTION_DECISIONS.HOLD_FOR_CLARIFICATION;
-    }
-
-    if (hasDocumentManipulation || actualFindingIds.includes("damaged_document")) {
-        return INSPECTION_DECISIONS.SEIZE_DOCUMENTS;
-    }
-
-    if (
-        actualFindingIds.includes("expired_drivers_license")
-        || actualFindingIds.includes("expired_insurance")
-        || actualFindingIds.some((findingId) => findingId.startsWith("missing_"))
-        || actualFindingIds.includes("document_refusal")
-        || actualFindingIds.includes("wrong_document_presented")
-    ) {
-        return INSPECTION_DECISIONS.DENY_CONTINUATION;
-    }
-
-    return INSPECTION_DECISIONS.ALLOW_TO_CONTINUE;
 }
 
 function getResolutionAction(decisionType) {

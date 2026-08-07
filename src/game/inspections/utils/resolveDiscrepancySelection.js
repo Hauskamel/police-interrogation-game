@@ -134,6 +134,12 @@ function getExpectedValue({ definition, trafficEntity, officialRegistry }) {
 }
 
 function getExpectedPairValue({ definition, trafficEntity, officialRegistry }) {
+    if (definition.id.startsWith("statement.")) {
+        const person = officialRegistry.peopleById?.[trafficEntity.npcId];
+        const property = definition.comparisonGroup.split(".")[1];
+        return person?.[property];
+    }
+
     if (definition.id.startsWith("driversLicense.")) {
         if (definition.comparisonGroup.startsWith("person.")) {
             const person = officialRegistry.peopleById?.[trafficEntity.npcId];

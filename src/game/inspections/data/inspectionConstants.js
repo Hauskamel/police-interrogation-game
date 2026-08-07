@@ -1,9 +1,8 @@
 // ##### Inspection Statuses
-// -----> Phase 1 unterscheidet nur laufende, abgeschlossene und abgebrochene Kontrollen.
+// -----> Unterscheidet laufende und vollständig abgeschlossene Kontrollen.
 export const INSPECTION_STATUSES = {
     ACTIVE: "active",
-    COMPLETED: "completed",
-    CANCELLED: "cancelled"
+    COMPLETED: "completed"
 };
 
 // ##### Inspection Document Types
@@ -38,7 +37,7 @@ export const DOCUMENT_AVAILABILITY_STATUSES = {
 };
 
 // ##### Inspection Decisions
-// -----> Beschreibt die administrativen Maßnahmen der ersten Gameplay-Version.
+// -----> Beschreibt die aktuell verfügbaren administrativen Maßnahmen.
 export const INSPECTION_DECISIONS = {
     ALLOW_TO_CONTINUE: "allow_to_continue",
     DENY_CONTINUATION: "deny_continuation",
@@ -85,7 +84,7 @@ export const INSPECTION_DECISION_OPTIONS = [
 ];
 
 // ##### Inspection Outcomes
-// -----> Kleine Ergebnisabstufung für den Kontrollbericht der ersten Version.
+// -----> Kleine Ergebnisabstufung für den Kontrollbericht.
 export const INSPECTION_OUTCOMES = {
     CORRECT: "correct",
     PARTIALLY_CORRECT: "partially_correct",

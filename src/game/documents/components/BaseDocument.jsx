@@ -1,9 +1,7 @@
-import React, { useEffect } from "react"
-import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { FaXmark } from "react-icons/fa6";
 import { useDraggable } from "../hooks";
-
-import { useGuiVisibilityStatesStore } from "@stores";
 
 const MotionDiv = motion.div;
 
@@ -20,52 +18,39 @@ export default function BaseDocument({
 }) {
     const { ref, position, onMouseDown } = useDraggable({x: 32, y: 32});
 
-    const setDocumentsAreVisible = useGuiVisibilityStatesStore(state => state.setDocumentVisibilityState)
-    const documentsAreVisible = useGuiVisibilityStatesStore(state => state.documentsVisible);
-
-    useEffect(()=>{
-        setDocumentsAreVisible(true)        
-    }, [setDocumentsAreVisible]);
-
     return (
         <div
-            className={`fixed left-0 top-0 z-[9000] ${discrepancyModeActive ? "drop-shadow-[0_0_16px_rgba(96,165,250,0.55)]" : ""} ${documentsAreVisible ? 'animate-fade-in' : 'animate-fade-out'}`}
+            className={`fixed left-0 top-0 z-[9000] ${discrepancyModeActive ? "drop-shadow-[0_0_16px_rgba(96,165,250,0.55)]" : ""}`}
             data-document-type={documentType}
         >
-            <AnimatePresence>   
-                {React.Children.map(children, (child) =>
-                        child ? (
-                            <MotionDiv
-                                key={child.key} // ensure key is passed
-                                initial={{ opacity: 0, scale: 0.8, y: 50 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.8, y: 50 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="w-full h-full"
-                                ref={ref}
-                                onMouseDown={onMouseDown}
-                                style={{
-                                    position: 'absolute',
-                                    left: `${position.x}px`,
-                                    top: `${position.y}px`,
-                                    cursor: 'move'
-                                }}
-                            >
-                                <button
-                                    type="button"
-                                    className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900/85 text-white shadow hover:bg-zinc-800"
-                                    aria-label="Dokument schließen"
-                                    onMouseDown={(event) => event.stopPropagation()}
-                                    onClick={onClose}
-                                >
-                                    <FaXmark aria-hidden="true" />
-                                </button>
-                                {child}
-                            </MotionDiv>
-                        ) : null
-                    )};
-                
-            </AnimatePresence>
+            {React.Children.map(children, (child) => child ? (
+                <MotionDiv
+                    key={child.key}
+                    initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="h-full w-full"
+                    ref={ref}
+                    onMouseDown={onMouseDown}
+                    style={{
+                        position: "absolute",
+                        left: `${position.x}px`,
+                        top: `${position.y}px`,
+                        cursor: "move"
+                    }}
+                >
+                    <button
+                        type="button"
+                        className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-900/85 text-white shadow hover:bg-zinc-800"
+                        aria-label="Dokument schließen"
+                        onMouseDown={(event) => event.stopPropagation()}
+                        onClick={onClose}
+                    >
+                        <FaXmark aria-hidden="true" />
+                    </button>
+                    {child}
+                </MotionDiv>
+            ) : null)}
         </div>
     );
-};
+}

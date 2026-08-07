@@ -23,12 +23,14 @@ Dokumente oeffnen
 ## Fokusmodus
 
 Der Button `Diskrepanz entdecken` ist erst aktiv, wenn mindestens ein Dokument
-geoeffnet ist. Nach dem Aktivieren werden Welt, Panels und Gespraechsbox abgedunkelt.
+geoeffnet ist. Nach dem Aktivieren werden Welt und nicht relevante Panels abgedunkelt.
 Nur folgende Elemente bleiben im Vordergrund:
 
 - alle aktuell geoeffneten Dokumente
 - die auswaehlbaren Dokumentfelder
 - die auswaehlbaren Registerfelder im Police Laptop
+- auswaehlbare Aussagen im Fahrergespräch
+- die Gespraechsbox als sichtbare Belegflaeche
 - Status und Abbruch des Diskrepanzmodus
 
 Die Kontrollaktionen befinden sich in einer dauerhaft stabilen Iconleiste links
@@ -107,11 +109,11 @@ geschlossen und im Diskrepanzmodus ausgewaehlt werden. Der Laptop belegt die
 darunterliegende Arbeitsflaeche und behaelt seine eigene Navigation sowie den zuletzt
 geoeffneten Datenbankzustand.
 
-Im aktiven Diskrepanzmodus bleibt der Laptop bedienbar. Die Gespraechsbox wird
-voruebergehend ausgeblendet und fuer Eingaben gesperrt, damit sie keine Registerfelder
-verdeckt. Nach der Auswertung erscheint sie mit unveraendertem Verlauf wieder. Ein kleines
-Statusfeld am Aktionsdock zeigt `Feld auswaehlen`, bei Paarfeldern `Vergleich 1/2`
-oder waehrend einer Einzelfeldpruefung `Pruefung laeuft`.
+Im aktiven Diskrepanzmodus bleiben Laptop und Gespraechsbox bedienbar. Aussagen wie
+die genannte Anschrift können dadurch direkt mit Führerschein oder Personenregister
+verglichen werden. Das bloße Stellen einer Frage erzeugt noch keine Feststellung.
+Ein kleines Statusfeld am Aktionsdock zeigt `Feld auswaehlen`, bei Paarfeldern
+`Vergleich 1/2` oder während einer Einzelfeldpruefung `Pruefung laeuft`.
 
 ## Feststellung und Gespraech
 

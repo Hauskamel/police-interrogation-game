@@ -9,7 +9,12 @@ import {
     DOCUMENT_AVAILABILITY_STATUSES,
     INSPECTION_DOCUMENT_TYPES
 } from "@game/inspections/data";
-import { getAvailableInterviewQuestions } from "@game/inspections/utils";
+import {
+    getAskedQuestionIds,
+    getAvailableInterviewQuestions,
+    getRequestedDocumentTypes
+} from "@game/inspections/utils";
+import { getShiftInterviewQuestions } from "@game/shifts/utils";
 import {
     useInspectionStore,
     useTrafficStore
@@ -49,7 +54,8 @@ export function DocumentManager() {
         (state) => state.recordInterviewAnswer
     );
     const activeDocs = Object.values(INSPECTION_DOCUMENT_TYPES);
-    const requestedDocuments = activeInspection?.requestedDocuments ?? [];
+    const requestedDocuments = getRequestedDocumentTypes(activeInspection);
+    const askedQuestionIds = getAskedQuestionIds(activeInspection);
     const visibleDocuments = activeInspection?.visibleDocuments ?? [];
     const discrepancyMode = activeInspection?.discrepancyMode ?? {
         active: false,
@@ -61,10 +67,18 @@ export function DocumentManager() {
     const fieldSelectionModeActive = Boolean(
         discrepancyMode.active || radioInquiryMode.active
     );
-    const availableInterviewQuestions = getAvailableInterviewQuestions({
+    const standardInterviewQuestions = getAvailableInterviewQuestions({
         openedDocuments: activeInspection?.openedDocuments,
         findings: activeInspection?.findings
     });
+    const narrativeInterviewQuestions = getShiftInterviewQuestions({
+        encounter: activeInspection?.shiftEncounter,
+        clueIds: activeInspection?.conversationMemory?.clueIds
+    });
+    const availableInterviewQuestions = [
+        ...standardInterviewQuestions,
+        ...narrativeInterviewQuestions
+    ];
 
     const handleDocumentRequest = (documentType) => {
         const availability = controlledTrafficEntity?.documentAvailability?.[
@@ -99,7 +113,8 @@ export function DocumentManager() {
 
     const handleInterviewQuestion = ({ id, playerText }) => {
         const statementProfile = controlledTrafficEntity?.statementProfile;
-        const response = statementProfile?.responses?.[id];
+        const response = activeInspection?.shiftEncounter?.responses?.[id]
+            ?? statementProfile?.responses?.[id];
         const npcText = response?.text;
         if (!npcText) return;
 
@@ -107,7 +122,8 @@ export function DocumentManager() {
             questionId: id,
             playerText,
             npcText,
-            findingId: response.findingId ?? null
+            fieldId: response.fieldId ?? null,
+            value: response.value ?? npcText
         });
     };
 
@@ -159,7 +175,7 @@ export function DocumentManager() {
                 discrepancyModeActive={discrepancyMode.active}
                 radioInquiryModeActive={radioInquiryMode.active}
                 onRequestDocument={handleDocumentRequest}
-                askedQuestionIds={activeInspection?.askedQuestionIds ?? []}
+                askedQuestionIds={askedQuestionIds}
                 interviewQuestions={availableInterviewQuestions}
                 onAskQuestion={handleInterviewQuestion}
             />

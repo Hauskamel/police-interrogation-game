@@ -14,6 +14,7 @@ Diese Dokumente erklären, **was ein Feature im Spiel bedeutet** und wie es geda
 
 | Dokument | Inhalt |
 |---|---|
+| [Narrative Schicht](./game-systems/shift-story.md) | Wie fünf normale Kontrollen einen kleinen Fall erzählen und frühere Gespräche spätere Nachfragen freischalten |
 | [Stabilisierung der Kontrollsession Phase 2 vom 06.08.2026](./system-changes/control-session-phase-2-stabilization-2026-08-06.md) | Einheitliche Findings, Dokumentreaktionen, kontextbezogene Befragung, Abschluss-Pacing, Balancing und Diensthandbuch |
 | [NPCs, Polizeiwissen und Verkehrskontrollen](./game-systems/npc-generation.md) | Wie NPCs, Fahrzeuge, Halter, Fahndungsrecords, TrafficEntities und Dokumentdaten zusammenhängen |
 | [Spielbare Polizei-Datenbank](./game-systems/police-database.md) | Welche Informationen der Police Laptop zeigt, wie die Suchen funktionieren und warum World Truth verborgen bleibt |
@@ -28,6 +29,7 @@ Diese Dokumente erklären, **was technisch geändert wurde**.
 
 | Dokument | Inhalt |
 |---|---|
+| [Inspection Refactor vom 06.08.2026](./system-changes/inspection-refactor-2026-08-06.md) | Beobachtbare Fahreraussagen, normalisierte Sessions, zentraler Abschluss, UI-Aufteilung und Legacy-Cleanup |
 | [Kontrollsession Phase 2 vom 06.08.2026](./system-changes/control-session-phase-2-foundation-2026-08-06.md) | Strukturierte Findings, Dokumentvorlage, Befragung, Entscheidungen, Bericht, Szenarien und Pacing |
 | [Control Scenario Director vom 04.08.2026](./system-changes/control-scenario-director-2026-08-04.md) | Technische Umsetzung des Pacing-Directors, gezielte Dokumentfälle, Spawn-Integration und Tests |
 | [Diskrepanzinteraktion vom 06.08.2026](./system-changes/discrepancy-interaction-2026-08-06.md) | Ersatz des Finding-Katalogs durch Dokumentfelder, Fokusmodus, Session-Erweiterung und Dialog-Provider |

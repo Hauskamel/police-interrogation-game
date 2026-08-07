@@ -92,6 +92,18 @@ describe("resolveDiscrepancySelection", () => {
             findingId: "vehicle_issue_date_mismatch"
         });
     });
+
+    it("finds a contradictory address only after comparing the statement", () => {
+        const result = resolveSelection([
+            field("statement.address", "Lindenstraße 14"),
+            field("driversLicense.address", "Hauptstrasse 1")
+        ]);
+
+        expect(result).toEqual({
+            status: DISCREPANCY_RESULT_STATUSES.DISCREPANCY_FOUND,
+            findingId: "inconsistent_driver_statement"
+        });
+    });
 });
 
 function resolveSelection(selectedFields) {

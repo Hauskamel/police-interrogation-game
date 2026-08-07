@@ -4,6 +4,10 @@ import {
     INSPECTION_DOCUMENT_TYPES,
     INSPECTION_STATUSES
 } from "@game/inspections/data";
+import {
+    getAskedQuestionIds,
+    getRequestedDocumentTypes
+} from "@game/inspections/utils";
 import { resetGameClock } from "@game/shared";
 
 import { useInspectionStore } from "./inspectionStore.js";
@@ -47,7 +51,7 @@ describe("inspectionStore", () => {
 
         const activeInspection = useInspectionStore.getState().activeInspection;
 
-        expect(activeInspection.requestedDocuments).toEqual([documentType]);
+        expect(getRequestedDocumentTypes(activeInspection)).toEqual([documentType]);
         expect(activeInspection.openedDocuments).toEqual([documentType]);
         expect(activeInspection.visibleDocuments).toEqual([]);
     });
@@ -62,7 +66,7 @@ describe("inspectionStore", () => {
 
         const activeInspection = useInspectionStore.getState().activeInspection;
 
-        expect(activeInspection.requestedDocuments).toEqual([documentType]);
+        expect(getRequestedDocumentTypes(activeInspection)).toEqual([documentType]);
         expect(activeInspection.openedDocuments).toEqual([documentType]);
         expect(activeInspection.visibleDocuments).toEqual([documentType]);
     });
@@ -129,22 +133,27 @@ describe("inspectionStore", () => {
         });
     });
 
-    it("stores interview contradictions as structured findings", () => {
+    it("stores interview statements as evidence without discovering them automatically", () => {
         const store = useInspectionStore.getState();
         store.startInspection("traffic--one");
         store.recordInterviewAnswer({
             questionId: "address",
             playerText: "Wie lautet Ihre Anschrift?",
             npcText: "Lindenstraße 14",
-            findingId: "inconsistent_driver_statement"
+            fieldId: "statement.address",
+            value: "Lindenstraße 14"
         });
 
         const activeInspection = useInspectionStore.getState().activeInspection;
 
-        expect(activeInspection.askedQuestionIds).toEqual(["address"]);
-        expect(activeInspection.findings[0]).toMatchObject({
-            findingId: "inconsistent_driver_statement",
-            discoveredVia: "driver_statement"
+        expect(getAskedQuestionIds(activeInspection)).toEqual(["address"]);
+        expect(activeInspection.findings).toEqual([]);
+        expect(activeInspection.conversationEntries[0]).toMatchObject({
+            questionId: "address",
+            statementField: {
+                fieldId: "statement.address",
+                value: "Lindenstraße 14"
+            }
         });
     });
 

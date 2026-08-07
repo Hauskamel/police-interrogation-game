@@ -5,10 +5,11 @@ import {
     INSPECTION_DOCUMENT_LABELS,
     INSPECTION_DOCUMENT_TYPES
 } from "@game/inspections/data";
+import { useInspectionFieldInteraction } from "@game/inspections/hooks/useInspectionFieldInteraction.js";
 
 
 // ##### Document Conversation Options
-// -----> Phase 1 bietet genau die drei Dokumentfragen der aktuellen Kontrollsession an.
+// -----> Bietet die drei Pflichtdokumente der aktuellen Kontrollsession an.
 const DOCUMENT_OPTIONS = [
     {
         type: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
@@ -93,7 +94,7 @@ export function DocumentConversation({
         <section
             className={`fixed bottom-4 right-4 z-[9500] flex h-[380px] max-h-[calc(100vh-2rem)] w-[min(580px,calc(100vw-2rem))] flex-col overflow-hidden rounded-md border border-zinc-700 bg-zinc-900 text-left text-white shadow-2xl transition sm:right-8 ${
                 discrepancyModeActive
-                    ? "pointer-events-none invisible opacity-0"
+                    ? "ring-1 ring-blue-500 opacity-100"
                     : "opacity-100"
             }`}
             aria-label="Gespräch mit dem Fahrer"
@@ -256,7 +257,11 @@ function DriverConversation({ conversationEntries }) {
             {conversationEntries.map((entry) => (
                 <div className="space-y-1" key={entry.id}>
                     <ConversationLine speaker="Sie" text={entry.playerText} />
-                    <ConversationLine speaker="Fahrer" text={entry.npcText} />
+                    <ConversationLine
+                        speaker="Fahrer"
+                        text={entry.npcText}
+                        statementField={entry.statementField}
+                    />
                 </div>
             ))}
         </>
@@ -285,8 +290,30 @@ function DispatchConversation({ radioInquiryModeActive, entries }) {
 }
 
 // Stellt Sprecher und Text im Verlauf klar gegenüber, ohne bereits ein Dialogsystem vorzutäuschen.
-function ConversationLine({ speaker, text }) {
+function ConversationLine({ speaker, text, statementField = null }) {
+    const fieldInteraction = useInspectionFieldInteraction(
+        statementField?.fieldId
+    );
     if (!text) return null;
+
+    const content = statementField && fieldInteraction.isInteractive
+        ? (
+            <button
+                type="button"
+                className={`rounded px-1 text-left underline decoration-dotted underline-offset-2 ${
+                    fieldInteraction.isSelected
+                        ? "bg-blue-700 text-white"
+                        : fieldInteraction.isCompatible
+                            ? "hover:bg-zinc-700"
+                            : "cursor-not-allowed opacity-40"
+                }`}
+                disabled={!fieldInteraction.isCompatible}
+                onClick={() => fieldInteraction.selectField(statementField.value)}
+            >
+                {text}
+            </button>
+        )
+        : text;
 
     return (
         <p className="leading-5 text-zinc-200">
@@ -298,7 +325,7 @@ function ConversationLine({ speaker, text }) {
             }>
                 {speaker}:
             </strong>{" "}
-            {text}
+            {content}
         </p>
     );
 }

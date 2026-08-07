@@ -32,13 +32,9 @@ export const INSPECTION_RULE_SECTIONS = [
         label: "Maßnahmen",
         title: "Zulässige Maßnahmen",
         intro: "Bei mehreren Feststellungen gilt die schwerwiegendste passende Maßnahme.",
-        rules: [
-            "Keine relevante Feststellung: Weiterfahrt erlauben.",
-            "Fehlender, unpassender oder abgelaufener Pflichtnachweis: Weiterfahrt verweigern.",
-            "Manipuliertes oder erheblich beschädigtes Dokument: Dokumente sicherstellen.",
-            "Widersprüchliche Identitätsangabe: Person zur Klärung festhalten.",
-            "Passende aktive Fahndung: Fahndungstreffer melden."
-        ]
+        rules: [...INSPECTION_DECISION_POLICY]
+            .reverse()
+            .map((policyEntry) => policyEntry.ruleText)
     },
     {
         id: "research",
@@ -54,3 +50,4 @@ export const INSPECTION_RULE_SECTIONS = [
         ]
     }
 ];
+import { INSPECTION_DECISION_POLICY } from "./inspectionDecisionPolicy.js";

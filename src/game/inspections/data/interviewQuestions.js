@@ -34,7 +34,3 @@ export const INTERVIEW_QUESTIONS = [
         followUp: true
     }
 ];
-
-export const INTERVIEW_QUESTIONS_BY_ID = Object.fromEntries(
-    INTERVIEW_QUESTIONS.map((question) => [question.id, question])
-);

@@ -109,9 +109,10 @@ describe("generateTrafficEntity control scenarios", () => {
             CONTROL_SCENARIO_TYPES.CONTRADICTORY_STATEMENT
         );
 
-        expect(entity.statementProfile.responses.address.findingId).toBe(
-            "inconsistent_driver_statement"
+        expect(entity.statementProfile.responses.address.fieldId).toBe(
+            "statement.address"
         );
+        expect(entity.statementProfile.responses.address.findingId).toBeUndefined();
         expect(entity.statementProfile.responses.address.text).not.toBe(
             entity.driverProfile.real.address
         );
