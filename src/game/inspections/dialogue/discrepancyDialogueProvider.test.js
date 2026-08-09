@@ -28,3 +28,18 @@ describe("createDiscrepancyDialogueTurn", () => {
         expect(turn.npcText).toBe("Eine externe Antwort.");
     });
 });
+
+describe("appearance discrepancy dialogue", () => {
+    it("confronts the driver about photo and appearance data", async () => {
+        const turn = await createDiscrepancyDialogueTurn({
+            findingId: "driver_appearance_mismatch",
+            selectedFields: [
+                { fieldId: "driversLicense.photo", label: "Passfoto", value: "driver2.jpg" },
+                { fieldId: "registryPerson.photo", label: "Lichtbild", value: "driver11.jpg" }
+            ]
+        });
+
+        expect(turn.playerText).toContain("Lichtbild");
+        expect(turn.npcText).toContain("anderes Foto");
+    });
+});

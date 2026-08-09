@@ -35,6 +35,42 @@ describe("createPresentedProfiles", () => {
         expect(profiles.vehicleProfile.presented).toEqual(profiles.vehicleProfile.real);
         expect(profiles.insuranceProfile.presented).toEqual(profiles.insuranceProfile.real);
     });
+
+    it("can forge the printed eye color without changing the real photo traits", () => {
+        const documentState = createValidDocumentState();
+        documentState.npcDocuments.driversLicense = {
+            integrity: DOCUMENT_INTEGRITY_TYPES.FORGED,
+            forgeryType: NPC_DOCUMENT_FORGERY_TYPES.WRONG_EYE_COLOR,
+            affectedFields: ["eyeColor"],
+            detectableBy: ["compare_photo_with_document"]
+        };
+
+        const profiles = createProfiles(documentState);
+
+        expect(profiles.driverProfile.real.eyeColor).toBe("blue");
+        expect(profiles.driverProfile.presented.eyeColor).not.toBe("blue");
+        expect(profiles.driverProfile.presented.npcImage).toBe("driver11.jpg");
+        expect(profiles.driverProfile.presented.distinguishingMarks).toEqual([
+            "scar_left_eyebrow"
+        ]);
+    });
+
+    it("can replace only the visible license photo", () => {
+        const documentState = createValidDocumentState();
+        documentState.npcDocuments.driversLicense = {
+            integrity: DOCUMENT_INTEGRITY_TYPES.FORGED,
+            forgeryType: NPC_DOCUMENT_FORGERY_TYPES.WRONG_PHOTO,
+            affectedFields: ["npcImage"],
+            detectableBy: ["compare_with_database_photo"]
+        };
+
+        const profiles = createProfiles(documentState);
+
+        expect(profiles.driverProfile.real.npcImage).toBe("driver11.jpg");
+        expect(profiles.driverProfile.presented.npcImage).not.toBe("driver11.jpg");
+        expect(profiles.driverProfile.presented.eyeColor).toBe("blue");
+        expect(profiles.driverProfile.presented.hairColor).toBe("blond");
+    });
 });
 
 function createProfiles(documentState) {
@@ -48,6 +84,10 @@ function createProfiles(documentState) {
                 birthDate: "1988-05-20",
                 birthYear: "1988",
                 age: 38,
+                hairColor: "blond",
+                eyeColor: "blue",
+                distinguishingMarks: ["scar_left_eyebrow"],
+                npcImage: "driver11.jpg",
                 crimeRecordIds: [],
                 driversLicense: {
                     licenseNumber: "ABC-12345678",

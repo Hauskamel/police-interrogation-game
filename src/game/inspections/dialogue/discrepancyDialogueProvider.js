@@ -8,6 +8,7 @@ import { INSPECTION_FINDING_DEFINITIONS_BY_ID } from "../data";
 export const scriptedNpcDialogueProvider = {
     async respond({ findingId }) {
         const responsesByFindingId = {
+            driver_appearance_mismatch: "Das ist mein Führerschein. Warum dort ein anderes Foto oder andere Merkmale stehen, kann ich nicht erklären.",
             driver_name_mismatch: "Das muss ein Fehler in den Unterlagen sein.",
             driver_address_mismatch: "Ich bin vor Kurzem umgezogen. Vielleicht wurde das noch nicht aktualisiert.",
             driver_birth_date_mismatch: "Das Geburtsdatum sollte eigentlich stimmen.",
@@ -59,6 +60,10 @@ export async function createDiscrepancyDialogueTurn({
 }
 
 function createOfficerStatement(findingId, findingLabel) {
+    if (findingId === "driver_appearance_mismatch") {
+        return "Das Lichtbild und die eingetragenen Personenmerkmale stimmen nicht überein. Wie erklären Sie das?";
+    }
+
     if (findingId === "expired_drivers_license") {
         return "Ihr Führerschein ist abgelaufen. Wie erklären Sie das?";
     }

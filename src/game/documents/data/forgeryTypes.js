@@ -11,7 +11,9 @@ export const NPC_DOCUMENT_FORGERY_TYPES = {
     WRONG_ADDRESS: "wrong_address",
     WRONG_BIRTH_DATE: "wrong_birth_date",
     WRONG_LICENSE_NUMBER: "wrong_license_number",
-    WRONG_NAME: "wrong_name"
+    WRONG_NAME: "wrong_name",
+    WRONG_EYE_COLOR: "wrong_eye_color",
+    WRONG_PHOTO: "wrong_photo"
 };
 
 export const VEHICLE_DOCUMENT_FORGERY_TYPES = {

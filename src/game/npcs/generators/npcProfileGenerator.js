@@ -5,6 +5,7 @@ import { generateNpcAppearance } from "./generateNpcAppearance.js";
 import { selectNpcPhoto } from "./selectNpcPhoto.js";
 
 import { getNpcAgeRange } from "../utils";
+import { NPC_PHOTO_METADATA } from "../data";
 
 // ##### NPC Profile Generator
 // -----> Erstellt die echte Identität und eine unveränderte presented-Basis einer Person.
@@ -63,7 +64,8 @@ export function createNpcProfileFromReal(real) {
         presented: {
             ...real,
             driversLicense: real.driversLicense ? { ...real.driversLicense } : null,
-            crimeRecordIds: [...real.crimeRecordIds]
+            crimeRecordIds: [...real.crimeRecordIds],
+            distinguishingMarks: [...(real.distinguishingMarks ?? [])]
         }
     };
 }
@@ -72,6 +74,8 @@ export function createNpcProfileFromReal(real) {
 // -----> Bündelt Stammdaten und biometrische Daten in der echten Personenidentität.
 // ---> crimeRecordIds verweist auf die separaten Straftatdatensätze.
 function createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicenseData = null) {
+    const photoMetadata = NPC_PHOTO_METADATA[npcImage];
+
     return {
         npcId: npcMasterData.npcId,
         sex: npcMasterData.sex,
@@ -85,6 +89,7 @@ function createRealProfile(npcMasterData, npcAppearance, npcImage, driversLicens
         height: npcAppearance.height,
         hairColor: npcAppearance.hairColor,
         eyeColor: npcAppearance.eyeColor,
+        distinguishingMarks: [...(photoMetadata?.distinguishingMarks ?? [])],
 
         npcImage: npcImage,
         driversLicense: driversLicenseData

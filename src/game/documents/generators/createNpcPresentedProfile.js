@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 
 import { DOCUMENT_INTEGRITY_TYPES, NPC_DOCUMENT_FORGERY_TYPES } from "../data";
+import { NPC_PHOTO_CATALOG } from "@game/npcs/data";
 
 // ##### NPC Presented Profile Generator
 // -----> Erstellt die vorgezeigten Personendaten aus der echten Identität.
@@ -23,7 +24,8 @@ function cloneNpcProfile(real) {
     return {
         ...real,
         driversLicense: real.driversLicense ? { ...real.driversLicense } : null,
-        crimeRecordIds: [...(real.crimeRecordIds ?? [])]
+        crimeRecordIds: [...(real.crimeRecordIds ?? [])],
+        distinguishingMarks: [...(real.distinguishingMarks ?? [])]
     };
 }
 
@@ -64,6 +66,34 @@ function applyNpcDocumentForgery(presentedProfile, forgeryType) {
             ...presentedProfile,
             firstName: faker.person.firstName("male"),
             lastName: faker.person.lastName()
+        };
+    }
+
+    if (forgeryType === NPC_DOCUMENT_FORGERY_TYPES.WRONG_EYE_COLOR) {
+        const alternateEyeColors = ["blue", "green", "brown"].filter(
+            (eyeColor) => eyeColor !== presentedProfile.eyeColor
+        );
+
+        return {
+            ...presentedProfile,
+            eyeColor: alternateEyeColors[0]
+        };
+    }
+
+    if (forgeryType === NPC_DOCUMENT_FORGERY_TYPES.WRONG_PHOTO) {
+        const replacementPhoto = Object.values(NPC_PHOTO_CATALOG).find(
+            (photo) => photo.fileName !== presentedProfile.npcImage
+                && (
+                    photo.eyeColor !== presentedProfile.eyeColor
+                    || photo.hairColor !== presentedProfile.hairColor
+                    || photo.distinguishingMarks.join("|")
+                        !== presentedProfile.distinguishingMarks.join("|")
+                )
+        );
+
+        return {
+            ...presentedProfile,
+            npcImage: replacementPhoto?.fileName ?? presentedProfile.npcImage
         };
     }
 

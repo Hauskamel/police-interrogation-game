@@ -124,6 +124,7 @@ function createOfficialPersonRecord(person) {
         height: person.height,
         hairColor: person.hairColor,
         eyeColor: person.eyeColor,
+        distinguishingMarks: [...(person.distinguishingMarks ?? [])],
         npcImage: person.npcImage,
         driversLicenseNumber: person.driversLicense?.licenseNumber ?? null
     };

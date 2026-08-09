@@ -19,6 +19,10 @@ import {
     useOfficialRegistryStore,
     usePoliceLaptopStore
 } from "@stores";
+import {
+    DISTINGUISHING_MARK_LABELS,
+    getNpcPhotoComparisonValue
+} from "@game/npcs/data";
 
 import {
     getActiveWantedRecordForNpc,
@@ -519,6 +523,9 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
                     data={npc.npcImage}
                     alt={`${npc.firstName} ${npc.lastName}`}
                     className="h-36 w-28 rounded object-cover"
+                    fieldId="registryPerson.photo"
+                    recordId={npc.npcId}
+                    selectionValue={getNpcPhotoComparisonValue(npc.npcImage)}
                 />
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -538,8 +545,15 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
                         <DataField label="Alter" value={`${npc.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(npc.sex)} />
                         <DataField label="Größe" value={npc.height ? `${npc.height} cm` : "Nicht erfasst"} />
-                        <DataField label="Haarfarbe" value={npc.hairColor} />
-                        <DataField label="Augenfarbe" value={npc.eyeColor} />
+                        <DataField label="Haarfarbe" value={npc.hairColor} fieldId="registryPerson.hairColor" recordId={npc.npcId} />
+                        <DataField label="Augenfarbe" value={npc.eyeColor} fieldId="registryPerson.eyeColor" recordId={npc.npcId} />
+                        <DataField
+                            label="Besondere Kennzeichen"
+                            value={formatDistinguishingMarks(npc.distinguishingMarks)}
+                            selectionValue={npc.distinguishingMarks ?? []}
+                            fieldId="registryPerson.distinguishingMarks"
+                            recordId={npc.npcId}
+                        />
                     </dl>
                 </div>
             </div>
@@ -585,6 +599,11 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
     );
 }
 
+function formatDistinguishingMarks(marks = []) {
+    if (marks.length === 0) return "Keine erfasst";
+    return marks.map((mark) => DISTINGUISHING_MARK_LABELS[mark] ?? mark).join(", ");
+}
+
 // Zeigt einen amtlichen Personen- und Fuehrerscheinrecord ohne polizeiliche Erkenntnisse hinzuzufuegen.
 function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
     if (!person) return <MissingRecord />;
@@ -596,6 +615,9 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
                     data={person.npcImage}
                     alt={`${person.firstName} ${person.lastName}`}
                     className="h-36 w-28 rounded object-cover"
+                    fieldId="registryPerson.photo"
+                    recordId={person.npcId}
+                    selectionValue={getNpcPhotoComparisonValue(person.npcImage)}
                 />
                 <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase text-zinc-500">
@@ -790,6 +812,9 @@ function WantedDetails({ criminalDatabase, wantedRecord, npc, onSelectPerson }) 
                     data={npc.npcImage}
                     alt={`${npc.firstName} ${npc.lastName}`}
                     className="h-32 w-24 rounded object-cover"
+                    fieldId="registryPerson.photo"
+                    recordId={npc.npcId}
+                    selectionValue={getNpcPhotoComparisonValue(npc.npcImage)}
                 />
                 <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase text-red-700">

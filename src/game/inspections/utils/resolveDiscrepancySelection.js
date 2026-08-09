@@ -57,8 +57,25 @@ export function resolveDiscrepancySelection({
         );
     }
 
-    if (normalizeValue(firstField.value) === normalizeValue(secondField.value)) {
+    const comparisonGroup = getSharedComparisonGroup(
+        firstDefinition,
+        secondDefinition
+    );
+    const firstValue = getComparableFieldValue(firstField, comparisonGroup);
+    const secondValue = getComparableFieldValue(secondField, comparisonGroup);
+
+    if (normalizeValue(firstValue) === normalizeValue(secondValue)) {
         return createResult(DISCREPANCY_RESULT_STATUSES.NO_DISCREPANCY);
+    }
+
+    const appearanceFindingId = [firstDefinition, secondDefinition]
+        .find((definition) => definition.id === "driversLicense.photo")
+        ?.findingId;
+    if (appearanceFindingId) {
+        return createResult(
+            DISCREPANCY_RESULT_STATUSES.DISCREPANCY_FOUND,
+            appearanceFindingId
+        );
     }
 
     const findingId = resolvePairFindingId({
@@ -141,6 +158,12 @@ function getExpectedPairValue({ definition, trafficEntity, officialRegistry }) {
     }
 
     if (definition.id.startsWith("driversLicense.")) {
+        if (definition.comparisonGroup.startsWith("appearance.")) {
+            const person = officialRegistry.peopleById?.[trafficEntity.npcId];
+            const property = definition.comparisonGroup.split(".")[1];
+            return person?.[property];
+        }
+
         if (definition.comparisonGroup.startsWith("person.")) {
             const person = officialRegistry.peopleById?.[trafficEntity.npcId];
             const property = definition.comparisonGroup.split(".")[1];
@@ -189,8 +212,24 @@ function fieldsCanBeCompared(firstDefinition, secondDefinition) {
         secondDefinition
         && firstDefinition.id !== secondDefinition.id
         && firstDefinition.surface !== secondDefinition.surface
-        && firstDefinition.comparisonGroup === secondDefinition.comparisonGroup
+        && Boolean(getSharedComparisonGroup(firstDefinition, secondDefinition))
     );
+}
+
+function getSharedComparisonGroup(firstDefinition, secondDefinition) {
+    const firstGroups = firstDefinition?.comparisonGroups
+        ?? [firstDefinition?.comparisonGroup].filter(Boolean);
+    const secondGroups = secondDefinition?.comparisonGroups
+        ?? [secondDefinition?.comparisonGroup].filter(Boolean);
+
+    return firstGroups.find((group) => secondGroups.includes(group)) ?? null;
+}
+
+function getComparableFieldValue(field, comparisonGroup) {
+    if (!field.fieldId.endsWith(".photo")) return field.value;
+
+    const appearanceProperty = comparisonGroup?.split(".")[1];
+    return field.value?.[appearanceProperty];
 }
 
 // Ein Laptopvergleich ist nur fachlich gueltig, wenn der geoeffnete Record zur Kontrolle gehoert.
@@ -227,6 +266,12 @@ function isExpired(value, inspectedAt) {
 }
 
 function normalizeValue(value) {
+    if (Array.isArray(value)) {
+        return [...value]
+            .map((entry) => String(entry).trim().toLocaleLowerCase("de-DE"))
+            .sort()
+            .join("|");
+    }
     return String(value ?? "").trim().toLocaleLowerCase("de-DE");
 }
 

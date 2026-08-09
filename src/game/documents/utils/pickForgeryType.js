@@ -7,10 +7,12 @@ import { NPC_DOCUMENT_FORGERY_TYPES, VEHICLE_DOCUMENT_FORGERY_TYPES } from "../d
 // ---> Wird von createDocumentState genutzt, bevor presented aus real erzeugt wird.
 export function pickNpcDocumentForgeryType() {
     return pickWeightedItem([
-        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_ADDRESS, weight: 35 },
-        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_LICENSE_NUMBER, weight: 30 },
+        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_ADDRESS, weight: 25 },
+        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_LICENSE_NUMBER, weight: 20 },
         { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_BIRTH_DATE, weight: 20 },
-        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_NAME, weight: 15 }
+        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_NAME, weight: 15 },
+        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_EYE_COLOR, weight: 10 },
+        { value: NPC_DOCUMENT_FORGERY_TYPES.WRONG_PHOTO, weight: 10 }
     ]).value;
 }
 

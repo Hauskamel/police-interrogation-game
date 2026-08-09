@@ -29,7 +29,10 @@ export function useInspectionFieldInteraction(fieldId, recordId = null) {
         || firstSelectedDefinition.checkType === DISCREPANCY_CHECK_TYPES.SINGLE
         || (
             firstSelectedDefinition.surface !== definition?.surface
-            && firstSelectedDefinition.comparisonGroup === definition?.comparisonGroup
+            && definitionsShareComparisonGroup(
+                firstSelectedDefinition,
+                definition
+            )
         );
 
     return {
@@ -43,4 +46,13 @@ export function useInspectionFieldInteraction(fieldId, recordId = null) {
             value
         })
     };
+}
+
+function definitionsShareComparisonGroup(firstDefinition, secondDefinition) {
+    const firstGroups = firstDefinition.comparisonGroups
+        ?? [firstDefinition.comparisonGroup].filter(Boolean);
+    const secondGroups = secondDefinition?.comparisonGroups
+        ?? [secondDefinition?.comparisonGroup].filter(Boolean);
+
+    return firstGroups.some((group) => secondGroups.includes(group));
 }

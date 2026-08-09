@@ -104,6 +104,74 @@ describe("resolveDiscrepancySelection", () => {
             findingId: "inconsistent_driver_statement"
         });
     });
+
+    it("confirms that the pass photo matches the eye color on the license", () => {
+        const result = resolveSelection([
+            field("driversLicense.photo", {
+                eyeColor: "blue",
+                hairColor: "blond",
+                distinguishingMarks: ["scar_left_eyebrow"]
+            }),
+            field("driversLicense.eyeColor", "blue")
+        ]);
+
+        expect(result.status).toBe(DISCREPANCY_RESULT_STATUSES.NO_DISCREPANCY);
+    });
+
+    it("finds an eye-color mismatch between pass photo and license data", () => {
+        const result = resolveSelection([
+            field("driversLicense.photo", {
+                eyeColor: "blue",
+                hairColor: "blond",
+                distinguishingMarks: ["scar_left_eyebrow"]
+            }),
+            field("driversLicense.eyeColor", "brown")
+        ]);
+
+        expect(result).toEqual({
+            status: DISCREPANCY_RESULT_STATUSES.DISCREPANCY_FOUND,
+            findingId: "driver_appearance_mismatch"
+        });
+    });
+
+    it("compares visible scars with the matching person record", () => {
+        const result = resolveSelection([
+            field("driversLicense.photo", {
+                eyeColor: "blue",
+                hairColor: "blond",
+                distinguishingMarks: ["scar_left_eyebrow"]
+            }),
+            registryField(
+                "registryPerson.distinguishingMarks",
+                ["scar_left_eyebrow"],
+                "npc--one"
+            )
+        ]);
+
+        expect(result.status).toBe(DISCREPANCY_RESULT_STATUSES.NO_DISCREPANCY);
+    });
+
+    it("finds a replaced license photo by comparing it with the database photo", () => {
+        const result = resolveSelection([
+            field("driversLicense.photo", {
+                photoIdentity: "driver2.jpg",
+                eyeColor: "green",
+                hairColor: "brown",
+                distinguishingMarks: []
+            }),
+            registryField("registryPerson.photo", {
+                photoIdentity: "driver11.jpg",
+                eyeColor: "blue",
+                hairColor: "blond",
+                distinguishingMarks: ["scar_left_eyebrow"]
+            }, "npc--one")
+        ]);
+
+        expect(result).toEqual({
+            status: DISCREPANCY_RESULT_STATUSES.DISCREPANCY_FOUND,
+            findingId: "driver_appearance_mismatch"
+        });
+    });
 });
 
 function resolveSelection(selectedFields) {

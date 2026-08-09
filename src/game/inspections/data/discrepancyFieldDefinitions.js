@@ -20,6 +20,7 @@ export const DISCREPANCY_REGISTRY_SUBJECTS = {
 // -----> Verbindet sichtbare Dokumentfelder mit Vergleichsgruppen und bestehenden Findings.
 // ---> Die UI rendert nur fieldId; alle fachlichen Regeln bleiben in dieser Konfiguration.
 export const DISCREPANCY_FIELD_DEFINITIONS = [
+    createAppearancePhotoField(),
     createPairField("driversLicense.firstName", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Vorname", "person.firstName", "driver_name_mismatch"),
     createPairField("driversLicense.lastName", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Nachname", "person.lastName", "driver_name_mismatch"),
     createPairField("driversLicense.address", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Adresse", "person.address", "driver_address_mismatch"),
@@ -28,6 +29,7 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createPairField("driversLicense.licensedSince", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Fahrerlaubnis seit", "license.licensedSince", "driver_license_dates_mismatch"),
     createPairField("driversLicense.issueDate", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Ausgabedatum", "license.issueDate", "driver_license_dates_mismatch"),
     createSingleField("driversLicense.expiryDate", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Ablaufdatum", "expired_drivers_license", "date.expiry"),
+    createPairField("driversLicense.eyeColor", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Augenfarbe", "appearance.eyeColor", "driver_appearance_mismatch"),
 
     createPairField("vehicleRegistration.ownerFirstName", INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION, "Halter Vorname", "person.firstName"),
     createPairField("vehicleRegistration.ownerLastName", INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION, "Halter Nachname", "person.lastName"),
@@ -55,6 +57,10 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createRegistryPairField("registryPerson.lastName", "registry.person", "Nachname", "person.lastName", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryPerson.address", "registry.person", "Adresse", "person.address", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryPerson.birthDate", "registry.person", "Geburtsdatum", "person.birthDate", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
+    createRegistryPairField("registryPerson.hairColor", "registry.person", "Haarfarbe", "appearance.hairColor", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
+    createRegistryPairField("registryPerson.eyeColor", "registry.person", "Augenfarbe", "appearance.eyeColor", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
+    createRegistryPairField("registryPerson.distinguishingMarks", "registry.person", "Besondere Kennzeichen", "appearance.distinguishingMarks", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
+    createRegistryPhotoField(),
     createRegistryPairField("registryLicense.number", "registry.license", "Fuehrerscheinnummer", "license.number", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryLicense.licensedSince", "registry.license", "Fahrerlaubnis seit", "license.licensedSince", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryLicense.issueDate", "registry.license", "Ausgabedatum", "license.issueDate", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
@@ -74,6 +80,45 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createRegistryPairField("registryInsurance.policyNumber", "registry.insurance", "Policennummer", "insurance.policyNumber", DISCREPANCY_REGISTRY_SUBJECTS.INSURANCE),
     createRegistryPairField("registryInsurance.plateNumber", "registry.insurance", "Kennzeichen", "vehicle.plateNumber", DISCREPANCY_REGISTRY_SUBJECTS.INSURANCE)
 ];
+
+function createAppearancePhotoField() {
+    return {
+        id: "driversLicense.photo",
+        documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
+        surface: "driversLicense.photo",
+        label: "Passfoto",
+        checkType: DISCREPANCY_CHECK_TYPES.PAIR,
+        comparisonGroup: null,
+        comparisonGroups: [
+            "appearance.photoIdentity",
+            "appearance.eyeColor",
+            "appearance.hairColor",
+            "appearance.distinguishingMarks"
+        ],
+        findingId: "driver_appearance_mismatch",
+        valueSource: null
+    };
+}
+
+function createRegistryPhotoField() {
+    return {
+        id: "registryPerson.photo",
+        documentType: null,
+        surface: "registry.person.photo",
+        label: "Lichtbild der Personenakte",
+        checkType: DISCREPANCY_CHECK_TYPES.PAIR,
+        comparisonGroup: null,
+        comparisonGroups: [
+            "appearance.photoIdentity",
+            "appearance.eyeColor",
+            "appearance.hairColor",
+            "appearance.distinguishingMarks"
+        ],
+        findingId: null,
+        valueSource: null,
+        registrySubject: DISCREPANCY_REGISTRY_SUBJECTS.DRIVER
+    };
+}
 
 export const DISCREPANCY_FIELD_DEFINITIONS_BY_ID = Object.fromEntries(
     DISCREPANCY_FIELD_DEFINITIONS.map((definition) => [definition.id, definition])

@@ -167,6 +167,14 @@ function createForgedNpcDriversLicenseState() {
         wrong_name: {
             affectedFields: ["firstName", "lastName"],
             detectableBy: ["compare_with_database", "question_identity"]
+        },
+        wrong_eye_color: {
+            affectedFields: ["eyeColor"],
+            detectableBy: ["compare_photo_with_document", "compare_with_database"]
+        },
+        wrong_photo: {
+            affectedFields: ["npcImage"],
+            detectableBy: ["compare_photo_with_document", "compare_with_database_photo"]
         }
     };
 

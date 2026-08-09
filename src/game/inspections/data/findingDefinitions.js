@@ -14,6 +14,15 @@ export const INSPECTION_FINDING_CATEGORIES = {
 // ---> Polizeitreffer entstehen erst durch die bewusste Abschlussentscheidung des Spielers.
 export const INSPECTION_FINDING_DEFINITIONS = [
     {
+        id: "driver_appearance_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Passfoto und Personenmerkmale stimmen nicht überein",
+        description: "Augenfarbe, Haarfarbe oder besondere Kennzeichen passen nicht zum Lichtbild.",
+        documentType: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
+        affectedFields: ["eyeColor", "hairColor", "distinguishingMarks", "npcImage"],
+        registryType: "driverLicense"
+    },
+    {
         id: "driver_name_mismatch",
         category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
         label: "Name stimmt nicht überein",

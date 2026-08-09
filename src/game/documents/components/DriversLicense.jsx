@@ -1,5 +1,6 @@
 import { BaseHeadlineWithText, BaseImage } from "./base";
 import { formatDateForDisplay } from "@game/shared";
+import { getNpcPhotoComparisonValue } from "@game/npcs/data";
 
 export function DriversLicense ({ driver }) {
     const driverProfile = driver?.presented;
@@ -14,7 +15,14 @@ export function DriversLicense ({ driver }) {
                 <div className="grid grid-cols-3 gap-4 mt-2">
                     <div className="col-span-1 flex flex-col items-center justify-center">
                         <div className="border-2 border-gray-600 flex items-center justify-center text-xs text-gray-700">
-                            <BaseImage data={driverProfile?.npcImage} />
+                            <BaseImage
+                                data={driverProfile?.npcImage}
+                                alt="Passfoto des Fahrers"
+                                fieldId="driversLicense.photo"
+                                selectionValue={getNpcPhotoComparisonValue(
+                                    driverProfile?.npcImage
+                                )}
+                            />
                         </div>
                     </div>
                     
@@ -39,7 +47,7 @@ export function DriversLicense ({ driver }) {
                             </div>
                         </div>
                         <div className="mt-2 flex justify-between">
-                            <BaseHeadlineWithText headline="Augenfarbe" data={driverProfile?.eyeColor}></BaseHeadlineWithText>
+                            <BaseHeadlineWithText headline="Augenfarbe" data={driverProfile?.eyeColor} fieldId="driversLicense.eyeColor" />
                             <BaseHeadlineWithText headline="Geschlecht" data={driverProfile?.sex}></BaseHeadlineWithText>
                             <BaseHeadlineWithText headline="Größe (m)" data={driverProfile?.height ? driverProfile.height / 100 : undefined}></BaseHeadlineWithText>
                         </div>
