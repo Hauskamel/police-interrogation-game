@@ -1,5 +1,13 @@
 import { createElement, useEffect, useState } from "react";
-import { FaCar, FaFileSignature, FaIdCard, FaRadio, FaXmark } from "react-icons/fa6";
+import {
+    FaBriefcase,
+    FaCar,
+    FaFileSignature,
+    FaIdCard,
+    FaPassport,
+    FaRadio,
+    FaXmark
+} from "react-icons/fa6";
 
 import {
     INSPECTION_DOCUMENT_LABELS,
@@ -9,7 +17,7 @@ import { useInspectionFieldInteraction } from "@game/inspections/hooks/useInspec
 
 
 // ##### Document Conversation Options
-// -----> Bietet die drei Pflichtdokumente der aktuellen Kontrollsession an.
+// -----> Bietet Basisdokumente und kontextabhängige Aufenthaltspapiere an.
 const DOCUMENT_OPTIONS = [
     {
         type: INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
@@ -22,6 +30,14 @@ const DOCUMENT_OPTIONS = [
     {
         type: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
         icon: FaFileSignature
+    },
+    {
+        type: INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT,
+        icon: FaPassport
+    },
+    {
+        type: INSPECTION_DOCUMENT_TYPES.WORK_PERMIT,
+        icon: FaBriefcase
     }
 ];
 
@@ -43,6 +59,7 @@ export function DocumentConversation({
     dispatchConversationEntries = [],
     discrepancyModeActive = false,
     radioInquiryModeActive = false,
+    availableDocumentTypes = [],
     onRequestDocument,
     askedQuestionIds = [],
     interviewQuestions = [],
@@ -122,59 +139,61 @@ export function DocumentConversation({
 
             {activeTab === CONVERSATION_TABS.DRIVER && (
                 <div className="border-b border-zinc-700 bg-zinc-950/70 px-3 py-3">
-                <p className="mb-2 text-[10px] font-semibold uppercase text-zinc-400">
-                    Dokumente
-                </p>
-                <div className="grid grid-cols-3 gap-2">
-                    {DOCUMENT_OPTIONS.map(({ type, icon }) => {
-                        const wasRequested = requestedDocuments.includes(type);
-                        const isVisible = visibleDocuments.includes(type);
-                        const label = getOptionLabel({
-                            documentType: type,
-                            wasRequested,
-                            isVisible,
-                            requestState: documentRequestStates[type]
-                        });
-                        const terminalRequest = isTerminalDocumentRequest(
-                            documentRequestStates[type]
-                        );
+                    <p className="mb-2 text-[10px] font-semibold uppercase text-zinc-400">
+                        Dokumente
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        {DOCUMENT_OPTIONS
+                            .filter(({ type }) => availableDocumentTypes.includes(type))
+                            .map(({ type, icon }) => {
+                                const wasRequested = requestedDocuments.includes(type);
+                                const isVisible = visibleDocuments.includes(type);
+                                const label = getOptionLabel({
+                                    documentType: type,
+                                    wasRequested,
+                                    isVisible,
+                                    requestState: documentRequestStates[type]
+                                });
+                                const terminalRequest = isTerminalDocumentRequest(
+                                    documentRequestStates[type]
+                                );
 
-                        return (
+                                return (
+                                    <button
+                                        type="button"
+                                        key={type}
+                                        className="flex min-w-0 items-center justify-center gap-2 rounded bg-zinc-700 px-2 py-2 text-xs font-semibold leading-4 hover:bg-zinc-600 disabled:cursor-default disabled:bg-blue-700 disabled:text-white"
+                                        disabled={isVisible || terminalRequest}
+                                        onClick={() => onRequestDocument(type)}
+                                        title={label}
+                                    >
+                                        {createElement(icon, {
+                                            className: "shrink-0",
+                                            "aria-hidden": true
+                                        })}
+                                        <span className="text-center">{label}</span>
+                                    </button>
+                                );
+                            })}
+                    </div>
+                    <p className="mb-2 mt-3 text-[10px] font-semibold uppercase text-zinc-400">
+                        Fahrer befragen
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {interviewQuestions.map((option) => (
                             <button
                                 type="button"
-                                key={type}
-                                className="flex min-w-0 items-center justify-center gap-2 rounded bg-zinc-700 px-2 py-2 text-xs font-semibold leading-4 hover:bg-zinc-600 disabled:cursor-default disabled:bg-blue-700 disabled:text-white"
-                                disabled={isVisible || terminalRequest}
-                                onClick={() => onRequestDocument(type)}
-                                title={label}
+                                key={option.id}
+                                className="rounded border border-zinc-700 bg-zinc-800 px-2 py-2 text-xs font-semibold hover:border-zinc-500 hover:bg-zinc-700"
+                                onClick={() => onAskQuestion(option)}
                             >
-                                {createElement(icon, {
-                                    className: "shrink-0",
-                                    "aria-hidden": true
-                                })}
-                                <span className="text-center">{label}</span>
+                                {askedQuestionIds.includes(option.id) && !option.followUp
+                                    ? `${option.label} erneut fragen`
+                                    : option.label
+                                }
                             </button>
-                        );
-                    })}
-                </div>
-                <p className="mb-2 mt-3 text-[10px] font-semibold uppercase text-zinc-400">
-                    Fahrer befragen
-                </p>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {interviewQuestions.map((option) => (
-                        <button
-                            type="button"
-                            key={option.id}
-                            className="rounded border border-zinc-700 bg-zinc-800 px-2 py-2 text-xs font-semibold hover:border-zinc-500 hover:bg-zinc-700"
-                            onClick={() => onAskQuestion(option)}
-                        >
-                            {askedQuestionIds.includes(option.id) && !option.followUp
-                                ? `${option.label} erneut fragen`
-                                : option.label
-                            }
-                        </button>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                 </div>
             )}
 

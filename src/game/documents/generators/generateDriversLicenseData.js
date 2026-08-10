@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 
 import { generateIssueAndExpiryDate } from "./generateIssueAndExpiryDate";
+import { HOME_COUNTRY } from "@game/npcs/data";
 
 export function generateDriversLicenseData (birthdate, options = {}) {
     // license number of npcs drivers license
@@ -20,7 +21,8 @@ export function generateDriversLicenseData (birthdate, options = {}) {
         licenseNumber,
         licensedSince: documentDates.licensedSince,
         issueDate: documentDates.formattedIssueDate,
-        expiryDate: documentDates.formattedExpiryDate
+        expiryDate: documentDates.formattedExpiryDate,
+        issuingCountry: options.issuingCountry ?? HOME_COUNTRY
     }
     return data;
 }

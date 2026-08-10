@@ -1,6 +1,10 @@
 export { evaluateInspection } from "./evaluateInspection.js";
 export { getAvailableInterviewQuestions } from "./getAvailableInterviewQuestions.js";
 export {
+    getRequestableInspectionDocumentTypes,
+    getRequiredInspectionDocumentTypes
+} from "./getInspectionDocumentTypes.js";
+export {
     getAskedQuestionIds,
     getRequestedDocumentTypes
 } from "./inspectionSessionSelectors.js";

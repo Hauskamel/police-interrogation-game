@@ -24,6 +24,27 @@ function cloneNpcProfile(real) {
     return {
         ...real,
         driversLicense: real.driversLicense ? { ...real.driversLicense } : null,
+        ...(real.migrationProfile
+            ? { migrationProfile: {
+                ...real.migrationProfile,
+                employment: real.migrationProfile.employment
+                    ? { ...real.migrationProfile.employment }
+                    : null
+            } }
+            : {}
+        ),
+        ...(Object.hasOwn(real, "residencePermit")
+            ? {
+                residencePermit: real.residencePermit
+                    ? { ...real.residencePermit }
+                    : null
+            }
+            : {}
+        ),
+        ...(Object.hasOwn(real, "workPermit")
+            ? { workPermit: real.workPermit ? { ...real.workPermit } : null }
+            : {}
+        ),
         crimeRecordIds: [...(real.crimeRecordIds ?? [])],
         distinguishingMarks: [...(real.distinguishingMarks ?? [])]
     };

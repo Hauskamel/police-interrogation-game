@@ -1,6 +1,7 @@
 export { generateBirthDate } from "./generateBirthDate.js";
 export { generateNpcAppearance } from "./generateNpcAppearance.js";
 export { generateNpcMasterData } from "./npcMasterDataGenerator.js";
+export { generateMigrationProfile } from "./generateMigrationProfile.js";
 export {
     createNpcProfileFromReal,
     generateNpcProfile

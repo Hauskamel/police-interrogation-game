@@ -11,6 +11,8 @@ export const DISCREPANCY_CHECK_TYPES = {
 // -----> Bestimmt, zu welcher kontrollierten Relation ein Laptop-Datensatz gehoeren muss.
 export const DISCREPANCY_REGISTRY_SUBJECTS = {
     DRIVER: "driver",
+    RESIDENCE_PERMIT: "residencePermit",
+    WORK_PERMIT: "workPermit",
     VEHICLE: "vehicle",
     VEHICLE_OWNER: "vehicleOwner",
     INSURANCE: "insurance"
@@ -28,6 +30,7 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createPairField("driversLicense.licenseNumber", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Fuehrerscheinnummer", "license.number", "license_number_mismatch"),
     createPairField("driversLicense.licensedSince", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Fahrerlaubnis seit", "license.licensedSince", "driver_license_dates_mismatch"),
     createPairField("driversLicense.issueDate", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Ausgabedatum", "license.issueDate", "driver_license_dates_mismatch"),
+    createPairField("driversLicense.issuingCountry", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Ausstellungsstaat", "person.countryOfOrigin", "immigration_identity_mismatch"),
     createSingleField("driversLicense.expiryDate", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Ablaufdatum", "expired_drivers_license", "date.expiry"),
     createPairField("driversLicense.eyeColor", INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE, "Augenfarbe", "appearance.eyeColor", "driver_appearance_mismatch"),
 
@@ -49,6 +52,17 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createPairField("insurance.plateNumber", INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE, "Versichertes Kennzeichen", "vehicle.plateNumber", "insurance_vehicle_mismatch"),
     createSingleField("insurance.validUntil", INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE, "Gueltig bis", "expired_insurance", "date.expiry"),
 
+    createPairField("residencePermit.firstName", INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT, "Vorname", "person.firstName", "immigration_identity_mismatch"),
+    createPairField("residencePermit.lastName", INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT, "Nachname", "person.lastName", "immigration_identity_mismatch"),
+    createPairField("residencePermit.countryOfOrigin", INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT, "Herkunftsland", "person.countryOfOrigin", "immigration_identity_mismatch"),
+    createPairField("residencePermit.permitNumber", INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT, "Aufenthaltstitel", "permit.residencePermitNumber", "permit_relation_mismatch"),
+    createSingleField("residencePermit.validUntil", INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT, "Gueltig bis", "expired_residence_permit", "date.expiry"),
+
+    createPairField("workPermit.firstName", INSPECTION_DOCUMENT_TYPES.WORK_PERMIT, "Vorname", "person.firstName", "immigration_identity_mismatch"),
+    createPairField("workPermit.lastName", INSPECTION_DOCUMENT_TYPES.WORK_PERMIT, "Nachname", "person.lastName", "immigration_identity_mismatch"),
+    createPairField("workPermit.residencePermitNumber", INSPECTION_DOCUMENT_TYPES.WORK_PERMIT, "Aufenthaltstitel", "permit.residencePermitNumber", "permit_relation_mismatch"),
+    createSingleField("workPermit.validUntil", INSPECTION_DOCUMENT_TYPES.WORK_PERMIT, "Gueltig bis", "expired_work_permit", "date.expiry"),
+
     // Fahreraussagen sind sichtbare Belege. Sie erzeugen erst durch einen bewussten
     // Vergleich mit Dokument- oder Registerangaben eine Feststellung.
     createPairField("statement.address", null, "Genannte Adresse", "person.address", "inconsistent_driver_statement", "statement"),
@@ -64,6 +78,9 @@ export const DISCREPANCY_FIELD_DEFINITIONS = [
     createRegistryPairField("registryLicense.number", "registry.license", "Fuehrerscheinnummer", "license.number", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryLicense.licensedSince", "registry.license", "Fahrerlaubnis seit", "license.licensedSince", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
     createRegistryPairField("registryLicense.issueDate", "registry.license", "Ausgabedatum", "license.issueDate", DISCREPANCY_REGISTRY_SUBJECTS.DRIVER),
+    createRegistryPairField("registryResidencePermit.number", "registry.residencePermit", "Aufenthaltstitel", "permit.residencePermitNumber", DISCREPANCY_REGISTRY_SUBJECTS.RESIDENCE_PERMIT),
+    createRegistryPairField("registryResidencePermit.countryOfOrigin", "registry.residencePermit", "Herkunftsland", "person.countryOfOrigin", DISCREPANCY_REGISTRY_SUBJECTS.RESIDENCE_PERMIT),
+    createRegistryPairField("registryWorkPermit.residencePermitNumber", "registry.workPermit", "Aufenthaltstitel", "permit.residencePermitNumber", DISCREPANCY_REGISTRY_SUBJECTS.WORK_PERMIT),
 
     createRegistryPairField("registryVehicle.plateNumber", "registry.vehicle", "Kennzeichen", "vehicle.plateNumber", DISCREPANCY_REGISTRY_SUBJECTS.VEHICLE),
     createRegistryPairField("registryVehicle.registrationNumber", "registry.vehicle", "Zulassungsnummer", "vehicle.registrationNumber", DISCREPANCY_REGISTRY_SUBJECTS.VEHICLE),

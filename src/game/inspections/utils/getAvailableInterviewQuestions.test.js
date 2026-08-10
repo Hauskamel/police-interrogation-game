@@ -34,4 +34,47 @@ describe("getAvailableInterviewQuestions", () => {
             "address_follow_up"
         );
     });
+
+    it("offers the foreign-stay question after a foreign license was opened", () => {
+        const questions = getAvailableInterviewQuestions({
+            openedDocuments: [INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE],
+            driverProfile: createForeignDriverProfile()
+        });
+
+        expect(questions.map((question) => question.id)).toContain("foreign_stay");
+        expect(questions.map((question) => question.id)).not.toContain(
+            "employment_details"
+        );
+    });
+
+    it("offers permit follow-ups after the foreign stay was discussed", () => {
+        const questions = getAvailableInterviewQuestions({
+            openedDocuments: [INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE],
+            driverProfile: createForeignDriverProfile(),
+            askedQuestionIds: ["foreign_stay"]
+        });
+
+        expect(questions.map((question) => question.id)).toContain(
+            "residence_details"
+        );
+        expect(questions.map((question) => question.id)).toContain(
+            "employment_details"
+        );
+    });
 });
+
+function createForeignDriverProfile() {
+    return {
+        real: {
+            migrationProfile: {
+                requiresResidencePermit: true,
+                requiresWorkPermit: true
+            }
+        },
+        presented: {
+            driversLicense: {
+                issuingCountry: "Auren"
+            }
+        }
+    };
+}

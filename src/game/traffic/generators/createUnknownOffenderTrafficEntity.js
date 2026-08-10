@@ -9,6 +9,7 @@ import { assembleTrafficEntity } from "./assembleTrafficEntity.js";
 // ---> Genau dieser Fall ist für Ermittlungen spannend: Wahrheit und Polizeiwissen unterscheiden sich.
 export function createUnknownOffenderTrafficEntity(options = {}) {
     const baseDriverProfile = generateNpcProfile({
+        ...options,
         minimumAge: options.forcedLicenseExpired ? 34 : 18,
         forcedLicenseExpired: options.forcedLicenseExpired
     });

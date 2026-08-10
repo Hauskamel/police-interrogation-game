@@ -3,7 +3,9 @@ import {
     CarDocuments,
     DocumentConversation,
     DriversLicense,
-    ProofOfInsurance
+    ProofOfInsurance,
+    ResidencePermit,
+    WorkPermit
 } from "../components";
 import {
     DOCUMENT_AVAILABILITY_STATUSES,
@@ -12,6 +14,7 @@ import {
 import {
     getAskedQuestionIds,
     getAvailableInterviewQuestions,
+    getRequestableInspectionDocumentTypes,
     getRequestedDocumentTypes
 } from "@game/inspections/utils";
 import { getShiftInterviewQuestions } from "@game/shifts/utils";
@@ -25,7 +28,9 @@ import {
 // ---> Der Fahrzeugschein zaehlt nicht pauschal, weil dort der Halter und nicht zwingend der Fahrer steht.
 const DRIVER_IDENTITY_DOCUMENTS = new Set([
     "driversLicense",
-    "proofOfInsurance"
+    "proofOfInsurance",
+    "residencePermit",
+    "workPermit"
 ]);
 
 /**
@@ -56,6 +61,10 @@ export function DocumentManager() {
     const activeDocs = Object.values(INSPECTION_DOCUMENT_TYPES);
     const requestedDocuments = getRequestedDocumentTypes(activeInspection);
     const askedQuestionIds = getAskedQuestionIds(activeInspection);
+    const availableDocumentTypes = getRequestableInspectionDocumentTypes({
+        trafficEntity: controlledTrafficEntity,
+        askedQuestionIds
+    });
     const visibleDocuments = activeInspection?.visibleDocuments ?? [];
     const discrepancyMode = activeInspection?.discrepancyMode ?? {
         active: false,
@@ -69,7 +78,9 @@ export function DocumentManager() {
     );
     const standardInterviewQuestions = getAvailableInterviewQuestions({
         openedDocuments: activeInspection?.openedDocuments,
-        findings: activeInspection?.findings
+        findings: activeInspection?.findings,
+        driverProfile: controlledTrafficEntity?.driverProfile,
+        askedQuestionIds
     });
     const narrativeInterviewQuestions = getShiftInterviewQuestions({
         encounter: activeInspection?.shiftEncounter,
@@ -147,6 +158,18 @@ export function DocumentManager() {
                 insurance={controlledTrafficEntity?.insuranceProfile}
                 owner={controlledTrafficEntity?.vehicleOwnerProfile}
             />
+        ),
+        residencePermit: (
+            <ResidencePermit
+                key="residencePermit"
+                driver={controlledTrafficEntity?.driverProfile}
+            />
+        ),
+        workPermit: (
+            <WorkPermit
+                key="workPermit"
+                driver={controlledTrafficEntity?.driverProfile}
+            />
         )
     }
 
@@ -174,6 +197,7 @@ export function DocumentManager() {
                 dispatchConversationEntries={activeInspection?.dispatchConversationEntries ?? []}
                 discrepancyModeActive={discrepancyMode.active}
                 radioInquiryModeActive={radioInquiryMode.active}
+                availableDocumentTypes={availableDocumentTypes}
                 onRequestDocument={handleDocumentRequest}
                 askedQuestionIds={askedQuestionIds}
                 interviewQuestions={availableInterviewQuestions}

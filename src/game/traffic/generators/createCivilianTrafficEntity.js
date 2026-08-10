@@ -29,6 +29,7 @@ const civilianInspectionProfiles = [
 // ---> Zivilisten können trotzdem kleine Prüfauffälligkeiten haben, z.B. abgelaufene Dokumente.
 export function createCivilianTrafficEntity(options = {}) {
     const baseDriverProfile = generateNpcProfile({
+        ...options,
         minimumAge: options.forcedLicenseExpired ? 34 : 18,
         forcedLicenseExpired: options.forcedLicenseExpired
     });

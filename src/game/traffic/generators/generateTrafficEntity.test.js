@@ -7,6 +7,7 @@ import {
     CONTROL_SCENARIO_TYPES
 } from "@game/inspections/data";
 import { resetGameClock } from "@game/shared";
+import { HOME_COUNTRY } from "@game/npcs/data";
 
 import { TRAFFIC_ENTITY_TYPES } from "../data";
 import { generateTrafficEntity } from "./generateTrafficEntity.js";
@@ -36,11 +37,11 @@ describe("generateTrafficEntity control scenarios", () => {
             deceptionRisk: 0,
             focusAreas: ["routine_documents"]
         });
-        expect(Object.values(entity.documentAvailability)).toEqual([
-            "provided",
-            "provided",
-            "provided"
-        ]);
+        expect(
+            Object.values(entity.documentAvailability).every(
+                (availability) => availability === "provided"
+            )
+        ).toBe(true);
     });
 
     it("creates an old-enough driver with an expired license", () => {
@@ -115,6 +116,20 @@ describe("generateTrafficEntity control scenarios", () => {
         expect(entity.statementProfile.responses.address.findingId).toBeUndefined();
         expect(entity.statementProfile.responses.address.text).not.toBe(
             entity.driverProfile.real.address
+        );
+    });
+
+    it("creates both related permits when the Dev GUI requires a work permit", () => {
+        const entity = generateTrafficEntity({
+            forcedType: TRAFFIC_ENTITY_TYPES.CIVILIAN,
+            forcedRequiresResidencePermit: true,
+            forcedRequiresWorkPermit: true
+        });
+
+        expect(entity.driverProfile.real.countryOfOrigin).not.toBe(HOME_COUNTRY);
+        expect(entity.driverProfile.real.residencePermit).toBeTruthy();
+        expect(entity.driverProfile.real.workPermit.residencePermitId).toBe(
+            entity.driverProfile.real.residencePermit.permitId
         );
     });
 });

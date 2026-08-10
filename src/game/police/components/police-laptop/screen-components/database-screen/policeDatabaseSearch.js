@@ -101,6 +101,19 @@ export function getOfficialVehiclesForNpc(officialRegistry, npcId) {
         .filter((vehicle) => vehicle.registeredOwnerNpcId === npcId);
 }
 
+// Loest die beiden eigenstaendigen Genehmigungsrecords ueber ihre Halter-ID auf.
+// Die Arbeitserlaubnis bleibt zusaetzlich ueber residencePermitId mit dem Aufenthaltstitel verknuepft.
+export function getOfficialImmigrationDocumentsForNpc(officialRegistry, npcId) {
+    const residencePermit = Object.values(
+        officialRegistry.residencePermitsByNumber ?? {}
+    ).find((permit) => permit.holderNpcId === npcId) ?? null;
+    const workPermit = Object.values(
+        officialRegistry.workPermitsByNumber ?? {}
+    ).find((permit) => permit.holderNpcId === npcId) ?? null;
+
+    return { residencePermit, workPermit };
+}
+
 // Ermittelt die aktive Fahndung einer Person, ohne den NPC-Record zu duplizieren.
 export function getActiveWantedRecordForNpc(criminalDatabase, npcId) {
     return getActiveWantedRecords(criminalDatabase)

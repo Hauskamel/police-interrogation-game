@@ -28,6 +28,7 @@ import {
     getActiveWantedRecordForNpc,
     getActiveWantedRecords,
     getCrimeRecordsForNpc,
+    getOfficialImmigrationDocumentsForNpc,
     getOfficialVehiclesForNpc,
     searchInsurancePolicies,
     searchDriverLicenses,
@@ -467,11 +468,16 @@ function RecordDetails({ criminalDatabase, officialRegistry, selection, onSelect
         const officialPerson = officialRegistry.peopleById?.[selection.id];
         const license = Object.values(officialRegistry.driverLicensesByNumber ?? {})
             .find((record) => record.npcId === selection.id);
+        const immigrationDocuments = getOfficialImmigrationDocumentsForNpc(
+            officialRegistry,
+            selection.id
+        );
 
         return (
             <OfficialPersonDetails
                 person={officialPerson}
                 license={license}
+                immigrationDocuments={immigrationDocuments}
                 vehicles={getOfficialVehiclesForNpc(officialRegistry, selection.id)}
                 onSelectVehicle={(vehicleId) => {
                     onSelect({ kind: "registryVehicle", id: vehicleId });
@@ -514,6 +520,10 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
 
     const crimes = getCrimeRecordsForNpc(criminalDatabase, npc);
     const vehicles = getOfficialVehiclesForNpc(officialRegistry, npc.npcId);
+    const immigrationDocuments = getOfficialImmigrationDocumentsForNpc(
+        officialRegistry,
+        npc.npcId
+    );
     const wantedRecord = getActiveWantedRecordForNpc(criminalDatabase, npc.npcId);
 
     return (
@@ -542,6 +552,7 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
                         <DataField label="Nachname" value={npc.lastName} fieldId="registryPerson.lastName" recordId={npc.npcId} />
                         <DataField label="Adresse" value={npc.address} fieldId="registryPerson.address" recordId={npc.npcId} />
                         <DataField label="Geburtsdatum" value={formatDateForDisplay(npc.birthDate)} selectionValue={npc.birthDate} fieldId="registryPerson.birthDate" recordId={npc.npcId} />
+                        <DataField label="Herkunftsland" value={npc.countryOfOrigin ?? "Nicht erfasst"} />
                         <DataField label="Alter" value={`${npc.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(npc.sex)} />
                         <DataField label="Größe" value={npc.height ? `${npc.height} cm` : "Nicht erfasst"} />
@@ -570,6 +581,8 @@ function PersonDetails({ criminalDatabase, officialRegistry, npc, onSelect }) {
                     <EmptyInline text="Kein Führerschein im Polizeibestand." />
                 )}
             </DetailSection>
+
+            <ImmigrationPermitDetails {...immigrationDocuments} />
 
             <DetailSection title="Registrierte Fahrzeuge">
                 {vehicles.length > 0 ? vehicles.map((vehicle) => (
@@ -605,7 +618,13 @@ function formatDistinguishingMarks(marks = []) {
 }
 
 // Zeigt einen amtlichen Personen- und Fuehrerscheinrecord ohne polizeiliche Erkenntnisse hinzuzufuegen.
-function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
+function OfficialPersonDetails({
+    person,
+    license,
+    immigrationDocuments,
+    vehicles,
+    onSelectVehicle
+}) {
     if (!person) return <MissingRecord />;
 
     return (
@@ -632,6 +651,7 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
                         <DataField label="Nachname" value={person.lastName} fieldId="registryPerson.lastName" recordId={person.npcId} />
                         <DataField label="Adresse" value={person.address} fieldId="registryPerson.address" recordId={person.npcId} />
                         <DataField label="Geburtsdatum" value={formatDateForDisplay(person.birthDate)} selectionValue={person.birthDate} fieldId="registryPerson.birthDate" recordId={person.npcId} />
+                        <DataField label="Herkunftsland" value={person.countryOfOrigin ?? "Nicht erfasst"} />
                         <DataField label="Alter" value={`${person.age} Jahre`} />
                         <DataField label="Geschlecht" value={formatSex(person.sex)} />
                     </dl>
@@ -650,6 +670,8 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
                     <EmptyInline text="Kein Führerschein im amtlichen Register." />
                 )}
             </DetailSection>
+
+            <ImmigrationPermitDetails {...immigrationDocuments} />
 
             <DetailSection title="Registrierte Fahrzeuge">
                 {vehicles.length > 0 ? vehicles.map((vehicle) => (
@@ -674,6 +696,47 @@ function OfficialPersonDetails({ person, license, vehicles, onSelectVehicle }) {
                 )}
             </DetailSection>
         </DetailLayout>
+    );
+}
+
+// Stellt Aufenthalts- und Arbeitstitel getrennt dar und macht ihre Verknuepfung pruefbar.
+function ImmigrationPermitDetails({ residencePermit, workPermit }) {
+    if (!residencePermit && !workPermit) return null;
+
+    return (
+        <DetailSection title="Aufenthalts- und Arbeitstitel">
+            {residencePermit && (
+                <div className="border-b border-zinc-200 pb-5">
+                    <p className="mb-3 text-xs font-semibold uppercase text-zinc-500">
+                        Aufenthaltserlaubnis
+                    </p>
+                    <dl className="grid gap-4 sm:grid-cols-3">
+                        <DataField label="Nummer" value={residencePermit.permitNumber} fieldId="registryResidencePermit.number" recordId={residencePermit.permitId} />
+                        <DataField label="Herkunftsland" value={residencePermit.countryOfOrigin} fieldId="registryResidencePermit.countryOfOrigin" recordId={residencePermit.permitId} />
+                        <DataField label="Zweck" value={residencePermit.purpose} />
+                        <DataField label="Wohnanschrift" value={residencePermit.localAddress} />
+                        <DataField label="Gültig ab" value={formatDateForDisplay(residencePermit.validFrom)} />
+                        <DataField label="Gültig bis" value={formatDateForDisplay(residencePermit.validUntil)} />
+                    </dl>
+                </div>
+            )}
+
+            {workPermit && (
+                <div className={residencePermit ? "pt-5" : ""}>
+                    <p className="mb-3 text-xs font-semibold uppercase text-zinc-500">
+                        Arbeitserlaubnis
+                    </p>
+                    <dl className="grid gap-4 sm:grid-cols-3">
+                        <DataField label="Nummer" value={workPermit.permitNumber} />
+                        <DataField label="Aufenthaltstitel" value={workPermit.residencePermitNumber} fieldId="registryWorkPermit.residencePermitNumber" recordId={workPermit.permitId} />
+                        <DataField label="Beruf" value={workPermit.occupation} />
+                        <DataField label="Arbeitgeber" value={workPermit.employer} />
+                        <DataField label="Gültig ab" value={formatDateForDisplay(workPermit.validFrom)} />
+                        <DataField label="Gültig bis" value={formatDateForDisplay(workPermit.validUntil)} />
+                    </dl>
+                </div>
+            )}
+        </DetailSection>
     );
 }
 

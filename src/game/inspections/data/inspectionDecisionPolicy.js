@@ -54,6 +54,8 @@ function isDocumentFinding(findingId) {
 function isContinuationBlockingFinding(findingId) {
     return findingId === "expired_drivers_license"
         || findingId === "expired_insurance"
+        || findingId === "expired_residence_permit"
+        || findingId === "expired_work_permit"
         || findingId.startsWith("missing_")
         || findingId === "document_refusal"
         || findingId === "wrong_document_presented";

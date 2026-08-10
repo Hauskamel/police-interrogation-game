@@ -1,6 +1,6 @@
 # Spielsystem: NPCs, Polizeiwissen und Verkehrskontrollen
 
-Stand: 2026-07-27
+Stand: 10.08.2026
 
 Dieses Dokument beschreibt die fachliche Idee hinter NPCs, Fahrzeugen, Polizeidaten und Dokumentkontrollen. Technische Änderungen auf dem Branch stehen getrennt in [Branch-Änderungen](../system-changes/npc-manipulated-identity-branch-changes.md).
 
@@ -35,6 +35,12 @@ Das NPC-Profil enthält:
 `real` beschreibt die interne Wahrheit. `presented` beschreibt die sichtbaren Angaben auf vorgelegten Dokumenten.
 
 Ein NPC kann in der Polizeidatenbank existieren, ohne gerade in der Spielwelt zu fahren.
+
+Jeder neu generierte NPC besitzt außerdem ein Herkunftsland und ein kanonisches
+`migrationProfile`. Daraus ergeben sich Reisegrund, geplante Aufenthaltsdauer und
+gegebenenfalls die Pflicht zu einer Aufenthalts- oder Arbeitserlaubnis. Die
+vollständigen Regeln stehen unter
+[Herkunft und Aufenthaltsdokumente](./immigration-documents.md).
 
 ### Vehicle
 

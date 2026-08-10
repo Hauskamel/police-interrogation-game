@@ -88,6 +88,8 @@ Enthält jeden tatsächlich geöffneten Dokumenttyp genau einmal:
 - `driversLicense`
 - `carDocuments`
 - `proofOfInsurance`
+- `residencePermit`, wenn der geplante Aufenthalt einen Aufenthaltstitel verlangt
+- `workPermit`, wenn der NPC in Westmark arbeiten wird
 
 Eine richtige Abschlussentscheidung wird nur als vollständig korrekt gewertet, wenn
 alle verfügbaren Dokumente geprüft wurden.
@@ -133,6 +135,8 @@ Aktuell pruefbar sind:
 - abgelaufener Führerschein
 - Policennummer und versichertes Fahrzeug
 - abgelaufener Versicherungsschutz
+- fehlende oder abgelaufene Aufenthalts- und Arbeitserlaubnisse
+- abweichende Herkunfts- oder Genehmigungsrelationen
 - fehlende oder erheblich beschädigte Dokumente
 - endgültig verweigerte oder unpassende Dokumente
 - widersprüchliche Fahreraussagen
@@ -247,8 +251,10 @@ Das Dienstwerkzeug-Panel mit dem Police Laptop ist während des Spiels dauerhaft
 erreichbar und benötigt keine Auswahl des Polizeifahrzeugs.
 
 Während einer aktiven Kontrolle erscheint unten rechts eine breite Gesprächsbox.
-Sie zeigt die Aussagen von Spieler und Fahrer sowie die drei verfügbaren
-Dokumentfragen. Bereits geschlossene Dokumente können dort erneut angesehen werden.
+Sie zeigt die Aussagen von Spieler und Fahrer sowie die im jeweiligen Fall
+verfügbaren Dokumentfragen. Aufenthaltstitel werden erst nach der Frage nach Herkunft
+und Aufenthaltsdauer angeboten, damit ihre Existenz nicht vorzeitig verraten wird.
+Bereits geschlossene Dokumente können dort erneut angesehen werden.
 Die frühere globale Dokumentleiste existiert nicht mehr.
 
 Das Fahrzeug-Panel folgt dieser Priorität:

@@ -5,9 +5,10 @@ import { faker } from "@faker-js/faker";
 
 import { generateBirthDate } from "./generateBirthDate.js";
 import { getNpcAge } from "../utils";
+import { FOREIGN_COUNTRIES, HOME_COUNTRY } from "../data";
 
 
-export function generateNpcMasterData () {
+export function generateNpcMasterData (options = {}) {
     // stabile, kompakte NPC-ID
     const npcId = createEntityId("npc");
 
@@ -32,6 +33,20 @@ export function generateNpcMasterData () {
     
     // age
     const age = getNpcAge(birthDate);
+
+    // Herkunftsland
+    // -----> Etwa ein Drittel der Verkehrsteilnehmer besitzt einen auslaendischen Fuehrerschein.
+    const requiresForeignOrigin = options.forcedRequiresResidencePermit === true
+        || options.forcedRequiresWorkPermit === true;
+    const countryOfOrigin = options.forcedCountryOfOrigin
+        ?? (requiresForeignOrigin
+            ? faker.helpers.arrayElement(FOREIGN_COUNTRIES)
+            : undefined
+        )
+        ?? (faker.number.float({ min: 0, max: 1 }) < 0.35
+            ? faker.helpers.arrayElement(FOREIGN_COUNTRIES)
+            : HOME_COUNTRY
+        );
     
     // TODO: Geburtsort einfügen
 
@@ -43,7 +58,8 @@ export function generateNpcMasterData () {
         lastName,
         address,
         birthYear,
-        birthDate
+        birthDate,
+        countryOfOrigin
     }
     return npcMasterData;
 }

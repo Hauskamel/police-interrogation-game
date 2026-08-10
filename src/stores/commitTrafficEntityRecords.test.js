@@ -30,6 +30,13 @@ describe("commitTrafficEntityRecords", () => {
         const registry = useOfficialRegistryStore.getState().officialRegistry;
         expect(registry.peopleById[trafficEntity.npcId].firstName).toBe("Jonas");
         expect(registry.peopleById[trafficEntity.npcId].firstName).not.toBe("Thomas");
+        expect(registry.peopleById[trafficEntity.npcId].countryOfOrigin).toBe("Auren");
+        expect(registry.residencePermitsByNumber["AE-ONE"].holderNpcId).toBe(
+            trafficEntity.npcId
+        );
+        expect(registry.workPermitsByNumber["AR-ONE"].residencePermitId).toBe(
+            "residence-permit--one"
+        );
         expect(registry.vehiclesById[trafficEntity.vehicleId].brand).toBe("Volkswagen");
         expect(registry.insurancePoliciesById["insurance--one"].policyNumber).toBe(
             "POL-REAL"
@@ -86,11 +93,30 @@ function createTrafficEntity(overrides = {}) {
         hairColor: "brown",
         eyeColor: "blue",
         npcImage: "jonas.png",
+        countryOfOrigin: "Auren",
+        migrationProfile: {
+            requiresResidencePermit: true,
+            requiresWorkPermit: true
+        },
         driversLicense: {
             licenseNumber: "ABC-12345678",
             licensedSince: "2006-05-20",
             issueDate: "2020-05-20",
-            expiryDate: "2035-05-20"
+            expiryDate: "2035-05-20",
+            issuingCountry: "Auren"
+        },
+        residencePermit: {
+            permitId: "residence-permit--one",
+            permitNumber: "AE-ONE",
+            holderNpcId: npcId,
+            countryOfOrigin: "Auren"
+        },
+        workPermit: {
+            permitId: "work-permit--one",
+            permitNumber: "AR-ONE",
+            holderNpcId: npcId,
+            residencePermitId: "residence-permit--one",
+            residencePermitNumber: "AE-ONE"
         }
     };
     const realVehicle = {

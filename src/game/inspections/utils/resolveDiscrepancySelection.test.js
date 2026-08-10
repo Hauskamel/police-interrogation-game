@@ -172,6 +172,35 @@ describe("resolveDiscrepancySelection", () => {
             findingId: "driver_appearance_mismatch"
         });
     });
+
+    it("finds a manipulated residence-permit number against its registry record", () => {
+        const result = resolveSelection([
+            field("residencePermit.permitNumber", "AE-FAKE"),
+            registryField(
+                "registryResidencePermit.number",
+                "AE-REAL",
+                "residence-permit--one"
+            )
+        ]);
+
+        expect(result).toEqual({
+            status: DISCREPANCY_RESULT_STATUSES.DISCREPANCY_FOUND,
+            findingId: "permit_relation_mismatch"
+        });
+    });
+
+    it("rejects an unrelated work-permit registry record", () => {
+        const result = resolveSelection([
+            field("workPermit.residencePermitNumber", "AE-REAL"),
+            registryField(
+                "registryWorkPermit.residencePermitNumber",
+                "AE-OTHER",
+                "work-permit--other"
+            )
+        ]);
+
+        expect(result.reason).toBe("wrong_registry_record");
+    });
 });
 
 function resolveSelection(selectedFields) {
@@ -184,6 +213,14 @@ function resolveSelection(selectedFields) {
                 real: {
                     driversLicense: {
                         licenseNumber: "ABC-12345678"
+                    },
+                    residencePermit: {
+                        permitId: "residence-permit--one",
+                        permitNumber: "AE-REAL"
+                    },
+                    workPermit: {
+                        permitId: "work-permit--one",
+                        residencePermitNumber: "AE-REAL"
                     }
                 }
             },

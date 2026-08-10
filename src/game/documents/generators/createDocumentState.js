@@ -26,7 +26,7 @@ export function createDocumentState({
     forcedHasForgery,
     forcedForgeryTarget
 } = {}) {
-    const baseState = createValidDocumentState();
+    const baseState = createValidDocumentState(driverProfile);
     const forgeryChance = forgeryChanceByTrafficType[trafficType] ?? 0;
 
     // Devtools können den Dokumentzustand bewusst erzwingen, ohne die normalen Spawn-Wahrscheinlichkeiten zu ändern.
@@ -53,15 +53,25 @@ export function createDocumentState({
 // ##### Valid Document State Factory
 // -----> Erstellt den Standardfall: alle Dokumente sind unverändert und stimmen zur Wahrheit.
 // ---> Dieser Zustand ist auch wichtig, damit UI und Prüflogik immer stabile Keys vorfinden.
-function createValidDocumentState() {
+function createValidDocumentState(driverProfile) {
+    const validState = {
+        integrity: DOCUMENT_INTEGRITY_TYPES.VALID,
+        forgeryType: null,
+        affectedFields: [],
+        detectableBy: []
+    };
+
     return {
         hasForgery: false,
         npcDocuments: {
-            driversLicense: {
-                integrity: DOCUMENT_INTEGRITY_TYPES.VALID,
-                forgeryType: null,
-                affectedFields: [],
-                detectableBy: []
+            driversLicense: { ...validState },
+            residencePermit: {
+                ...validState,
+                carried: Boolean(driverProfile?.real?.residencePermit)
+            },
+            workPermit: {
+                ...validState,
+                carried: Boolean(driverProfile?.real?.workPermit)
             }
         },
         vehicleDocuments: {
@@ -106,6 +116,7 @@ function applyForgeryTarget(documentState, {
         ...documentState,
         hasForgery: true,
         npcDocuments: {
+            ...documentState.npcDocuments,
             driversLicense: target === DOCUMENT_FORGERY_TARGETS.DRIVER
                 ? createForgedNpcDriversLicenseState()
                 : documentState.npcDocuments.driversLicense

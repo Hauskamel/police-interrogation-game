@@ -3,6 +3,7 @@ import {
     DOCUMENT_AVAILABILITY_STATUSES,
     INSPECTION_DOCUMENT_TYPES
 } from "../data";
+import { HOME_COUNTRY, TRAVEL_PURPOSES } from "@game/npcs/data";
 
 // ##### Control Interaction Profile
 // -----> Erzeugt die kontrollspezifische Dokumentverfügbarkeit und vorbereitete Fahreraussagen.
@@ -77,6 +78,7 @@ function getDocumentAvailabilityOverride(scenarioType) {
 // und ein späteres Dialog- oder KI-System kann denselben fachlichen Vertrag verwenden.
 function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerProfile }) {
     const driver = driverProfile.real;
+    const migrationProfile = driver.migrationProfile;
     const owner = vehicleOwnerProfile.real;
     const ownerName = [owner.firstName, owner.lastName].filter(Boolean).join(" ");
     const responses = {
@@ -94,12 +96,30 @@ function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerPr
                 : `Das Fahrzeug gehört ${ownerName || "einer anderen Person"}.`
         },
         travel_reason: {
-            text: "Ich bin auf dem Weg zu einem privaten Termin."
+            text: createTravelReasonResponse(migrationProfile)
         },
         address_follow_up: {
             text: "Nein, die genannte Anschrift ist korrekt. Dabei bleibe ich."
         }
     };
+
+    if (driver.countryOfOrigin !== HOME_COUNTRY) {
+        responses.foreign_stay = {
+            text: createForeignStayResponse(migrationProfile)
+        };
+
+        if (migrationProfile.requiresResidencePermit) {
+            responses.residence_details = {
+                text: `Ich wohne während meines Aufenthalts in ${migrationProfile.localAddress}.`
+            };
+        }
+
+        if (migrationProfile.requiresWorkPermit) {
+            responses.employment_details = {
+                text: `Ich arbeite als ${migrationProfile.employment.occupation} bei ${migrationProfile.employment.employer}.`
+            };
+        }
+    }
     const hasContradiction = controlScenario?.type
         === CONTROL_SCENARIO_TYPES.CONTRADICTORY_STATEMENT
         || controlScenario?.type === CONTROL_SCENARIO_TYPES.MULTI_ISSUE;
@@ -115,4 +135,39 @@ function createStatementProfile({ controlScenario, driverProfile, vehicleOwnerPr
     return {
         responses
     };
+}
+
+function createTravelReasonResponse(migrationProfile) {
+    const responseByPurpose = {
+        [TRAVEL_PURPOSES.TRANSIT]: "Ich bin nur auf der Durchreise.",
+        [TRAVEL_PURPOSES.VISIT]: "Ich besuche Freunde in Westmark.",
+        [TRAVEL_PURPOSES.LONG_STAY]: "Ich bleibe für einen längeren privaten Aufenthalt in Westmark.",
+        [TRAVEL_PURPOSES.WORK]: "Ich fahre zu meiner Arbeitsstelle in Westmark."
+    };
+
+    return responseByPurpose[migrationProfile?.travelPurpose]
+        ?? "Ich bin auf dem Weg zu einem privaten Termin.";
+}
+
+function createForeignStayResponse(migrationProfile) {
+    const country = migrationProfile.countryOfOrigin;
+    const duration = formatStayDuration(migrationProfile.plannedStayDays);
+
+    if (migrationProfile.travelPurpose === TRAVEL_PURPOSES.TRANSIT) {
+        return `Ich komme aus ${country} und bin nur auf der Durchreise. Ich bleibe ${duration}.`;
+    }
+
+    if (migrationProfile.travelPurpose === TRAVEL_PURPOSES.WORK) {
+        return `Ich komme aus ${country} und werde für ${duration} in Westmark arbeiten.`;
+    }
+
+    return `Ich komme aus ${country} und bleibe für ${duration} in Westmark.`;
+}
+
+function formatStayDuration(days) {
+    if (days === 1) return "einen Tag";
+    if (days < 14) return `${days} Tage`;
+    if (days < 60) return `${Math.round(days / 7)} Wochen`;
+    if (days < 548) return `${Math.round(days / 30)} Monate`;
+    return `${Math.round(days / 365)} Jahre`;
 }

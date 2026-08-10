@@ -3,6 +3,8 @@ import { create } from "zustand";
 const emptyOfficialRegistry = {
     peopleById: {},
     driverLicensesByNumber: {},
+    residencePermitsByNumber: {},
+    workPermitsByNumber: {},
     vehiclesById: {},
     insurancePoliciesById: {}
 };
@@ -16,6 +18,8 @@ export const useOfficialRegistryStore = create((set) => ({
     registerOfficialRecords: ({
         peopleById = {},
         driverLicensesByNumber = {},
+        residencePermitsByNumber = {},
+        workPermitsByNumber = {},
         vehiclesById = {},
         insurancePoliciesById = {}
     } = {}) => {
@@ -28,6 +32,14 @@ export const useOfficialRegistryStore = create((set) => ({
                 driverLicensesByNumber: {
                     ...state.officialRegistry.driverLicensesByNumber,
                     ...driverLicensesByNumber
+                },
+                residencePermitsByNumber: {
+                    ...state.officialRegistry.residencePermitsByNumber,
+                    ...residencePermitsByNumber
+                },
+                workPermitsByNumber: {
+                    ...state.officialRegistry.workPermitsByNumber,
+                    ...workPermitsByNumber
                 },
                 vehiclesById: {
                     ...state.officialRegistry.vehiclesById,
@@ -52,6 +64,8 @@ export const useOfficialRegistryStore = create((set) => ({
 export function registerCriminalDatabaseOfficialRecords(criminalDatabase) {
     const peopleById = {};
     const driverLicensesByNumber = {};
+    const residencePermitsByNumber = {};
+    const workPermitsByNumber = {};
     const vehiclesById = { ...(criminalDatabase?.vehiclesById ?? {}) };
 
     Object.values(criminalDatabase?.npcsById ?? {}).forEach((npc) => {
@@ -64,11 +78,19 @@ export function registerCriminalDatabaseOfficialRecords(criminalDatabase) {
                 npcId: npc.npcId
             };
         }
+
+        registerImmigrationDocuments({
+            person: npc,
+            residencePermitsByNumber,
+            workPermitsByNumber
+        });
     });
 
     useOfficialRegistryStore.getState().registerOfficialRecords({
         peopleById,
         driverLicensesByNumber,
+        residencePermitsByNumber,
+        workPermitsByNumber,
         vehiclesById
     });
 }
@@ -83,6 +105,8 @@ export function registerTrafficEntityOfficialRecords(trafficEntity) {
     ].filter(Boolean);
     const peopleById = {};
     const driverLicensesByNumber = {};
+    const residencePermitsByNumber = {};
+    const workPermitsByNumber = {};
 
     people.forEach((person) => {
         peopleById[person.npcId] = createOfficialPersonRecord(person);
@@ -93,6 +117,13 @@ export function registerTrafficEntityOfficialRecords(trafficEntity) {
                 npcId: person.npcId
             };
         }
+
+
+        registerImmigrationDocuments({
+            person,
+            residencePermitsByNumber,
+            workPermitsByNumber
+        });
     });
 
     const vehicle = trafficEntity.vehicleProfile?.real;
@@ -101,6 +132,8 @@ export function registerTrafficEntityOfficialRecords(trafficEntity) {
     useOfficialRegistryStore.getState().registerOfficialRecords({
         peopleById,
         driverLicensesByNumber,
+        residencePermitsByNumber,
+        workPermitsByNumber,
         vehiclesById: vehicle
             ? { [vehicle.vehicleId]: vehicle }
             : {},
@@ -126,6 +159,29 @@ function createOfficialPersonRecord(person) {
         eyeColor: person.eyeColor,
         distinguishingMarks: [...(person.distinguishingMarks ?? [])],
         npcImage: person.npcImage,
-        driversLicenseNumber: person.driversLicense?.licenseNumber ?? null
+        countryOfOrigin: person.countryOfOrigin ?? null,
+        driversLicenseNumber: person.driversLicense?.licenseNumber ?? null,
+        residencePermitNumber: person.residencePermit?.permitNumber ?? null,
+        workPermitNumber: person.workPermit?.permitNumber ?? null
     };
+}
+
+function registerImmigrationDocuments({
+    person,
+    residencePermitsByNumber,
+    workPermitsByNumber
+}) {
+    if (person.residencePermit) {
+        residencePermitsByNumber[person.residencePermit.permitNumber] = {
+            ...person.residencePermit,
+            holderNpcId: person.npcId
+        };
+    }
+
+    if (person.workPermit) {
+        workPermitsByNumber[person.workPermit.permitNumber] = {
+            ...person.workPermit,
+            holderNpcId: person.npcId
+        };
+    }
 }

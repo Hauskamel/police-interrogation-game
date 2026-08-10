@@ -5,6 +5,7 @@ export { createPresentedProfiles } from "./createPresentedProfiles.js";
 export { createVehiclePresentedProfile } from "./createVehiclePresentedProfile.js";
 export { generateDriversLicenseData } from "./generateDriversLicenseData.js";
 export { generateInsuranceProfile } from "./generateInsuranceProfile.js";
+export { generateImmigrationDocuments } from "./generateImmigrationDocuments.js";
 export { generateIssueAndExpiryDate } from "./generateIssueAndExpiryDate.js";
 export {
     generateVehicleRegistrationDocument

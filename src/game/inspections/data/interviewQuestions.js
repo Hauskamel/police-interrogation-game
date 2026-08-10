@@ -27,6 +27,24 @@ export const INTERVIEW_QUESTIONS = [
         requirements: ["vehicleRegistrationOpened"]
     },
     {
+        id: "foreign_stay",
+        label: "Herkunft und Aufenthalt",
+        playerText: "Ich sehe, Ihr Führerschein ist kein regionaler. Wo kommen Sie her und wie lange wird Ihr Aufenthalt dauern?",
+        requirements: ["foreignDriversLicenseOpened"]
+    },
+    {
+        id: "residence_details",
+        label: "Aufenthaltsort",
+        playerText: "Wo wohnen Sie während Ihres Aufenthalts?",
+        requirements: ["foreignStayAsked", "residenceRequired"]
+    },
+    {
+        id: "employment_details",
+        label: "Beschäftigung",
+        playerText: "Wo und als was werden Sie in Westmark arbeiten?",
+        requirements: ["foreignStayAsked", "workPurpose"]
+    },
+    {
         id: "address_follow_up",
         label: "Adresse nachhaken",
         playerText: "Ihre Anschrift stimmt nicht mit den Unterlagen überein. Möchten Sie Ihre Aussage korrigieren?",

@@ -36,6 +36,8 @@ const devSpawnDefaults = {
     databaseNpcId: RANDOM_DATABASE_NPC_ID,
     knownToPolice: false,
     hasForgedDocuments: false,
+    requiresResidencePermit: false,
+    requiresWorkPermit: false,
     complexityLevel: 1,
     deceptionRisk: 0,
     focusAreas: ["routine_documents"]
@@ -46,6 +48,8 @@ export const useLilGuiSetup = () => {
     const controllersRef = useRef([]);
     const applyToStoppedNpcControllerRef = useRef(null);
     const databaseNpcControllerRef = useRef(null);
+    const residencePermitControllerRef = useRef(null);
+    const workPermitControllerRef = useRef(null);
     const selectedTrafficEntityRef = useRef(null);
     const concealedTrafficEntityIdRef = useRef(null);
     const devSpawnOptionsRef = useRef({
@@ -120,6 +124,8 @@ export const useLilGuiSetup = () => {
             ...identityExclusions,
             forcedType: devOptions.trafficType,
             forcedHasForgery: devOptions.hasForgedDocuments,
+            forcedRequiresResidencePermit: devOptions.requiresResidencePermit,
+            forcedRequiresWorkPermit: devOptions.requiresWorkPermit,
             forcedDatabaseNpcId: getForcedDatabaseNpcId(devOptions.databaseNpcId)
         });
 
@@ -212,6 +218,13 @@ export const useLilGuiSetup = () => {
                     criminalDatabase,
                     devOptions: guiContent
                 });
+                updatePermitRequirementControllers({
+                    controllers: [
+                        residencePermitControllerRef.current,
+                        workPermitControllerRef.current
+                    ],
+                    trafficType: guiContent.trafficType
+                });
                 replaceSelectedTrafficScenarioFromGui({
                     selectedTrafficEntityRef,
                     updateTrafficEntity,
@@ -270,6 +283,55 @@ export const useLilGuiSetup = () => {
                     devOptions: guiContent
                 });
             });
+
+        const residencePermitController = spawnFolder
+            .add(guiContent, "requiresResidencePermit")
+            .name("Benötigt Aufenthaltserlaubnis")
+            .onChange((requiresResidencePermit) => {
+                concealedTrafficEntityIdRef.current = null;
+
+                // Ohne Aufenthaltstitel kann fachlich keine Arbeitserlaubnis bestehen.
+                if (!requiresResidencePermit) {
+                    guiContent.requiresWorkPermit = false;
+                }
+
+                updateControllerDisplays(controllersRef.current);
+                replaceSelectedTrafficScenarioFromGui({
+                    selectedTrafficEntityRef,
+                    updateTrafficEntity,
+                    criminalDatabase,
+                    focusSelection: focusSelectionRef.current,
+                    devOptions: guiContent
+                });
+            });
+
+        const workPermitController = spawnFolder
+            .add(guiContent, "requiresWorkPermit")
+            .name("Benötigt Arbeitserlaubnis")
+            .onChange((requiresWorkPermit) => {
+                concealedTrafficEntityIdRef.current = null;
+
+                // Erwerbstaetigkeit setzt automatisch einen gueltigen Aufenthaltstitel voraus.
+                if (requiresWorkPermit) {
+                    guiContent.requiresResidencePermit = true;
+                }
+
+                updateControllerDisplays(controllersRef.current);
+                replaceSelectedTrafficScenarioFromGui({
+                    selectedTrafficEntityRef,
+                    updateTrafficEntity,
+                    criminalDatabase,
+                    focusSelection: focusSelectionRef.current,
+                    devOptions: guiContent
+                });
+            });
+
+        residencePermitControllerRef.current = residencePermitController;
+        workPermitControllerRef.current = workPermitController;
+        updatePermitRequirementControllers({
+            controllers: [residencePermitController, workPermitController],
+            trafficType: guiContent.trafficType
+        });
 
         const complexityController = spawnFolder
             .add(guiContent, "complexityLevel", 1, 5, 1)
@@ -338,6 +400,8 @@ export const useLilGuiSetup = () => {
             databaseNpcController,
             knownToPoliceController,
             forgedDocumentsController,
+            residencePermitController,
+            workPermitController,
             complexityController,
             deceptionController,
             ...focusControllers
@@ -347,6 +411,8 @@ export const useLilGuiSetup = () => {
             controllersRef.current = [];
             applyToStoppedNpcControllerRef.current = null;
             databaseNpcControllerRef.current = null;
+            residencePermitControllerRef.current = null;
+            workPermitControllerRef.current = null;
             spawnFolder.destroy();
         };
     }, [
@@ -384,6 +450,13 @@ export const useLilGuiSetup = () => {
             criminalDatabase,
             devOptions: devSpawnOptionsRef.current
         });
+        updatePermitRequirementControllers({
+            controllers: [
+                residencePermitControllerRef.current,
+                workPermitControllerRef.current
+            ],
+            trafficType: selectedTrafficEntity.trafficType
+        });
         updateApplyToStoppedNpcController({
             controller: applyToStoppedNpcControllerRef.current,
             selectedTrafficEntity
@@ -398,6 +471,7 @@ export const useLilGuiSetup = () => {
 function applyDevSpawnOverrides(trafficEntity, devOptions) {
     const isDatabaseOffender = isDatabaseTrafficType(devOptions.trafficType);
     const knownToPolice = isDatabaseOffender || devOptions.knownToPolice;
+    const migrationProfile = trafficEntity.driverProfile?.real?.migrationProfile;
 
     return {
         ...trafficEntity,
@@ -429,6 +503,10 @@ function applyDevSpawnOverrides(trafficEntity, devOptions) {
             databaseNpcId: trafficEntity.police?.databaseNpcId,
             knownToPolice,
             hasForgedDocuments: devOptions.hasForgedDocuments,
+            requiresResidencePermit: Boolean(
+                migrationProfile?.requiresResidencePermit
+            ),
+            requiresWorkPermit: Boolean(migrationProfile?.requiresWorkPermit),
             complexityLevel: devOptions.complexityLevel,
             deceptionRisk: devOptions.deceptionRisk,
             focusAreas: [...devOptions.focusAreas]
@@ -468,6 +546,8 @@ function replaceSelectedTrafficScenarioFromGui({
         ),
         forcedType: devOptions.trafficType,
         forcedHasForgery: devOptions.hasForgedDocuments,
+        forcedRequiresResidencePermit: devOptions.requiresResidencePermit,
+        forcedRequiresWorkPermit: devOptions.requiresWorkPermit,
         forcedDatabaseNpcId: getForcedDatabaseNpcId(devOptions.databaseNpcId)
     });
 
@@ -575,6 +655,14 @@ function syncGuiOptionsFromTrafficEntity({
         databaseNpcId: trafficEntity.police?.databaseNpcId ?? RANDOM_DATABASE_NPC_ID,
         knownToPolice: isNpcKnownToPolice(trafficEntity.police?.status),
         hasForgedDocuments: Boolean(trafficEntity.documentState?.hasForgery),
+        requiresResidencePermit: Boolean(
+            trafficEntity.driverProfile?.real?.migrationProfile
+                ?.requiresResidencePermit
+        ),
+        requiresWorkPermit: Boolean(
+            trafficEntity.driverProfile?.real?.migrationProfile
+                ?.requiresWorkPermit
+        ),
         complexityLevel: trafficEntity.inspectionProfile?.complexityLevel ?? 1,
         deceptionRisk: trafficEntity.inspectionProfile?.deceptionRisk ?? 0,
         focusAreas: [...focusAreas]
@@ -659,6 +747,17 @@ function updateDatabaseNpcController({ controller, criminalDatabase, devOptions 
     } else {
         controller.disable();
     }
+}
+
+// Datenbank-NPCs besitzen bereits kanonische Migrationsdaten, die das Devtool nicht ueberschreibt.
+function updatePermitRequirementControllers({ controllers, trafficType }) {
+    controllers.filter(Boolean).forEach((controller) => {
+        if (isDatabaseTrafficType(trafficType)) {
+            controller.disable();
+        } else {
+            controller.enable();
+        }
+    });
 }
 
 // ##### Forced Database NPC Normalizer

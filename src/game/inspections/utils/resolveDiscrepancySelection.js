@@ -204,6 +204,45 @@ function getExpectedPairValue({ definition, trafficEntity, officialRegistry }) {
             : insurance?.[property];
     }
 
+    if (definition.id.startsWith("residencePermit.")) {
+        return getImmigrationPermitExpectedValue({
+            definition,
+            trafficEntity,
+            officialRegistry,
+            permitType: "residencePermit"
+        });
+    }
+
+    if (definition.id.startsWith("workPermit.")) {
+        return getImmigrationPermitExpectedValue({
+            definition,
+            trafficEntity,
+            officialRegistry,
+            permitType: "workPermit"
+        });
+    }
+
+    return undefined;
+}
+
+function getImmigrationPermitExpectedValue({
+    definition,
+    trafficEntity,
+    officialRegistry,
+    permitType
+}) {
+    const property = definition.comparisonGroup.split(".")[1];
+
+    if (definition.comparisonGroup.startsWith("person.")) {
+        return officialRegistry.peopleById?.[trafficEntity.npcId]?.[property];
+    }
+
+    if (definition.comparisonGroup === "permit.residencePermitNumber") {
+        return permitType === "residencePermit"
+            ? trafficEntity.driverProfile?.real?.residencePermit?.permitNumber
+            : trafficEntity.driverProfile?.real?.workPermit?.residencePermitNumber;
+    }
+
     return undefined;
 }
 
@@ -243,6 +282,8 @@ function registryRecordBelongsToTrafficEntity({ selectedFields, trafficEntity })
     const definition = getDefinition(registryField);
     const expectedRecordIds = {
         [DISCREPANCY_REGISTRY_SUBJECTS.DRIVER]: trafficEntity.npcId,
+        [DISCREPANCY_REGISTRY_SUBJECTS.RESIDENCE_PERMIT]: trafficEntity.driverProfile?.real?.residencePermit?.permitId,
+        [DISCREPANCY_REGISTRY_SUBJECTS.WORK_PERMIT]: trafficEntity.driverProfile?.real?.workPermit?.permitId,
         [DISCREPANCY_REGISTRY_SUBJECTS.VEHICLE]: trafficEntity.vehicleId,
         [DISCREPANCY_REGISTRY_SUBJECTS.VEHICLE_OWNER]: trafficEntity.vehicleOwnerProfile?.real?.npcId,
         [DISCREPANCY_REGISTRY_SUBJECTS.INSURANCE]: trafficEntity.insuranceProfile?.real?.policyId

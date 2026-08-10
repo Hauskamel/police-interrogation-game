@@ -4,9 +4,9 @@ import {
     INSPECTION_FINDING_DEFINITIONS,
     getExpectedInspectionDecision,
     INSPECTION_OUTCOMES,
-    INSPECTION_RESOLUTION_ACTIONS,
-    REQUIRED_INSPECTION_DOCUMENTS
+    INSPECTION_RESOLUTION_ACTIONS
 } from "../data";
+import { getRequiredInspectionDocumentTypes } from "./getInspectionDocumentTypes.js";
 
 // ##### Inspection Evaluator
 // -----> Bewertet ausschließlich Sachverhalte, die in der aktuellen Kontrolle erkennbar waren.
@@ -42,7 +42,8 @@ export function evaluateInspection({
     const expectedDecision = getExpectedInspectionDecision(actualFindingIds);
     const decisionWasCorrect = playerDecision.type === expectedDecision;
     const unavailableDocuments = getUnavailableRequestedDocuments(inspectionSession);
-    const unopenedDocuments = REQUIRED_INSPECTION_DOCUMENTS.filter((documentType) => {
+    const requiredDocuments = getRequiredInspectionDocumentTypes(trafficEntity);
+    const unopenedDocuments = requiredDocuments.filter((documentType) => {
         return !inspectionSession.openedDocuments.includes(documentType)
             && !unavailableDocuments.includes(documentType);
     });
@@ -120,6 +121,10 @@ function getDetectableFindingIds({
     })
         ? ["expired_insurance"]
         : [];
+    const immigrationValidityFindingIds = getExpiredImmigrationPermitFindingIds({
+        trafficEntity,
+        inspectedAt: inspectionSession.startedAt
+    });
     const policeFindingIds = hasActiveWantedRecord({
         trafficEntity,
         criminalDatabase
@@ -136,6 +141,7 @@ function getDetectableFindingIds({
         ...documentFindingIds,
         ...validityFindingIds,
         ...insuranceValidityFindingIds,
+        ...immigrationValidityFindingIds,
         ...controlFindingIds,
         ...policeFindingIds
     ]));
@@ -151,7 +157,9 @@ function getControlInteractionFindingIds({
     const findingByDocument = {
         driversLicense: "missing_drivers_license",
         carDocuments: "missing_vehicle_registration",
-        proofOfInsurance: "missing_insurance"
+        proofOfInsurance: "missing_insurance",
+        residencePermit: "missing_residence_permit",
+        workPermit: "missing_work_permit"
     };
     const findings = Object.entries(trafficEntity.documentAvailability ?? {})
         .flatMap(([documentType, availability]) => {
@@ -232,6 +240,27 @@ function isInsuranceExpired({ trafficEntity, inspectedAt }) {
     if (!validUntil) return false;
 
     return validUntil < inspectedAt.slice(0, 10);
+}
+
+function getExpiredImmigrationPermitFindingIds({ trafficEntity, inspectedAt }) {
+    const realDriver = trafficEntity.driverProfile?.real;
+    const findings = [];
+
+    if (
+        realDriver?.residencePermit?.validUntil
+        && realDriver.residencePermit.validUntil < inspectedAt.slice(0, 10)
+    ) {
+        findings.push("expired_residence_permit");
+    }
+
+    if (
+        realDriver?.workPermit?.validUntil
+        && realDriver.workPermit.validUntil < inspectedAt.slice(0, 10)
+    ) {
+        findings.push("expired_work_permit");
+    }
+
+    return findings;
 }
 
 // Nur ein auflösbarer aktiver Fahndungsrecord ist eine handlungsrelevante Fahndung.

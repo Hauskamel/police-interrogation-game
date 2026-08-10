@@ -11,18 +11,24 @@ export const INSPECTION_STATUSES = {
 export const INSPECTION_DOCUMENT_TYPES = {
     DRIVERS_LICENSE: "driversLicense",
     VEHICLE_REGISTRATION: "carDocuments",
-    PROOF_OF_INSURANCE: "proofOfInsurance"
+    PROOF_OF_INSURANCE: "proofOfInsurance",
+    RESIDENCE_PERMIT: "residencePermit",
+    WORK_PERMIT: "workPermit"
 };
 
 export const INSPECTION_DOCUMENT_LABELS = {
     [INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE]: "Führerschein",
     [INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION]: "Fahrzeugpapiere",
-    [INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE]: "Versicherung"
+    [INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE]: "Versicherung",
+    [INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT]: "Aufenthaltserlaubnis",
+    [INSPECTION_DOCUMENT_TYPES.WORK_PERMIT]: "Arbeitserlaubnis"
 };
 
-export const REQUIRED_INSPECTION_DOCUMENTS = Object.values(
-    INSPECTION_DOCUMENT_TYPES
-);
+export const REQUIRED_INSPECTION_DOCUMENTS = [
+    INSPECTION_DOCUMENT_TYPES.DRIVERS_LICENSE,
+    INSPECTION_DOCUMENT_TYPES.VEHICLE_REGISTRATION,
+    INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE
+];
 
 // ##### Document Availability
 // -----> Trennt den Besitz eines Dokuments von dessen Verhalten bei einer Kontrolle.

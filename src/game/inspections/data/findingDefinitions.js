@@ -77,6 +77,31 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         registryType: "vehicle"
     },
     {
+        id: "immigration_identity_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Identitätsdaten der Aufenthaltspapiere stimmen nicht überein",
+        description: "Name oder Herkunftsland weichen zwischen Führerschein und Erlaubnissen ab.",
+        documentType: null,
+        affectedFields: [
+            "driversLicense.issuingCountry",
+            "residencePermit.firstName",
+            "residencePermit.lastName",
+            "residencePermit.countryOfOrigin",
+            "workPermit.firstName",
+            "workPermit.lastName"
+        ],
+        registryType: null
+    },
+    {
+        id: "permit_relation_mismatch",
+        category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
+        label: "Arbeitserlaubnis verweist auf einen anderen Aufenthaltstitel",
+        description: "Die Referenz der Arbeitserlaubnis passt nicht zur vorgelegten Aufenthaltserlaubnis.",
+        documentType: INSPECTION_DOCUMENT_TYPES.WORK_PERMIT,
+        affectedFields: ["workPermit.residencePermitNumber"],
+        registryType: null
+    },
+    {
         id: "vehicle_registration_number_mismatch",
         category: INSPECTION_FINDING_CATEGORIES.DOCUMENT,
         label: "Zulassungsnummer stimmt nicht überein",
@@ -163,6 +188,42 @@ export const INSPECTION_FINDING_DEFINITIONS = [
         label: "Versicherungsnachweis nicht vorgelegt",
         description: "Ein Versicherungsnachweis kann nicht vorgelegt werden.",
         documentType: INSPECTION_DOCUMENT_TYPES.PROOF_OF_INSURANCE,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "missing_residence_permit",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Aufenthaltserlaubnis nicht vorgelegt",
+        description: "Die für den längeren Aufenthalt erforderliche Erlaubnis wurde nicht vorgelegt.",
+        documentType: INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "missing_work_permit",
+        category: INSPECTION_FINDING_CATEGORIES.COOPERATION,
+        label: "Arbeitserlaubnis nicht vorgelegt",
+        description: "Die für die angegebene Beschäftigung erforderliche Arbeitserlaubnis wurde nicht vorgelegt.",
+        documentType: INSPECTION_DOCUMENT_TYPES.WORK_PERMIT,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "expired_residence_permit",
+        category: INSPECTION_FINDING_CATEGORIES.VALIDITY,
+        label: "Aufenthaltserlaubnis ist abgelaufen",
+        description: "Die Aufenthaltserlaubnis war bei Kontrollbeginn nicht mehr gültig.",
+        documentType: INSPECTION_DOCUMENT_TYPES.RESIDENCE_PERMIT,
+        affectedFields: [],
+        registryType: null
+    },
+    {
+        id: "expired_work_permit",
+        category: INSPECTION_FINDING_CATEGORIES.VALIDITY,
+        label: "Arbeitserlaubnis ist abgelaufen",
+        description: "Die Arbeitserlaubnis war bei Kontrollbeginn nicht mehr gültig.",
+        documentType: INSPECTION_DOCUMENT_TYPES.WORK_PERMIT,
         affectedFields: [],
         registryType: null
     },
