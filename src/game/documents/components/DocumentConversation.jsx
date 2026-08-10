@@ -1,4 +1,4 @@
-import { createElement, useEffect, useState } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 import {
     FaBriefcase,
     FaCar,
@@ -67,6 +67,7 @@ export function DocumentConversation({
 }) {
     const [openTabs, setOpenTabs] = useState([CONVERSATION_TABS.DRIVER]);
     const [activeTab, setActiveTab] = useState(CONVERSATION_TABS.DRIVER);
+    const conversationLogRef = useRef(null);
 
     // Der Funkmodus oeffnet den Zentralenkanal automatisch, ohne den Fahrerverlauf zu verlieren.
     useEffect(() => {
@@ -90,6 +91,20 @@ export function DocumentConversation({
         setActiveTab(CONVERSATION_TABS.DISPATCH);
     }, [dispatchConversationEntries.length]);
 
+    // Der Verlauf waechst bis zur Maximalhoehe und zeigt bei neuen Eintraegen die letzte Antwort.
+    // Reiter und Aktionsleisten liegen ausserhalb dieses Scrollbereichs und bleiben unveraendert.
+    useEffect(() => {
+        const conversationLog = conversationLogRef.current;
+        if (!conversationLog) return;
+
+        conversationLog.scrollTop = conversationLog.scrollHeight;
+    }, [
+        activeTab,
+        conversationEntries.length,
+        dispatchConversationEntries.length,
+        radioInquiryModeActive
+    ]);
+
     const closeTab = (tabId) => {
         setOpenTabs((currentTabs) => {
             const remainingTabs = currentTabs.filter((openTab) => openTab !== tabId);
@@ -109,14 +124,14 @@ export function DocumentConversation({
 
     return (
         <section
-            className={`fixed bottom-4 right-4 z-[9500] flex h-[380px] max-h-[calc(100vh-2rem)] w-[min(580px,calc(100vw-2rem))] flex-col overflow-hidden rounded-md border border-zinc-700 bg-zinc-900 text-left text-white shadow-2xl transition sm:right-8 ${
+            className={`fixed bottom-4 right-4 z-[9500] flex max-h-[50vh] w-[min(580px,calc(100vw-2rem))] flex-col overflow-hidden rounded-md border border-zinc-700 bg-zinc-900 text-left text-white shadow-2xl transition sm:right-8 ${
                 discrepancyModeActive
                     ? "ring-1 ring-blue-500 opacity-100"
                     : "opacity-100"
             }`}
             aria-label="Gespräch mit dem Fahrer"
         >
-            <header className="flex min-h-12 items-end gap-1 border-b border-zinc-700 bg-zinc-950 px-3 pt-2">
+            <header className="flex h-12 shrink-0 items-end gap-1 border-b border-zinc-700 bg-zinc-950 px-3 pt-2">
                 {openTabs.map((tabId) => (
                     <ConversationTab
                         key={tabId}
@@ -138,11 +153,12 @@ export function DocumentConversation({
             </header>
 
             {activeTab === CONVERSATION_TABS.DRIVER && (
-                <div className="border-b border-zinc-700 bg-zinc-950/70 px-3 py-3">
-                    <p className="mb-2 text-[10px] font-semibold uppercase text-zinc-400">
-                        Dokumente
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                <div className="shrink-0 border-b border-zinc-700 bg-zinc-950/70">
+                    <div className="flex h-14 items-center gap-3 border-b border-zinc-800 px-3">
+                        <p className="shrink-0 text-[10px] font-semibold uppercase text-zinc-400">
+                            Dokumente
+                        </p>
+                        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                         {DOCUMENT_OPTIONS
                             .filter(({ type }) => availableDocumentTypes.includes(type))
                             .map(({ type, icon }) => {
@@ -162,43 +178,51 @@ export function DocumentConversation({
                                     <button
                                         type="button"
                                         key={type}
-                                        className="flex min-w-0 items-center justify-center gap-2 rounded bg-zinc-700 px-2 py-2 text-xs font-semibold leading-4 hover:bg-zinc-600 disabled:cursor-default disabled:bg-blue-700 disabled:text-white"
+                                        className={getDocumentButtonClass({
+                                            isVisible,
+                                            terminalRequest
+                                        })}
                                         disabled={isVisible || terminalRequest}
                                         onClick={() => onRequestDocument(type)}
                                         title={label}
+                                        aria-label={label}
                                     >
                                         {createElement(icon, {
-                                            className: "shrink-0",
+                                            className: "h-4 w-4 shrink-0",
                                             "aria-hidden": true
                                         })}
-                                        <span className="text-center">{label}</span>
+                                        <span className="sr-only">{label}</span>
                                     </button>
                                 );
                             })}
+                        </div>
                     </div>
-                    <p className="mb-2 mt-3 text-[10px] font-semibold uppercase text-zinc-400">
-                        Fahrer befragen
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                        {interviewQuestions.map((option) => (
-                            <button
-                                type="button"
-                                key={option.id}
-                                className="rounded border border-zinc-700 bg-zinc-800 px-2 py-2 text-xs font-semibold hover:border-zinc-500 hover:bg-zinc-700"
-                                onClick={() => onAskQuestion(option)}
-                            >
-                                {askedQuestionIds.includes(option.id) && !option.followUp
-                                    ? `${option.label} erneut fragen`
-                                    : option.label
-                                }
-                            </button>
-                        ))}
+                    <div className="flex h-12 items-center gap-3 px-3">
+                        <p className="shrink-0 text-[10px] font-semibold uppercase text-zinc-400">
+                            Befragen
+                        </p>
+                        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {interviewQuestions.map((option) => (
+                                <button
+                                    type="button"
+                                    key={option.id}
+                                    className="shrink-0 whitespace-nowrap rounded border border-zinc-700 bg-zinc-800 px-3 py-1.5 text-xs font-semibold hover:border-zinc-500 hover:bg-zinc-700"
+                                    onClick={() => onAskQuestion(option)}
+                                >
+                                    {askedQuestionIds.includes(option.id) && !option.followUp
+                                        ? `${option.label} erneut fragen`
+                                        : option.label
+                                    }
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
 
             <div
-                className="min-h-0 flex-1 space-y-2 overflow-y-auto px-4 py-3 text-sm"
+                ref={conversationLogRef}
+                className="min-h-[5.5rem] max-h-[calc(50vh-10rem)] flex-1 space-y-2 overflow-y-auto px-4 py-3 text-sm"
                 role="log"
                 aria-live="polite"
             >
@@ -369,4 +393,19 @@ function isTerminalDocumentRequest(requestState) {
     return ["unavailable", "refused", "wrong_document"].includes(
         requestState?.result
     );
+}
+
+// Dokumentbuttons bleiben immer quadratisch; Farbe und Tooltip transportieren ihren Zustand.
+function getDocumentButtonClass({ isVisible, terminalRequest }) {
+    const baseClasses = "flex h-9 w-9 shrink-0 items-center justify-center rounded border text-sm transition";
+
+    if (isVisible) {
+        return `${baseClasses} cursor-default border-blue-500 bg-blue-700 text-white`;
+    }
+
+    if (terminalRequest) {
+        return `${baseClasses} cursor-not-allowed border-zinc-700 bg-zinc-800 text-zinc-500`;
+    }
+
+    return `${baseClasses} border-zinc-600 bg-zinc-700 text-zinc-100 hover:border-zinc-400 hover:bg-zinc-600`;
 }

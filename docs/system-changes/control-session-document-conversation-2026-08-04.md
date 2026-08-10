@@ -69,3 +69,14 @@ darauf aufbauen und vor dem Öffnen des Dokuments beispielsweise entscheiden:
 
 Diese späteren Zustände erfordern keine erneute Umstellung der Benutzerführung oder
 des grundlegenden Session-Ablaufs.
+
+## Layout-Aktualisierung vom 10.08.2026
+
+Die Gesprächsbox besitzt keine feste Gesamthöhe mehr. Der Gesprächsverlauf wächst
+dynamisch von mindestens drei Textzeilen bis zu einer maximalen Boxhöhe von `50vh`
+und scrollt danach intern. Neue Antworten werden automatisch sichtbar gehalten.
+
+Reiter, Dokumentaktionen und Gesprächsoptionen liegen außerhalb des scrollenden
+Textbereichs und behalten ihre Höhe. Dokumente werden als quadratische Icon-Buttons
+mit Tooltip und zugänglichem Namen dargestellt. Die Dokument- und Fragenleisten
+bleiben einzeilig und können bei geringerer Breite horizontal bedient werden.

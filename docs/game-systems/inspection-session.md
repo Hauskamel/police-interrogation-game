@@ -255,6 +255,13 @@ Sie zeigt die Aussagen von Spieler und Fahrer sowie die im jeweiligen Fall
 verfügbaren Dokumentfragen. Aufenthaltstitel werden erst nach der Frage nach Herkunft
 und Aufenthaltsdauer angeboten, damit ihre Existenz nicht vorzeitig verraten wird.
 Bereits geschlossene Dokumente können dort erneut angesehen werden.
+
+Die Box passt ihre Höhe an den Gesprächsverlauf an und wächst höchstens bis `50vh`.
+Der Textbereich zeigt mindestens drei Zeilen und scrollt nach Erreichen der
+Maximalhöhe intern. Reiter-, Dokument- und Fragenleiste behalten dabei ihre feste
+Höhe. Dokumentaktionen erscheinen als quadratische Icons mit Tooltip, damit fünf
+oder mehr Dokumentarten die Leiste nicht umbrechen. Auch die Fragen bleiben in einer
+einzeiligen, horizontal bedienbaren Leiste.
 Die frühere globale Dokumentleiste existiert nicht mehr.
 
 Das Fahrzeug-Panel folgt dieser Priorität:
